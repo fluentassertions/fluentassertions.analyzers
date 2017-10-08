@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FluentAssertions.BestPractices\FluentAssertions.BestPractices.csproj" />
   </ItemGroup>
 

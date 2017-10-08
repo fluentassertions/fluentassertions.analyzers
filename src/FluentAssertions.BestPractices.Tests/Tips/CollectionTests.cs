@@ -156,5 +156,150 @@ namespace FluentAssertions.BestPractices.Tests
             DiagnosticVerifier.VerifyCSharpFix<CollectionShouldContainPropertyCodeFix, CollectionShouldContainPropertyAnalyzer>(oldSource, newSource);
         }
         
+        [TestMethod]
+        [Description("actual.Contains(expected).Should().BeTrue();")]
+        [NotImplemented]
+        public void CollectionShouldContainItem_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Contains(expected).Should().BeTrue(); new: actual.Should().Contain(expected);")]
+        [NotImplemented]
+        public void CollectionShouldContainItem_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Contains(unexpected).Should().BeTrue();")]
+        [NotImplemented]
+        public void CollectionShouldNotContainItem_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Contains(unexpected).Should().BeTrue(); new: actual.Should().NotContain(unexpected);")]
+        [NotImplemented]
+        public void CollectionShouldNotContainItem_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Count().Should().Be(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCount_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Count().Should().Be(k); new: actual.Should().HaveCount(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCount_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Count().Should().BeGreaterThan(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountGreaterThan_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Count().Should().BeGreaterThan(k); new: actual.Should().HaveCountGreaterThan(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountGreaterThan_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Count().Should().BeGreaterOrEqualTo(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountGreaterOrEqualTo_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Count().Should().BeGreaterOrEqualTo(k); new: actual.Should().HaveCountGreaterOrEqualTo(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountGreaterOrEqualTo_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Count().Should().BeLessThan(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountLessThan_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Count().Should().BeLessThan(k); new: actual.Should().HaveCountLessThan(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountLessThan_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Count().Should().BeLessOrEqualTo(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountLessOrEqualTo_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Count().Should().BeLessOrEqualTo(k); new: actual.Should().HaveCountLessOrEqualTo(k);")]
+        [NotImplemented]
+        public void CollectionShouldHaveCountLessOrEqualTo_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Count().Should().NotBe(k);")]
+        [NotImplemented]
+        public void CollectionShouldNotHaveCount_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Count().Should().NotBe(k); new: actual.Should().NotHaveCount(k);")]
+        [NotImplemented]
+        public void CollectionShouldNotHaveCount_TestCodeFix()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("actual.Should().HaveCount(1);")]
+        [NotImplemented]
+        public void CollectionShouldContainSingle_TestAnalyzer()
+        {
+            
+        }
+        
+        [TestMethod]
+        [Description("old: actual.Should().HaveCount(1); new: actual.Should().ContainSingle();")]
+        [NotImplemented]
+        public void CollectionShouldContainSingle_TestCodeFix()
+        {
+            
+        }
+        
+        // actual.Should().HaveCount(0);
     }
 }
