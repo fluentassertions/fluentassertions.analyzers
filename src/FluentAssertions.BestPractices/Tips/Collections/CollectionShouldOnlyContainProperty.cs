@@ -10,17 +10,18 @@ using System.Composition;
 namespace FluentAssertions.BestPractices
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldNotContainPropertyAnalyzer : FluentAssertionsAnalyzer
+    public class CollectionShouldOnlyContainPropertyAnalyzer : FluentAssertionsAnalyzer
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotContainProperty;
+        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldOnlyContainProperty;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .NotContain() instead.";
+        public const string Message = "Use {0} .Should() followed by .OnlyContain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
-            var visitor = new CollectionShouldNotContainPropertySyntaxVisitor();
+            var visitor = new CollectionShouldOnlyContainPropertySyntaxVisitor();
             statement.Accept(visitor);
 
             if (visitor.IsValid)
@@ -42,18 +43,18 @@ namespace FluentAssertions.BestPractices
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldNotContainPropertyCodeFix)), Shared]
-    public class CollectionShouldNotContainPropertyCodeFix : FluentAssertionsCodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldOnlyContainPropertyCodeFix)), Shared]
+    public class CollectionShouldOnlyContainPropertyCodeFix : FluentAssertionsCodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainPropertyAnalyzer.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyContainPropertyAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
-            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().NotContain({properties[Constants.DiagnosticProperties.PredicateString]});");
+            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().OnlyContain({properties[Constants.DiagnosticProperties.PredicateString]});");
     }
 
-    public class CollectionShouldNotContainPropertySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+    public class CollectionShouldOnlyContainPropertySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
     {
-        public CollectionShouldNotContainPropertySyntaxVisitor() : base("Any", "Should", "BeFalse")
+        public CollectionShouldOnlyContainPropertySyntaxVisitor() : base("All", "Should", "BeTrue")
         {
         }
     }

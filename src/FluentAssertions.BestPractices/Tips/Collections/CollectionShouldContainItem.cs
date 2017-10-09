@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -9,20 +8,19 @@ using System.Composition;
 
 namespace FluentAssertions.BestPractices
 {
-
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionsShouldBeEmptyAnalyzer : FluentAssertionsAnalyzer
+    public class CollectionShouldContainItemAnalyzer : FluentAssertionsAnalyzer
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionsShouldBeEmpty;
+        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldContainItem;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .BeEmpty() instead.";
+        public const string Message = "Use {0} .Should() followed by ### instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
-            var visitor = new CollectionsShouldBeEmptySyntaxVisitor();
+            var visitor = new CollectionShouldContainItemSyntaxVisitor();
             statement.Accept(visitor);
 
             if (visitor.IsValid)
@@ -32,6 +30,7 @@ namespace FluentAssertions.BestPractices
                     [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
                     [Constants.DiagnosticProperties.Title] = Title
                 }.ToImmutableDictionary();
+				throw new System.NotImplementedException();
 
                 return Diagnostic.Create(
                     descriptor: Rule,
@@ -43,19 +42,22 @@ namespace FluentAssertions.BestPractices
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionsShouldBeEmptyCodeFix)), Shared]
-    public class CollectionsShouldBeEmptyCodeFix : FluentAssertionsCodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldContainItemCodeFix)), Shared]
+    public class CollectionShouldContainItemCodeFix : FluentAssertionsCodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionsShouldBeEmptyAnalyzer.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldContainItemAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
-            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().BeEmpty();");
+        {
+			throw new System.NotImplementedException();
+		}
     }
 
-    public class CollectionsShouldBeEmptySyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public class CollectionShouldContainItemSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
     {
-        public CollectionsShouldBeEmptySyntaxVisitor() : base("Any", "Should", "BeFalse")
+        public CollectionShouldContainItemSyntaxVisitor() : base("###")
         {
+			throw new System.NotImplementedException();
         }
     }
 }

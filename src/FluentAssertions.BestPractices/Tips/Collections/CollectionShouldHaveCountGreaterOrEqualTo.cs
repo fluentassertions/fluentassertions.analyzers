@@ -9,18 +9,19 @@ using System.Composition;
 
 namespace FluentAssertions.BestPractices
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldNotContainPropertyAnalyzer : FluentAssertionsAnalyzer
+	[DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class CollectionShouldHaveCountGreaterOrEqualToAnalyzer : FluentAssertionsAnalyzer
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotContainProperty;
+        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCountGreaterOrEqualTo;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .NotContain() instead.";
+        public const string Message = "Use {0} .Should() followed by ### instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
-            var visitor = new CollectionShouldNotContainPropertySyntaxVisitor();
+            var visitor = new CollectionShouldHaveCountGreaterOrEqualToSyntaxVisitor();
             statement.Accept(visitor);
 
             if (visitor.IsValid)
@@ -28,9 +29,9 @@ namespace FluentAssertions.BestPractices
                 var properties = new Dictionary<string, string>
                 {
                     [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title,
-                    [Constants.DiagnosticProperties.PredicateString] = visitor.PredicateString
+                    [Constants.DiagnosticProperties.Title] = Title
                 }.ToImmutableDictionary();
+				throw new System.NotImplementedException();
 
                 return Diagnostic.Create(
                     descriptor: Rule,
@@ -42,19 +43,22 @@ namespace FluentAssertions.BestPractices
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldNotContainPropertyCodeFix)), Shared]
-    public class CollectionShouldNotContainPropertyCodeFix : FluentAssertionsCodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveCountGreaterOrEqualToCodeFix)), Shared]
+    public class CollectionShouldHaveCountGreaterOrEqualToCodeFix : FluentAssertionsCodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainPropertyAnalyzer.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountGreaterOrEqualToAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
-            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().NotContain({properties[Constants.DiagnosticProperties.PredicateString]});");
+        {
+			throw new System.NotImplementedException();
+		}
     }
 
-    public class CollectionShouldNotContainPropertySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+    public class CollectionShouldHaveCountGreaterOrEqualToSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
     {
-        public CollectionShouldNotContainPropertySyntaxVisitor() : base("Any", "Should", "BeFalse")
+        public CollectionShouldHaveCountGreaterOrEqualToSyntaxVisitor() : base("###")
         {
+			throw new System.NotImplementedException();
         }
     }
 }

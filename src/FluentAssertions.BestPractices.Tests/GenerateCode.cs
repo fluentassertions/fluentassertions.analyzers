@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
 
 namespace FluentAssertions.BestPractices.Tests
 {
     public static class GenerateCode
     {
-        public static readonly string NamespaceName = "TestNamespace";
-        public static readonly string ClassName = "TestClass";
-        public static readonly string MethodName = "TestMethod";
-        public static readonly string VariableName = "actual";
+        public static string NamespaceName => "TestNamespace";
+        public static string ClassName => "TestClass";
+        public static string MethodName => "TestMethod";
 
-        public static readonly string ComplexClassName = "TestComplexClass";
-        public static readonly string ComplexClassBooleanpropertyName = "BooleanProperty";
+        public static string ActualVariableName => "actual";
+        public static string ExpectedVariableName => "expected";
+        public static string CountVariable => "k";
+
+        public static string ComplexClassName => "TestComplexClass";
+        public static string ComplexClassBooleanpropertyName => "BooleanProperty";
 
 
         public static string EnumerableAssertion(string assertion) => new StringBuilder()
@@ -20,7 +22,7 @@ namespace FluentAssertions.BestPractices.Tests
             .AppendLine("{")
             .AppendLine($"    class {ClassName}")
             .AppendLine("    {")
-            .AppendLine($"        void {MethodName}({nameof(IEnumerable)}<{ComplexClassName}> {VariableName})")
+            .AppendLine($"        void {MethodName}({nameof(IEnumerable)}<{ComplexClassName}> {ActualVariableName}, {ComplexClassName} {ExpectedVariableName}, int {CountVariable})")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
@@ -37,7 +39,7 @@ namespace FluentAssertions.BestPractices.Tests
             .AppendLine("{")
             .AppendLine($"    class {ClassName}")
             .AppendLine("    {")
-            .AppendLine($"        void {MethodName}(int {VariableName})")
+            .AppendLine($"        void {MethodName}(int {ActualVariableName}, int {ExpectedVariableName})")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
