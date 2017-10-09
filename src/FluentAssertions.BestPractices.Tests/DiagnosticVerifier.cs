@@ -14,6 +14,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.CSharp;
+using System.Reflection;
 
 namespace FluentAssertions.BestPractices.Tests
 {
@@ -26,16 +27,40 @@ namespace FluentAssertions.BestPractices.Tests
         {
             References = new[]
             {
-                typeof(object),
-                typeof(Enumerable),
-                typeof(CSharpCompilation),
-                typeof(Compilation),
-                typeof(AssertionScope)
-            }.Select(type => (MetadataReference)MetadataReference.CreateFromFile(type.Assembly.Location)).ToImmutableArray();
+                typeof(object), // System.Private.CoreLib
+                typeof(Enumerable), // System.Linq
+                typeof(CSharpCompilation), // Microsoft.CodeAnalysis.CSharp
+                typeof(Compilation), // Microsoft.CodeAnalysis
+                typeof(AssertionScope), // FluentAssertions.Core
+                typeof(AssertionExtensions), // FluentAssertions
+            //    typeof(System.Linq.Expressions.Expression) // System.Linq.Expressions
+            }.Select(type => type.GetTypeInfo().Assembly.Location)
+            .Append(GetSystemAssemblyPathByName("System.Threading.Tasks.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Runtime.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Reflection.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Xml.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Xml.XDocument.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Private.Xml.Linq.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Linq.Expressions.dll"))
+            .Select(location => (MetadataReference)MetadataReference.CreateFromFile(location))
+            .ToImmutableArray();
+            
             DefaultFilePathPrefix = "Test";
             CSharpDefaultFileExt = "cs";
             VisualBasicDefaultExt = "vb";
             TestProjectName = "TestProject";
+
+            string GetSystemAssemblyPathByName(string assemblyName)
+            {
+                var root = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
+                return System.IO.Path.Combine(root, assemblyName);
+            }
+        }
+        // based on http://code.fitness/post/2017/02/using-csharpscript-with-netstandard.html
+        public static string GetSystemAssemblyPathByName(string assemblyName)
+        {
+            var root = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
+            return System.IO.Path.Combine(root, assemblyName);
         }
 
         private static readonly ImmutableArray<MetadataReference> References;
@@ -103,7 +128,7 @@ namespace FluentAssertions.BestPractices.Tests
                 var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document));
 
                 //check if applying the code fix introduced any new compiler diagnostics
-                if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
+                if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any(diagnostic => diagnostic.Severity >= DiagnosticSeverity.Info && diagnostic.Id != "CS1701"))
                 {
                     // Format and get the compiler diagnostics again so that the locations make sense in the output
                     document = document.WithSyntaxRoot(Formatter.Format(document.GetSyntaxRootAsync().Result, Formatter.Annotation, document.Project.Solution.Workspace));
@@ -213,7 +238,7 @@ namespace FluentAssertions.BestPractices.Tests
         /// Given an analyzer and a document to apply it to, run the analyzer and gather an array of diagnostics found in it.
         /// The returned diagnostics are then ordered by location in the source document.
         /// </summary>
-        /// <param name="analyzer">The analyzer to run on the documents</param>
+        /// <param name="analyzers">The analyzer to run on the documents</param>
         /// <param name="documents">The Documents that the analyzer will be run on</param>
         /// <returns>An IEnumerable of Diagnostics that surfaced in the source code, sorted by Location</returns>
         private static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer[] analyzers, Document[] documents)
@@ -228,8 +253,14 @@ namespace FluentAssertions.BestPractices.Tests
             foreach (var project in projects)
             {
                 var compilationWithAnalyzers = project.GetCompilationAsync().Result.WithAnalyzers(ImmutableArray.Create(analyzers));
-                var diags = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
-                foreach (var diag in diags)
+                var relevantDiagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
+
+                var allDiagnostics = compilationWithAnalyzers.GetAllDiagnosticsAsync().Result;
+                var other = allDiagnostics.Except(relevantDiagnostics).ToArray();
+
+                other.Should().NotContain(diagnostic => diagnostic.Severity >= DiagnosticSeverity.Info && diagnostic.Id != "CS1701", "there should be no error diagnostics that are not related to the test");
+
+                foreach (var diag in relevantDiagnostics)
                 {
                     if (diag.Location == Location.None || diag.Location.IsInMetadata)
                     {

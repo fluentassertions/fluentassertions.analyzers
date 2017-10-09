@@ -75,26 +75,26 @@ namespace FluentAssertions.BestPractices.Tests
 
         [TestMethod]
         [AssertionDiagnostic("actual.Contains(expectedItem).Should().BeTrue();")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldContainItem_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldContainItemAnalyzer>();
 
         [TestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Contains(expectedItem).Should().BeTrue();",
             newAssertion: "actual.Should().Contain(expectedItem);")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldContainItem_TestCodeFix() => VerifyCSharpFix<CollectionShouldContainItemCodeFix, CollectionShouldContainItemAnalyzer>();
 
         [TestMethod]
-        [AssertionDiagnostic("actual.Contains(unexpectedItem).Should().BeFalse();")]
-        [NotImplemented]
+        [AssertionDiagnostic("actual.Contains(unexpectedItem).Should().BeFalse(\"for some reason\");")]
+        [Implemented]
         public void CollectionShouldNotContainItem_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldNotContainItemAnalyzer>();
 
         [TestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Contains(unexpectedItem).Should().BeFalse();",
             newAssertion: "actual.Should().NotContain(unexpectedItem);")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldNotContainItem_TestCodeFix() => VerifyCSharpFix<CollectionShouldNotContainItemCodeFix, CollectionShouldNotContainItemAnalyzer>();
 
         [TestMethod]
@@ -192,7 +192,6 @@ namespace FluentAssertions.BestPractices.Tests
         [NotImplemented]
         public void CollectionShouldHaveSameCount_TestCodeFix() => VerifyCSharpFix<CollectionShouldHaveSameCountCodeFix, CollectionShouldHaveSameCountAnalyzer>();
 
-
         [TestMethod]
         [AssertionDiagnostic("actual.Count().Should().NotBe(unexpected.Count());")]
         [NotImplemented]
@@ -216,18 +215,6 @@ namespace FluentAssertions.BestPractices.Tests
             newAssertion: "actual.Should().Contain(x => x.BooleanProperty);")]
         [NotImplemented]
         public void CollectionShouldContainProperty_TestCodeFix02() => VerifyCSharpFix<CollectionShouldContainPropertyCodeFix, CollectionShouldContainPropertyAnalyzer>();
-
-        [TestMethod]
-        [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().NotBeEmpty();")]
-        [NotImplemented]
-        public void CollectionShouldContainProperty_TestAnalyzer03() => VerifyCSharpDiagnostic<CollectionShouldContainPropertyAnalyzer>();
-
-        [TestMethod]
-        [AssertionCodeFix(
-        oldAssertion: "actual.Where(x => x.BooleanProperty).Should().NotBeEmpty();",
-        newAssertion: "actual.Should().Contain(x => x.BooleanProperty);")]
-        [NotImplemented]
-        public void CollectionShouldContainProperty_TestCodeFix03() => VerifyCSharpFix<CollectionShouldContainPropertyCodeFix, CollectionShouldContainPropertyAnalyzer>();
 
         [TestMethod]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty();")]
@@ -433,17 +420,16 @@ namespace FluentAssertions.BestPractices.Tests
             var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
             var message = (string)type.GetField("Message").GetValue(null);
 
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(
-            /*DiagnosticVerifier.VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(*/source, new DiagnosticResult
-                                                                               {
-                                                                                   Id = diagnosticId,
-                                                                                   Message = string.Format(message, GenerateCode.ActualVariableName),
-                                                                                   Locations = new DiagnosticResultLocation[]
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
+            {
+                Id = diagnosticId,
+                Message = string.Format(message, GenerateCode.ActualVariableName),
+                Locations = new DiagnosticResultLocation[]
                 {
-                    new DiagnosticResultLocation("Test0.cs", 7,13)
+                    new DiagnosticResultLocation("Test0.cs", 10,13)
                 },
-                                                                                   Severity = DiagnosticSeverity.Info
-                                                                               });
+                Severity = DiagnosticSeverity.Info
+            });
         }
 
         private void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>()

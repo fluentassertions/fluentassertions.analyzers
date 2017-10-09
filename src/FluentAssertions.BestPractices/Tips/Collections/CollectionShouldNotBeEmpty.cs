@@ -20,26 +20,9 @@ namespace FluentAssertions.BestPractices
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
-            var visitor = new AnyShouldBeTrueSyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
-            {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title
-                }.ToImmutableDictionary();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
-            }
-            return null;
+            get { yield return new AnyShouldBeTrueSyntaxVisitor(); }
         }
 
         private class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor

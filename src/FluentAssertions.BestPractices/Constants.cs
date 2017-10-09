@@ -7,6 +7,7 @@
             public const string Title = nameof(Title);
             public const string VariableName = nameof(VariableName);
             public const string PredicateString = nameof(PredicateString);
+            public const string ExpectedItemString = nameof(ExpectedItemString);
         }
 
         public static class Tips

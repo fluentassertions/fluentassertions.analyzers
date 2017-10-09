@@ -18,35 +18,13 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by .BeEmpty() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
-            var visitors = new FluentAssertionsCSharpSyntaxVisitor[]
+            get
             {
-                new ActualShouldHaveCount0SyntaxVisitor(),
-                new AnyShouldBeFalseSyntaxVisitor()
-            };
-
-            foreach (var visitor in visitors)
-            {
-                statement.Accept(visitor);
-
-                if (visitor.IsValid)
-                {
-                    var properties = new Dictionary<string, string>
-                    {
-                        [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                        [Constants.DiagnosticProperties.Title] = Title
-                    }.ToImmutableDictionary();
-
-                    return Diagnostic.Create(
-                        descriptor: Rule,
-                        location: statement.Expression.GetLocation(),
-                        properties: properties,
-                        messageArgs: visitor.VariableName);
-                }
+                yield return new AnyShouldBeFalseSyntaxVisitor();
+                yield return new ShouldHaveCount0SyntaxVisitor();
             }
-            return null;
         }
 
         private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
@@ -64,15 +42,13 @@ namespace FluentAssertions.BestPractices
                 _anyMethodHasArgument = RequiredMethods.Count == 0 && node.Expression is SimpleLambdaExpressionSyntax;
             }
         }
-        private class ActualShouldHaveCount0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        private class ShouldHaveCount0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            private const int HaveCountArgument = 0;
+            private bool _foundHaveCount0 = false;
 
-            private bool _foundHaveCountArgument = false;
+            public override bool IsValid => base.IsValid && _foundHaveCount0;
 
-            public override bool IsValid => base.IsValid && _foundHaveCountArgument;
-
-            public ActualShouldHaveCount0SyntaxVisitor() : base("Should", "HaveCount")
+            public ShouldHaveCount0SyntaxVisitor() : base("Should", "HaveCount")
             {
             }
 
@@ -83,7 +59,7 @@ namespace FluentAssertions.BestPractices
                     && node.Expression is LiteralExpressionSyntax literal
                     && literal.Token.Value is int argument)
                 {
-                    _foundHaveCountArgument = argument == HaveCountArgument;
+                    _foundHaveCount0 = argument == 0;
                 }
             }
         }
