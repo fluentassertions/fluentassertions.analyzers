@@ -220,10 +220,210 @@ namespace FluentAssertions.BestPractices.Tests
 
         [TestMethod]
         [Assertion(
-            oldAssertion: "actual.Where(x => x.SomeProperty).Should().NotBeEmpty();",
+            oldAssertion: "actual.Where(x => x.BooleanProperty).Should().NotBeEmpty();",
             newAssertion: "actual.Should().Contain(x => x.BooleanProperty);")]
         [NotImplemented]
         public void CollectionShouldContainProperty_TestCodeFix02() => VerifyCSharpFix<CollectionShouldContainPropertyCodeFix, CollectionShouldContainPropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Where(x => x.BooleanProperty).Should().NotBeEmpty();")]
+        [NotImplemented]
+        public void CollectionShouldContainProperty_TestAnalyzer03() => VerifyCSharpDiagnostic<CollectionShouldContainPropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Where(x => x.BooleanProperty).Should().NotBeEmpty();",
+        newAssertion: "actual.Should().Contain(x => x.BooleanProperty);")]
+        [NotImplemented]
+        public void CollectionShouldContainProperty_TestCodeFix03() => VerifyCSharpFix<CollectionShouldContainPropertyCodeFix, CollectionShouldContainPropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Where(x => x.BooleanProperty).Should().BeEmpty();")]
+        [NotImplemented]
+        public void CollectionShouldNotContainProperty_TestAnalyzer02() => VerifyCSharpDiagnostic<CollectionShouldNotContainPropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Where(x => x.BooleanProperty).Should().BeEmpty();",
+        newAssertion: "actual.Should().NotContain(x => x.BooleanProperty);")]
+        [NotImplemented]
+        public void CollectionShouldNotContainProperty_TestCodeFix02() => VerifyCSharpFix<CollectionShouldNotContainPropertyCodeFix, CollectionShouldNotContainPropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Where(x => x.BooleanProperty).Should().HaveCount(1);")]
+        [NotImplemented]
+        public void CollectionShouldContainSingleProperty_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldContainSinglePropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Where(x => x.BooleanProperty).Should().HaveCount(1);",
+        newAssertion: "actual.Should().ContainSingle(x => x.BooleanProperty);")]
+        [NotImplemented]
+        public void CollectionShouldContainSingleProperty_TestCodeFix() => VerifyCSharpFix<CollectionShouldContainSinglePropertyCodeFix, CollectionShouldContainSinglePropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Should().OnlyContain(e => !e.SomeProperty);")]
+        [NotImplemented]
+        public void CollectionShouldNotContainProperty_TestAnalyzer03() => VerifyCSharpDiagnostic<CollectionShouldNotContainPropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Should().OnlyContain(e => !e.SomeProperty);",
+        newAssertion: "actual.Should().NotContain(x => x.BooleanProperty);")]
+        [NotImplemented]
+        public void CollectionShouldNotContainProperty_TestCodeFix03() => VerifyCSharpFix<CollectionShouldNotContainPropertyCodeFix, CollectionShouldNotContainPropertyAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Should().NotBeNull().And.NotBeEmpty();")]
+        [NotImplemented]
+        public void CollectionShouldNotBeNullOrEmpty_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldNotBeNullOrEmptyAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Should().NotBeNull().And.NotBeEmpty();",
+        newAssertion: "actual.Should().NotBeNullOrEmpty();")]
+        [NotImplemented]
+        public void CollectionShouldNotBeNullOrEmpty_TestCodeFix() => VerifyCSharpFix<CollectionShouldNotBeNullOrEmptyCodeFix, CollectionShouldNotBeNullOrEmptyAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.ElementAt(k).Should().Be(expected);")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldHaveElementAtAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.ElementAt(k).Should().Be(expected);",
+        newAssertion: "actual.Should().HaveElementAt(k, expected);")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt_TestCodeFix() => VerifyCSharpFix<CollectionShouldHaveElementAtCodeFix, CollectionShouldHaveElementAtAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual[k].Should().Be(expected);")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt_TestAnalyzer02() => VerifyCSharpDiagnostic<CollectionShouldHaveElementAtAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual[k].Should().Be(expected);",
+        newAssertion: "actual.Should().HaveElementAt(k, expected);")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt_TestCodeFix02() => VerifyCSharpFix<CollectionShouldHaveElementAtCodeFix, CollectionShouldHaveElementAtAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Skip(k).First().Should().Be(expected);")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt_TestAnalyzer03() => VerifyCSharpDiagnostic<CollectionShouldHaveElementAtAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Skip(k).First().Should().Be(expected);",
+        newAssertion: "actual.Should().HaveElementAt(k, expected);")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt_TestCodeFix03() => VerifyCSharpFix<CollectionShouldHaveElementAtCodeFix, CollectionShouldHaveElementAtAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual);")]
+        [NotImplemented]
+        public void CollectionShouldBeInAscendingOrder_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldBeInAscendingOrderAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual);",
+        newAssertion: "actual.Should().BeInAscendingOrder(x => x.BooleanProperty);")]
+        [NotImplemented]
+        public void CollectionShouldBeInAscendingOrder_TestCodeFix() => VerifyCSharpFix<CollectionShouldBeInAscendingOrderCodeFix, CollectionShouldBeInAscendingOrderAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual);")]
+        [NotImplemented]
+        public void CollectionShouldBeInDescendingOrder_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldBeInDescendingOrderAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual);",
+        newAssertion: "actual.Should().BeInDescendingOrder(x => x.BooleanProperty);")]
+        [NotImplemented]
+        public void CollectionShouldBeInDescendingOrder_TestCodeFix() => VerifyCSharpFix<CollectionShouldBeInDescendingOrderCodeFix, CollectionShouldBeInDescendingOrderAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Select(e1 => e1.SomeProperty).Should().Equal(expected.Select(e2 => e2.SomeProperty));")]
+        [NotImplemented]
+        public void CollectionShouldEqualOtherCollectionByComparer_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldEqualOtherCollectionByComparerAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Select(e1 => e1.SomeProperty).Should().Equal(expected.Select(e2 => e2.SomeProperty));",
+        newAssertion: "actual.Should().Equal(expected, (e1, e2) => e1.SomeProperty == e2.SomeProperty);")]
+        [NotImplemented]
+        public void CollectionShouldEqualOtherCollectionByComparer_TestCodeFix() => VerifyCSharpFix<CollectionShouldEqualOtherCollectionByComparerCodeFix, CollectionShouldEqualOtherCollectionByComparerAnalyzer>();
+
+        [TestMethod]
+        [Assertion("actual.Intersect(expected).Should().BeEmpty();")]
+        [NotImplemented]
+        public void CollectionShouldNotIntersectWith_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldNotIntersectWithAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Intersect(expected).Should().BeEmpty();",
+        newAssertion: "actual.Should().NotIntersectWith(expected);")]
+        [NotImplemented]
+        public void CollectionShouldNotIntersectWith_TestCodeFix() => VerifyCSharpFix<CollectionShouldNotIntersectWithCodeFix, CollectionShouldNotIntersectWithAnalyzer>();
+        [TestMethod]
+        [Assertion("actual.Intersect(expected).Should().NotBeEmpty();")]
+        [NotImplemented]
+        public void CollectionShouldIntersectWith_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldIntersectWithAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Intersect(expected).Should().NotBeEmpty();",
+        newAssertion: "actual.Should().IntersectWith(expected);")]
+        [NotImplemented]
+        public void CollectionShouldIntersectWith_TestCodeFix() => VerifyCSharpFix<CollectionShouldIntersectWithCodeFix, CollectionShouldIntersectWithAnalyzer>();
+        [TestMethod]
+        [Assertion("actual.Select(x => x.BooleanProperty).Should().NotContainNulls();")]
+        [NotImplemented]
+        public void CollectionShouldNotContainNulls_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldNotContainNullsAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Select(x => x.BooleanProperty).Should().NotContainNulls();",
+        newAssertion: "actual.Should().NotContainNulls(e => e.OtherProperty);")]
+        [NotImplemented]
+        public void CollectionShouldNotContainNulls_TestCodeFix() => VerifyCSharpFix<CollectionShouldNotContainNullsCodeFix, CollectionShouldNotContainNullsAnalyzer>();
+        [TestMethod]
+        [Assertion("actual.Should().HaveSameCount(actual.Distinct());")]
+        [NotImplemented]
+        public void CollectionShouldOnlyHaveUniqueItems_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldOnlyHaveUniqueItemsAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Should().HaveSameCount(actual.Distinct());",
+        newAssertion: "actual.Should().OnlyHaveUniqueItems();")]
+        [NotImplemented]
+        public void CollectionShouldOnlyHaveUniqueItems_TestCodeFix() => VerifyCSharpFix<CollectionShouldOnlyHaveUniqueItemsCodeFix, CollectionShouldOnlyHaveUniqueItemsAnalyzer>();
+        [TestMethod]
+        [Assertion("actual.Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems();")]
+        [NotImplemented]
+        public void CollectionShouldOnlyHaveUniqueItemsByComparer_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems();",
+        newAssertion: "actual.Should().OnlyHaveUniqueItems(x => x.BooleanProperty);")]
+        [NotImplemented]
+        public void CollectionShouldOnlyHaveUniqueItemsByComparer_TestCodeFix() => VerifyCSharpFix<CollectionShouldOnlyHaveUniqueItemsByComparerCodeFix, CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer>();
+        [TestMethod]
+        [Assertion("actual.FirstOrDefault().Should().BeNull();")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt0Null_TestAnalyzer() => VerifyCSharpDiagnostic<CollectionShouldHaveElementAt0NullAnalyzer>();
+
+        [TestMethod]
+        [Assertion(
+        oldAssertion: "actual.FirstOrDefault().Should().BeNull();",
+        newAssertion: "actual.Should().HaveElementAt(0, null);")]
+        [NotImplemented]
+        public void CollectionShouldHaveElementAt0Null_TestCodeFix() => VerifyCSharpFix<CollectionShouldHaveElementAt0NullCodeFix, CollectionShouldHaveElementAt0NullAnalyzer>();
+
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>() where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
