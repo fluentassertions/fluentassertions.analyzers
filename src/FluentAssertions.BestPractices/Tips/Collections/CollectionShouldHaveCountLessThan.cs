@@ -21,6 +21,7 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
+            return null;
             var visitor = new CollectionShouldHaveCountLessThanSyntaxVisitor();
             statement.Accept(visitor);
 
@@ -54,7 +55,7 @@ namespace FluentAssertions.BestPractices
 		}
     }
 
-    public class CollectionShouldHaveCountLessThanSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public class CollectionShouldHaveCountLessThanSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public CollectionShouldHaveCountLessThanSyntaxVisitor() : base("###")
         {

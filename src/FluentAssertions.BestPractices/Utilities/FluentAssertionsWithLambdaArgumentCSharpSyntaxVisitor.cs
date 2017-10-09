@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FluentAssertions.BestPractices
 {
 
-    public abstract class FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public abstract class FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public string PredicateString { get; private set; }
 

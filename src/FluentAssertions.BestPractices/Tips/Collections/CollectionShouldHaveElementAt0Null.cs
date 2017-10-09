@@ -21,6 +21,7 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
+            return null;
             var visitor = new CollectionShouldHaveElementAt0NullSyntaxVisitor();
             statement.Accept(visitor);
 
@@ -54,7 +55,7 @@ namespace FluentAssertions.BestPractices
 		}
     }
 
-    public class CollectionShouldHaveElementAt0NullSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public class CollectionShouldHaveElementAt0NullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public CollectionShouldHaveElementAt0NullSyntaxVisitor() : base("###")
         {

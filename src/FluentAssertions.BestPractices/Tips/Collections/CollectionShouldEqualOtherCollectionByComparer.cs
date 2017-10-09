@@ -21,6 +21,7 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
+            return null;
             var visitor = new CollectionShouldEqualOtherCollectionByComparerSyntaxVisitor();
             statement.Accept(visitor);
 
@@ -54,7 +55,7 @@ namespace FluentAssertions.BestPractices
 		}
     }
 
-    public class CollectionShouldEqualOtherCollectionByComparerSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public class CollectionShouldEqualOtherCollectionByComparerSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public CollectionShouldEqualOtherCollectionByComparerSyntaxVisitor() : base("###")
         {

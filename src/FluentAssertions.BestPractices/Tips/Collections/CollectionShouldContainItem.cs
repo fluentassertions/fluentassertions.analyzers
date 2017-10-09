@@ -20,6 +20,7 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
+            return null;
             var visitor = new CollectionShouldContainItemSyntaxVisitor();
             statement.Accept(visitor);
 
@@ -53,7 +54,7 @@ namespace FluentAssertions.BestPractices
 		}
     }
 
-    public class CollectionShouldContainItemSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public class CollectionShouldContainItemSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public CollectionShouldContainItemSyntaxVisitor() : base("###")
         {

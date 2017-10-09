@@ -21,6 +21,7 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
+            return null;
             var visitor = new CollectionShouldOnlyHaveUniqueItemsByComparerSyntaxVisitor();
             statement.Accept(visitor);
 
@@ -54,7 +55,7 @@ namespace FluentAssertions.BestPractices
 		}
     }
 
-    public class CollectionShouldOnlyHaveUniqueItemsByComparerSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public class CollectionShouldOnlyHaveUniqueItemsByComparerSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public CollectionShouldOnlyHaveUniqueItemsByComparerSyntaxVisitor() : base("###")
         {

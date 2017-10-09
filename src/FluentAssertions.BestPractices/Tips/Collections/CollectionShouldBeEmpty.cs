@@ -21,24 +21,71 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
-            var visitor = new CollectionShouldBeEmptySyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            var visitors = new FluentAssertionsCSharpSyntaxVisitor[]
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title
-                }.ToImmutableDictionary();
+                new ActualShouldHaveCount0SyntaxVisitor(),
+                new AnyShouldBeFalseSyntaxVisitor()
+            };
 
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+            foreach (var visitor in visitors)
+            {
+                statement.Accept(visitor);
+
+                if (visitor.IsValid)
+                {
+                    var properties = new Dictionary<string, string>
+                    {
+                        [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
+                        [Constants.DiagnosticProperties.Title] = Title
+                    }.ToImmutableDictionary();
+
+                    return Diagnostic.Create(
+                        descriptor: Rule,
+                        location: statement.Expression.GetLocation(),
+                        properties: properties,
+                        messageArgs: visitor.VariableName);
+                }
             }
             return null;
+        }
+
+        private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            private bool _anyMethodHasArgument = false;
+            public override bool IsValid => base.IsValid && !_anyMethodHasArgument;
+
+            public AnyShouldBeFalseSyntaxVisitor() : base("Any", "Should", "BeFalse")
+            {
+            }
+
+            public override void VisitArgument(ArgumentSyntax node)
+            {
+                // empty RequiredMethods means we are in the Any method
+                _anyMethodHasArgument = RequiredMethods.Count == 0 && node.Expression is SimpleLambdaExpressionSyntax;
+            }
+        }
+        private class ActualShouldHaveCount0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            private const int HaveCountArgument = 0;
+
+            private bool _foundHaveCountArgument = false;
+
+            public override bool IsValid => base.IsValid && _foundHaveCountArgument;
+
+            public ActualShouldHaveCount0SyntaxVisitor() : base("Should", "HaveCount")
+            {
+            }
+
+            public override void VisitArgument(ArgumentSyntax node)
+            {
+                // the Should method has no arguments so we must be inside HaveCount
+                if (RequiredMethods.Count == 0
+                    && node.Expression is LiteralExpressionSyntax literal
+                    && literal.Token.Value is int argument)
+                {
+                    _foundHaveCountArgument = argument == HaveCountArgument;
+                }
+            }
         }
     }
 
@@ -50,11 +97,4 @@ namespace FluentAssertions.BestPractices
         protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
             => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().BeEmpty();");
     }
-
-    public class CollectionShouldBeEmptySyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
-    {
-        public CollectionShouldBeEmptySyntaxVisitor() : base("Any", "Should", "BeFalse")
-        {
-        }
-    }    
 }

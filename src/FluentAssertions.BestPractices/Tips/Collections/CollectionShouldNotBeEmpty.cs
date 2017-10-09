@@ -22,7 +22,7 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
-            var visitor = new CollectionShouldNotBeEmptySyntaxVisitor();
+            var visitor = new AnyShouldBeTrueSyntaxVisitor();
             statement.Accept(visitor);
 
             if (visitor.IsValid)
@@ -41,6 +41,22 @@ namespace FluentAssertions.BestPractices
             }
             return null;
         }
+
+        private class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            private bool _anyMethodHasArgument = false;
+            public override bool IsValid => base.IsValid && !_anyMethodHasArgument;
+
+            public AnyShouldBeTrueSyntaxVisitor() : base("Any", "Should", "BeTrue")
+            {
+            }
+
+            public override void VisitArgument(ArgumentSyntax node)
+            {
+                // empty RequiredMethods means we are in the Any method
+                _anyMethodHasArgument = RequiredMethods.Count == 0 && node.Expression is SimpleLambdaExpressionSyntax;
+            }
+        }
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldNotBeEmptyCodeFix)), Shared]
@@ -50,12 +66,5 @@ namespace FluentAssertions.BestPractices
 
         protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
             => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().NotBeEmpty();");
-    }
-
-    public class CollectionShouldNotBeEmptySyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
-    {
-        public CollectionShouldNotBeEmptySyntaxVisitor() : base("Any", "Should", "BeTrue")
-        {
-        }
     }
 }

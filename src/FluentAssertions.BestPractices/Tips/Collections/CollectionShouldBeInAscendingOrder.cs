@@ -21,6 +21,7 @@ namespace FluentAssertions.BestPractices
 
         protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
+            return null;
             var visitor = new CollectionShouldBeInAscendingOrderSyntaxVisitor();
             statement.Accept(visitor);
 
@@ -31,7 +32,6 @@ namespace FluentAssertions.BestPractices
                     [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
                     [Constants.DiagnosticProperties.Title] = Title
                 }.ToImmutableDictionary();
-				throw new System.NotImplementedException();
 
                 return Diagnostic.Create(
                     descriptor: Rule,
@@ -54,7 +54,7 @@ namespace FluentAssertions.BestPractices
 		}
     }
 
-    public class CollectionShouldBeInAscendingOrderSyntaxVisitor : FluentAssertionsWithoutArgumentsCSharpSyntaxVisitor
+    public class CollectionShouldBeInAscendingOrderSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public CollectionShouldBeInAscendingOrderSyntaxVisitor() : base("###")
         {

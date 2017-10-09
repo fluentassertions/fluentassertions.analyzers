@@ -11,6 +11,7 @@ namespace FluentAssertions.BestPractices.Tests
 
         public static string ActualVariableName => "actual";
         public static string ExpectedVariableName => "expected";
+        public static string ExpectedItemVariableName => "expected";
         public static string CountVariable => "k";
 
         public static string ComplexClassName => "TestComplexClass";
@@ -22,7 +23,7 @@ namespace FluentAssertions.BestPractices.Tests
             .AppendLine("{")
             .AppendLine($"    class {ClassName}")
             .AppendLine("    {")
-            .AppendLine($"        void {MethodName}({nameof(IEnumerable)}<{ComplexClassName}> {ActualVariableName}, {ComplexClassName} {ExpectedVariableName}, int {CountVariable})")
+            .AppendLine($"        void {MethodName}({nameof(IEnumerable)}<{ComplexClassName}> {ActualVariableName}, {nameof(IEnumerable)}<{ComplexClassName}> {ExpectedVariableName}, {ComplexClassName} {ExpectedItemVariableName}, int {CountVariable})")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
