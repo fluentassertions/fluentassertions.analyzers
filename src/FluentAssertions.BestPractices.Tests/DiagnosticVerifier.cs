@@ -44,7 +44,7 @@ namespace FluentAssertions.BestPractices.Tests
             .Append(GetSystemAssemblyPathByName("System.Linq.Expressions.dll"))
             .Select(location => (MetadataReference)MetadataReference.CreateFromFile(location))
             .ToImmutableArray();
-            
+
             DefaultFilePathPrefix = "Test";
             CSharpDefaultFileExt = "cs";
             VisualBasicDefaultExt = "vb";
@@ -128,7 +128,7 @@ namespace FluentAssertions.BestPractices.Tests
                 var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document));
 
                 //check if applying the code fix introduced any new compiler diagnostics
-                if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any(diagnostic => diagnostic.Severity >= DiagnosticSeverity.Info && diagnostic.Id != "CS1701"))
+                if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
                 {
                     // Format and get the compiler diagnostics again so that the locations make sense in the output
                     document = document.WithSyntaxRoot(Formatter.Format(document.GetSyntaxRootAsync().Result, Formatter.Annotation, document.Project.Solution.Workspace));
@@ -202,7 +202,16 @@ namespace FluentAssertions.BestPractices.Tests
         /// <returns>The compiler diagnostics that were found in the code</returns>
         private static IEnumerable<Diagnostic> GetCompilerDiagnostics(Document document)
         {
-            return document.GetSemanticModelAsync().Result.GetDiagnostics();
+            var compilation = document.GetSemanticModelAsync().Result.Compilation;
+            return compilation.WithOptions(compilation.Options
+                .WithSpecificDiagnosticOptions(new Dictionary<string, ReportDiagnostic>
+                {
+                    ["CS1701"] = ReportDiagnostic.Suppress, // Binding redirects
+                    ["CS1702"] = ReportDiagnostic.Suppress,
+                    ["CS1705"] = ReportDiagnostic.Suppress,
+                    ["CS8019"] = ReportDiagnostic.Suppress // TODO: Unnecessary using directive
+                })
+            ).GetDiagnostics();
         }
 
         /// <summary>
@@ -252,13 +261,23 @@ namespace FluentAssertions.BestPractices.Tests
             var diagnostics = new List<Diagnostic>();
             foreach (var project in projects)
             {
-                var compilationWithAnalyzers = project.GetCompilationAsync().Result.WithAnalyzers(ImmutableArray.Create(analyzers));
+                var compilation = project.GetCompilationAsync().Result;
+                var compilationWithAnalyzers = compilation
+                    .WithOptions(compilation.Options
+                        .WithSpecificDiagnosticOptions(new Dictionary<string, ReportDiagnostic>
+                        {
+                            ["CS1701"] = ReportDiagnostic.Suppress, // Binding redirects
+                            ["CS1702"] = ReportDiagnostic.Suppress,
+                            ["CS1705"] = ReportDiagnostic.Suppress,
+                            ["CS8019"] = ReportDiagnostic.Suppress // TODO: Unnecessary using directive
+                        }))
+                    .WithAnalyzers(ImmutableArray.Create(analyzers));
                 var relevantDiagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
 
                 var allDiagnostics = compilationWithAnalyzers.GetAllDiagnosticsAsync().Result;
                 var other = allDiagnostics.Except(relevantDiagnostics).ToArray();
 
-                other.Should().NotContain(diagnostic => diagnostic.Severity >= DiagnosticSeverity.Info && diagnostic.Id != "CS1701", "there should be no error diagnostics that are not related to the test");
+                other.Should().BeEmpty("there should be no error diagnostics that are not related to the test");
 
                 foreach (var diag in relevantDiagnostics)
                 {
