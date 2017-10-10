@@ -10,10 +10,10 @@ var configuration = Argument("configuration", "Release");
 //////////////////////////////////////////////////////////////////////
 
 // Define directories.
-var buildDir = Directory("./Artifacts") + Directory(configuration);
+var buildDir = Directory("./artifacts") + Directory(configuration);
 var solutionFile = File("./src/FluentAssertions.BestPractices.sln");
 var testCsproj = File("./src/FluentAssertions.BestPractices.Tests/FluentAssertions.BestPractices.Tests.csproj");
-var analyzersCsproj = File("./src/FluentAssertions.BestPractices/FluentAssertions.BestPractices.csproj");
+var nuspecFile = File("./src/FluentAssertions.BestPractices/FluentAssertions.BestPractices.nuspec");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -44,23 +44,24 @@ Task("Build")
 });
 
 Task("Run-Unit-Tests")
+	.IsDependentOn("Build")
     .Does(() =>
 {
       DotNetCoreTest(testCsproj, new DotNetCoreTestSettings
 	  {
 	    Filter = "TestCategory=Completed",
-		Configuration = configuration
+		Configuration = configuration,
+		NoBuild = true
 	  });
 });
 
 Task("Pack")
     .Does(() => 
     {
-      DotNetCorePack(analyzersCsproj, new DotNetCorePackSettings
-	  {
-	    Configuration = configuration,
-        OutputDirectory = buildDir
-	  });
+	  var nuGetPackSettings = new NuGetPackSettings {
+          OutputDirectory = buildDir
+      };
+      NuGetPack(nuspecFile, nuGetPackSettings);
     });
 
 //////////////////////////////////////////////////////////////////////

@@ -6,13 +6,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.BestPracti
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{1D2F0A0B-7B98-49D6-BD83-E750A2DD7FD0}"
 	ProjectSection(SolutionItems) = preProject
-		collections.yml = collections.yml
-		comparable.yml = comparable.yml
-		dictionaries.yml = dictionaries.yml
-		exceptions.yml = exceptions.yml
-		nullables.yml = nullables.yml
-		strings.yml = strings.yml
-		types.yml = types.yml
+		..\.gitattributes = ..\.gitattributes
+		..\.gitignore = ..\.gitignore
+		..\build.cake = ..\build.cake
+		..\build.ps1 = ..\build.ps1
+		..\build.sh = ..\build.sh
+		..\collections.yml = ..\collections.yml
+		..\comparable.yml = ..\comparable.yml
+		..\dictionaries.yml = ..\dictionaries.yml
+		..\exceptions.yml = ..\exceptions.yml
+		FluentAssertions.BestPractices.nuspec = FluentAssertions.BestPractices.nuspec
+		..\LICENSE = ..\LICENSE
+		..\nullables.yml = ..\nullables.yml
+		..\README.md = ..\README.md
+		..\strings.yml = ..\strings.yml
+		..\types.yml = ..\types.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.BestPractices", "FluentAssertions.BestPractices\FluentAssertions.BestPractices.csproj", "{3BA672F7-00D8-4E77-89A0-D46DD99D35AA}"

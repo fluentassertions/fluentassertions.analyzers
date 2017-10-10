@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>FluentAssertions.BestPractices</id>
+    <title>Fluent Assertions Best Practice</title>
+    <version>0.0.1</version>
+    <owners>Meir Blachman</owners>
+    <authors>Meir Blachman</authors>
+    <summary>
+      Analyzers to help writing fluentassertions the right way.
+    </summary>
+    <description>
+      Analyzers to help writing fluentassertions the right way.
+    </description>
+    <language>en-US</language>
+    <licenseUrl>https://github.com/Meir017/fluentassertions.bestpractices/blob/master/LICENSE</licenseUrl>
+    <iconUrl>https://raw.githubusercontent.com/fluentassertions/fluentassertions/release-5.0/Src/FluentAssertions.png</iconUrl>
+    <projectUrl>http://www.fluentassertions.com</projectUrl>
+	<requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>FluentAssertions Analyzers</tags>
+	<frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="" />
+    </frameworkAssemblies>
+    <copyright>Copyright Meir Blachman 2017-</copyright>
+    <releaseNotes>
+      See https://github.com/Meir017/fluentassertions.bestpractices/releases/
+    </releaseNotes>
+  </metadata>
+  <files>
+    <file src="bin\*\netstandard1.3\*.dll" target="analyzers\dotnet\cs" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
+    <file src="tools\*.ps1" target="tools\" />
+  </files>
+</package>

@@ -9,7 +9,7 @@ namespace FluentAssertions.BestPractices
 {
     public abstract class FluentAssertionsAnalyzer<TCSharpSyntaxVisitor> : DiagnosticAnalyzer where TCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public const string Title = "Assertion can be simplified.";
+        public const string Title = "Simplify Assertion";
         protected abstract DiagnosticDescriptor Rule { get; }
 
         protected abstract IEnumerable<(TCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors { get; }
