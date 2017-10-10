@@ -27,8 +27,9 @@ Task("GitVersion")
     .Does(() =>
     {
         var gitVersion = GitVersion();
-
 		version += $"-preview{gitVersion.BuildMetaData}";
+
+		Information($"Version: {Version}");
     });
 
 Task("Clean")
@@ -93,6 +94,8 @@ Task("Publish-Nuget")
         }
 
 		var nupkgFile = $"{buildDir}/FluentAssertions.BestPractices/FluentAssertions.BestPractices.{version}.nupkg";
+		Information($"Publishing nupkg file '{nupkgFile}'...");
+
 		NuGetPush(nupkgFile, new NuGetPushSettings
 		{
             ApiKey = apiKey,
