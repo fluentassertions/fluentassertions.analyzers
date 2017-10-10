@@ -1,5 +1,7 @@
 # [FluentAssertions](http://fluentassertions.com/) Best Practices
 
+<img src="./assets/fluent_assertions.svg.png" width="400">
+
 ***"With Fluent Assertions, the assertions look beautiful, natural and most importantly, extremely readable"*** -[_Girish_](https://twitter.com/girishracharya)
 
 * Latest nuget version [placeholder]
