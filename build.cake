@@ -77,6 +77,29 @@ Task("Pack")
         NuGetPack(nuspecFile, nuGetPackSettings);
     });
 
+Task("Publish-Nuget")
+	.WithCriteria(AppVeyor.IsRunningOnAppVeyor)
+    .Does(() =>
+	{
+		var apiKey = EnvironmentVariable("NUGET_API_KEY");
+        if(string.IsNullOrEmpty(apiKey))
+		{
+            throw new InvalidOperationException("Could not resolve NuGet API key.");
+        }	    
+        var apiUrl = EnvironmentVariable("NUGET_API_URL");
+        if(string.IsNullOrEmpty(apiUrl))
+		{
+            throw new InvalidOperationException("Could not resolve NuGet API url.");
+        }
+
+		var nupkgFile = $"{buildDir}/{configuration}/FluentAssertions.BestPractices/FluentAssertions.BestPractices.{version}.nupkg";
+		NuGetPush(nupkgFile, new NuGetPushSettings
+		{
+            ApiKey = apiKey,
+            Source = apiUrl
+        });
+	});
+
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
@@ -85,7 +108,8 @@ Task("Default")
     .IsDependentOn("GitVersion")
     .IsDependentOn("Build")
     .IsDependentOn("Run-Unit-Tests")
-    .IsDependentOn("Pack");
+    .IsDependentOn("Pack")
+	.IsDependentOn("Publish-Nuget");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
