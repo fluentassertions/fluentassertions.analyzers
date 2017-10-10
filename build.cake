@@ -29,7 +29,7 @@ Task("GitVersion")
         var gitVersion = GitVersion();
 		version += $"-preview{gitVersion.BuildMetaData}";
 
-		Information($"Version: {Version}");
+		Information($"Version: {version}");
     });
 
 Task("Clean")
