@@ -92,7 +92,7 @@ Task("Publish-Nuget")
             throw new InvalidOperationException("Could not resolve NuGet API url.");
         }
 
-		var nupkgFile = $"{buildDir}/{configuration}/FluentAssertions.BestPractices/FluentAssertions.BestPractices.{version}.nupkg";
+		var nupkgFile = $"{buildDir}/FluentAssertions.BestPractices/FluentAssertions.BestPractices.{version}.nupkg";
 		NuGetPush(nupkgFile, new NuGetPushSettings
 		{
             ApiKey = apiKey,
