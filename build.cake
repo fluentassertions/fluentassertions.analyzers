@@ -1,3 +1,5 @@
+#tool "nuget:?package=GitVersion.CommandLine"
+
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
@@ -14,53 +16,66 @@ var buildDir = Directory("./artifacts") + Directory(configuration);
 var solutionFile = File("./src/FluentAssertions.BestPractices.sln");
 var testCsproj = File("./src/FluentAssertions.BestPractices.Tests/FluentAssertions.BestPractices.Tests.csproj");
 var nuspecFile = File("./src/FluentAssertions.BestPractices/FluentAssertions.BestPractices.nuspec");
+GitVersion gitVersion; 
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
 
+Task("GitVersion")
+    .Does(() =>
+    {
+        gitVersion = GitVersion(new GitVersionSettings
+        {
+            UpdateAssemblyInfo = true
+        });
+    });
+
 Task("Clean")
     .Does(() =>
-{
-    CleanDirectory(buildDir);
-});
+    {
+        CleanDirectory(buildDir);
+    });
 
 Task("Restore-NuGet-Packages")
     .IsDependentOn("Clean")
     .Does(() =>
-{
-	DotNetCoreRestore(solutionFile);
-});
+    {
+        DotNetCoreRestore(solutionFile);
+    });
 
 Task("Build")
     .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
-{
-    DotNetCoreBuild(solutionFile, new DotNetCoreBuildSettings
-	{
-	  Configuration = configuration,
-	  OutputDirectory = buildDir
-	});
-});
+    {
+        DotNetCoreBuild(solutionFile, new DotNetCoreBuildSettings
+        {
+            Configuration = configuration,
+            OutputDirectory = buildDir
+        });
+    });
 
 Task("Run-Unit-Tests")
-	.IsDependentOn("Build")
+    .IsDependentOn("Build")
     .Does(() =>
-{
-      DotNetCoreTest(testCsproj, new DotNetCoreTestSettings
-	  {
-	    Filter = "TestCategory=Completed",
-		Configuration = configuration
-	  });
-});
+    {
+        DotNetCoreTest(testCsproj, new DotNetCoreTestSettings
+        {
+            Filter = "TestCategory=Completed",
+            Configuration = configuration
+        });
+    });
 
 Task("Pack")
-    .Does(() => 
+    .IsDependentOn("GitVersion")
+    .Does(() =>
     {
-	  var nuGetPackSettings = new NuGetPackSettings {
-          OutputDirectory = buildDir
-      };
-      NuGetPack(nuspecFile, nuGetPackSettings);
+        var nuGetPackSettings = new NuGetPackSettings
+        {
+            OutputDirectory = buildDir,
+            Version = gitVersion.NuGetVersionV2
+        };
+        NuGetPack(nuspecFile, nuGetPackSettings);
     });
 
 //////////////////////////////////////////////////////////////////////
@@ -68,6 +83,7 @@ Task("Pack")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
+    .IsDependentOn("GitVersion")
     .IsDependentOn("Build")
     .IsDependentOn("Run-Unit-Tests")
     .IsDependentOn("Pack");
