@@ -22,6 +22,7 @@ namespace FluentAssertions.BestPractices.Tests
         public static string EnumerableAssertion(string assertion) => new StringBuilder()
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Linq;")
+            .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine($"namespace {NamespaceName}")
             .AppendLine("{")

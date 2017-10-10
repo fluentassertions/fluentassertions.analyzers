@@ -18,27 +18,20 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by .NotContain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            var visitor = new CollectionShouldNotContainPropertySyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            get
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title,
-                    [Constants.DiagnosticProperties.PredicateString] = visitor.PredicateString
-                }.ToImmutableDictionary();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+                yield return (new AnyShouldBeFalseSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeFalse", 0));
             }
-            return null;
+        }
+
+        private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        {
+            protected override string MathodContainingLambda => "Any";
+            public AnyShouldBeFalseSyntaxVisitor() : base("Any", "Should", "BeFalse")
+            {
+            }
         }
     }
 
@@ -47,14 +40,7 @@ namespace FluentAssertions.BestPractices
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainPropertyAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
-            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().NotContain({properties[Constants.DiagnosticProperties.PredicateString]});");
-    }
-
-    public class CollectionShouldNotContainPropertySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
-    {
-        public CollectionShouldNotContainPropertySyntaxVisitor() : base("Any", "Should", "BeFalse")
-        {
-        }
+        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotContain({properties.CombineWithBecauseArgumentsString(properties.PredicateString)});");
     }
 }

@@ -7,17 +7,12 @@ using System.Linq;
 
 namespace FluentAssertions.BestPractices
 {
-    public abstract class FluentAssertionsAnalyzer : FluentAssertionsAnalyzer<FluentAssertionsCSharpSyntaxVisitor>
-    {
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors => Enumerable.Empty<FluentAssertionsCSharpSyntaxVisitor>();
-    }
-
     public abstract class FluentAssertionsAnalyzer<TCSharpSyntaxVisitor> : DiagnosticAnalyzer where TCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public const string Title = "Assertion can be simplified.";
         protected abstract DiagnosticDescriptor Rule { get; }
 
-        protected abstract IEnumerable<TCSharpSyntaxVisitor> Visitors { get; }
+        protected abstract IEnumerable<(TCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors { get; }
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -43,31 +38,34 @@ namespace FluentAssertions.BestPractices
 
         protected virtual Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
         {
-            foreach (var visitor in Visitors)
+            foreach (var (visitor, becauseArguments) in Visitors)
             {
                 statement.Accept(visitor);
 
                 if (visitor.IsValid)
                 {
-                    return CreateDiagnostic(visitor, statement);
+                    statement.Accept(becauseArguments);
+                    return CreateDiagnostic(visitor, statement, becauseArguments.BecauseArgumentsString);
                 }
             }
             return null;
         }
 
-        protected virtual Diagnostic CreateDiagnostic(TCSharpSyntaxVisitor visitor, ExpressionStatementSyntax statement)
+        protected virtual Diagnostic CreateDiagnostic(TCSharpSyntaxVisitor visitor, ExpressionStatementSyntax statement, string becauseArguments)
         {
-            var properties = new Dictionary<string, string>
-            {
-                [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                [Constants.DiagnosticProperties.Title] = Title
-            }.ToImmutableDictionary();
-
+            var properties = visitor.ToDiagnosticProperties()
+                .Add(Constants.DiagnosticProperties.Title, Title)
+                .Add(Constants.DiagnosticProperties.BecauseArgumentsString, becauseArguments);
             return Diagnostic.Create(
                 descriptor: Rule,
                 location: statement.GetLocation(),
                 properties: properties,
                 messageArgs: visitor.VariableName);
         }
+    }
+
+    public abstract class FluentAssertionsAnalyzer : FluentAssertionsAnalyzer<FluentAssertionsCSharpSyntaxVisitor>
+    {
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors => Enumerable.Empty<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)>();
     }
 }

@@ -633,8 +633,9 @@ namespace FluentAssertions.BestPractices.Tests
 
         private static DiagnosticAnalyzer[] CreateAllAnalyzers()
         {
-            var assembly = typeof(Constants).Assembly;
-            var analyzersTypes = assembly.GetTypes().Where(type => !type.IsAbstract && typeof(FluentAssertionsAnalyzer).IsAssignableFrom(type));
+            var assembly = typeof(Constants).Assembly;            
+            var analyzersTypes = assembly.GetTypes()
+                .Where(type => !type.IsAbstract && typeof(DiagnosticAnalyzer).IsAssignableFrom(type));
             var analyzers = analyzersTypes.Select(type => (DiagnosticAnalyzer)Activator.CreateInstance(type));
 
             return analyzers.ToArray();

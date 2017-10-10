@@ -15,31 +15,16 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldContainItem;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .Contain() instead.";
+        public const string Message = "Use {0} .Should() followed by Contain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            var visitor = new ContainsShouldBeTrueSyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            get
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title,
-                    [Constants.DiagnosticProperties.ExpectedItemString] = visitor.ExpectedItemString
-                }.ToImmutableDictionary();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+                yield return (new ContainsShouldBeTrueSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeTrue", 0));
             }
-            return null;
         }
 
         private class ContainsShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
@@ -51,12 +36,15 @@ namespace FluentAssertions.BestPractices
             {
             }
 
-            public override void VisitArgument(ArgumentSyntax node)
+            public override ImmutableDictionary<string, string> ToDiagnosticProperties()
+                => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.ExpectedItemString, ExpectedItemString);
+
+            public override void VisitArgumentList(ArgumentListSyntax node)
             {
-                if (RequiredMethods.Count == 0)
-                {
-                    ExpectedItemString = node.ToFullString();
-                }
+                if (!node.Arguments.Any()) return;
+                if (CurrentMethod != "Contains") return;
+
+                ExpectedItemString = node.Arguments[0].ToFullString();
             }
         }
     }
@@ -67,7 +55,7 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldContainItemAnalyzer.DiagnosticId);
 
         // actual.Should().Contain(expectedItem);
-        protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
-            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().Contain({properties[Constants.DiagnosticProperties.ExpectedItemString]});");
+        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().Contain({properties.CombineWithBecauseArgumentsString(properties.ExpectedItemString)});");
     }
 }

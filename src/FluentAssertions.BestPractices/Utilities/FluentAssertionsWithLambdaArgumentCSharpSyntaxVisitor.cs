@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FluentAssertions.BestPractices
 {
@@ -10,21 +10,21 @@ namespace FluentAssertions.BestPractices
 
         public override bool IsValid => base.IsValid && PredicateString != null;
 
-        public FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor(params string[] requiredMethods) : base(requiredMethods)
+        protected abstract string MathodContainingLambda { get; }
+
+        protected FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor(params string[] requiredMethods) : base(requiredMethods)
         {
         }
+
+        public override ImmutableDictionary<string, string> ToDiagnosticProperties()
+            => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.PredicateString, PredicateString);
 
         public override void VisitArgumentList(ArgumentListSyntax node)
         {
-            if (node.Arguments.Count == 1 && RequiredMethods.Count == 0)
-            {
-                base.Visit(node.Arguments[0]);
-            }
-        }
+            if (!node.Arguments.Any()) return;
+            if (CurrentMethod != MathodContainingLambda) return;
 
-        public override void VisitArgument(ArgumentSyntax node)
-        {
-            if (node.Expression is SimpleLambdaExpressionSyntax lambda)
+            if (node.Arguments[0].Expression is SimpleLambdaExpressionSyntax lambda)
             {
                 PredicateString = lambda.ToFullString();
             }

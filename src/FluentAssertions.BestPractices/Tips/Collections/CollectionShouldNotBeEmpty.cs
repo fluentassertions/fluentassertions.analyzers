@@ -20,24 +20,20 @@ namespace FluentAssertions.BestPractices
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            get { yield return new AnyShouldBeTrueSyntaxVisitor(); }
+            get
+            {
+                yield return (new AnyShouldBeTrueSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeTrue", 0));
+            }
         }
 
-        private class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        private class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsWithoutLambdaArgumentCSharpSyntaxVisitor
         {
-            private bool _anyMethodHasArgument = false;
-            public override bool IsValid => base.IsValid && !_anyMethodHasArgument;
+            protected override string MathodNotContainingLambda => "Any";
 
             public AnyShouldBeTrueSyntaxVisitor() : base("Any", "Should", "BeTrue")
             {
-            }
-
-            public override void VisitArgument(ArgumentSyntax node)
-            {
-                // empty RequiredMethods means we are in the Any method
-                _anyMethodHasArgument = RequiredMethods.Count == 0 && node.Expression is SimpleLambdaExpressionSyntax;
             }
         }
     }
@@ -47,7 +43,7 @@ namespace FluentAssertions.BestPractices
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeEmptyAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
-            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().NotBeEmpty();");
+        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotBeEmpty({properties.BecauseArgumentsString});");
     }
 }

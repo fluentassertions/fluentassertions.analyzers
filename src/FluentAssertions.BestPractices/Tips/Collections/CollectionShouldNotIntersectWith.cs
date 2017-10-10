@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Composition;
 
 namespace FluentAssertions.BestPractices
 {
-	[DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CollectionShouldNotIntersectWithAnalyzer : FluentAssertionsAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotIntersectWith;
@@ -49,7 +48,7 @@ namespace FluentAssertions.BestPractices
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotIntersectWithAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
+        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
         {
 			throw new System.NotImplementedException();
 		}

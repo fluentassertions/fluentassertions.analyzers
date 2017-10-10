@@ -18,49 +18,42 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by .BeEmpty() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
             get
             {
-                yield return new AnyShouldBeFalseSyntaxVisitor();
-                yield return new ShouldHaveCount0SyntaxVisitor();
+                yield return (new AnyShouldBeFalseSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeFalse", 0));
+                yield return (new ShouldHaveCount0SyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("HaveCount", 1));
             }
         }
 
-        private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithoutLambdaArgumentCSharpSyntaxVisitor
         {
-            private bool _anyMethodHasArgument = false;
-            public override bool IsValid => base.IsValid && !_anyMethodHasArgument;
+            protected override string MathodNotContainingLambda => "Any";
 
             public AnyShouldBeFalseSyntaxVisitor() : base("Any", "Should", "BeFalse")
             {
             }
-
-            public override void VisitArgument(ArgumentSyntax node)
-            {
-                // empty RequiredMethods means we are in the Any method
-                _anyMethodHasArgument = RequiredMethods.Count == 0 && node.Expression is SimpleLambdaExpressionSyntax;
-            }
         }
         private class ShouldHaveCount0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            private bool _foundHaveCount0 = false;
+            private bool _haveCountMethodHas0Argument;
 
-            public override bool IsValid => base.IsValid && _foundHaveCount0;
+            public override bool IsValid => base.IsValid && _haveCountMethodHas0Argument;
 
             public ShouldHaveCount0SyntaxVisitor() : base("Should", "HaveCount")
             {
             }
 
-            public override void VisitArgument(ArgumentSyntax node)
+            public override void VisitArgumentList(ArgumentListSyntax node)
             {
-                // the Should method has no arguments so we must be inside HaveCount
-                if (RequiredMethods.Count == 0
-                    && node.Expression is LiteralExpressionSyntax literal
-                    && literal.Token.Value is int argument)
-                {
-                    _foundHaveCount0 = argument == 0;
-                }
+                if (!node.Arguments.Any()) return;
+
+                _haveCountMethodHas0Argument = !_haveCountMethodHas0Argument
+                    && CurrentMethod == "HaveCount"
+                    && node.Arguments[0].Expression is LiteralExpressionSyntax literal
+                    && literal.Token.Value is int argument
+                    && argument == 0;
             }
         }
     }
@@ -69,8 +62,8 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldBeEmptyCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeEmptyAnalyzer.DiagnosticId);
-
-        protected override StatementSyntax GetNewStatement(ImmutableDictionary<string, string> properties)
-            => SyntaxFactory.ParseStatement($"{properties[Constants.DiagnosticProperties.VariableName]}.Should().BeEmpty();");
-    }
+        
+        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().BeEmpty({properties.BecauseArgumentsString});");
+    } 
 }
