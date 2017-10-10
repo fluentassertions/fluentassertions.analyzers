@@ -17,7 +17,7 @@ branches:
 
 # Artifacts
 artifacts:
-- path: '.\artifacts\*.nupkg'
+- path: '.\artifacts\**\*.nupkg'
 
 # Build cache
 cache:
