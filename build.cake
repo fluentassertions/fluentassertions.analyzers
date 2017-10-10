@@ -50,8 +50,7 @@ Task("Run-Unit-Tests")
       DotNetCoreTest(testCsproj, new DotNetCoreTestSettings
 	  {
 	    Filter = "TestCategory=Completed",
-		Configuration = configuration,
-		NoBuild = true
+		Configuration = configuration
 	  });
 });
 
