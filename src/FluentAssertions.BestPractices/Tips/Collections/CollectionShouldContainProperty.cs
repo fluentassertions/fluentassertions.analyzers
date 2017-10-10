@@ -23,13 +23,21 @@ namespace FluentAssertions.BestPractices
             get
             {
                 yield return (new AnyShouldBeTrueSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeTrue", 0));
+                yield return (new WhereShouldNotBeEmptySyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("NotBeEmpty", 0));
             }
         }
 
-        public class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        private class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MathodContainingLambda => "Any";
             public AnyShouldBeTrueSyntaxVisitor() : base("Any", "Should", "BeTrue")
+            {
+            }
+        }
+        private class WhereShouldNotBeEmptySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        {
+            protected override string MathodContainingLambda => "Where";
+            public WhereShouldNotBeEmptySyntaxVisitor() : base("Where", "Should", "NotBeEmpty")
             {
             }
         }

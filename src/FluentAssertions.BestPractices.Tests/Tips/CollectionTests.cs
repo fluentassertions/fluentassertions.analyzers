@@ -39,12 +39,16 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any(x => x.BooleanProperty).Should().BeTrue({0});")]
+        [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().NotBeEmpty({0});")]
         [Implemented]
         public void CollectionShouldContainProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldContainPropertyAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Any(x => x.BooleanProperty).Should().BeTrue({0});",
+            newAssertion: "actual.Should().Contain(x => x.BooleanProperty{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Where(x => x.BooleanProperty).Should().NotBeEmpty({0});",
             newAssertion: "actual.Should().Contain(x => x.BooleanProperty{0});")]
         [Implemented]
         public void CollectionShouldContainProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldContainPropertyCodeFix, CollectionShouldContainPropertyAnalyzer>(oldAssertion, newAssertion);
@@ -203,19 +207,7 @@ namespace FluentAssertions.BestPractices.Tests
             newAssertion: "actual.Should().NotHaveSameCount(unexpected{0});")]
         [NotImplemented]
         public void CollectionShouldNotHaveSameCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotHaveSameCountCodeFix, CollectionShouldNotHaveSameCountAnalyzer>(oldAssertion, newAssertion);
-
-        [AssertionDataTestMethod]
-        [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().NotBeEmpty({0});")]
-        [NotImplemented]
-        public void CollectionShouldContainProperty_TestAnalyzer02(string assertion) => VerifyCSharpDiagnostic<CollectionShouldContainPropertyAnalyzer>(assertion);
-
-        [AssertionDataTestMethod]
-        [AssertionCodeFix(
-            oldAssertion: "actual.Where(x => x.BooleanProperty).Should().NotBeEmpty({0});",
-            newAssertion: "actual.Should().Contain(x => x.BooleanProperty{0});")]
-        [NotImplemented]
-        public void CollectionShouldContainProperty_TestCodeFix02(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldContainPropertyCodeFix, CollectionShouldContainPropertyAnalyzer>(oldAssertion, newAssertion);
-
+        
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});")]
         [NotImplemented]
