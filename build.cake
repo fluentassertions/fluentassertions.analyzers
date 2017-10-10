@@ -16,19 +16,19 @@ var buildDir = Directory("./artifacts") + Directory(configuration);
 var solutionFile = File("./src/FluentAssertions.BestPractices.sln");
 var testCsproj = File("./src/FluentAssertions.BestPractices.Tests/FluentAssertions.BestPractices.Tests.csproj");
 var nuspecFile = File("./src/FluentAssertions.BestPractices/FluentAssertions.BestPractices.nuspec");
-GitVersion gitVersion; 
+var version = GetCurrentVersion(Context);
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
 
 Task("GitVersion")
+    .WithCriteria(AppVeyor.IsRunningOnAppVeyor)
     .Does(() =>
     {
-        gitVersion = GitVersion(new GitVersionSettings
-        {
-            UpdateAssemblyInfo = true
-        });
+        var gitVersion = GitVersion();
+
+		version += $"-preview{gitVersion.BuildMetaData}";
     });
 
 Task("Clean")
@@ -67,13 +67,12 @@ Task("Run-Unit-Tests")
     });
 
 Task("Pack")
-    .IsDependentOn("GitVersion")
     .Does(() =>
     {
         var nuGetPackSettings = new NuGetPackSettings
         {
             OutputDirectory = buildDir,
-            Version = gitVersion.NuGetVersionV2
+            Version = version
         };
         NuGetPack(nuspecFile, nuGetPackSettings);
     });
@@ -93,3 +92,14 @@ Task("Default")
 //////////////////////////////////////////////////////////////////////
 
 RunTarget(target);
+
+string GetCurrentVersion(ICakeContext context)
+{
+	return context.XmlPeek(nuspecFile, "nu:package/nu:metadata/nu:version", new XmlPeekSettings
+	{
+	    Namespaces = new Dictionary<string, string>
+		{
+			["nu"] = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"
+		}
+	});
+}
