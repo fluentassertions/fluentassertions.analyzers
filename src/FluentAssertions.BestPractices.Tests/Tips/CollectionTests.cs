@@ -103,26 +103,35 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().Be(k{0});")]
-        [NotImplemented]
+        [AssertionDiagnostic("actual.Count().Should().Be(6{0});")]
+        [Implemented]
         public void CollectionShouldHaveCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldHaveCountAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().Be(k{0});",
             newAssertion: "actual.Should().HaveCount(k{0});")]
-        [NotImplemented]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Count().Should().Be(6{0});",
+            newAssertion: "actual.Should().HaveCount(6{0});")]
+        [Implemented]
         public void CollectionShouldHaveCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveCountCodeFix, CollectionShouldHaveCountAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterThan(k{0});")]
-        [NotImplemented]
+        [AssertionDiagnostic("actual.Count().Should().BeGreaterThan(6{0});")]
+        [Implemented]
         public void CollectionShouldHaveCountGreaterThan_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldHaveCountGreaterThanAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeGreaterThan(k{0});",
             newAssertion: "actual.Should().HaveCountGreaterThan(k{0});")]
-        [NotImplemented]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Count().Should().BeGreaterThan(6{0});",
+            newAssertion: "actual.Should().HaveCountGreaterThan(6{0});")]
+        [Implemented]
+        [Ignore("Waiting for official FluentAssertions 5.0")]
         public void CollectionShouldHaveCountGreaterThan_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveCountGreaterThanCodeFix, CollectionShouldHaveCountGreaterThanAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -135,6 +144,7 @@ namespace FluentAssertions.BestPractices.Tests
             oldAssertion: "actual.Count().Should().BeGreaterOrEqualTo(k{0});",
             newAssertion: "actual.Should().HaveCountGreaterOrEqualTo(k{0});")]
         [NotImplemented]
+        [Ignore("Waiting for official FluentAssertions 5.0")]
         public void CollectionShouldHaveCountGreaterOrEqualTo_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveCountGreaterOrEqualToCodeFix, CollectionShouldHaveCountGreaterOrEqualToAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -147,6 +157,7 @@ namespace FluentAssertions.BestPractices.Tests
             oldAssertion: "actual.Count().Should().BeLessThan(k{0});",
             newAssertion: "actual.Should().HaveCountLessThan(k{0});")]
         [NotImplemented]
+        [Ignore("Waiting for official FluentAssertions 5.0")]
         public void CollectionShouldHaveCountLessThan_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveCountLessThanCodeFix, CollectionShouldHaveCountLessThanAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -207,7 +218,7 @@ namespace FluentAssertions.BestPractices.Tests
             newAssertion: "actual.Should().NotHaveSameCount(unexpected{0});")]
         [NotImplemented]
         public void CollectionShouldNotHaveSameCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotHaveSameCountCodeFix, CollectionShouldNotHaveSameCountAnalyzer>(oldAssertion, newAssertion);
-        
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});")]
         [NotImplemented]

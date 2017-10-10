@@ -18,6 +18,7 @@ namespace FluentAssertions.BestPractices
         public string PredicateString => Properties[Constants.DiagnosticProperties.PredicateString];
         public string ExpectedItemString => Properties[Constants.DiagnosticProperties.ExpectedItemString];
         public string UnexpectedItemString => Properties[Constants.DiagnosticProperties.UnexpectedItemString];
+        public string CountArgument => Properties[Constants.DiagnosticProperties.CountArgument];
 
         public string CombineWithBecauseArgumentsString(string validArgument)
         {

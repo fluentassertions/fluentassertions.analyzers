@@ -48,10 +48,10 @@ namespace FluentAssertions.BestPractices
             public override void VisitArgumentList(ArgumentListSyntax node)
             {
                 if (!node.Arguments.Any()) return;
+                if (CurrentMethod != "HaveCount") return;
 
-                _haveCountMethodHas0Argument = !_haveCountMethodHas0Argument
-                    && CurrentMethod == "HaveCount"
-                    && node.Arguments[0].Expression is LiteralExpressionSyntax literal
+                _haveCountMethodHas0Argument =
+                    node.Arguments[0].Expression is LiteralExpressionSyntax literal
                     && literal.Token.Value is int argument
                     && argument == 0;
             }
@@ -62,8 +62,8 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldBeEmptyCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeEmptyAnalyzer.DiagnosticId);
-        
+
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
             => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().BeEmpty({properties.BecauseArgumentsString});");
-    } 
+    }
 }
