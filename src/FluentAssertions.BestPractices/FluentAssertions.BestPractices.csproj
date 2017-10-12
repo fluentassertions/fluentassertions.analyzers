@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-	<RootNamespace>FluentAssertions.BestPractices</RootNamespace>
+    <RootNamespace>FluentAssertions.BestPractices</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,9 +22,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  
+
   <PropertyGroup>
     <NuspecFile>.\FluentAssertions.BestPractices</NuspecFile>
   </PropertyGroup>
-  
+
 </Project>

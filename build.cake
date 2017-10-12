@@ -22,12 +22,11 @@ var version = GetCurrentVersion(Context);
 // TASKS
 //////////////////////////////////////////////////////////////////////
 
-Task("GitVersion")
+Task("Update-Version")
     .WithCriteria(AppVeyor.IsRunningOnAppVeyor)
     .Does(() =>
     {
-        var gitVersion = GitVersion();
-		version += $"-preview{gitVersion.BuildMetaData}";
+		version += $"-preview{AppVeyor.Environment.Build.Number}";
 
 		Information($"Version: {version}");
     });
@@ -78,21 +77,15 @@ Task("Pack")
         NuGetPack(nuspecFile, nuGetPackSettings);
     });
 
-Task("Publish-Nuget")
+Task("Publish-NuGet")
 	.WithCriteria(AppVeyor.IsRunningOnAppVeyor)
+	.WithCriteria(HasEnvironmentVariable("NUGET_API_KEY"))
+	.WithCriteria(HasEnvironmentVariable("NUGET_API_URL"))
     .Does(() =>
 	{
 		var apiKey = EnvironmentVariable("NUGET_API_KEY");
-        if(string.IsNullOrEmpty(apiKey))
-		{
-            throw new InvalidOperationException("Could not resolve NuGet API key.");
-        }	    
         var apiUrl = EnvironmentVariable("NUGET_API_URL");
-        if(string.IsNullOrEmpty(apiUrl))
-		{
-            throw new InvalidOperationException("Could not resolve NuGet API url.");
-        }
-
+        
 		var nupkgFile = File($"{buildDir}/FluentAssertions.BestPractices.{version}.nupkg");
 		Information($"Publishing nupkg file '{nupkgFile}'...");
 
@@ -108,11 +101,11 @@ Task("Publish-Nuget")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("GitVersion")
+    .IsDependentOn("Update-Version")
     .IsDependentOn("Build")
     .IsDependentOn("Run-Unit-Tests")
     .IsDependentOn("Pack")
-	.IsDependentOn("Publish-Nuget");
+	.IsDependentOn("Publish-NuGet");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION

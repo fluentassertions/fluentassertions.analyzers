@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -14,32 +15,23 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotHaveCount;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use {0} .Should() followed by NotHaveCount instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            return null;
-            var visitor = new CollectionShouldNotHaveCountSyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            get
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title
-                }.ToImmutableDictionary();
-				throw new System.NotImplementedException();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+                yield return (new CountShouldNotBeSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("NotBe", 1));
             }
-            return null;
+        }
+
+        private class CountShouldNotBeSyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
+        {
+            protected override string MethodContainingArgument => "NotBe";
+            public CountShouldNotBeSyntaxVisitor() : base("Count", "Should", "NotBe")
+            {
+            }
         }
     }
 
@@ -49,16 +41,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotHaveCountAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-        {
-			throw new System.NotImplementedException();
-		}
-    }
-
-    public class CollectionShouldNotHaveCountSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CollectionShouldNotHaveCountSyntaxVisitor() : base("###")
-        {
-			throw new System.NotImplementedException();
-        }
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotHaveCount({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
     }
 }
