@@ -136,27 +136,35 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterOrEqualTo(k{0});")]
-        [NotImplemented]
+        [AssertionDiagnostic("actual.Count().Should().BeGreaterOrEqualTo(6{0});")]
+        [Implemented]
         public void CollectionShouldHaveCountGreaterOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldHaveCountGreaterOrEqualToAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeGreaterOrEqualTo(k{0});",
             newAssertion: "actual.Should().HaveCountGreaterOrEqualTo(k{0});")]
-        [NotImplemented]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Count().Should().BeGreaterOrEqualTo(6{0});",
+            newAssertion: "actual.Should().HaveCountGreaterOrEqualTo(6{0});")]
+        [Implemented]
         [Ignore("Waiting for official FluentAssertions 5.0")]
         public void CollectionShouldHaveCountGreaterOrEqualTo_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveCountGreaterOrEqualToCodeFix, CollectionShouldHaveCountGreaterOrEqualToAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeLessThan(k{0});")]
-        [NotImplemented]
+        [AssertionDiagnostic("actual.Count().Should().BeLessThan(6{0});")]
+        [Implemented]
         public void CollectionShouldHaveCountLessThan_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldHaveCountLessThanAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeLessThan(k{0});",
             newAssertion: "actual.Should().HaveCountLessThan(k{0});")]
-        [NotImplemented]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Count().Should().BeLessThan(6{0});",
+            newAssertion: "actual.Should().HaveCountLessThan(6{0});")]
+        [Implemented]
         [Ignore("Waiting for official FluentAssertions 5.0")]
         public void CollectionShouldHaveCountLessThan_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveCountLessThanCodeFix, CollectionShouldHaveCountLessThanAnalyzer>(oldAssertion, newAssertion);
 

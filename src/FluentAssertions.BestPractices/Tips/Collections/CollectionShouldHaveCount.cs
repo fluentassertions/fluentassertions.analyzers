@@ -37,7 +37,7 @@ namespace FluentAssertions.BestPractices
             }
 
             public override ImmutableDictionary<string, string> ToDiagnosticProperties()
-                => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.CountArgument, CountArgument);
+                => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.ArgumentString, CountArgument);
 
             public override void VisitArgumentList(ArgumentListSyntax node)
             {
@@ -55,6 +55,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCount({properties.CombineWithBecauseArgumentsString(properties.CountArgument)});");
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCount({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
     }
 }

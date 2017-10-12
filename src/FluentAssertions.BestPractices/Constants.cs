@@ -10,7 +10,7 @@
             public const string ExpectedItemString = nameof(ExpectedItemString);
             public const string UnexpectedItemString = nameof(UnexpectedItemString);
             public const string BecauseArgumentsString = nameof(BecauseArgumentsString);
-            public const string CountArgument = nameof(CountArgument);
+            public const string ArgumentString = nameof(ArgumentString);
         }
 
         public static class Tips

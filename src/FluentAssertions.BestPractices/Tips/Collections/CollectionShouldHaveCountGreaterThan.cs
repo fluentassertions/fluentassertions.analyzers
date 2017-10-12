@@ -26,25 +26,12 @@ namespace FluentAssertions.BestPractices
             }
         }
 
-        private class CountShouldBeGreaterThanSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        private class CountShouldBeGreaterThanSyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
         {
-            public string CountArgument { get; private set; }
-
-            public override bool IsValid => base.IsValid && CountArgument != null;
+            protected override string MethodContainingArgument => "BeGreaterThan";
 
             public CountShouldBeGreaterThanSyntaxVisitor() : base("Count", "Should", "BeGreaterThan")
             {
-            }
-
-            public override ImmutableDictionary<string, string> ToDiagnosticProperties()
-                => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.CountArgument, CountArgument);
-
-            public override void VisitArgumentList(ArgumentListSyntax node)
-            {
-                if (!node.Arguments.Any()) return;
-                if (CurrentMethod != "BeGreaterThan") return;
-
-                CountArgument = node.Arguments[0].ToFullString();
             }
         }
     }
@@ -55,6 +42,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountGreaterThanAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCountGreaterThan({properties.CombineWithBecauseArgumentsString(properties.CountArgument)});");
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCountGreaterThan({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
     }
 }

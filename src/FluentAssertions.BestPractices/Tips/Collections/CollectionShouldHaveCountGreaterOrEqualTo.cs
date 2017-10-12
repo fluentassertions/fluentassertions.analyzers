@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -17,29 +18,20 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by ### instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            return null;
-            var visitor = new CollectionShouldHaveCountGreaterOrEqualToSyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            get
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title
-                }.ToImmutableDictionary();
-				throw new System.NotImplementedException();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+                yield return (new CountShouldBeGreaterOrEqualToSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeGreaterOrEqualTo", 1));
             }
-            return null;
+        }
+
+        private class CountShouldBeGreaterOrEqualToSyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
+        {
+            protected override string MethodContainingArgument => "BeGreaterOrEqualTo";
+            public CountShouldBeGreaterOrEqualToSyntaxVisitor() : base("Count", "Should", "BeGreaterOrEqualTo")
+            {
+            }
         }
     }
 
@@ -49,16 +41,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountGreaterOrEqualToAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-        {
-			throw new System.NotImplementedException();
-		}
-    }
-
-    public class CollectionShouldHaveCountGreaterOrEqualToSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CollectionShouldHaveCountGreaterOrEqualToSyntaxVisitor() : base("###")
-        {
-			throw new System.NotImplementedException();
-        }
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCountGreaterOrEqualTo({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
     }
 }
