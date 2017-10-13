@@ -29,14 +29,14 @@ namespace FluentAssertions.BestPractices
 
         private class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
-            protected override string MathodContainingLambda => "Any";
+            protected override string MethodContainingLambda => "Any";
             public AnyShouldBeTrueSyntaxVisitor() : base("Any", "Should", "BeTrue")
             {
             }
         }
         private class WhereShouldNotBeEmptySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
-            protected override string MathodContainingLambda => "Where";
+            protected override string MethodContainingLambda => "Where";
             public WhereShouldNotBeEmptySyntaxVisitor() : base("Where", "Should", "NotBeEmpty")
             {
             }

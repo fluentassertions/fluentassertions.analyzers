@@ -29,7 +29,7 @@ namespace FluentAssertions.BestPractices
 
         private class AllShouldBeTrueSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
-            protected override string MathodContainingLambda => "All";
+            protected override string MethodContainingLambda => "All";
             public AllShouldBeTrueSyntaxVisitor() : base("All", "Should", "BeTrue")
             {
             }

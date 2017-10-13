@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 
 namespace FluentAssertions.BestPractices
 {
@@ -63,6 +64,27 @@ namespace FluentAssertions.BestPractices
             {
                 EncounteredFirstMethod = true;
                 Visit(node.Expression);
+            }
+        }
+        public sealed override void VisitElementAccessExpression(ElementAccessExpressionSyntax node)
+        {
+            const string methodName = "[]";
+            VisitedMethods.Push(methodName);
+
+            if (!EncounteredFirstMethod && !methodName.Equals(RequiredMethods.Peek()))
+            {
+                Visit(node.Expression);
+                Visit(node.ArgumentList);
+
+                VisitedMethods.Pop();
+            }
+            else if (RequiredMethods.Count > 0 && methodName.Equals(RequiredMethods.Pop()))
+            {
+                EncounteredFirstMethod = true;
+                Visit(node.Expression);
+                Visit(node.ArgumentList);
+
+                VisitedMethods.Pop();
             }
         }
 

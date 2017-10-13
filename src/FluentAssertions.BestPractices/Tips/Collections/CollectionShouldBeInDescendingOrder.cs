@@ -28,7 +28,7 @@ namespace FluentAssertions.BestPractices
         private class OrderByDescendingShouldEqualSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             private bool _argumentIsSelf;
-            protected override string MathodContainingLambda => "OrderByDescending";
+            protected override string MethodContainingLambda => "OrderByDescending";
 
             public override bool IsValid => base.IsValid && _argumentIsSelf;
 

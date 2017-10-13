@@ -4,30 +4,20 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace FluentAssertions.BestPractices
 {
 
-    public abstract class FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+    public abstract class FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
     {
-        public string PredicateString { get; private set; }
+        protected virtual SimpleLambdaExpressionSyntax Lambda => Arguments[(MethodContainingLambda, 0)] as SimpleLambdaExpressionSyntax;
 
-        public override bool IsValid => base.IsValid && PredicateString != null;
+        protected abstract string MethodContainingLambda { get; }
 
-        protected abstract string MathodContainingLambda { get; }
+        public override bool IsValid => base.IsValid && Lambda != null;
+        protected override bool AreArgumentsValid => Arguments.TryGetValue((MethodContainingLambda, 0), out var lambda) && lambda is SimpleLambdaExpressionSyntax;
 
         protected FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor(params string[] requiredMethods) : base(requiredMethods)
         {
         }
 
         public override ImmutableDictionary<string, string> ToDiagnosticProperties()
-            => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.LambdaString, PredicateString);
-
-        public override void VisitArgumentList(ArgumentListSyntax node)
-        {
-            if (!node.Arguments.Any()) return;
-            if (CurrentMethod != MathodContainingLambda) return;
-
-            if (node.Arguments[0].Expression is SimpleLambdaExpressionSyntax lambda)
-            {
-                PredicateString = lambda.ToFullString();
-            }
-        }
+            => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.LambdaString, Lambda.ToFullString());
     }
 }

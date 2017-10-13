@@ -30,7 +30,7 @@ namespace FluentAssertions.BestPractices
         {
             private bool _haveCountMethodHas1Argument;
 
-            protected override string MathodContainingLambda => "Where";
+            protected override string MethodContainingLambda => "Where";
             public override bool IsValid => base.IsValid && _haveCountMethodHas1Argument;
             public WhereShouldHaveCount1SyntaxVisitor() : base("Where", "Should", "HaveCount")
             {

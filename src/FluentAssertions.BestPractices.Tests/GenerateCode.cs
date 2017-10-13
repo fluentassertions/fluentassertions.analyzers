@@ -28,7 +28,7 @@ namespace FluentAssertions.BestPractices.Tests
             .AppendLine("{")
             .AppendLine($"    public class {ClassName}")
             .AppendLine("    {")
-            .AppendLine($"        public void {MethodName}({nameof(IEnumerable)}<{ComplexClassName}> {ActualVariableName}, {nameof(IEnumerable)}<{ComplexClassName}> {ExpectedVariableName}, {nameof(IEnumerable)}<{ComplexClassName}> {UnexpectedVariableName}, {ComplexClassName} {ExpectedItemVariableName}, {ComplexClassName} {UnexpectedItemVariableName}, int {CountVariable})")
+            .AppendLine($"        public void {MethodName}({nameof(IList)}<{ComplexClassName}> {ActualVariableName}, {nameof(IList)}<{ComplexClassName}> {ExpectedVariableName}, {nameof(IList)}<{ComplexClassName}> {UnexpectedVariableName}, {ComplexClassName} {ExpectedItemVariableName}, {ComplexClassName} {UnexpectedItemVariableName}, int {CountVariable})")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")

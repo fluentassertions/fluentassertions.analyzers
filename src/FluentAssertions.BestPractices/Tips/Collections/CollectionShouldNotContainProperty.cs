@@ -24,21 +24,42 @@ namespace FluentAssertions.BestPractices
             {
                 yield return (new AnyShouldBeFalseSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeFalse", 0));
                 yield return (new WhereShouldBeEmptySyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeEmpty", 0));
+                yield return (new ShouldOnlyContainNotSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("OnlyContain", 1));
             }
         }
 
         private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
-            protected override string MathodContainingLambda => "Any";
+            protected override string MethodContainingLambda => "Any";
             public AnyShouldBeFalseSyntaxVisitor() : base("Any", "Should", "BeFalse")
             {
             }
         }
         private class WhereShouldBeEmptySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
-            protected override string MathodContainingLambda => "Where";
+            protected override string MethodContainingLambda => "Where";
             public WhereShouldBeEmptySyntaxVisitor() : base("Where", "Should", "BeEmpty")
             {
+            }
+        }
+        // actual.Should().OnlyContain(e => !e.BooleanProperty{0});
+        private class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        {
+            protected override string MethodContainingLambda => "OnlyContain";
+            protected override SimpleLambdaExpressionSyntax Lambda => ReverseLambda(base.Lambda);
+
+            public ShouldOnlyContainNotSyntaxVisitor() : base("Should", "OnlyContain")
+            {
+            }
+
+            private SimpleLambdaExpressionSyntax ReverseLambda(SimpleLambdaExpressionSyntax lambda)
+            {
+                if (lambda.Body is PrefixUnaryExpressionSyntax prefixUnary && prefixUnary.OperatorToken.IsKind(SyntaxKind.ExclamationToken))
+                {
+                    return lambda.WithBody(prefixUnary.Operand);
+                }
+
+                return lambda;
             }
         }
     }
