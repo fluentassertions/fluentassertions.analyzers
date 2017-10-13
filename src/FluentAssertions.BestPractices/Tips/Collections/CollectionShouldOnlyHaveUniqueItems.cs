@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -18,28 +19,35 @@ namespace FluentAssertions.BestPractices
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            return null;
-            var visitor = new CollectionShouldOnlyHaveUniqueItemsSyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            get
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title
-                }.ToImmutableDictionary();
-				throw new System.NotImplementedException();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+                yield return (new ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("HaveSameCount", 1));
             }
-            return null;
+        }
+
+        private class ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
+        {
+            protected override string MethodContainingArgument => "HaveSameCount";
+            public ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor() : base("Should", "HaveSameCount")
+            {
+            }
+
+            protected override ExpressionSyntax ModifyArgument(ExpressionSyntax expression)
+            {
+                var visitor = new CollectionDistinctSyntaxVisitor();
+                expression.Accept(visitor);
+
+                return (visitor.IsValid && visitor.VariableName == VariableName) ? expression : null;
+            }
+
+            private class CollectionDistinctSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+            {
+                public CollectionDistinctSyntaxVisitor() : base("Distinct")
+                {
+                }
+            }
         }
     }
 
@@ -49,16 +57,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyHaveUniqueItemsAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-        {
-			throw new System.NotImplementedException();
-		}
-    }
-
-    public class CollectionShouldOnlyHaveUniqueItemsSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CollectionShouldOnlyHaveUniqueItemsSyntaxVisitor() : base("###")
-        {
-			throw new System.NotImplementedException();
-        }
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().OnlyHaveUniqueItems({properties.BecauseArgumentsString});");
     }
 }

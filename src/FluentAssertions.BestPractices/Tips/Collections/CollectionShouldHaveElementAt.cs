@@ -30,7 +30,7 @@ namespace FluentAssertions.BestPractices
 
         private class ElementAtIndexShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
         {
-            protected override bool AreArgumentsValid =>
+            protected override bool AreArgumentsValid() =>
                 Arguments.TryGetValue(("ElementAt", 0), out ExpressionSyntax index) && (index is LiteralExpressionSyntax || index is IdentifierNameSyntax)
                 && Arguments.TryGetValue(("Be", 0), out ExpressionSyntax expectedItem) && (expectedItem is LiteralExpressionSyntax || expectedItem is IdentifierNameSyntax);
 
@@ -45,7 +45,7 @@ namespace FluentAssertions.BestPractices
         }
         private class IndexerShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
         {
-            protected override bool AreArgumentsValid =>
+            protected override bool AreArgumentsValid() =>
                 Arguments.TryGetValue(("[]", 0), out ExpressionSyntax index) && (index is LiteralExpressionSyntax || index is IdentifierNameSyntax)
                 && Arguments.TryGetValue(("Be", 0), out ExpressionSyntax expectedItem) && (expectedItem is LiteralExpressionSyntax || expectedItem is IdentifierNameSyntax);
 
@@ -60,7 +60,7 @@ namespace FluentAssertions.BestPractices
 
         private class SkipFirstShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
         {
-            protected override bool AreArgumentsValid =>
+            protected override bool AreArgumentsValid() =>
                 Arguments.TryGetValue(("Skip", 0), out ExpressionSyntax index) && (index is LiteralExpressionSyntax || index is IdentifierNameSyntax)
                 && Arguments.TryGetValue(("Be", 0), out ExpressionSyntax expectedItem) && (expectedItem is LiteralExpressionSyntax || expectedItem is IdentifierNameSyntax);
 

@@ -46,7 +46,7 @@ namespace FluentAssertions.BestPractices
         private class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MethodContainingLambda => "OnlyContain";
-            protected override SimpleLambdaExpressionSyntax Lambda => ReverseLambda(base.Lambda);
+            public override SimpleLambdaExpressionSyntax Lambda => ReverseLambda(base.Lambda);
 
             public ShouldOnlyContainNotSyntaxVisitor() : base("Should", "OnlyContain")
             {

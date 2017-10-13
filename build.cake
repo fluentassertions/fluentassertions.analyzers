@@ -104,8 +104,7 @@ Task("Default")
     .IsDependentOn("Update-Version")
     .IsDependentOn("Build")
     .IsDependentOn("Run-Unit-Tests")
-    .IsDependentOn("Pack")
-	.IsDependentOn("Publish-NuGet");
+    .IsDependentOn("Pack");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION

@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -14,32 +15,62 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldEqualOtherCollectionByComparer;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use {0} .Should() followed by .Equal() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            return null;
-            var visitor = new CollectionShouldEqualOtherCollectionByComparerSyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            get
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title
-                }.ToImmutableDictionary();
-				throw new System.NotImplementedException();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+                yield return (new SelectShouldEqualOtherCollectionSelectSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("Equal", 1));
             }
-            return null;
+        }
+
+        private class SelectShouldEqualOtherCollectionSelectSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
+        {
+            private ExpressionSyntax _lambdaArgument;
+            private string _otherVariable;
+
+            protected override bool AreArgumentsValid()
+            {
+                if (Arguments.TryGetValue(("Select", 0), out var selectArgument) && selectArgument is SimpleLambdaExpressionSyntax select
+                    && Arguments.TryGetValue(("Equal", 0), out var expectedArgument) && expectedArgument is InvocationExpressionSyntax expected)
+                {
+                    var visitor = new SelectSyntaxVisitor();
+                    expected.Accept(visitor);
+
+                    if (visitor.IsValid)
+                    {
+                        _otherVariable = visitor.VariableName;
+                        _lambdaArgument = SyntaxFactory.ParenthesizedLambdaExpression(
+                            parameterList: SyntaxFactory.ParameterList().AddParameters(select.Parameter, visitor.Lambda.Parameter),
+                            body: SyntaxFactory.BinaryExpression(SyntaxKind.EqualsExpression,
+                                left: (ExpressionSyntax)select.Body,
+                                right: (ExpressionSyntax)visitor.Lambda.Body)
+                        ).NormalizeWhitespace();
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public SelectShouldEqualOtherCollectionSelectSyntaxVisitor() : base("Select", "Should", "Equal")
+            {
+            }
+
+            public override ImmutableDictionary<string, string> ToDiagnosticProperties() => base.ToDiagnosticProperties()
+                .Add(Constants.DiagnosticProperties.LambdaString, _lambdaArgument.ToFullString())
+                .Add(Constants.DiagnosticProperties.ArgumentString, _otherVariable);
+
+
+            private class SelectSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+            {
+                protected override string MethodContainingLambda => "Select";
+                public SelectSyntaxVisitor() : base("Select")
+                {
+                }
+            }
         }
     }
 
@@ -49,16 +80,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldEqualOtherCollectionByComparerAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-        {
-			throw new System.NotImplementedException();
-		}
-    }
-
-    public class CollectionShouldEqualOtherCollectionByComparerSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CollectionShouldEqualOtherCollectionByComparerSyntaxVisitor() : base("###")
-        {
-			throw new System.NotImplementedException();
-        }
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().Equal({properties.ArgumentString}, {properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
     }
 }

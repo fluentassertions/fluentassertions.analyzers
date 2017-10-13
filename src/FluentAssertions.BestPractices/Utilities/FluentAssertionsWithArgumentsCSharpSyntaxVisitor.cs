@@ -7,12 +7,13 @@ namespace FluentAssertions.BestPractices
     public abstract class FluentAssertionsWithArgumentsCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         protected readonly Dictionary<(string Method, int Index), ExpressionSyntax> Arguments = new Dictionary<(string Method, int Index), ExpressionSyntax>();
-        protected abstract bool AreArgumentsValid { get; }
-        public override bool IsValid => base.IsValid && AreArgumentsValid;
+        public override bool IsValid => base.IsValid && AreArgumentsValid();
 
         protected FluentAssertionsWithArgumentsCSharpSyntaxVisitor(params string[] requiredMethods) : base(requiredMethods)
         {
         }
+
+        protected abstract bool AreArgumentsValid();
 
         public override void VisitArgumentList(ArgumentListSyntax node)
         {
