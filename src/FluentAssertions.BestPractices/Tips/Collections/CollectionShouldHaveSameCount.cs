@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
@@ -17,7 +18,7 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by HaveSameCount() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override System.Collections.Generic.IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
             get
             {
@@ -42,7 +43,7 @@ namespace FluentAssertions.BestPractices
             }
         }
     }
-
+    
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveSameCountCodeFix)), Shared]
     public class CollectionShouldHaveSameCountCodeFix : FluentAssertionsCodeFixProvider
     {

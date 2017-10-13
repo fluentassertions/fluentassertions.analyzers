@@ -55,6 +55,7 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any(x => x.BooleanProperty).Should().BeFalse({0});")]
+        [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});")]
         [Implemented]
         public void CollectionShouldNotContainProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldNotContainPropertyAnalyzer>(assertion);
 
@@ -62,6 +63,9 @@ namespace FluentAssertions.BestPractices.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.Any(x => x.BooleanProperty).Should().BeFalse({0});",
             newAssertion: "actual.Should().NotContain(x => x.BooleanProperty{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});",
+        newAssertion: "actual.Should().NotContain(x => x.BooleanProperty{0});")]
         [Implemented]
         public void CollectionShouldNotContainProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotContainPropertyCodeFix, CollectionShouldNotContainPropertyAnalyzer>(oldAssertion, newAssertion);
 
@@ -227,38 +231,27 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().NotBe(unexpected.Count(){0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldNotHaveSameCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldNotHaveSameCountAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().NotBe(unexpected.Count(){0});",
             newAssertion: "actual.Should().NotHaveSameCount(unexpected{0});")]
-        [NotImplemented]
+        [Implemented]
+        [Ignore("Will be available in Fluent Assertions 5.0")]
         public void CollectionShouldNotHaveSameCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotHaveSameCountCodeFix, CollectionShouldNotHaveSameCountAnalyzer>(oldAssertion, newAssertion);
-
-        [AssertionDataTestMethod]
-        [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});")]
-        [NotImplemented]
-        public void CollectionShouldNotContainProperty_TestAnalyzer02(string assertion) => VerifyCSharpDiagnostic<CollectionShouldNotContainPropertyAnalyzer>(assertion);
-
-        [AssertionDataTestMethod]
-        [AssertionCodeFix(
-        oldAssertion: "actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});",
-        newAssertion: "actual.Should().NotContain(x => x.BooleanProperty{0});")]
-        [NotImplemented]
-        public void CollectionShouldNotContainProperty_TestCodeFix02(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotContainPropertyCodeFix, CollectionShouldNotContainPropertyAnalyzer>(oldAssertion, newAssertion);
-
+        
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldContainSingleProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldContainSinglePropertyAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});",
-        newAssertion: "actual.Should().ContainSingle(x => x.BooleanProperty{0});")]
-        [NotImplemented]
+            oldAssertion: "actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});",
+            newAssertion: "actual.Should().ContainSingle(x => x.BooleanProperty{0});")]
+        [Implemented]
         public void CollectionShouldContainSingleProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldContainSinglePropertyCodeFix, CollectionShouldContainSinglePropertyAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]

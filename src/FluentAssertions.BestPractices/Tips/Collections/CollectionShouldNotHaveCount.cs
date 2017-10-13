@@ -15,7 +15,7 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotHaveCount;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by NotHaveCount instead.";
+        public const string Message = "Use {0} .Should() followed by .NotHaveCount() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
@@ -31,6 +31,13 @@ namespace FluentAssertions.BestPractices
             protected override string MethodContainingArgument => "NotBe";
             public CountShouldNotBeSyntaxVisitor() : base("Count", "Should", "NotBe")
             {
+            }
+
+            protected override ExpressionSyntax ModifyArgument(ExpressionSyntax expression)
+            {
+                if (expression is IdentifierNameSyntax identifier) return identifier;
+                if (expression is LiteralExpressionSyntax literal) return literal;
+                return null;
             }
         }
     }

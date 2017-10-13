@@ -59,7 +59,7 @@ namespace FluentAssertions.BestPractices
             {
                 Visit(node.Expression);
             }
-            else if (methodName.Equals(RequiredMethods.Pop()))
+            else if (RequiredMethods.Count > 0 && methodName.Equals(RequiredMethods.Pop()))
             {
                 EncounteredFirstMethod = true;
                 Visit(node.Expression);
