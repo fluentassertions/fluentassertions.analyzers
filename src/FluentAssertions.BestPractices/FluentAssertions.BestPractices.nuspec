@@ -15,10 +15,10 @@
     <language>en-US</language>
     <licenseUrl>https://github.com/Meir017/fluentassertions.bestpractices/blob/master/LICENSE</licenseUrl>
     <iconUrl>https://raw.githubusercontent.com/fluentassertions/fluentassertions/release-5.0/Src/FluentAssertions.png</iconUrl>
-    <projectUrl>http://www.fluentassertions.com</projectUrl>
-	<requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/Meir017/fluentassertions.bestpractices</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>FluentAssertions Analyzers</tags>
-	<frameworkAssemblies>
+    <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
     <copyright>Copyright Meir Blachman 2017-</copyright>
