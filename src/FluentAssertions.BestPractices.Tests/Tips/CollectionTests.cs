@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Reflection;
 
 namespace FluentAssertions.BestPractices.Tests
 {
@@ -257,7 +256,7 @@ namespace FluentAssertions.BestPractices.Tests
             newAssertion: "actual.Should().ContainSingle(x => x.BooleanProperty{0});")]
         [Implemented]
         public void CollectionShouldContainSingleProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldContainSinglePropertyCodeFix, CollectionShouldContainSinglePropertyAnalyzer>(oldAssertion, newAssertion);
-        
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().NotBeNull().And.NotBeEmpty({0});")]
         [NotImplemented]
@@ -301,7 +300,7 @@ namespace FluentAssertions.BestPractices.Tests
             newAssertion: "actual.Should().HaveElementAt(6, expectedItem{0});")]
         [Implemented]
         public void CollectionShouldHaveElementAt_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveElementAtCodeFix, CollectionShouldHaveElementAtAnalyzer>(oldAssertion, newAssertion);
-        
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});")]
         [Implemented]
@@ -340,37 +339,41 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Intersect(expected).Should().BeEmpty({0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldNotIntersectWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldNotIntersectWithAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
         oldAssertion: "actual.Intersect(expected).Should().BeEmpty({0});",
         newAssertion: "actual.Should().NotIntersectWith(expected{0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldNotIntersectWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotIntersectWithCodeFix, CollectionShouldNotIntersectWithAnalyzer>(oldAssertion, newAssertion);
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Intersect(expected).Should().NotBeEmpty({0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldIntersectWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldIntersectWithAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.Intersect(expected).Should().NotBeEmpty({0});",
-        newAssertion: "actual.Should().IntersectWith(expected{0});")]
-        [NotImplemented]
+            oldAssertion: "actual.Intersect(expected).Should().NotBeEmpty({0});",
+            newAssertion: "actual.Should().IntersectWith(expected{0});")]
+        [Implemented]
         public void CollectionShouldIntersectWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldIntersectWithCodeFix, CollectionShouldIntersectWithAnalyzer>(oldAssertion, newAssertion);
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Select(x => x.BooleanProperty).Should().NotContainNulls({0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldNotContainNulls_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldNotContainNullsAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.Select(x => x.BooleanProperty).Should().NotContainNulls({0});",
-        newAssertion: "actual.Should().NotContainNulls(e => e.OtherProperty{0});")]
-        [NotImplemented]
+            oldAssertion: "actual.Select(x => x.BooleanProperty).Should().NotContainNulls({0});",
+            newAssertion: "actual.Should().NotContainNulls(x => x.BooleanProperty{0});")]
+        [Implemented]
+        [Ignore("Will be available in Fluent Assertions 5.0")]
         public void CollectionShouldNotContainNulls_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotContainNullsCodeFix, CollectionShouldNotContainNullsAnalyzer>(oldAssertion, newAssertion);
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveSameCount(actual.Distinct(){0});")]
         [NotImplemented]
@@ -378,10 +381,11 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.Should().HaveSameCount(actual.Distinct(){0});",
-        newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
+            oldAssertion: "actual.Should().HaveSameCount(actual.Distinct(){0});",
+            newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
         [NotImplemented]
         public void CollectionShouldOnlyHaveUniqueItems_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldOnlyHaveUniqueItemsCodeFix, CollectionShouldOnlyHaveUniqueItemsAnalyzer>(oldAssertion, newAssertion);
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems({0});")]
         [NotImplemented]
@@ -389,8 +393,8 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems({0});",
-        newAssertion: "actual.Should().OnlyHaveUniqueItems(x => x.BooleanProperty{0});")]
+            oldAssertion: "actual.Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems({0});",
+            newAssertion: "actual.Should().OnlyHaveUniqueItems(x => x.BooleanProperty{0});")]
         [NotImplemented]
         public void CollectionShouldOnlyHaveUniqueItemsByComparer_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldOnlyHaveUniqueItemsByComparerCodeFix, CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer>(oldAssertion, newAssertion);
         [AssertionDataTestMethod]
@@ -400,8 +404,8 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.FirstOrDefault().Should().BeNull({0});",
-        newAssertion: "actual.Should().HaveElementAt(0, null{0});")]
+            oldAssertion: "actual.FirstOrDefault().Should().BeNull({0});",
+            newAssertion: "actual.Should().HaveElementAt(0, null{0});")]
         [NotImplemented]
         public void CollectionShouldHaveElementAt0Null_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldHaveElementAt0NullCodeFix, CollectionShouldHaveElementAt0NullAnalyzer>(oldAssertion, newAssertion);
 

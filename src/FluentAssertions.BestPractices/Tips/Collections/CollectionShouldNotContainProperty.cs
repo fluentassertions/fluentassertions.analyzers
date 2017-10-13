@@ -16,7 +16,7 @@ namespace FluentAssertions.BestPractices
         public const string Category = Constants.Tips.Category;
 
         public const string Message = "Use {0} .Should() followed by .NotContain() instead.";
-
+        
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
@@ -42,7 +42,7 @@ namespace FluentAssertions.BestPractices
             {
             }
         }
-        // actual.Should().OnlyContain(e => !e.BooleanProperty{0});
+        
         private class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MethodContainingLambda => "OnlyContain";
