@@ -14,6 +14,21 @@ A collection of Analyzers based on the best practices [docs](https://github.com/
 
 ![Demo](assets/demo.gif)
 
+## Install
+
+using the latest stable version:
+
+```powershell
+Install-Package FluentAssertions.BestPractices
+```
+
+using the latest prerelease version:
+
+```powershell
+Install-Package FluentAssertions.BestPractices -IncludePrerelease -Source https://ci.appveyor.com/nuget/fluentassertions-bestpractices
+```
+
+
 ## Getting Started
 
 ### Build
