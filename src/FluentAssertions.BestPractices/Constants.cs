@@ -47,6 +47,16 @@
                 public const string CollectionShouldOnlyHaveUniqueItemsByComparer = nameof(CollectionShouldOnlyHaveUniqueItemsByComparer);
                 public const string CollectionShouldHaveElementAt0Null = nameof(CollectionShouldHaveElementAt0Null);
             }
+            public static class Dictionaries
+            {
+                public const string DictionaryShouldContainKey = nameof(DictionaryShouldContainKey);
+                public const string DictionaryShouldContainValue = nameof(DictionaryShouldContainValue);
+                public const string DictionaryShouldContainKeyAndValue = nameof(DictionaryShouldContainKeyAndValue);
+                public const string DictionaryShouldContainPair = nameof(DictionaryShouldContainPair);
+                public const string DictionaryShouldNotContainKey = nameof(DictionaryShouldNotContainKey);
+                public const string DictionaryShouldNotContainValue = nameof(DictionaryShouldNotContainValue);
+
+            }
         }
     }
 }
