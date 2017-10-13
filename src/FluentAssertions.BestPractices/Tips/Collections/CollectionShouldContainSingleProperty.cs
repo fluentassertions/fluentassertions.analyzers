@@ -39,7 +39,11 @@ namespace FluentAssertions.BestPractices
             public override void VisitArgumentList(ArgumentListSyntax node)
             {
                 if (!node.Arguments.Any()) return;
-                if (CurrentMethod != "HaveCount") base.VisitArgumentList(node); ;
+                if (CurrentMethod != "HaveCount")
+                {
+                    base.VisitArgumentList(node);
+                    return;
+                }
 
                 _haveCountMethodHas1Argument =
                     node.Arguments[0].Expression is LiteralExpressionSyntax literal
@@ -55,6 +59,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldContainSinglePropertyAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().ContainSingle({properties.CombineWithBecauseArgumentsString(properties.PredicateString)});");
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().ContainSingle({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
     }
 }

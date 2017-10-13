@@ -49,6 +49,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainPropertyAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotContain({properties.CombineWithBecauseArgumentsString(properties.PredicateString)});");
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotContain({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
     }
 }

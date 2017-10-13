@@ -15,7 +15,7 @@ namespace FluentAssertions.BestPractices
         public string Title => Properties[Constants.DiagnosticProperties.Title];
         public string VariableName => Properties[Constants.DiagnosticProperties.VariableName];
         public string BecauseArgumentsString => Properties[Constants.DiagnosticProperties.BecauseArgumentsString];
-        public string PredicateString => Properties[Constants.DiagnosticProperties.PredicateString];
+        public string LambdaString => Properties[Constants.DiagnosticProperties.LambdaString];
         public string ExpectedItemString => Properties[Constants.DiagnosticProperties.ExpectedItemString];
         public string UnexpectedItemString => Properties[Constants.DiagnosticProperties.UnexpectedItemString];
         public string ArgumentString => Properties[Constants.DiagnosticProperties.ArgumentString];

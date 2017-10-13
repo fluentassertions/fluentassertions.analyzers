@@ -6,7 +6,7 @@
         {
             public const string Title = nameof(Title);
             public const string VariableName = nameof(VariableName);
-            public const string PredicateString = nameof(PredicateString);
+            public const string LambdaString = nameof(LambdaString);
             public const string ExpectedItemString = nameof(ExpectedItemString);
             public const string UnexpectedItemString = nameof(UnexpectedItemString);
             public const string BecauseArgumentsString = nameof(BecauseArgumentsString);

@@ -17,7 +17,7 @@ namespace FluentAssertions.BestPractices
         }
 
         public override ImmutableDictionary<string, string> ToDiagnosticProperties()
-            => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.PredicateString, PredicateString);
+            => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.LambdaString, PredicateString);
 
         public override void VisitArgumentList(ArgumentListSyntax node)
         {

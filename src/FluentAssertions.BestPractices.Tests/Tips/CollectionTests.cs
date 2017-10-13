@@ -316,26 +316,26 @@ namespace FluentAssertions.BestPractices.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldBeInAscendingOrder_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldBeInAscendingOrderAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});",
-        newAssertion: "actual.Should().BeInAscendingOrder(x => x.BooleanProperty{0});")]
-        [NotImplemented]
+            oldAssertion: "actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});",
+            newAssertion: "actual.Should().BeInAscendingOrder(x => x.BooleanProperty{0});")]
+        [Implemented]
         public void CollectionShouldBeInAscendingOrder_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldBeInAscendingOrderCodeFix, CollectionShouldBeInAscendingOrderAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual{0});")]
-        [NotImplemented]
+        [Implemented]
         public void CollectionShouldBeInDescendingOrder_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldBeInDescendingOrderAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-        oldAssertion: "actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual{0});",
-        newAssertion: "actual.Should().BeInDescendingOrder(x => x.BooleanProperty{0});")]
-        [NotImplemented]
+            oldAssertion: "actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual{0});",
+            newAssertion: "actual.Should().BeInDescendingOrder(x => x.BooleanProperty{0});")]
+        [Implemented]
         public void CollectionShouldBeInDescendingOrder_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldBeInDescendingOrderCodeFix, CollectionShouldBeInDescendingOrderAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]

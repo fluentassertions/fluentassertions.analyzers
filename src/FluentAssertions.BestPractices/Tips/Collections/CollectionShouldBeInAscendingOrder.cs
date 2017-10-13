@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -14,31 +15,39 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldBeInAscendingOrder;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use {0} .Should() followed by .BeInAscendingOrder() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
-            return null;
-            var visitor = new CollectionShouldBeInAscendingOrderSyntaxVisitor();
-            statement.Accept(visitor);
-
-            if (visitor.IsValid)
+            get
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [Constants.DiagnosticProperties.VariableName] = visitor.VariableName,
-                    [Constants.DiagnosticProperties.Title] = Title
-                }.ToImmutableDictionary();
-
-                return Diagnostic.Create(
-                    descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
-                    properties: properties,
-                    messageArgs: visitor.VariableName);
+                yield return (new OrderByShouldEqualSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("Equal", 1));
             }
-            return null;
+        }
+        private class OrderByShouldEqualSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        {
+            private bool _argumentIsSelf;
+            protected override string MathodContainingLambda => "OrderBy";
+
+            public override bool IsValid => base.IsValid && _argumentIsSelf;
+
+            public OrderByShouldEqualSyntaxVisitor() : base("OrderBy", "Should", "Equal")
+            {
+            }
+
+            public override void VisitArgumentList(ArgumentListSyntax node)
+            {
+                if (!node.Arguments.Any()) return;
+                if (CurrentMethod != "Equal")
+                {
+                    base.VisitArgumentList(node);
+                    return;
+                }
+
+                _argumentIsSelf = node.Arguments[0].Expression is IdentifierNameSyntax identifier
+                    && identifier.Identifier.Text == VariableName;
+            }
         }
     }
 
@@ -48,16 +57,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeInAscendingOrderAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-        {
-			throw new System.NotImplementedException();
-		}
-    }
-
-    public class CollectionShouldBeInAscendingOrderSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CollectionShouldBeInAscendingOrderSyntaxVisitor() : base("###")
-        {
-			throw new System.NotImplementedException();
-        }
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().BeInAscendingOrder({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
     }
 }
