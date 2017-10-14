@@ -42,6 +42,6 @@ namespace FluentAssertions.BestPractices
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer.DiagnosticId);
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties}.Should().OnlyHaveUniqueItems({properties.CombineWithBecauseArgumentsString(properties.LambdaString)})");
+            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().OnlyHaveUniqueItems({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
     }
 }
