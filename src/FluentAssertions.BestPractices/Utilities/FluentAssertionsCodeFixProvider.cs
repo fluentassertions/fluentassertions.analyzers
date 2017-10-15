@@ -33,12 +33,14 @@ namespace FluentAssertions.BestPractices
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var newStatement = GetNewStatement(new FluentAssertionsDiagnosticProperties(properties)).WithTriviaFrom(statement);
+            var newStatement = GetNewStatement(statement, new FluentAssertionsDiagnosticProperties(properties)).WithTriviaFrom(statement);
 
             root = root.ReplaceNode(statement, newStatement);
 
             return document.WithSyntaxRoot(root);
         }
+
+        protected virtual StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties) => GetNewStatement(properties);
 
         protected abstract StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties);
     }

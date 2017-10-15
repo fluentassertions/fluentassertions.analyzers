@@ -18,6 +18,8 @@ namespace FluentAssertions.BestPractices
 
         public sealed override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCodeBlockAction(AnalyzeCodeBlock);
         }
 

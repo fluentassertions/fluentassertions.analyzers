@@ -9,7 +9,6 @@ namespace FluentAssertions.BestPractices
 
     public abstract class FluentAssertionsCSharpSyntaxVisitor : CSharpSyntaxVisitor
     {
-        protected bool EncounteredFirstMethod;
         protected string CurrentMethod => VisitedMethods.Count > 0 ? VisitedMethods.Peek() : null;
 
         protected readonly Stack<string> VisitedMethods = new Stack<string>();
@@ -25,7 +24,7 @@ namespace FluentAssertions.BestPractices
 
         protected FluentAssertionsCSharpSyntaxVisitor(params string[] requiredMethods)
         {
-            RequiredMethods = new Stack<string>(requiredMethods);
+            RequiredMethods = new Stack<string>(requiredMethods);            
         }
 
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => new Dictionary<string, string>
@@ -54,38 +53,22 @@ namespace FluentAssertions.BestPractices
         public sealed override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
             var methodName = node.Name.Identifier.Text;
-            VisitedMethods.Push(methodName);
 
-            if (!EncounteredFirstMethod && !methodName.Equals(RequiredMethods.Peek()))
-            {
-                Visit(node.Expression);
-            }
-            else if (RequiredMethods.Count > 0 && methodName.Equals(RequiredMethods.Pop()))
-            {
-                EncounteredFirstMethod = true;
-                Visit(node.Expression);
-            }
+            VisitMethod(methodName);
+
+            Visit(node.Expression);
+
         }
         public sealed override void VisitElementAccessExpression(ElementAccessExpressionSyntax node)
         {
             const string methodName = "[]";
-            VisitedMethods.Push(methodName);
 
-            if (!EncounteredFirstMethod && !methodName.Equals(RequiredMethods.Peek()))
-            {
-                Visit(node.Expression);
-                Visit(node.ArgumentList);
+            VisitMethod(methodName);
 
-                VisitedMethods.Pop();
-            }
-            else if (RequiredMethods.Count > 0 && methodName.Equals(RequiredMethods.Pop()))
-            {
-                EncounteredFirstMethod = true;
-                Visit(node.Expression);
-                Visit(node.ArgumentList);
+            Visit(node.Expression);
+            Visit(node.ArgumentList);
 
-                VisitedMethods.Pop();
-            }
+            VisitedMethods.Pop();
         }
 
         public sealed override void VisitIdentifierName(IdentifierNameSyntax node)
@@ -93,6 +76,15 @@ namespace FluentAssertions.BestPractices
             if (RequiredMethods.Count == 0)
             {
                 VariableName = node.Identifier.Text;
+            }
+        }
+
+        private void VisitMethod(string methodName)
+        {
+            VisitedMethods.Push(methodName);
+            if (RequiredMethods.Count > 0 && methodName.Equals(RequiredMethods.Peek()))
+            {
+                RequiredMethods.Pop();
             }
         }
     }

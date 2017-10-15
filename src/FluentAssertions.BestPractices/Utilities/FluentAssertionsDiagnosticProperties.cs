@@ -12,21 +12,23 @@ namespace FluentAssertions.BestPractices
             Properties = properties;
         }
 
-        public string Title => Properties[Constants.DiagnosticProperties.Title];
-        public string VariableName => Properties[Constants.DiagnosticProperties.VariableName];
-        public string BecauseArgumentsString => Properties[Constants.DiagnosticProperties.BecauseArgumentsString];
-        public string LambdaString => Properties[Constants.DiagnosticProperties.LambdaString];
-        public string ExpectedItemString => Properties[Constants.DiagnosticProperties.ExpectedItemString];
-        public string UnexpectedItemString => Properties[Constants.DiagnosticProperties.UnexpectedItemString];
-        public string ArgumentString => Properties[Constants.DiagnosticProperties.ArgumentString];
+        public string Title => GetPropertyOrDefault(Constants.DiagnosticProperties.Title);
+        public string VariableName => GetPropertyOrDefault(Constants.DiagnosticProperties.VariableName);
+        public string BecauseArgumentsString => GetPropertyOrDefault(Constants.DiagnosticProperties.BecauseArgumentsString);
+        public string LambdaString => GetPropertyOrDefault(Constants.DiagnosticProperties.LambdaString);
+        public string ExpectedItemString => GetPropertyOrDefault(Constants.DiagnosticProperties.ExpectedItemString);
+        public string UnexpectedItemString => GetPropertyOrDefault(Constants.DiagnosticProperties.UnexpectedItemString);
+        public string ArgumentString => GetPropertyOrDefault(Constants.DiagnosticProperties.ArgumentString);
 
         public string CombineWithBecauseArgumentsString(string validArgument)
         {
-            if (!string.IsNullOrWhiteSpace(BecauseArgumentsString))
+            if (!string.IsNullOrWhiteSpace(BecauseArgumentsString) && !string.IsNullOrWhiteSpace(validArgument))
             {
                 return $"{validArgument}, {BecauseArgumentsString}";
             }
-            return validArgument;
+            return validArgument + BecauseArgumentsString;
         }
+
+        private string GetPropertyOrDefault(string key) => Properties.TryGetValue(key, out var value) ? value : string.Empty;
     }
 }

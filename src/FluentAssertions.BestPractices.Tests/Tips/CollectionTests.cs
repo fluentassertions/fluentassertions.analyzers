@@ -208,18 +208,7 @@ namespace FluentAssertions.BestPractices.Tests
         [Implemented]
         [Ignore("Will be available in Fluent Assertions 5.0")]
         public void CollectionShouldNotHaveCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotHaveCountCodeFix, CollectionShouldNotHaveCountAnalyzer>(oldAssertion, newAssertion);
-
-        [AssertionDataTestMethod]
-        [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
-        [Implemented]
-        public void CollectionShouldContainSingle_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldContainSingleAnalyzer>(assertion);
-
-        [AssertionDataTestMethod]
-        [AssertionCodeFix(oldAssertion: "actual.Should().HaveCount(1{0});",
-            newAssertion: "actual.Should().ContainSingle({0});")]
-        [Implemented]
-        public void CollectionShouldContainSingle_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldContainSingleCodeFix, CollectionShouldContainSingleAnalyzer>(oldAssertion, newAssertion);
-
+        
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveCount(expected.Count(){0});")]
         [Implemented]
@@ -246,16 +235,20 @@ namespace FluentAssertions.BestPractices.Tests
         public void CollectionShouldNotHaveSameCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldNotHaveSameCountCodeFix, CollectionShouldNotHaveSameCountAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
+        [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});")]
         [Implemented]
-        public void CollectionShouldContainSingleProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldContainSinglePropertyAnalyzer>(assertion);
+        public void CollectionShouldContainSingle_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldContainSingleAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});",
             newAssertion: "actual.Should().ContainSingle(x => x.BooleanProperty{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().HaveCount(1{0});",
+            newAssertion: "actual.Should().ContainSingle({0});")]
         [Implemented]
-        public void CollectionShouldContainSingleProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldContainSinglePropertyCodeFix, CollectionShouldContainSinglePropertyAnalyzer>(oldAssertion, newAssertion);
+        public void CollectionShouldContainSingle_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionShouldContainSingleCodeFix, CollectionShouldContainSingleAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().NotBeNull().And.NotBeEmpty({0});")]
