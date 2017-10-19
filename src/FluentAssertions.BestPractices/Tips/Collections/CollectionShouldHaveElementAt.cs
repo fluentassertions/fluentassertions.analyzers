@@ -28,7 +28,7 @@ namespace FluentAssertions.BestPractices
             }
         }
 
-        private class ElementAtIndexShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
+        public class ElementAtIndexShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
         {
             protected override bool AreArgumentsValid() =>
                 Arguments.TryGetValue(("ElementAt", 0), out ExpressionSyntax index) && (index is LiteralExpressionSyntax || index is IdentifierNameSyntax)
@@ -43,7 +43,7 @@ namespace FluentAssertions.BestPractices
                 .Add(Constants.DiagnosticProperties.ArgumentString, Arguments[("ElementAt", 0)].ToFullString())
                 .Add(Constants.DiagnosticProperties.ExpectedItemString, Arguments[("Be", 0)].ToFullString());
         }
-        private class IndexerShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
+        public class IndexerShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
         {
             protected override bool AreArgumentsValid() =>
                 Arguments.TryGetValue(("[]", 0), out ExpressionSyntax index) && (index is LiteralExpressionSyntax || index is IdentifierNameSyntax)
@@ -58,7 +58,7 @@ namespace FluentAssertions.BestPractices
                 .Add(Constants.DiagnosticProperties.ExpectedItemString, Arguments[("Be", 0)].ToFullString());
         }
 
-        private class SkipFirstShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
+        public class SkipFirstShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
         {
             protected override bool AreArgumentsValid() =>
                 Arguments.TryGetValue(("Skip", 0), out ExpressionSyntax index) && (index is LiteralExpressionSyntax || index is IdentifierNameSyntax)
@@ -73,8 +73,6 @@ namespace FluentAssertions.BestPractices
                 .Add(Constants.DiagnosticProperties.ArgumentString, Arguments[("Skip", 0)].ToFullString())
                 .Add(Constants.DiagnosticProperties.ExpectedItemString, Arguments[("Be", 0)].ToFullString());
         }
-
-        // actual.Skip(k).First().Should().Be(expectedItem{0});
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveElementAtCodeFix)), Shared]
@@ -84,5 +82,34 @@ namespace FluentAssertions.BestPractices
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
             => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveElementAt({properties.ArgumentString}, {properties.CombineWithBecauseArgumentsString(properties.ExpectedItemString)});");
+
+        /*[AssertionCodeFix(
+            oldAssertion: "actual[k].Should().Be(expectedItem{0});",
+            newAssertion: "actual.Should().HaveElementAt(k, expectedItem{0});")]*/
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.ElementAtIndexShouldBeSyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
+                var newStatement = GetNewStatement(statement, remove);
+
+                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.IndexerShouldBeSyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
+                var newStatement = GetNewStatement(statement, remove);
+
+                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.SkipFirstShouldBeSyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
+                var newStatement = GetNewStatement(statement, remove, NodeReplacement.Remove("First"));
+
+                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+            }
+            throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+        }
     }
 }

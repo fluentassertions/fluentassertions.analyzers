@@ -45,5 +45,16 @@ namespace FluentAssertions.BestPractices
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
             => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotBeEmpty({properties.BecauseArgumentsString});");
+
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            NodeReplacement[] replacements =
+            {
+                new NodeReplacement.RemoveNodeReplacement("Any"),
+                new NodeReplacement.RenameNodeReplacement("BeTrue", "NotBeEmpty")
+            };
+
+            return GetNewStatement(statement, replacements);
+        }
     }
 }

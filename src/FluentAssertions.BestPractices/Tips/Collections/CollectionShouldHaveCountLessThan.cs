@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCountLessThan;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by HaveCountLessThan() instead.";
+        public const string Message = "Use {0} .Should() followed by .HaveCountLessThan() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
@@ -39,8 +38,10 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldHaveCountLessThanCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountLessThanAnalyzer.DiagnosticId);
-
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCountLessThan({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameNodeReplacement("BeLessThan", "HaveCountLessThan"));
+        }
     }
 }

@@ -20,6 +20,8 @@ namespace FluentAssertions.BestPractices
         public string UnexpectedItemString => GetPropertyOrDefault(Constants.DiagnosticProperties.UnexpectedItemString);
         public string ArgumentString => GetPropertyOrDefault(Constants.DiagnosticProperties.ArgumentString);
 
+        public string VisitorName => GetPropertyOrDefault(Constants.DiagnosticProperties.VisitorName);
+
         public string CombineWithBecauseArgumentsString(string validArgument)
         {
             if (!string.IsNullOrWhiteSpace(BecauseArgumentsString) && !string.IsNullOrWhiteSpace(validArgument))

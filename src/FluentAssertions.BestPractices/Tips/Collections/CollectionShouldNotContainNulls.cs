@@ -39,8 +39,13 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldNotContainNullsCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainNullsAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var remove = NodeReplacement.RemoveAndExtractArguments("Select");
+            var newStatement = GetNewStatement(statement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotContainNulls({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
+            return GetNewStatement(newStatement, NodeReplacement.PrependArguments("NotContainNulls", remove.Arguments));
+        }
     }
 }

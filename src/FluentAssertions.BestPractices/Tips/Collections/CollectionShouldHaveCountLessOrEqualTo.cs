@@ -15,7 +15,7 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCountLessOrEqualTo;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by HaveCountLessOrEqualTo instead.";
+        public const string Message = "Use {0} .Should() followed by .HaveCountLessOrEqualTo() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
@@ -42,5 +42,10 @@ namespace FluentAssertions.BestPractices
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
             => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCountLessOrEqualTo({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameNodeReplacement("BeLessOrEqualTo", "HaveCountLessOrEqualTo"));
+        }
     }
 }

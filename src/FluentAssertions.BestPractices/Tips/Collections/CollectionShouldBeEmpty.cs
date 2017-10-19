@@ -27,7 +27,7 @@ namespace FluentAssertions.BestPractices
             }
         }
 
-        private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithoutLambdaArgumentCSharpSyntaxVisitor
+        public class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithoutLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MathodNotContainingLambda => "Any";
 
@@ -35,7 +35,7 @@ namespace FluentAssertions.BestPractices
             {
             }
         }
-        private class ShouldHaveCount0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldHaveCount0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             private bool _haveCountMethodHas0Argument;
 
@@ -62,8 +62,35 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldBeEmptyCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeEmptyAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            switch (properties.VisitorName)
+            {
+                case nameof(CollectionShouldBeEmptyAnalyzer.AnyShouldBeFalseSyntaxVisitor):
+                    return GetNewStatement(statement, NodeReplacement.Remove("Any"), NodeReplacement.Rename("BeFalse", "BeEmpty"));
+                case nameof(CollectionShouldBeEmptyAnalyzer.ShouldHaveCount0SyntaxVisitor):
+                    return GetNewStatement(statement, new HaveCountNodeReplacement());
+                default:
+                    throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+            }
+        }
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().BeEmpty({properties.BecauseArgumentsString});");
+        private class HaveCountNodeReplacement : NodeReplacement
+        {
+            public override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == "HaveCount";
+            public override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Parent;
+            public override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
+            {
+                var invocation = (InvocationExpressionSyntax)listNode.Value.Parent;
+
+                invocation = invocation.ReplaceNode(listNode.Value, listNode.Value.WithName(SyntaxFactory.IdentifierName("BeEmpty")));
+
+                // remove the 0 argument
+                var arguments = invocation.ArgumentList.Arguments.RemoveAt(0);
+
+                return invocation.WithArgumentList(invocation.ArgumentList.WithArguments(arguments));
+            }
+        }
     }
 }

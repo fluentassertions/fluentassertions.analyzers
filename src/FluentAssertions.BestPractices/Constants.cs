@@ -11,6 +11,8 @@
             public const string UnexpectedItemString = nameof(UnexpectedItemString);
             public const string BecauseArgumentsString = nameof(BecauseArgumentsString);
             public const string ArgumentString = nameof(ArgumentString);
+
+            public const string VisitorName = nameof(VisitorName);
         }
 
         public static class Tips

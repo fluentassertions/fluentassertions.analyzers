@@ -49,5 +49,10 @@ namespace FluentAssertions.BestPractices
 
         protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
             => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotHaveCount({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameNodeReplacement("NotBe", "NotHaveCount"));
+        }
     }
 }

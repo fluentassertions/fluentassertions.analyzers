@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotBeNullOrEmpty;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use {0} .Should() followed by .NotBeNullOrEmpty() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
@@ -28,13 +27,13 @@ namespace FluentAssertions.BestPractices
             }
         }
 
-        private class ShouldNotBeNullAndNotBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldNotBeNullAndNotBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public ShouldNotBeNullAndNotBeEmptySyntaxVisitor() : base("Should", "NotBeNull", "And", "NotBeEmpty")
             {
             }
         }
-        private class ShouldNotBeEmptyAndNotBeNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldNotBeEmptyAndNotBeNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public ShouldNotBeEmptyAndNotBeNullSyntaxVisitor() : base("Should", "NotBeEmpty", "And", "NotBeNull")
             {
@@ -47,7 +46,35 @@ namespace FluentAssertions.BestPractices
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeNullOrEmptyAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotBeNullOrEmpty({properties.BecauseArgumentsString});");
+        protected override bool CanRewriteAssertion(ExpressionStatementSyntax statement)
+        {
+            var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
+            statement.Accept(visitor);
+
+            var notBeEmpty = visitor.Members.Find(member => member.Name.Identifier.Text == "NotBeEmpty");
+            var notBeNull = visitor.Members.Find(member => member.Name.Identifier.Text == "NotBeNull");
+
+            return !(notBeEmpty.Parent is InvocationExpressionSyntax notBeEmptyInvocation && notBeEmptyInvocation.ArgumentList.Arguments.Any()
+                && notBeNull.Parent is InvocationExpressionSyntax notBeNullInvocation && notBeNullInvocation.ArgumentList.Arguments.Any());
+        }
+
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeNullAndNotBeEmptySyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("NotBeEmpty");
+                var newStatement = GetNewStatement(statement, remove);
+
+                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("NotBeNull");
+                var newStatement = GetNewStatement(statement, remove);
+
+                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
+            }
+            throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+        }
     }
 }

@@ -39,8 +39,10 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldHaveCountGreaterOrEqualToCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountGreaterOrEqualToAnalyzer.DiagnosticId);
-
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCountGreaterOrEqualTo({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameNodeReplacement("BeGreaterOrEqualTo", "HaveCountGreaterOrEqualTo"));
+        }
     }
 }
