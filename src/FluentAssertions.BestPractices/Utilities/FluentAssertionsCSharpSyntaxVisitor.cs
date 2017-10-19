@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
 
 namespace FluentAssertions.BestPractices
 {
@@ -29,7 +28,8 @@ namespace FluentAssertions.BestPractices
 
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => new Dictionary<string, string>
         {
-            [Constants.DiagnosticProperties.VariableName] = VariableName
+            [Constants.DiagnosticProperties.VariableName] = VariableName,
+            [Constants.DiagnosticProperties.VisitorName] = GetType().Name
         }.ToImmutableDictionary();
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax node)
