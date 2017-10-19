@@ -52,8 +52,13 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldNotContainItemCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainItemAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Contains");
+            var newStatement = GetNewStatement(statement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotContain({properties.CombineWithBecauseArgumentsString(properties.UnexpectedItemString)});");
+            return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeFalse", "NotContain", remove.Arguments));
+        }
     }
 }

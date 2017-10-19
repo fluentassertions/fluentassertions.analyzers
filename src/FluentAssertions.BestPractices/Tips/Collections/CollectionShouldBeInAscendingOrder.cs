@@ -55,8 +55,15 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldBeInAscendingOrderCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeInAscendingOrderAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var remove = NodeReplacement.RemoveAndExtractArguments("OrderBy");
+            var newStatement = GetNewStatement(statement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().BeInAscendingOrder({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
+            newStatement = GetNewStatement(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("Equal", "BeInAscendingOrder"));
+
+            return GetNewStatement(newStatement, NodeReplacement.PrependArguments("BeInAscendingOrder", remove.Arguments));
+        }
     }
 }

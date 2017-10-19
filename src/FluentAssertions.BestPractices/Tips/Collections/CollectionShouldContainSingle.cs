@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -26,8 +25,8 @@ namespace FluentAssertions.BestPractices
                 yield return (new ShouldHaveCount1SyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("HaveCount", 1));
             }
         }
-        
-        private class WhereShouldHaveCount1SyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+
+        public class WhereShouldHaveCount1SyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             private bool _haveCountMethodHas1Argument;
 
@@ -52,7 +51,7 @@ namespace FluentAssertions.BestPractices
                     && argument == 1;
             }
         }
-        private class ShouldHaveCount1SyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
+        public class ShouldHaveCount1SyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
         {
             protected override string MethodContainingArgument => "HaveCount";
             public ShouldHaveCount1SyntaxVisitor() : base("Should", "HaveCount")
@@ -76,8 +75,22 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldContainSingleCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldContainSingleAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var newStatement = GetNewStatement(statement, NodeReplacement.RenameAndRemoveFirstArgument("HaveCount", "ContainSingle"));
+            if (properties.VisitorName == nameof(CollectionShouldContainSingleAnalyzer.ShouldHaveCount1SyntaxVisitor))
+            {
+                return newStatement;
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldContainSingleAnalyzer.WhereShouldHaveCount1SyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("Where");
+                newStatement = GetNewStatement(newStatement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().ContainSingle({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
+                return  GetNewStatement(newStatement, NodeReplacement.PrependArguments("ContainSingle", remove.Arguments));
+            }
+            throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+        }
     }
 }

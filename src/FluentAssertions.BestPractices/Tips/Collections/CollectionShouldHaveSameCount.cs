@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveSameCount;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by HaveSameCount() instead.";
+        public const string Message = "Use {0} .Should() followed by .HaveSameCount() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
@@ -43,13 +42,15 @@ namespace FluentAssertions.BestPractices
             }
         }
     }
-    
+
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveSameCountCodeFix)), Shared]
     public class CollectionShouldHaveSameCountCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveSameCountAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveSameCount({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            return GetNewStatement(statement, new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("HaveCount", "HaveSameCount"));
+        }
     }
 }

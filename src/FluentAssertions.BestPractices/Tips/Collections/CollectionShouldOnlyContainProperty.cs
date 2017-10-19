@@ -27,7 +27,7 @@ namespace FluentAssertions.BestPractices
             }
         }
 
-        private class AllShouldBeTrueSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        public class AllShouldBeTrueSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MethodContainingLambda => "All";
             public AllShouldBeTrueSyntaxVisitor() : base("All", "Should", "BeTrue")
@@ -40,8 +40,13 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldOnlyContainPropertyCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyContainPropertyAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("All");
+            var newStatement = GetNewStatement(statement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().OnlyContain({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
+            return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeTrue", "OnlyContain", remove.Arguments));
+        }
     }
 }

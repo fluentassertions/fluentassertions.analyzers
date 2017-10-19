@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FluentAssertions.BestPractices.Tests
 {
@@ -21,21 +22,28 @@ namespace FluentAssertions.BestPractices.Tests
     {
         public string Assertion { get; }
 
-        public AssertionDiagnosticAttribute(string assertion)
+        public bool Ignore { get; }
+
+        public AssertionDiagnosticAttribute(string assertion, bool ignore = false)
         {
             Assertion = assertion;
+            Ignore = ignore;
         }
     }
+
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class AssertionCodeFixAttribute : Attribute
     {
         public string OldAssertion { get; }
         public string NewAssertion { get; }
 
-        public AssertionCodeFixAttribute(string oldAssertion, string newAssertion)
+        public bool Ignore { get; }
+
+        public AssertionCodeFixAttribute(string oldAssertion, string newAssertion, bool ignore = false)
         {
             OldAssertion = oldAssertion;
             NewAssertion = newAssertion;
+            Ignore = ignore;
         }
     }
 
@@ -52,9 +60,9 @@ namespace FluentAssertions.BestPractices.Tests
             var codeFixAttributes = testMethod.GetAttributes<AssertionCodeFixAttribute>(false);
 
             var results = new List<TestResult>();
-            for (int i = 0; i < diagnosticAttributes.Length; i++)
+            foreach (var diagnosticAttribute in diagnosticAttributes.Where(attribute => !attribute.Ignore))
             {
-                foreach (var assertion in GetTestCases(diagnosticAttributes[i]))
+                foreach (var assertion in GetTestCases(diagnosticAttribute))
                 {
                     var result = testMethod.Invoke(new[] { assertion });
                     result.DisplayName = assertion;
@@ -62,9 +70,9 @@ namespace FluentAssertions.BestPractices.Tests
                     results.Add(result);
                 }
             }
-            for (int i = 0; i < codeFixAttributes.Length; i++)
+            foreach (var codeFixAttribute in codeFixAttributes.Where(attribute => !attribute.Ignore))
             {
-                foreach (var (oldAssertion, newAssertion) in GetTestCases(codeFixAttributes[i]))
+                foreach (var (oldAssertion, newAssertion) in GetTestCases(codeFixAttribute))
                 {
                     var result = testMethod.Invoke(new[] { oldAssertion, newAssertion });
                     result.DisplayName = $"{Environment.NewLine}old: \"{oldAssertion}\" {Environment.NewLine}new: \"{newAssertion}\"";

@@ -24,12 +24,17 @@ namespace FluentAssertions.BestPractices
                 var statement = root.FindToken(diagnostic.Location.SourceSpan.Start)
                    .Parent.AncestorsAndSelf().OfType<ExpressionStatementSyntax>().First();
 
-                context.RegisterCodeFix(CodeAction.Create(
-                    title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
-                    createChangedDocument: c => RewriteAssertion(context.Document, statement, diagnostic.Properties, c)
-                    ), diagnostic);
+                if (CanRewriteAssertion(statement))
+                {
+                    context.RegisterCodeFix(CodeAction.Create(
+                        title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
+                        createChangedDocument: c => RewriteAssertion(context.Document, statement, diagnostic.Properties, c)
+                        ), diagnostic);
+                }
             }
         }
+
+        protected virtual bool CanRewriteAssertion(ExpressionStatementSyntax statement) => true;
 
         protected async Task<Document> RewriteAssertion(Document document, ExpressionStatementSyntax statement, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
         {
@@ -48,32 +53,37 @@ namespace FluentAssertions.BestPractices
         protected ExpressionStatementSyntax GetNewStatement(ExpressionStatementSyntax statement, params NodeReplacement[] replacements)
         {
             var newStatement = statement;
-            void UpdateRoot(NodeReplacement replacement)
-            {
-                var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
-                newStatement.Accept(visitor);
-                var members = new LinkedList<MemberAccessExpressionSyntax>(visitor.Members);
-
-                var current = members.Last;
-                while (current != null)
-                {
-                    if (replacement.IsValidNode(current.Value))
-                    {
-                        newStatement = newStatement.ReplaceNode(replacement.ComputeOld(current), replacement.ComputeNew(current));
-                        return;
-                    }
-                    current = current.Previous;
-                }
-            }
-
             foreach (var replacement in replacements)
             {
-                UpdateRoot(replacement);
+                newStatement = GetNewStatement(newStatement, replacement);
+                var code = newStatement.ToFullString();
             }
             return newStatement;
         }
 
-        private class MemberAccessExpressionsCSharpSyntaxVisitor : CSharpSyntaxVisitor
+        protected ExpressionStatementSyntax GetNewStatement(ExpressionStatementSyntax statement, NodeReplacement replacement)
+        {
+            var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
+            statement.Accept(visitor);
+            var members =  new LinkedList<MemberAccessExpressionSyntax>(visitor.Members);
+
+            var current = members.Last;
+            while (current != null)
+            {
+                if (replacement.IsValidNode(current.Value))
+                {
+                    // extract custom data into the replacement object
+                    replacement.ExtractValues(current.Value);
+
+                    return statement.ReplaceNode(replacement.ComputeOld(current), replacement.ComputeNew(current));
+                }
+                current = current.Previous;
+            }
+
+            throw new System.InvalidOperationException("should not get here");
+        }
+
+        protected class MemberAccessExpressionsCSharpSyntaxVisitor : CSharpSyntaxVisitor
         {
             public List<MemberAccessExpressionSyntax> Members { get; } = new List<MemberAccessExpressionSyntax>();
 
@@ -81,9 +91,13 @@ namespace FluentAssertions.BestPractices
 
             public sealed override void VisitExpressionStatement(ExpressionStatementSyntax node) => Visit(node.Expression);
 
+
             public sealed override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
             {
-                Members.Add(node);
+                if (node.Name.Identifier.Text != "And")
+                {
+                    Members.Add(node);
+                }
                 Visit(node.Expression);
             }
         }

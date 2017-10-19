@@ -38,8 +38,13 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldNotIntersectWithCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotIntersectWithAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var remove = NodeReplacement.RemoveAndExtractArguments("Intersect");
+            var newStatement = GetNewStatement(statement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotIntersectWith({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+            return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotIntersectWith", remove.Arguments));
+        }
     }
 }

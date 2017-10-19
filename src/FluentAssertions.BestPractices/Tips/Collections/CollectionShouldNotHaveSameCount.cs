@@ -47,8 +47,10 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldNotHaveSameCountCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotHaveSameCountAnalyzer.DiagnosticId);
-
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotHaveSameCount({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("NotBe", "NotHaveSameCount"));
+        }
     }
 }

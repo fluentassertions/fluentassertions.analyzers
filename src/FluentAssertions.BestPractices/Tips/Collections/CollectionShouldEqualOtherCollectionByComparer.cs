@@ -63,7 +63,6 @@ namespace FluentAssertions.BestPractices
                 .Add(Constants.DiagnosticProperties.LambdaString, _lambdaArgument.ToFullString())
                 .Add(Constants.DiagnosticProperties.ArgumentString, _otherVariable);
 
-
             private class SelectSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
             {
                 protected override string MethodContainingLambda => "Select";
@@ -78,8 +77,34 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldEqualOtherCollectionByComparerCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldEqualOtherCollectionByComparerAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var removeMethodContainingFirstLambda = NodeReplacement.RemoveAndExtractArguments("Select");
+            var newStatement = GetNewStatement(statement, removeMethodContainingFirstLambda);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().Equal({properties.ArgumentString}, {properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
+            var removeArgument = NodeReplacement.RemoveFirstArgument("Equal");
+            newStatement = GetNewStatement(newStatement, removeArgument);
+
+            var argumentInvocation = (InvocationExpressionSyntax)removeArgument.Argument.Expression;
+            var identifier = ((MemberAccessExpressionSyntax)argumentInvocation.Expression).Expression;
+
+            var firstLambda = (SimpleLambdaExpressionSyntax)removeMethodContainingFirstLambda.Arguments[0].Expression;
+            var secondLambda = (SimpleLambdaExpressionSyntax)argumentInvocation.ArgumentList.Arguments[0].Expression;
+
+            var newArguments = SyntaxFactory.SeparatedList<ArgumentSyntax>()
+                .Add(removeArgument.Argument.WithExpression(identifier))
+                .Add(removeArgument.Argument.WithExpression(CombineLambdas(firstLambda, secondLambda).NormalizeWhitespace()
+            ));
+
+            return GetNewStatement(newStatement, NodeReplacement.PrependArguments("Equal", newArguments));
+        }
+
+        private ParenthesizedLambdaExpressionSyntax CombineLambdas(SimpleLambdaExpressionSyntax left, SimpleLambdaExpressionSyntax right) => SyntaxFactory.ParenthesizedLambdaExpression(
+            parameterList: SyntaxFactory.ParameterList().AddParameters(left.Parameter, right.Parameter),
+            body: SyntaxFactory.BinaryExpression(SyntaxKind.EqualsExpression,
+                left: (ExpressionSyntax)left.Body,
+                right: (ExpressionSyntax)right.Body)
+        );
     }
 }

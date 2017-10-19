@@ -53,8 +53,10 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldHaveCountCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountAnalyzer.DiagnosticId);
-
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveCount({properties.CombineWithBecauseArgumentsString(properties.ArgumentString)});");
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameNodeReplacement("Be", "HaveCount"));
+        }
     }
 }

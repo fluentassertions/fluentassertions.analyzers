@@ -40,8 +40,13 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldOnlyHaveUniqueItemsByComparerCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            var remove = NodeReplacement.RemoveAndExtractArguments("Select");
+            var newStatement = GetNewStatement(statement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().OnlyHaveUniqueItems({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
+            return GetNewStatement(newStatement, NodeReplacement.PrependArguments("OnlyHaveUniqueItems", remove.Arguments));
+        }
     }
 }

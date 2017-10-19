@@ -23,7 +23,7 @@ namespace FluentAssertions.BestPractices
 
         protected FluentAssertionsCSharpSyntaxVisitor(params string[] requiredMethods)
         {
-            RequiredMethods = new Stack<string>(requiredMethods);            
+            RequiredMethods = new Stack<string>(requiredMethods);
         }
 
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => new Dictionary<string, string>
@@ -37,7 +37,7 @@ namespace FluentAssertions.BestPractices
             Visit(node.Expression);
             Visit(node.ArgumentList);
 
-            VisitedMethods.Pop();
+            if (VisitedMethods.Count > 0) VisitedMethods.Pop();
         }
 
         public override void VisitArgumentList(ArgumentListSyntax node)

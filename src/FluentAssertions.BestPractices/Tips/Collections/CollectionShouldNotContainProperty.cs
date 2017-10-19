@@ -16,7 +16,7 @@ namespace FluentAssertions.BestPractices
         public const string Category = Constants.Tips.Category;
 
         public const string Message = "Use {0} .Should() followed by .NotContain() instead.";
-        
+
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
         {
@@ -28,22 +28,23 @@ namespace FluentAssertions.BestPractices
             }
         }
 
-        private class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        public class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MethodContainingLambda => "Any";
             public AnyShouldBeFalseSyntaxVisitor() : base("Any", "Should", "BeFalse")
             {
             }
         }
-        private class WhereShouldBeEmptySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+
+        public class WhereShouldBeEmptySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MethodContainingLambda => "Where";
             public WhereShouldBeEmptySyntaxVisitor() : base("Where", "Should", "BeEmpty")
             {
             }
         }
-        
-        private class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+
+        public class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
         {
             protected override string MethodContainingLambda => "OnlyContain";
             public override SimpleLambdaExpressionSyntax Lambda => ReverseLambda(base.Lambda);
@@ -68,8 +69,28 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldNotContainPropertyCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainPropertyAnalyzer.DiagnosticId);
+        
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.AnyShouldBeFalseSyntaxVisitor))
+            {
+                var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Any");
+                var newStatement = GetNewStatement(statement, remove);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotContain({properties.CombineWithBecauseArgumentsString(properties.LambdaString)});");
+                return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeFalse", "NotContain", remove.Arguments));
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.WhereShouldBeEmptySyntaxVisitor))
+            {
+                var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Where");
+                var newStatement = GetNewStatement(statement, remove);
+
+                return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeEmpty", "NotContain", remove.Arguments));
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.ShouldOnlyContainNotSyntaxVisitor))
+            {
+                return GetNewStatement(statement, new NodeReplacement.RenameAndNegateLambdaNodeReplacement("OnlyContain", "NotContain"));
+            }
+            throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+        }
     }
 }
