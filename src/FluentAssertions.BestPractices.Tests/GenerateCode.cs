@@ -1,45 +1,32 @@
-﻿using System.Collections;
-using System.Text;
+﻿using System.Text;
 
 namespace FluentAssertions.BestPractices.Tests
 {
     public static class GenerateCode
     {
-        public static string NamespaceName => "TestNamespace";
-        public static string ClassName => "TestClass";
-        public static string MethodName => "TestMethod";
-
         public static string ActualVariableName => "actual";
-        public static string ExpectedVariableName => "expected";
-        public static string ExpectedItemVariableName => "expectedItem";
-        public static string UnexpectedVariableName => "unexpected";
-        public static string UnexpectedItemVariableName => "unexpectedItem";
-        public static string CountVariable => "k";
-
-        public static string ComplexClassName => "TestComplexClass";
-        public static string ComplexClassBooleanpropertyName => "BooleanProperty";
 
         public static string EnumerableAssertion(string assertion) => new StringBuilder()
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Linq;")
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
-            .AppendLine($"namespace {NamespaceName}")
+            .AppendLine("namespace TestNamespace")
             .AppendLine("{")
-            .AppendLine($"    public class {ClassName}")
+            .AppendLine("    public class TestClass")
             .AppendLine("    {")
-            .AppendLine($"        public void {MethodName}({nameof(IList)}<{ComplexClassName}> {ActualVariableName}, {nameof(IList)}<{ComplexClassName}> {ExpectedVariableName}, {nameof(IList)}<{ComplexClassName}> {UnexpectedVariableName}, {ComplexClassName} {ExpectedItemVariableName}, {ComplexClassName} {UnexpectedItemVariableName}, int {CountVariable})")
+            .AppendLine($"        public void TestMethod(IList<TestComplexClass> {ActualVariableName}, IList<TestComplexClass> expected, IList<TestComplexClass> unexpected, TestComplexClass expectedItem, TestComplexClass unexpectedItem, int k)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendLine($"    public class {ComplexClassName}")
+            .AppendLine("    public class TestComplexClass")
             .AppendLine("    {")
-            .AppendLine($"        public bool {ComplexClassBooleanpropertyName} {{ get; set; }}")
+            .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("    }")
             .AppendLine("    class Program")
             .AppendLine("    {")
-            .AppendLine($"        public static void Main()")
+            .AppendLine("        public static void Main()")
             .AppendLine("        {")
             .AppendLine("        }")
             .AppendLine("    }")
@@ -51,18 +38,18 @@ namespace FluentAssertions.BestPractices.Tests
             .AppendLine("using System.Linq;")
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
-            .AppendLine($"namespace {NamespaceName}")
+            .AppendLine("namespace TestNamespace")
             .AppendLine("{")
-            .AppendLine($"    public class {ClassName}")
+            .AppendLine("    public class TestClass")
             .AppendLine("    {")
-            .AppendLine($"        public void {MethodName}({nameof(IDictionary)}<string, {ComplexClassName}> {ActualVariableName}, {nameof(IDictionary)}<string, {ComplexClassName}> {ExpectedVariableName}, {nameof(IList)}<{ComplexClassName}> {UnexpectedVariableName}, {ComplexClassName} {ExpectedItemVariableName}, {ComplexClassName} {UnexpectedItemVariableName}, int {CountVariable})")
+            .AppendLine($"        public void TestMethod(Dictionary<string, TestComplexClass> {ActualVariableName}, IDictionary<string, TestComplexClass> expected, IDictionary<string, TestComplexClass> unexpected, string expectedKey, TestComplexClass expectedValue, string unexpectedKey, TestComplexClass unexpectedValue)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendLine($"    public class {ComplexClassName}")
+            .AppendLine($"    public class TestComplexClass")
             .AppendLine("    {")
-            .AppendLine($"        public bool {ComplexClassBooleanpropertyName} {{ get; set; }}")
+            .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("    }")
             .AppendLine("    class Program")
             .AppendLine("    {")
@@ -74,11 +61,11 @@ namespace FluentAssertions.BestPractices.Tests
             .ToString();
 
         public static string NumericAssertion(string assertion) => new StringBuilder()
-            .AppendLine($"namespace {NamespaceName}")
+            .AppendLine("namespace TestNamespace")
             .AppendLine("{")
-            .AppendLine($"    class {ClassName}")
+            .AppendLine("    class TestClass")
             .AppendLine("    {")
-            .AppendLine($"        void {MethodName}(int {ActualVariableName}, int {ExpectedVariableName})")
+            .AppendLine($"        void TestMethod(int {ActualVariableName}, int expected)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")

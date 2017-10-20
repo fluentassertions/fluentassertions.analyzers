@@ -33,7 +33,6 @@ namespace FluentAssertions.BestPractices.Tests
                 typeof(Compilation), // Microsoft.CodeAnalysis
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
-            //    typeof(System.Linq.Expressions.Expression) // System.Linq.Expressions
             }.Select(type => type.GetTypeInfo().Assembly.Location)
             .Append(GetSystemAssemblyPathByName("System.Threading.Tasks.dll"))
             .Append(GetSystemAssemblyPathByName("System.Runtime.dll"))
@@ -42,6 +41,7 @@ namespace FluentAssertions.BestPractices.Tests
             .Append(GetSystemAssemblyPathByName("System.Xml.XDocument.dll"))
             .Append(GetSystemAssemblyPathByName("System.Private.Xml.Linq.dll"))
             .Append(GetSystemAssemblyPathByName("System.Linq.Expressions.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Collections.dll"))
             .Select(location => (MetadataReference)MetadataReference.CreateFromFile(location))
             .ToImmutableArray();
 
@@ -277,7 +277,9 @@ namespace FluentAssertions.BestPractices.Tests
                 var allDiagnostics = compilationWithAnalyzers.GetAllDiagnosticsAsync().Result;
                 var other = allDiagnostics.Except(relevantDiagnostics).ToArray();
 
-                other.Should().BeEmpty("there should be no error diagnostics that are not related to the test");
+                var code = documents[0].GetSyntaxRootAsync().Result.ToFullString();
+
+                other.Should().BeEmpty($"there should be no error diagnostics that are not related to the test.{Environment.NewLine}code: {code}");
 
                 foreach (var diag in relevantDiagnostics)
                 {

@@ -14,23 +14,23 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainValue;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use {0} .Should() followed by .ContainValue() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return new DictionaryShouldContainValueSyntaxVisitor();
+                yield return new ContainsValueShouldBeTrue();
             }
         }
 
-		private class DictionaryShouldContainValueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-		{
-			public DictionaryShouldContainValueSyntaxVisitor() : base("###", "Should")
-			{
-			}
-		}
+        private class ContainsValueShouldBeTrue : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public ContainsValueShouldBeTrue() : base("ContainsValue", "Should", "BeTrue")
+            {
+            }
+        }
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DictionaryShouldContainValueCodeFix)), Shared]
@@ -40,7 +40,10 @@ namespace FluentAssertions.BestPractices
 
         protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
         {
-            throw new System.NotImplementedException();
+            var remove = NodeReplacement.RemoveAndExtractArguments("ContainsValue");
+            var newStatement = GetNewStatement(statement, remove);
+
+            return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainValue", remove.Arguments));
         }
     }
 }

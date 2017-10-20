@@ -14,20 +14,20 @@ namespace FluentAssertions.BestPractices
         public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldNotContainKey;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use {0} .Should() followed by .NotContainKey() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return new DictionaryShouldNotContainKeySyntaxVisitor();
+                yield return new ContainsKeyShouldBeFalseSyntaxVisitor();
             }
         }
 
-		private class DictionaryShouldNotContainKeySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+		private class ContainsKeyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public DictionaryShouldNotContainKeySyntaxVisitor() : base("###", "Should")
+			public ContainsKeyShouldBeFalseSyntaxVisitor() : base("ContainsKey", "Should", "BeFalse")
 			{
 			}
 		}
@@ -40,7 +40,10 @@ namespace FluentAssertions.BestPractices
 
         protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
         {
-            throw new System.NotImplementedException();
+            var remove = NodeReplacement.RemoveAndExtractArguments("ContainsKey");
+            var newStatement = GetNewStatement(statement, remove);
+
+            return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContainKey", remove.Arguments));
         }
     }
 }
