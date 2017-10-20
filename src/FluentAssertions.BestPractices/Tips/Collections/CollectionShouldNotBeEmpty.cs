@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -20,11 +19,11 @@ namespace FluentAssertions.BestPractices
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return (new AnyShouldBeTrueSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeTrue", 0));
+                yield return new AnyShouldBeTrueSyntaxVisitor();
             }
         }
 
@@ -42,10 +41,7 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldNotBeEmptyCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeEmptyAnalyzer.DiagnosticId);
-
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().NotBeEmpty({properties.BecauseArgumentsString});");
-
+        
         protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
         {
             NodeReplacement[] replacements =

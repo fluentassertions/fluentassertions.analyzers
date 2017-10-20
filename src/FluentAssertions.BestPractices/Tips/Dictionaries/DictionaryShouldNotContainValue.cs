@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -18,11 +17,11 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by ### instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return (new DictionaryShouldNotContainValueSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("###", 0));
+                yield return new DictionaryShouldNotContainValueSyntaxVisitor();
             }
         }
 
@@ -39,7 +38,9 @@ namespace FluentAssertions.BestPractices
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldNotContainValueAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().###;");
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

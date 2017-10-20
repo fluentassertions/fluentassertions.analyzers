@@ -17,11 +17,11 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by .HaveSameCount() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return (new ShouldHaveCountOtherCollectionCountSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("HaveCount", 1));
+                yield return new ShouldHaveCountOtherCollectionCountSyntaxVisitor();
             }
         }
 

@@ -18,13 +18,13 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by .NotContain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return (new AnyShouldBeFalseSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeFalse", 0));
-                yield return (new WhereShouldBeEmptySyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("BeEmpty", 0));
-                yield return (new ShouldOnlyContainNotSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("OnlyContain", 1));
+                yield return new AnyShouldBeFalseSyntaxVisitor();
+                yield return new WhereShouldBeEmptySyntaxVisitor();
+                yield return new ShouldOnlyContainNotSyntaxVisitor();
             }
         }
 

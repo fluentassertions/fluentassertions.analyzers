@@ -18,12 +18,12 @@ namespace FluentAssertions.BestPractices
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return (new ShouldNotBeNullAndNotBeEmptySyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("NotBeEmpty", 0));
-                yield return (new ShouldNotBeEmptyAndNotBeNullSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("NotBeNull", 0));
+                yield return new ShouldNotBeNullAndNotBeEmptySyntaxVisitor();
+                yield return new ShouldNotBeEmptyAndNotBeNullSyntaxVisitor();
             }
         }
 

@@ -19,11 +19,11 @@ namespace FluentAssertions.BestPractices
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return (new SelectShouldEqualOtherCollectionSelectSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("Equal", 1));
+                yield return new SelectShouldEqualOtherCollectionSelectSyntaxVisitor();
             }
         }
 

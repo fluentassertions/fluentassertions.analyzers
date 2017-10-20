@@ -47,8 +47,7 @@ namespace FluentAssertions.BestPractices
             return document.WithSyntaxRoot(root);
         }
 
-        protected virtual StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties) => throw new System.NotImplementedException();
-        protected virtual StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties) => GetNewStatement(properties);
+        protected abstract StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties);
 
         protected ExpressionStatementSyntax GetNewStatement(ExpressionStatementSyntax statement, params NodeReplacement[] replacements)
         {

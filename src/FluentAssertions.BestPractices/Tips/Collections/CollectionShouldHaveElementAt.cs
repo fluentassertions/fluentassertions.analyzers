@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -18,13 +17,13 @@ namespace FluentAssertions.BestPractices
         public const string Message = "Use {0} .Should() followed by ### instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<(FluentAssertionsCSharpSyntaxVisitor, BecauseArgumentsSyntaxVisitor)> Visitors
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return (new ElementAtIndexShouldBeSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("Be", 1));
-                yield return (new IndexerShouldBeSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("Be", 1));
-                yield return (new SkipFirstShouldBeSyntaxVisitor(), new BecauseArgumentsSyntaxVisitor("Be", 1));
+                yield return new ElementAtIndexShouldBeSyntaxVisitor();
+                yield return new IndexerShouldBeSyntaxVisitor();
+                yield return new SkipFirstShouldBeSyntaxVisitor();
             }
         }
 
@@ -79,13 +78,7 @@ namespace FluentAssertions.BestPractices
     public class CollectionShouldHaveElementAtCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveElementAtAnalyzer.DiagnosticId);
-
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
-            => SyntaxFactory.ParseStatement($"{properties.VariableName}.Should().HaveElementAt({properties.ArgumentString}, {properties.CombineWithBecauseArgumentsString(properties.ExpectedItemString)});");
-
-        /*[AssertionCodeFix(
-            oldAssertion: "actual[k].Should().Be(expectedItem{0});",
-            newAssertion: "actual.Should().HaveElementAt(k, expectedItem{0});")]*/
+        
         protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
         {
             if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.ElementAtIndexShouldBeSyntaxVisitor))

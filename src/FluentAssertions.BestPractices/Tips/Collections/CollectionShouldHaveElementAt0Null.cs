@@ -48,10 +48,10 @@ namespace FluentAssertions.BestPractices
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveElementAt0NullAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(FluentAssertionsDiagnosticProperties properties)
+        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
         {
-			throw new System.NotImplementedException();
-		}
+            throw new System.NotImplementedException();
+        }
     }
 
     public class CollectionShouldHaveElementAt0NullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
