@@ -279,7 +279,7 @@ namespace FluentAssertions.BestPractices.Tests
 
                 var code = documents[0].GetSyntaxRootAsync().Result.ToFullString();
 
-                other.Should().BeEmpty($"there should be no error diagnostics that are not related to the test.{Environment.NewLine}code: {code}");
+                other.Should().BeEmpty("there should be no error diagnostics that are not related to the test.{0}code: {1}", Environment.NewLine, code);
 
                 foreach (var diag in relevantDiagnostics)
                 {
