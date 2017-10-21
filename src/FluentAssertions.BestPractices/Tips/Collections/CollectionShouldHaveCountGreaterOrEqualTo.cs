@@ -41,7 +41,7 @@ namespace FluentAssertions.BestPractices
         
         protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
         {
-            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameNodeReplacement("BeGreaterOrEqualTo", "HaveCountGreaterOrEqualTo"));
+            return GetNewStatement(statement, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeGreaterOrEqualTo", "HaveCountGreaterOrEqualTo"));
         }
     }
 }

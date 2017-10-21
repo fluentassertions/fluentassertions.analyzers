@@ -77,18 +77,18 @@ namespace FluentAssertions.BestPractices
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Any");
                 var newStatement = GetNewStatement(statement, remove);
 
-                return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeFalse", "NotContain", remove.Arguments));
+                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.WhereShouldBeEmptySyntaxVisitor))
             {
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Where");
                 var newStatement = GetNewStatement(statement, remove);
 
-                return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeEmpty", "NotContain", remove.Arguments));
+                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.ShouldOnlyContainNotSyntaxVisitor))
             {
-                return GetNewStatement(statement, new NodeReplacement.RenameAndNegateLambdaNodeReplacement("OnlyContain", "NotContain"));
+                return GetNewStatement(statement, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

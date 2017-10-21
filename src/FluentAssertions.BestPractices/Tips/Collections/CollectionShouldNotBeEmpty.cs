@@ -46,8 +46,8 @@ namespace FluentAssertions.BestPractices
         {
             NodeReplacement[] replacements =
             {
-                new NodeReplacement.RemoveNodeReplacement("Any"),
-                new NodeReplacement.RenameNodeReplacement("BeTrue", "NotBeEmpty")
+                NodeReplacement.Remove("Any"),
+                NodeReplacement.Rename("BeTrue", "NotBeEmpty")
             };
 
             return GetNewStatement(statement, replacements);

@@ -19,10 +19,13 @@ namespace FluentAssertions.BestPractices
         public static RemoveAndExtractArgumentsNodeReplacement RemoveAndExtractArguments(string name) => new RemoveAndExtractArgumentsNodeReplacement(name);
         public static NodeReplacement RenameAndPrependArguments(string oldName, string newName, SeparatedSyntaxList<ArgumentSyntax> arguments) => new RenameAndPrependArgumentsNodeReplacement(oldName, newName, arguments);
         public static NodeReplacement RenameAndRemoveInvocationOfMethodOnFirstArgument(string oldName, string newName) => new RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement(oldName, newName);
-        public static NodeReplacement RenameAndRemoveFirstArgument(string oldName, string newName) => new RenameAndRemoveFirstArgumentNodeReplacement(oldName, newName);
+        public static RenameAndRemoveFirstArgumentNodeReplacement RenameAndRemoveFirstArgument(string oldName, string newName) => new RenameAndRemoveFirstArgumentNodeReplacement(oldName, newName);
+        public static RenameAndExtractArgumentsNodeReplacement RenameAndExtractArguments(string oldName, string newName) => new RenameAndExtractArgumentsNodeReplacement(oldName, newName);
         public static RemoveFirstArgumentNodeReplacement RemoveFirstArgument(string name) => new RemoveFirstArgumentNodeReplacement(name);
         public static NodeReplacement PrependArguments(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) => new PrependArgumentsNodeReplacement(name, arguments);
         public static RemoveAndRetrieveIndexerArgumentsNodeReplacement RemoveAndRetrieveIndexerArguments(string methodAfterIndexer) => new RemoveAndRetrieveIndexerArgumentsNodeReplacement(methodAfterIndexer);
+        public static RenameAndNegateLambdaNodeReplacement RenameAndNegateLambda(string oldName, string newName) => new RenameAndNegateLambdaNodeReplacement(oldName, newName);
+        public static WithArgumentsNodeReplacement WithArguments(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) => new WithArgumentsNodeReplacement(name, arguments);
 
         public class RenameNodeReplacement : NodeReplacement
         {
@@ -152,13 +155,16 @@ namespace FluentAssertions.BestPractices
 
         public class RenameAndRemoveFirstArgumentNodeReplacement : RenameNodeReplacement
         {
+            public ArgumentSyntax Argument { get; private set; }
+
             public RenameAndRemoveFirstArgumentNodeReplacement(string oldName, string newName) : base(oldName, newName)
             {
             }
 
             public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node)
             {
-                var exceptFirstArgument = node.ArgumentList.Arguments.RemoveAt(0);
+                Argument = node.ArgumentList.Arguments[0];
+                var exceptFirstArgument = node.ArgumentList.Arguments.Remove(Argument);
 
                 return node.WithArgumentList(node.ArgumentList.WithArguments(exceptFirstArgument));
             }
@@ -181,6 +187,20 @@ namespace FluentAssertions.BestPractices
             private LambdaExpressionSyntax NagateLambda(LambdaExpressionSyntax lambda)
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public class RenameAndExtractArgumentsNodeReplacement : RenameNodeReplacement
+        {
+            public SeparatedSyntaxList<ArgumentSyntax> Arguments { get; private set; }
+
+            public RenameAndExtractArgumentsNodeReplacement(string oldName, string newName) : base(oldName, newName)
+            {
+            }
+
+            public override void ExtractValues(MemberAccessExpressionSyntax node)
+            {
+                Arguments = ((InvocationExpressionSyntax)node.Parent).ArgumentList.Arguments;
             }
         }
 
@@ -216,6 +236,18 @@ namespace FluentAssertions.BestPractices
 
                 return node.WithArgumentList(combinedArguments);
             }
+        }
+
+        public class WithArgumentsNodeReplacement : EditNodeReplacement
+        {
+            private readonly SeparatedSyntaxList<ArgumentSyntax> _arguments;
+
+            public WithArgumentsNodeReplacement(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) : base(name)
+            {
+                _arguments = arguments;
+            }
+
+            public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node) => node.WithArgumentList(node.ArgumentList.WithArguments(_arguments));
         }
 
         public class RemoveAndRetrieveIndexerArgumentsNodeReplacement : NodeReplacement

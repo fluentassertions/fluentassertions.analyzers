@@ -49,7 +49,7 @@ namespace FluentAssertions.BestPractices
         
         protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
         {
-            return GetNewStatement(statement, new NodeReplacement.RemoveNodeReplacement("Count"), new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("NotBe", "NotHaveSameCount"));
+            return GetNewStatement(statement, NodeReplacement.Remove("Count"), new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("NotBe", "NotHaveSameCount"));
         }
     }
 }

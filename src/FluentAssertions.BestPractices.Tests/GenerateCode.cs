@@ -42,7 +42,7 @@ namespace FluentAssertions.BestPractices.Tests
             .AppendLine("{")
             .AppendLine("    public class TestClass")
             .AppendLine("    {")
-            .AppendLine($"        public void TestMethod(Dictionary<string, TestComplexClass> {ActualVariableName}, IDictionary<string, TestComplexClass> expected, IDictionary<string, TestComplexClass> unexpected, string expectedKey, TestComplexClass expectedValue, string unexpectedKey, TestComplexClass unexpectedValue)")
+            .AppendLine($"        public void TestMethod(Dictionary<string, TestComplexClass> {ActualVariableName}, IDictionary<string, TestComplexClass> expected, IDictionary<string, TestComplexClass> unexpected, string expectedKey, TestComplexClass expectedValue, string unexpectedKey, TestComplexClass unexpectedValue, KeyValuePair<string, TestComplexClass> pair)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")

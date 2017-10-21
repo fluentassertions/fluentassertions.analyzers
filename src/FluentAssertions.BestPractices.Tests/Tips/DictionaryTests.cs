@@ -71,9 +71,15 @@ namespace FluentAssertions.BestPractices.Tests
         public void DictionaryShouldNotContainValue_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<DictionaryShouldNotContainValueCodeFix, DictionaryShouldNotContainValueAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
-        [AssertionDiagnostic("actual.Should().ContainKey(expectedKey{0}).And.ContainValue(expectedValue{0});")]
-        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(expectedKey{0}).And.ContainValue(expectedValue{0}).And.ToString();")]
-        [NotImplemented]
+        [AssertionDiagnostic("actual.Should().ContainKey(expectedKey{0}).And.ContainValue(expectedValue);")]
+        [AssertionDiagnostic("actual.Should().ContainKey(expectedKey).And.ContainValue(expectedValue{0});")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(expectedKey{0}).And.ContainValue(expectedValue).And.ToString();")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(expectedKey).And.ContainValue(expectedValue{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.Should().ContainValue(expectedValue{0}).And.ContainKey(expectedKey);")]
+        [AssertionDiagnostic("actual.Should().ContainValue(expectedValue).And.ContainKey(expectedKey{0});")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(expectedValue{0}).And.ContainKey(expectedKey).And.ToString();")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(expectedValue).And.ContainKey(expectedKey{0}).And.ToString();")]
+        [Implemented]
         public void DictionaryShouldContainKeyAndValue_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<DictionaryShouldContainKeyAndValueAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
@@ -89,29 +95,59 @@ namespace FluentAssertions.BestPractices.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(expectedKey).And.ContainValue(expectedValue{0}).And.ToString();",
             newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(expectedKey, expectedValue{0}).And.ToString();")]
-        [NotImplemented]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().ContainValue(expectedValue{0}).And.ContainKey(expectedKey);",
+            newAssertion: "actual.Should().Contain(expectedKey, expectedValue{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(expectedValue).And.ContainKey(expectedKey{0}).And.ToString();",
+            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(expectedKey, expectedValue{0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().ContainValue(expectedValue).And.ContainKey(expectedKey{0});",
+            newAssertion: "actual.Should().Contain(expectedKey, expectedValue{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(expectedValue{0}).And.ContainKey(expectedKey).And.ToString();",
+            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(expectedKey, expectedValue{0}).And.ToString();")]
+        [Implemented]
         public void DictionaryShouldContainKeyAndValue_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<DictionaryShouldContainKeyAndValueCodeFix, DictionaryShouldContainKeyAndValueAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
-        [AssertionDiagnostic("actual.Should().ContainKey(expected.Key{0}).And.ContainValue(expected.Value);")]
-        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(expected.Key{0}).And.ContainValue(expected.Value).And.ToString();")]
-        [NotImplemented]
+        [AssertionDiagnostic("actual.Should().ContainKey(pair.Key{0}).And.ContainValue(pair.Value);")]
+        [AssertionDiagnostic("actual.Should().ContainKey(pair.Key).And.ContainValue(pair.Value{0});")]
+        [AssertionDiagnostic("actual.Should().ContainValue(pair.Value{0}).And.ContainKey(pair.Key);")]
+        [AssertionDiagnostic("actual.Should().ContainValue(pair.Value).And.ContainKey(pair.Key{0});")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(pair.Key{0}).And.ContainValue(pair.Value).And.ToString();")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(pair.Key).And.ContainValue(pair.Value{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(pair.Value{0}).And.ContainKey(pair.Key).And.ToString();")]
+        [AssertionDiagnostic("actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(pair.Value).And.ContainKey(pair.Key{0}).And.ToString();")]
+        [Implemented]
         public void DictionaryShouldContainPair_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<DictionaryShouldContainPairAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-            oldAssertion: "actual.Should().ContainKey(expected.Key{0}).And.ContainValue(expected.Value);",
-            newAssertion: "actual.Should().Contain(expected{0});")]
+            oldAssertion: "actual.Should().ContainKey(pair.Key{0}).And.ContainValue(pair.Value);",
+            newAssertion: "actual.Should().Contain(pair{0});")]
         [AssertionCodeFix(
-            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(expected.Key{0}).And.ContainValue(expected.Value).And.ToString();",
-            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(expected{0}).And.ToString();")]
+            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(pair.Key{0}).And.ContainValue(pair.Value).And.ToString();",
+            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(pair{0}).And.ToString();")]
         [AssertionCodeFix(
-            oldAssertion: "actual.Should().ContainKey(expected.Key).And.ContainValue(expected.Value{0});",
-            newAssertion: "actual.Should().Contain(expected{0});")]
+            oldAssertion: "actual.Should().ContainKey(pair.Key).And.ContainValue(pair.Value{0});",
+            newAssertion: "actual.Should().Contain(pair{0});")]
         [AssertionCodeFix(
-            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(expected.Key).And.ContainValue(expected.Value{0}).And.ToString();",
-            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(expected{0}).And.ToString();")]
-        [NotImplemented]
+            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainKey(pair.Key).And.ContainValue(pair.Value{0}).And.ToString();",
+            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(pair{0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().ContainValue(pair.Value{0}).And.ContainKey(pair.Key);",
+            newAssertion: "actual.Should().Contain(pair{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(pair.Value{0}).And.ContainKey(pair.Key).And.ToString();",
+            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(pair{0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().ContainValue(pair.Value).And.ContainKey(pair.Key{0});",
+            newAssertion: "actual.Should().Contain(pair{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().ContainValue(pair.Value).And.ContainKey(pair.Key{0}).And.ToString();",
+            newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(pair{0}).And.ToString();")]
+        [Implemented]
         public void DictionaryShouldContainPair_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<DictionaryShouldContainPairCodeFix, DictionaryShouldContainPairAnalyzer>(oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssersion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()

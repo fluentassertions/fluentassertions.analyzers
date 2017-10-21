@@ -58,6 +58,7 @@ namespace FluentAssertions.BestPractices
 
             Visit(node.Expression);
 
+            if(node.Parent is MemberAccessExpressionSyntax && VisitedMethods.Count > 0) VisitedMethods.Pop();
         }
         public sealed override void VisitElementAccessExpression(ElementAccessExpressionSyntax node)
         {
@@ -87,5 +88,18 @@ namespace FluentAssertions.BestPractices
                 RequiredMethods.Pop();
             }
         }
+
+#if DEBUG
+        private int _indent = 0;
+        public override void Visit(Microsoft.CodeAnalysis.SyntaxNode node)
+        {
+            _indent++;
+            var indent = new string(' ', _indent * 2);
+            if(this.GetType().Name == "ShouldContainKeyAndContainValueSyntaxVisitor") 
+                System.Console.WriteLine($"{indent}{CurrentMethod ?? "<null>"}: {node.GetType().Name}");
+            base.Visit(node);
+            --_indent;
+        }
+#endif
     }
 }
