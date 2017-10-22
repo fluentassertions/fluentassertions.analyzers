@@ -17,7 +17,8 @@ branches:
 
 # Artifacts
 artifacts:
-- path: '.\artifacts\**\*.nupkg'
+- path: ./artifacts/FluentAssertions.Analyzers*.nupkg
+  name: Artifacts
 
 # Build cache
 cache:

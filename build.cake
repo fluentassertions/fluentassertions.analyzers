@@ -12,10 +12,10 @@ var configuration = Argument("configuration", "Release");
 //////////////////////////////////////////////////////////////////////
 
 // Define directories.
-var buildDir = Directory("./artifacts") + Directory(configuration);
-var solutionFile = File("./src/FluentAssertions.BestPractices.sln");
-var testCsproj = File("./src/FluentAssertions.BestPractices.Tests/FluentAssertions.BestPractices.Tests.csproj");
-var nuspecFile = File("./src/FluentAssertions.BestPractices/FluentAssertions.BestPractices.nuspec");
+var buildDir = Directory("./artifacts");
+var solutionFile = File("./src/FluentAssertions.Analyzers.sln");
+var testCsproj = File("./src/FluentAssertions.Analyzers.Tests/FluentAssertions.Analyzers.Tests.csproj");
+var nuspecFile = File("./src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.nuspec");
 var version = GetCurrentVersion(Context);
 
 //////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ Task("Publish-NuGet")
 		var apiKey = EnvironmentVariable("NUGET_API_KEY");
         var apiUrl = EnvironmentVariable("NUGET_API_URL");
         
-		var nupkgFile = File($"{buildDir}/FluentAssertions.BestPractices.{version}.nupkg");
+		var nupkgFile = File($"{buildDir}/FluentAssertions.Analyzers.{version}.nupkg");
 		Information($"Publishing nupkg file '{nupkgFile}'...");
 
 		NuGetPush(nupkgFile, new NuGetPushSettings
