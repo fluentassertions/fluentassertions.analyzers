@@ -23,6 +23,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("    public class TestComplexClass")
             .AppendLine("    {")
             .AppendLine("        public bool BooleanProperty { get; set; }")
+            .AppendLine("        public string Message { get; set; }")
             .AppendLine("    }")
             .AppendLine("    class Program")
             .AppendLine("    {")
