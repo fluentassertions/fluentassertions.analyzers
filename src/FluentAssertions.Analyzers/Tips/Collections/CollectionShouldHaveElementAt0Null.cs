@@ -18,11 +18,11 @@ namespace FluentAssertions.Analyzers
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
-        protected override Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected override Diagnostic AnalyzeExpression(ExpressionSyntax expression)
         {
             return null;
             var visitor = new CollectionShouldHaveElementAt0NullSyntaxVisitor();
-            statement.Accept(visitor);
+            expression.Accept(visitor);
 
             if (visitor.IsValid)
             {
@@ -35,7 +35,7 @@ namespace FluentAssertions.Analyzers
 
                 return Diagnostic.Create(
                     descriptor: Rule,
-                    location: statement.Expression.GetLocation(),
+                    location: expression.GetLocation(),
                     properties: properties,
                     messageArgs: visitor.VariableName);
             }
@@ -48,7 +48,7 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveElementAt0NullAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             throw new System.NotImplementedException();
         }

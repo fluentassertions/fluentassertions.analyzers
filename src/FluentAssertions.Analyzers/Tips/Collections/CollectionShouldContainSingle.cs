@@ -76,9 +76,9 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldContainSingleAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            var newStatement = GetNewStatement(statement, NodeReplacement.RenameAndRemoveFirstArgument("HaveCount", "ContainSingle"));
+            var newStatement = GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveCount", "ContainSingle"));
             if (properties.VisitorName == nameof(CollectionShouldContainSingleAnalyzer.ShouldHaveCount1SyntaxVisitor))
             {
                 return newStatement;
@@ -86,9 +86,9 @@ namespace FluentAssertions.Analyzers
             else if (properties.VisitorName == nameof(CollectionShouldContainSingleAnalyzer.WhereShouldHaveCount1SyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("Where");
-                newStatement = GetNewStatement(newStatement, remove);
+                newStatement = GetNewExpression(newStatement, remove);
 
-                return  GetNewStatement(newStatement, NodeReplacement.PrependArguments("ContainSingle", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.PrependArguments("ContainSingle", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

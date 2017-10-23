@@ -70,25 +70,25 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainPropertyAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.AnyShouldBeFalseSyntaxVisitor))
             {
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Any");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.WhereShouldBeEmptySyntaxVisitor))
             {
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Where");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.ShouldOnlyContainNotSyntaxVisitor))
             {
-                return GetNewStatement(statement, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
+                return GetNewExpression(expression, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

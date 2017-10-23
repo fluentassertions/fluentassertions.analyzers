@@ -8,6 +8,8 @@ namespace FluentAssertions.Analyzers.Tests
     [AttributeUsage(AttributeTargets.Method)]
     public class NotImplementedAttribute : TestCategoryBaseAttribute
     {
+        public string Reason { get; set; }
+        
         public override IList<string> TestCategories => new[] { "NotImplemented" };
     }
 

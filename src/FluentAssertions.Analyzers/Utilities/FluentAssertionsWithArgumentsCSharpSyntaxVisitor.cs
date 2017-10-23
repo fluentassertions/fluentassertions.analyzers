@@ -6,7 +6,12 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class FluentAssertionsWithArgumentsCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        protected readonly Dictionary<(string Method, int Index), ExpressionSyntax> Arguments = new Dictionary<(string Method, int Index), ExpressionSyntax>();
+        protected Dictionary<(string Method, int Index), ExpressionSyntax> Arguments { get; } = new Dictionary<(string Method, int Index), ExpressionSyntax>();
+
+
+        private List<(string Method, SeparatedSyntaxList<ArgumentSyntax> Arguments)> MethodArguments { get; } = new List<(string Method, SeparatedSyntaxList<ArgumentSyntax> Arguments)>();
+        protected string a;
+
         public override bool IsValid => base.IsValid && AreArgumentsValid();
 
         protected FluentAssertionsWithArgumentsCSharpSyntaxVisitor(params string[] requiredMethods) : base(requiredMethods)
@@ -26,9 +31,13 @@ namespace FluentAssertions.Analyzers
 
         private void VisitArguments(SeparatedSyntaxList<ArgumentSyntax> arguments)
         {
-            for (int i = 0; i < arguments.Count; i++)
+            if (arguments.Any())
             {
-                Arguments.Add((CurrentMethod, i), arguments[i].Expression);
+                MethodArguments.Add((CurrentMethod, arguments));
+                for (int i = 0; i < arguments.Count; i++)
+                {
+                    Arguments.Add((CurrentMethod, i), arguments[i].Expression);
+                }
             }
         }
     }

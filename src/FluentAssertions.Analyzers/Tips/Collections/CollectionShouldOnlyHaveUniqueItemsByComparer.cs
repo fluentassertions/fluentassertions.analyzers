@@ -40,12 +40,12 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var remove = NodeReplacement.RemoveAndExtractArguments("Select");
-            var newStatement = GetNewStatement(statement, remove);
+            var newStatement = GetNewExpression(expression, remove);
 
-            return GetNewStatement(newStatement, NodeReplacement.PrependArguments("OnlyHaveUniqueItems", remove.Arguments));
+            return GetNewExpression(newStatement, NodeReplacement.PrependArguments("OnlyHaveUniqueItems", remove.Arguments));
         }
     }
 }

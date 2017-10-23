@@ -47,21 +47,21 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldContainPropertyAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             if (properties.VisitorName == nameof(CollectionShouldContainPropertyAnalyzer.AnyShouldBeTrueSyntaxVisitor))
             {
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Any");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeTrue", "Contain", remove.Arguments));
+                return GetNewExpression(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeTrue", "Contain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldContainPropertyAnalyzer.WhereShouldNotBeEmptySyntaxVisitor))
             {
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Where");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("NotBeEmpty", "Contain", remove.Arguments));
+                return GetNewExpression(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("NotBeEmpty", "Contain", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

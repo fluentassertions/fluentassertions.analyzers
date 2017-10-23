@@ -52,12 +52,12 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainItemAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Contains");
-            var newStatement = GetNewStatement(statement, remove);
+            var newStatement = GetNewExpression(expression, remove);
 
-            return GetNewStatement(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeFalse", "NotContain", remove.Arguments));
+            return GetNewExpression(newStatement, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeFalse", "NotContain", remove.Arguments));
         }
     }
 }

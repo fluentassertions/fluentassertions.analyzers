@@ -55,14 +55,14 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeInAscendingOrderAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var remove = NodeReplacement.RemoveAndExtractArguments("OrderBy");
-            var newStatement = GetNewStatement(statement, remove);
+            var newStatement = GetNewExpression(expression, remove);
 
-            newStatement = GetNewStatement(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("Equal", "BeInAscendingOrder"));
+            newStatement = GetNewExpression(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("Equal", "BeInAscendingOrder"));
 
-            return GetNewStatement(newStatement, NodeReplacement.PrependArguments("BeInAscendingOrder", remove.Arguments));
+            return GetNewExpression(newStatement, NodeReplacement.PrependArguments("BeInAscendingOrder", remove.Arguments));
         }
     }
 }
