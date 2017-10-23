@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -6,7 +7,14 @@ namespace FluentAssertions.Analyzers.Tests
     {
         public static string ActualVariableName => "actual";
 
-        public static string EnumerableAssertion(string assertion) => new StringBuilder()
+        public static string EnumerableCodeBlockAssertion(string assertion) => EnumerableAssertion(
+            "        {" + Environment.NewLine +
+            "            " + assertion + Environment.NewLine +
+            "        }");
+        public static string EnumerableExpressionBodyAssertion(string assertion) => EnumerableAssertion(
+            "            => " + assertion);
+
+        private static string EnumerableAssertion(string bodyExpression) => new StringBuilder()
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Linq;")
             .AppendLine("using System;")
@@ -16,9 +24,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("    public class TestClass")
             .AppendLine("    {")
             .AppendLine($"        public void TestMethod(IList<TestComplexClass> {ActualVariableName}, IList<TestComplexClass> expected, IList<TestComplexClass> unexpected, TestComplexClass expectedItem, TestComplexClass unexpectedItem, int k)")
-            .AppendLine("        {")
-            .AppendLine($"            {assertion}")
-            .AppendLine("        }")
+            .AppendLine(bodyExpression)
             .AppendLine("    }")
             .AppendLine("    public class TestComplexClass")
             .AppendLine("    {")

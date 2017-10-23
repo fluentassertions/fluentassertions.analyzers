@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveElementAt;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use {0} .Should() followed by .HaveElementAt() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -29,7 +29,7 @@ namespace FluentAssertions.Analyzers
 
         public class ElementAtIndexShouldBeSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
         {
-            protected override bool AreArgumentsValid() =>
+            protected override bool AreArgumentsValid() =>                
                 Arguments.TryGetValue(("ElementAt", 0), out ExpressionSyntax index) && (index is LiteralExpressionSyntax || index is IdentifierNameSyntax)
                 && Arguments.TryGetValue(("Be", 0), out ExpressionSyntax expectedItem) && (expectedItem is LiteralExpressionSyntax || expectedItem is IdentifierNameSyntax);
 
@@ -79,28 +79,28 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveElementAtAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.ElementAtIndexShouldBeSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.IndexerShouldBeSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.SkipFirstShouldBeSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
-                var newStatement = GetNewStatement(statement, remove, NodeReplacement.Remove("First"));
+                var newStatement = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
 
-                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

@@ -63,14 +63,14 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeEmptyAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             switch (properties.VisitorName)
             {
                 case nameof(CollectionShouldBeEmptyAnalyzer.AnyShouldBeFalseSyntaxVisitor):
-                    return GetNewStatement(statement, NodeReplacement.Remove("Any"), NodeReplacement.Rename("BeFalse", "BeEmpty"));
+                    return GetNewExpression(expression, NodeReplacement.Remove("Any"), NodeReplacement.Rename("BeFalse", "BeEmpty"));
                 case nameof(CollectionShouldBeEmptyAnalyzer.ShouldHaveCount0SyntaxVisitor):
-                    return GetNewStatement(statement, new HaveCountNodeReplacement());
+                    return GetNewExpression(expression, new HaveCountNodeReplacement());
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }

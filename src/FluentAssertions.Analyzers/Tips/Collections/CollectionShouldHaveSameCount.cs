@@ -48,9 +48,9 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveSameCountAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return GetNewStatement(statement, new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("HaveCount", "HaveSameCount"));
+            return GetNewExpression(expression, new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("HaveCount", "HaveSameCount"));
         }
     }
 }

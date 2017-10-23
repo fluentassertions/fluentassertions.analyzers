@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,49 +20,47 @@ namespace FluentAssertions.Analyzers
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var statement = root.FindToken(diagnostic.Location.SourceSpan.Start)
-                   .Parent.AncestorsAndSelf().OfType<ExpressionStatementSyntax>().First();
-
-                if (CanRewriteAssertion(statement))
+                var expression = (ExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan);
+                if (CanRewriteAssertion(expression))
                 {
                     context.RegisterCodeFix(CodeAction.Create(
                         title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
-                        createChangedDocument: c => RewriteAssertion(context.Document, statement, diagnostic.Properties, c)
+                        createChangedDocument: c => RewriteAssertion(context.Document, expression, diagnostic.Properties, c)
                         ), diagnostic);
                 }
             }
         }
 
-        protected virtual bool CanRewriteAssertion(ExpressionStatementSyntax statement) => true;
+        protected virtual bool CanRewriteAssertion(ExpressionSyntax expression) => true;
 
-        protected async Task<Document> RewriteAssertion(Document document, ExpressionStatementSyntax statement, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
+        protected async Task<Document> RewriteAssertion(Document document, ExpressionSyntax expression, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var newStatement = GetNewStatement(statement, new FluentAssertionsDiagnosticProperties(properties));
+            var newExpression = GetNewExpression(expression, new FluentAssertionsDiagnosticProperties(properties));
 
-            root = root.ReplaceNode(statement, newStatement);
+            root = root.ReplaceNode(expression, newExpression);
 
             return document.WithSyntaxRoot(root);
         }
 
-        protected abstract StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties);
+        protected abstract ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties);
 
-        protected ExpressionStatementSyntax GetNewStatement(ExpressionStatementSyntax statement, params NodeReplacement[] replacements)
+        protected ExpressionSyntax GetNewExpression(ExpressionSyntax expression, params NodeReplacement[] replacements)
         {
-            var newStatement = statement;
+            var newStatement = expression;
             foreach (var replacement in replacements)
             {
-                newStatement = GetNewStatement(newStatement, replacement);
+                newStatement = GetNewExpression(newStatement, replacement);
                 var code = newStatement.ToFullString();
             }
             return newStatement;
         }
 
-        protected ExpressionStatementSyntax GetNewStatement(ExpressionStatementSyntax statement, NodeReplacement replacement)
+        protected ExpressionSyntax GetNewExpression(ExpressionSyntax expression, NodeReplacement replacement)
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
-            statement.Accept(visitor);
+            expression.Accept(visitor);
             var members =  new LinkedList<MemberAccessExpressionSyntax>(visitor.Members);
 
             var current = members.Last;
@@ -74,7 +71,7 @@ namespace FluentAssertions.Analyzers
                     // extract custom data into the replacement object
                     replacement.ExtractValues(current.Value);
 
-                    return statement.ReplaceNode(replacement.ComputeOld(current), replacement.ComputeNew(current));
+                    return expression.ReplaceNode(replacement.ComputeOld(current), replacement.ComputeNew(current));
                 }
                 current = current.Previous;
             }

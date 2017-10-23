@@ -78,13 +78,13 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldEqualOtherCollectionByComparerAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var removeMethodContainingFirstLambda = NodeReplacement.RemoveAndExtractArguments("Select");
-            var newStatement = GetNewStatement(statement, removeMethodContainingFirstLambda);
+            var newStatement = GetNewExpression(expression, removeMethodContainingFirstLambda);
 
             var removeArgument = NodeReplacement.RemoveFirstArgument("Equal");
-            newStatement = GetNewStatement(newStatement, removeArgument);
+            newStatement = GetNewExpression(newStatement, removeArgument);
 
             var argumentInvocation = (InvocationExpressionSyntax)removeArgument.Argument.Expression;
             var identifier = ((MemberAccessExpressionSyntax)argumentInvocation.Expression).Expression;
@@ -97,7 +97,7 @@ namespace FluentAssertions.Analyzers
                 .Add(removeArgument.Argument.WithExpression(CombineLambdas(firstLambda, secondLambda).NormalizeWhitespace()
             ));
 
-            return GetNewStatement(newStatement, NodeReplacement.PrependArguments("Equal", newArguments));
+            return GetNewExpression(newStatement, NodeReplacement.PrependArguments("Equal", newArguments));
         }
 
         private ParenthesizedLambdaExpressionSyntax CombineLambdas(SimpleLambdaExpressionSyntax left, SimpleLambdaExpressionSyntax right) => SyntaxFactory.ParenthesizedLambdaExpression(

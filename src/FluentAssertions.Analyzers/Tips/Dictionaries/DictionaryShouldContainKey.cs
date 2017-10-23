@@ -38,12 +38,12 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldContainKeyAnalyzer.DiagnosticId);
 
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var remove = NodeReplacement.RemoveAndExtractArguments("ContainsKey");
-            var newStatement = GetNewStatement(statement, remove);
+            var newStatement = GetNewExpression(expression, remove);
 
-            return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainKey", remove.Arguments));
+            return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainKey", remove.Arguments));
         }
     }
 }

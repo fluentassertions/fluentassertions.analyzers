@@ -10,7 +10,8 @@ namespace FluentAssertions.Analyzers
     {
         protected string CurrentMethod => VisitedMethods.Count > 0 ? VisitedMethods.Peek() : null;
 
-        protected readonly Stack<string> VisitedMethods = new Stack<string>();
+        protected Stack<string> AllVisitedMethods { get; } = new Stack<string>();
+        protected Stack<string> VisitedMethods { get; } = new Stack<string>();
 
         /// <summary>
         /// The order in the syntax tree is reversed
@@ -58,8 +59,12 @@ namespace FluentAssertions.Analyzers
 
             Visit(node.Expression);
 
-            if(node.Parent is MemberAccessExpressionSyntax && VisitedMethods.Count > 0) VisitedMethods.Pop();
+            if (node.Parent is MemberAccessExpressionSyntax && VisitedMethods.Count > 0)
+            {
+                VisitedMethods.Pop();
+            }
         }
+
         public sealed override void VisitElementAccessExpression(ElementAccessExpressionSyntax node)
         {
             const string methodName = "[]";
@@ -82,6 +87,7 @@ namespace FluentAssertions.Analyzers
 
         private void VisitMethod(string methodName)
         {
+            AllVisitedMethods.Push(methodName);
             VisitedMethods.Push(methodName);
             if (RequiredMethods.Count > 0 && methodName.Equals(RequiredMethods.Peek()))
             {
@@ -89,17 +95,18 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-#if DEBUG
+        /*
         private int _indent = 0;
         public override void Visit(Microsoft.CodeAnalysis.SyntaxNode node)
         {
             _indent++;
             var indent = new string(' ', _indent * 2);
-            if(this.GetType().Name == "ShouldContainKeyAndContainValueSyntaxVisitor") 
+            if (this.GetType().Name == "ShouldContainKeyAndContainValueSyntaxVisitor")
                 System.Console.WriteLine($"{indent}{CurrentMethod ?? "<null>"}: {node.GetType().Name}");
             base.Visit(node);
             --_indent;
         }
-#endif
+        */
+
     }
 }

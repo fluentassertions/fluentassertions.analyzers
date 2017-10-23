@@ -46,10 +46,10 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeNullOrEmptyAnalyzer.DiagnosticId);
 
-        protected override bool CanRewriteAssertion(ExpressionStatementSyntax statement)
+        protected override bool CanRewriteAssertion(ExpressionSyntax expression)
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
-            statement.Accept(visitor);
+            expression.Accept(visitor);
 
             var notBeEmpty = visitor.Members.Find(member => member.Name.Identifier.Text == "NotBeEmpty");
             var notBeNull = visitor.Members.Find(member => member.Name.Identifier.Text == "NotBeNull");
@@ -58,21 +58,21 @@ namespace FluentAssertions.Analyzers
                 && notBeNull.Parent is InvocationExpressionSyntax notBeNullInvocation && notBeNullInvocation.ArgumentList.Arguments.Any());
         }
 
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeNullAndNotBeEmptySyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("NotBeEmpty");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("NotBeNull");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
-                return GetNewStatement(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
+                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

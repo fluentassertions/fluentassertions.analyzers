@@ -68,10 +68,10 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldContainPairAnalyzer.DiagnosticId);
 
-        protected override bool CanRewriteAssertion(ExpressionStatementSyntax statement)
+        protected override bool CanRewriteAssertion(ExpressionSyntax expression)
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
-            statement.Accept(visitor);
+            expression.Accept(visitor);
 
             var containKey = visitor.Members.Find(member => member.Name.Identifier.Text == "ContainKey");
             var containValue = visitor.Members.Find(member => member.Name.Identifier.Text == "ContainValue");
@@ -80,31 +80,31 @@ namespace FluentAssertions.Analyzers
                 && containValue.Parent is InvocationExpressionSyntax containValueInvocation && containValueInvocation.ArgumentList.Arguments.Count > 1);
         }
 
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             if (properties.VisitorName == nameof(DictionaryShouldContainPairAnalyzer.ShouldContainKeyAndContainValueSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ContainValue");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
                 var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 
-                newStatement = GetNewStatement(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("ContainKey", "Contain"));
+                newStatement = GetNewExpression(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("ContainKey", "Contain"));
 
-                newStatement = GetNewStatement(newStatement, NodeReplacement.PrependArguments("Contain", newArguments));
+                newStatement = GetNewExpression(newStatement, NodeReplacement.PrependArguments("Contain", newArguments));
 
                 return newStatement;
             }
             else if (properties.VisitorName == nameof(DictionaryShouldContainPairAnalyzer.ShouldContainValueAndContainKeySyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ContainKey");
-                var newStatement = GetNewStatement(statement, remove);
+                var newStatement = GetNewExpression(expression, remove);
 
                 var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 
-                newStatement = GetNewStatement(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("ContainValue", "Contain"));
+                newStatement = GetNewExpression(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("ContainValue", "Contain"));
 
-                newStatement = GetNewStatement(newStatement, NodeReplacement.PrependArguments("Contain", newArguments));
+                newStatement = GetNewExpression(newStatement, NodeReplacement.PrependArguments("Contain", newArguments));
 
                 return newStatement;
             }

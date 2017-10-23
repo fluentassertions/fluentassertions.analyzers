@@ -42,7 +42,7 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeEmptyAnalyzer.DiagnosticId);
         
-        protected override StatementSyntax GetNewStatement(ExpressionStatementSyntax statement, FluentAssertionsDiagnosticProperties properties)
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             NodeReplacement[] replacements =
             {
@@ -50,7 +50,7 @@ namespace FluentAssertions.Analyzers
                 NodeReplacement.Rename("BeTrue", "NotBeEmpty")
             };
 
-            return GetNewStatement(statement, replacements);
+            return GetNewExpression(expression, replacements);
         }
     }
 }

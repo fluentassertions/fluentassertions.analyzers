@@ -27,10 +27,22 @@ namespace FluentAssertions.Analyzers
         {
             var method = context.CodeBlock as MethodDeclarationSyntax;
             if (method == null) return;
-
-            foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
+            
+            if(method.Body != null)
             {
-                var diagnostic = AnalyzeExpressionStatement(statement);
+                foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
+                {
+                    var diagnostic = AnalyzeExpression(statement.Expression);
+                    if (diagnostic != null)
+                    {
+                        context.ReportDiagnostic(diagnostic);
+                    }
+                }
+                return;
+            }
+            if (method.ExpressionBody != null)
+            {
+                var diagnostic = AnalyzeExpression(method.ExpressionBody.Expression);
                 if (diagnostic != null)
                 {
                     context.ReportDiagnostic(diagnostic);
@@ -38,27 +50,27 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected virtual Diagnostic AnalyzeExpressionStatement(ExpressionStatementSyntax statement)
+        protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression)
         {
             foreach (var visitor in Visitors)
             {
-                statement.Accept(visitor);
+                expression.Accept(visitor);
 
                 if (visitor.IsValid)
                 {
-                    return CreateDiagnostic(visitor, statement);
+                    return CreateDiagnostic(visitor, expression);
                 }
             }
             return null;
         }
 
-        protected virtual Diagnostic CreateDiagnostic(TCSharpSyntaxVisitor visitor, ExpressionStatementSyntax statement)
+        protected virtual Diagnostic CreateDiagnostic(TCSharpSyntaxVisitor visitor, ExpressionSyntax expression)
         {
             var properties = visitor.ToDiagnosticProperties()
                 .Add(Constants.DiagnosticProperties.Title, Title);
             return Diagnostic.Create(
                 descriptor: Rule,
-                location: statement.GetLocation(),
+                location: expression.GetLocation(),
                 properties: properties,
                 messageArgs: visitor.VariableName);
         }

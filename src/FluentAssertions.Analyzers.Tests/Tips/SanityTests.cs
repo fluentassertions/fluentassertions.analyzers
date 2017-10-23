@@ -10,7 +10,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertionCallMultipleMethodWithTheSameNameAndArguments()
         {
             const string assertion = "actual.Should().Contain(d => d.Message.Contains(\"a\")).And.Contain(d => d.Message.Contains(\"c\"));";
-            var source = GenerateCode.EnumerableAssertion(assertion);
+            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -20,7 +20,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void PropertyOfIndexerShouldBe_ShouldNotThrowException()
         {
             const string assertion = "actual[0].Message.Should().Be(\"test\");";
-            var source = GenerateCode.EnumerableAssertion(assertion);
+            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -30,7 +30,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void PropertyOfElementAtShouldBe_ShouldNotTriggerDiagnostic()
         {
             const string assertion = "actual.ElementAt(0).Message.Should().Be(\"test\");";
-            var source = GenerateCode.EnumerableAssertion(assertion);
+            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
