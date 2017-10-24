@@ -26,11 +26,22 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         }
 
         [TestMethod]
-        [NotImplemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/13")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/13")]
         public void PropertyOfElementAtShouldBe_ShouldNotTriggerDiagnostic()
         {
             const string assertion = "actual.ElementAt(0).Message.Should().Be(\"test\");";
             var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/10")]
+        public void NestedAssertions_ShouldNotTrigger()
+        {
+            const string declaration = "var nestedList = new List<List<int>>();";
+            const string assertion = "nestedList.Should().NotBeNull().And.ContainSingle().Which.Should().NotBeEmpty();";
+            var source = GenerateCode.EnumerableCodeBlockAssertion(declaration + assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
