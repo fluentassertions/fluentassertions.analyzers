@@ -6,6 +6,16 @@ namespace FluentAssertions.Analyzers.Tests.Tips
     public class SanityTests
     {
         [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/11")]
+        public void CountWithPredicate()
+        {
+            const string assertion = "actual.Count(d => d.Message.Contains(\"a\")).Should().Be(2);";
+            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+            
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/10")]
         public void AssertionCallMultipleMethodWithTheSameNameAndArguments()
         {

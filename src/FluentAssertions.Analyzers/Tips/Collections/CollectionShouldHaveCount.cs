@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
 
         private class CountShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public CountShouldBeSyntaxVisitor() : base(new MemberValidator("Count"), MemberValidator.Should, new MemberValidator("Be"))
+            public CountShouldBeSyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, new MemberValidator("Be"))
             {
             }
         }
