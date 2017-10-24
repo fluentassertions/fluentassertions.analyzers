@@ -6,7 +6,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
     public class SanityTests
     {
         [TestMethod]
-        [NotImplemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/10")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/10")]
         public void AssertionCallMultipleMethodWithTheSameNameAndArguments()
         {
             const string assertion = "actual.Should().Contain(d => d.Message.Contains(\"a\")).And.Contain(d => d.Message.Contains(\"c\"));";
@@ -16,7 +16,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         }
 
         [TestMethod]
-        [NotImplemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/13")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/13")]
         public void PropertyOfIndexerShouldBe_ShouldNotThrowException()
         {
             const string assertion = "actual[0].Message.Should().Be(\"test\");";

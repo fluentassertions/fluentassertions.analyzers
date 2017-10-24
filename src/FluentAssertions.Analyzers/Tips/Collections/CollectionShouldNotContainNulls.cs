@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotContainNulls;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should()### instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -25,10 +25,9 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class SelectShouldNotContainNullsSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        private class SelectShouldNotContainNullsSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingLambda => "Select";
-            public SelectShouldNotContainNullsSyntaxVisitor() : base("Select", "Should", "NotContainNulls")
+            public SelectShouldNotContainNullsSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("NotContainNulls"))
             {
             }
         }

@@ -27,8 +27,8 @@ namespace FluentAssertions.Analyzers
         {
             var method = context.CodeBlock as MethodDeclarationSyntax;
             if (method == null) return;
-            
-            if(method.Body != null)
+
+            if (method.Body != null)
             {
                 foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
                 {
@@ -71,8 +71,7 @@ namespace FluentAssertions.Analyzers
             return Diagnostic.Create(
                 descriptor: Rule,
                 location: expression.GetLocation(),
-                properties: properties,
-                messageArgs: visitor.VariableName);
+                properties: properties);
         }
     }
 

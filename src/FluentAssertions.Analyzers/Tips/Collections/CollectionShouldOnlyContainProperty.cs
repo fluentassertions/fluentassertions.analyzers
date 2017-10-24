@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldOnlyContainProperty;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .OnlyContain() instead.";
+        public const string Message = "Use .Should().OnlyContain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
@@ -26,10 +26,9 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        public class AllShouldBeTrueSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        public class AllShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingLambda => "All";
-            public AllShouldBeTrueSyntaxVisitor() : base("All", "Should", "BeTrue")
+            public AllShouldBeTrueSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("All"), MemberValidator.Should, new MemberValidator("BeTrue"))
             {
             }
         }

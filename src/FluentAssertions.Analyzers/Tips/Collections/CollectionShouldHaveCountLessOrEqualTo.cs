@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCountLessOrEqualTo;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .HaveCountLessOrEqualTo() instead.";
+        public const string Message = "Use .Should().HaveCountLessOrEqualTo() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
@@ -25,10 +25,9 @@ namespace FluentAssertions.Analyzers
                 yield return new CountShouldBeLessOrEqualToSyntaxVisitor();
             }
         }
-        private class CountShouldBeLessOrEqualToSyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
+        private class CountShouldBeLessOrEqualToSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingArgument => "BeLessOrEqualTo";
-            public CountShouldBeLessOrEqualToSyntaxVisitor() : base("Count", "Should", "BeLessOrEqualTo")
+            public CountShouldBeLessOrEqualToSyntaxVisitor() : base(new MemberValidator("Count"), MemberValidator.Should, new MemberValidator("BeLessOrEqualTo"))
             {
             }
         }

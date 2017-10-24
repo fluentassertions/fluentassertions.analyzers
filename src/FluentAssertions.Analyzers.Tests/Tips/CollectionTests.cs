@@ -9,6 +9,14 @@ namespace FluentAssertions.Analyzers.Tests
         public TestContext TestContext { get; set; }
 
         [AssertionDataTestMethod]
+        [AssertionDiagnostic("nestedList.Should().NotBeNull({0}).And.ContainSingle().Which.Should().NotBeEmpty();")]
+        [AssertionDiagnostic("nestedList.Should().NotBeNull().And.ContainSingle().Which.Should().NotBeEmpty({0});")]
+        [AssertionDiagnostic("nestedList.Should().NotBeNull().And.ContainSingle({0}).Which.Should().NotBeEmpty();")]
+        [NotImplemented]
+        public void NoDiagnostics(string assertion) => VerifyCSharpNoDiagnosticsCodeBlock(assertion);
+
+
+        [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeTrue({0}).And.ToString();")]
         [Implemented]
@@ -375,6 +383,8 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.Should().NotBeEmpty().And.NotBeNull({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeNull().And.NotBeEmpty({0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeEmpty().And.NotBeNull({0}).And.ToString();")]
+        [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeNull().And.HaveCount(2).And.NotBeEmpty({0}).And.ToString();")]
+        [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeEmpty().And.HaveCount(2).And.NotBeNull({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldNotBeNullOrEmptyAnalyzer>(assertion);
 
@@ -390,7 +400,7 @@ namespace FluentAssertions.Analyzers.Tests
             newAssertion: "actual.Should().NotBeNullOrEmpty({0});")]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().NotBeEmpty({0}).And.NotBeNull();",
-            newAssertion: "actual.Should().NotBeNullOrEmpty({0});")]        
+            newAssertion: "actual.Should().NotBeNullOrEmpty({0});")]
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Should().NotBeNull().And.HaveCount(2).And.NotBeEmpty({0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().NotBeNullOrEmpty({0}).And.HaveCount(2).And.ToString();")]
@@ -399,8 +409,6 @@ namespace FluentAssertions.Analyzers.Tests
             newAssertion: "actual.AsEnumerable().Should().NotBeNullOrEmpty({0}).And.HaveCount(2).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotBeNullOrEmptyCodeFix, CollectionShouldNotBeNullOrEmptyAnalyzer>(oldAssertion, newAssertion);
-
-        public void CollectionShouldNotBeNullOrEmptyMultipleReasons_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotBeNullOrEmptyCodeFix, CollectionShouldNotBeNullOrEmptyAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.ElementAt(k).Should().Be(expectedItem{0});")]
@@ -604,7 +612,7 @@ namespace FluentAssertions.Analyzers.Tests
             newAssertion: "actual.AsEnumerable().Should().HaveElementAt(0, null{0}).And.ToString();")]
         [Ignore("What Should Happen?")]
         public void CollectionShouldHaveElementAt0Null_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveElementAt0NullCodeFix, CollectionShouldHaveElementAt0NullAnalyzer>(oldAssertion, newAssertion);
-        
+
         private void VerifyCSharpDiagnosticCodeBlock<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.EnumerableCodeBlockAssertion(sourceAssertion);
@@ -616,7 +624,7 @@ namespace FluentAssertions.Analyzers.Tests
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
             {
                 Id = diagnosticId,
-                Message = string.Format(message, GenerateCode.ActualVariableName),
+                Message = message,
                 Locations = new DiagnosticResultLocation[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 11,13)
@@ -636,7 +644,7 @@ namespace FluentAssertions.Analyzers.Tests
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
             {
                 Id = diagnosticId,
-                Message = string.Format(message, GenerateCode.ActualVariableName),
+                Message = message,
                 Locations = new DiagnosticResultLocation[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 10,16)
@@ -663,6 +671,12 @@ namespace FluentAssertions.Analyzers.Tests
             var newSource = GenerateCode.EnumerableExpressionBodyAssertion(newSourceAssertion);
 
             DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
+        }
+
+        private void VerifyCSharpNoDiagnosticsCodeBlock(string assertion)
+        {
+            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
     }
 }

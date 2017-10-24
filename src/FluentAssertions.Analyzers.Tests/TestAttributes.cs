@@ -16,6 +16,8 @@ namespace FluentAssertions.Analyzers.Tests
     [AttributeUsage(AttributeTargets.Method)]
     public class ImplementedAttribute : TestCategoryBaseAttribute
     {
+        public string Reason { get; set; }
+
         public override IList<string> TestCategories => new[] { "Completed" };
     }
 

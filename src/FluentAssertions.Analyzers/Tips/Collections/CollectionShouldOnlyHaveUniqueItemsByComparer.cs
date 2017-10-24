@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldOnlyHaveUniqueItemsByComparer;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .OnlyHaveUniqueItems() instead.";
+        public const string Message = "Use .Should().OnlyHaveUniqueItems() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
@@ -26,10 +26,9 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class SelectShouldOnlyHaveUniqueItemsSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        private class SelectShouldOnlyHaveUniqueItemsSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingLambda => "Select";
-            public SelectShouldOnlyHaveUniqueItemsSyntaxVisitor() : base("Select", "Should", "OnlyHaveUniqueItems")
+            public SelectShouldOnlyHaveUniqueItemsSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("OnlyHaveUniqueItems"))
             {
             }
         }

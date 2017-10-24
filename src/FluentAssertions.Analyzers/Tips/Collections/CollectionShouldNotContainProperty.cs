@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotContainProperty;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .NotContain() instead.";
+        public const string Message = "Use .Should().NotContain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -28,39 +27,24 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        public class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        public class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingLambda => "Any";
-            public AnyShouldBeFalseSyntaxVisitor() : base("Any", "Should", "BeFalse")
+            public AnyShouldBeFalseSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeFalse"))
             {
             }
         }
 
-        public class WhereShouldBeEmptySyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        public class WhereShouldBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingLambda => "Where";
-            public WhereShouldBeEmptySyntaxVisitor() : base("Where", "Should", "BeEmpty")
+            public WhereShouldBeEmptySyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Where"), MemberValidator.Should, new MemberValidator("BeEmpty"))
             {
             }
         }
 
-        public class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+        public class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingLambda => "OnlyContain";
-            public override SimpleLambdaExpressionSyntax Lambda => ReverseLambda(base.Lambda);
-
-            public ShouldOnlyContainNotSyntaxVisitor() : base("Should", "OnlyContain")
+            public ShouldOnlyContainNotSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MathodContainingLambda("OnlyContain"))
             {
-            }
-
-            private SimpleLambdaExpressionSyntax ReverseLambda(SimpleLambdaExpressionSyntax lambda)
-            {
-                if (lambda.Body is PrefixUnaryExpressionSyntax prefixUnary && prefixUnary.OperatorToken.IsKind(SyntaxKind.ExclamationToken))
-                {
-                    return lambda.WithBody(prefixUnary.Operand);
-                }
-
-                return lambda;
             }
         }
     }
