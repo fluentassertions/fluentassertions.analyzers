@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainKey;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .ContainKey() instead.";
+        public const string Message = "Use .Should().ContainKey() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
 
 		private class ContainsKeyShouldBeTrue : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public ContainsKeyShouldBeTrue() : base("ContainsKey", "Should", "BeTrue")
+			public ContainsKeyShouldBeTrue() : base(new MemberValidator("ContainsKey"), MemberValidator.Should, new MemberValidator("BeTrue"))
 			{
 			}
 		}

@@ -15,7 +15,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainPair;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .Contain() instead.";
+        public const string Message = "Use .Should().Contain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -27,37 +27,50 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        public abstract class ContainKeyValueSyntaxVisitor : FluentAssertionsWithArgumentsCSharpSyntaxVisitor
+        // TODO: how to extract the property accessing the Key & Value properties and compare them
+        public abstract class ContainKeyValueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override bool AreArgumentsValid()
+            private string KeyPropertyParentName;
+            private string ValuePropertyParentName;
+
+            protected ContainKeyValueSyntaxVisitor(params MemberValidator[] members) : base(members)
             {
-                return Arguments.TryGetValue(("ContainKey", 0), out var key)
-                    && key is MemberAccessExpressionSyntax keyAccess
-                    && keyAccess.Expression is IdentifierNameSyntax keyContainer
-                    && keyAccess.Name.Identifier.Text == "Key"
-
-                    && Arguments.TryGetValue(("ContainValue", 0), out var value)
-                    && value is MemberAccessExpressionSyntax valueAccess
-                    && valueAccess.Expression is IdentifierNameSyntax valueContainer
-                    && valueAccess.Name.Identifier.Text == "Value"
-
-                    && keyContainer.Identifier.Text == valueContainer.Identifier.Text;
             }
 
-            protected ContainKeyValueSyntaxVisitor(params string[] requiredMethods) : base(requiredMethods)
+            public override bool IsValid => base.IsValid && KeyPropertyParentName == ValuePropertyParentName;
+
+            protected static bool KeyIsProperty(SeparatedSyntaxList<ArgumentSyntax> arguments)
             {
+                if (!arguments.Any()) return false;
+
+                return arguments.First().Expression is MemberAccessExpressionSyntax valueAccess
+                    && valueAccess.Expression is IdentifierNameSyntax identifier
+                    && valueAccess.Name.Identifier.Text == "Key";
+            }
+            protected static bool ValueIsProperty(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            {
+                if (!arguments.Any()) return false;
+
+                if (arguments.First().Expression is MemberAccessExpressionSyntax valueAccess
+                    && valueAccess.Expression is IdentifierNameSyntax identifier
+                    && valueAccess.Name.Identifier.Text == "Value")
+                {
+                    return true;
+                }
+                return false;
             }
         }
+
         public class ShouldContainKeyAndContainValueSyntaxVisitor : ContainKeyValueSyntaxVisitor
         {
-
-            public ShouldContainKeyAndContainValueSyntaxVisitor() : base("Should", "ContainKey", "And", "ContainValue")
+            public ShouldContainKeyAndContainValueSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("ContainKey", KeyIsProperty), MemberValidator.And, new MemberValidator("ContainValue", ValueIsProperty))
             {
             }
         }
+
         public class ShouldContainValueAndContainKeySyntaxVisitor : ContainKeyValueSyntaxVisitor
         {
-            public ShouldContainValueAndContainKeySyntaxVisitor() : base("Should", "ContainValue", "And", "ContainKey")
+            public ShouldContainValueAndContainKeySyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("ContainValue", ValueIsProperty), MemberValidator.And, new MemberValidator("ContainKey", KeyIsProperty))
             {
             }
         }

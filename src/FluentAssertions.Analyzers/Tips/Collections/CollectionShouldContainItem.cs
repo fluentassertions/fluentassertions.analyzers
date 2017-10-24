@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldContainItem;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by Contain() instead.";
+        public const string Message = "Use .Should()Contain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
@@ -28,22 +28,8 @@ namespace FluentAssertions.Analyzers
 
         private class ContainsShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public string ExpectedItemString { get; private set; }
-            public override bool IsValid => base.IsValid && ExpectedItemString != null;
-
-            public ContainsShouldBeTrueSyntaxVisitor() : base("Contains", "Should", "BeTrue")
+            public ContainsShouldBeTrueSyntaxVisitor() : base(new MemberValidator("Contains"), MemberValidator.Should, new MemberValidator("BeTrue"))
             {
-            }
-
-            public override ImmutableDictionary<string, string> ToDiagnosticProperties()
-                => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.ExpectedItemString, ExpectedItemString);
-
-            public override void VisitArgumentList(ArgumentListSyntax node)
-            {
-                if (!node.Arguments.Any()) return;
-                if (CurrentMethod != "Contains") return;
-
-                ExpectedItemString = node.Arguments[0].ToFullString();
             }
         }
     }

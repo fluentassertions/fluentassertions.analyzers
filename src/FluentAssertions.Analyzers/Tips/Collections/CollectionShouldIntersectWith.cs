@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldIntersectWith;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .IntersectWith() instead.";
+        public const string Message = "Use .Should().IntersectWith() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -25,10 +25,9 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class IntersectShouldNotBeEmptySyntaxVisitor : FluentAssertionsWithArgumentCSharpSyntaxVisitor
+        private class IntersectShouldNotBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            protected override string MethodContainingArgument => "Intersect";
-            public IntersectShouldNotBeEmptySyntaxVisitor() : base("Intersect", "Should", "NotBeEmpty")
+            public IntersectShouldNotBeEmptySyntaxVisitor() : base(MemberValidator.HasArguments("Intersect"), MemberValidator.Should, new MemberValidator("NotBeEmpty"))
             {
             }
         }

@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldBeInDescendingOrder;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .BeInDescendingOrder() instead.";
+        public const string Message = "Use .Should().BeInDescendingOrder() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -24,28 +24,11 @@ namespace FluentAssertions.Analyzers
                 yield return new OrderByDescendingShouldEqualSyntaxVisitor();
             }
         }
-        private class OrderByDescendingShouldEqualSyntaxVisitor : FluentAssertionsWithLambdaArgumentCSharpSyntaxVisitor
+
+        private class OrderByDescendingShouldEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            private bool _argumentIsSelf;
-            protected override string MethodContainingLambda => "OrderByDescending";
-
-            public override bool IsValid => base.IsValid && _argumentIsSelf;
-
-            public OrderByDescendingShouldEqualSyntaxVisitor() : base("OrderByDescending", "Should", "Equal")
+            public OrderByDescendingShouldEqualSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("OrderByDescending"), MemberValidator.Should, MemberValidator.ArgumentIsVariable("Equal"))
             {
-            }
-
-            public override void VisitArgumentList(ArgumentListSyntax node)
-            {
-                if (!node.Arguments.Any()) return;
-                if (CurrentMethod != "Equal")
-                {
-                    base.VisitArgumentList(node);
-                    return;
-                }
-
-                _argumentIsSelf = node.Arguments[0].Expression is IdentifierNameSyntax identifier
-                    && identifier.Identifier.Text == VariableName;
             }
         }
     }

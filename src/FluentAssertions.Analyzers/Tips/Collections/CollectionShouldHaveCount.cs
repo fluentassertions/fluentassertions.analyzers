@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCount;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by .HaveCount() instead.";
+        public const string Message = "Use .Should().HaveCount() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -27,23 +27,8 @@ namespace FluentAssertions.Analyzers
 
         private class CountShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public string CountArgument { get; private set; }
-
-            public override bool IsValid => base.IsValid && CountArgument != null;
-
-            public CountShouldBeSyntaxVisitor() : base("Count", "Should", "Be")
+            public CountShouldBeSyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, new MemberValidator("Be"))
             {
-            }
-
-            public override ImmutableDictionary<string, string> ToDiagnosticProperties()
-                => base.ToDiagnosticProperties().Add(Constants.DiagnosticProperties.ArgumentString, CountArgument);
-
-            public override void VisitArgumentList(ArgumentListSyntax node)
-            {
-                if (!node.Arguments.Any()) return;
-                if (CurrentMethod != "Be") return;
-
-                CountArgument = node.Arguments[0].ToFullString();
             }
         }
     }
@@ -52,7 +37,7 @@ namespace FluentAssertions.Analyzers
     public class CollectionShouldHaveCountCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountAnalyzer.DiagnosticId);
-        
+
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("Be", "HaveCount"));
