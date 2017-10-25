@@ -66,21 +66,21 @@ namespace FluentAssertions.Analyzers
             {
                 var renameKeyArguments = NodeReplacement.RenameAndExtractArguments("ContainKey", "Contain");
                 var removeValueArguments = NodeReplacement.RemoveAndExtractArguments("ContainValue");
-                var newStatement = GetNewExpression(expression, renameKeyArguments, removeValueArguments);
+                var newExpression = GetNewExpression(expression, renameKeyArguments, removeValueArguments);
 
                 var newArguments = MergeContainKeyAndContainValueArguments(renameKeyArguments.Arguments, removeValueArguments.Arguments);
 
-                return GetNewExpression(newStatement, NodeReplacement.WithArguments("Contain", newArguments));
+                return GetNewExpression(newExpression, NodeReplacement.WithArguments("Contain", newArguments));
             }
             else if (properties.VisitorName == nameof(DictionaryShouldContainPairAnalyzer.ShouldContainValueAndContainKeySyntaxVisitor))
             {
                 var removeKeyArguments = NodeReplacement.RemoveAndExtractArguments("ContainKey");
                 var renameValueArguments = NodeReplacement.RenameAndExtractArguments("ContainValue", "Contain");
-                var newStatement = GetNewExpression(expression, removeKeyArguments, renameValueArguments);
+                var newExpression = GetNewExpression(expression, removeKeyArguments, renameValueArguments);
 
                 var newArguments = MergeContainKeyAndContainValueArguments(removeKeyArguments.Arguments, renameValueArguments.Arguments);
 
-                return GetNewExpression(newStatement, NodeReplacement.WithArguments("Contain", newArguments));
+                return GetNewExpression(newExpression, NodeReplacement.WithArguments("Contain", newArguments));
             }
             else
             {

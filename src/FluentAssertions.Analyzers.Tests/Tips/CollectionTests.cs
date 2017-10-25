@@ -15,7 +15,6 @@ namespace FluentAssertions.Analyzers.Tests
         [NotImplemented]
         public void NoDiagnostics(string assertion) => VerifyCSharpNoDiagnosticsCodeBlock(assertion);
 
-
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeTrue({0}).And.ToString();")]

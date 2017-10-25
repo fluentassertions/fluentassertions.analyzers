@@ -48,17 +48,17 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            var newStatement = GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveCount", "ContainSingle"));
+            var newExpression = GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveCount", "ContainSingle"));
             if (properties.VisitorName == nameof(CollectionShouldContainSingleAnalyzer.ShouldHaveCount1SyntaxVisitor))
             {
-                return newStatement;
+                return newExpression;
             }
             else if (properties.VisitorName == nameof(CollectionShouldContainSingleAnalyzer.WhereShouldHaveCount1SyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("Where");
-                newStatement = GetNewExpression(newStatement, remove);
+                newExpression = GetNewExpression(newExpression, remove);
 
-                return GetNewExpression(newStatement, NodeReplacement.PrependArguments("ContainSingle", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.PrependArguments("ContainSingle", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

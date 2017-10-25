@@ -59,23 +59,23 @@ namespace FluentAssertions.Analyzers
             if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.ElementAtIndexShouldBeSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.IndexerShouldBeSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldHaveElementAtAnalyzer.SkipFirstShouldBeSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
-                var newStatement = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
+                var newExpression = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
 
-                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

@@ -41,9 +41,9 @@ namespace FluentAssertions.Analyzers
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var remove = NodeReplacement.RemoveAndExtractArguments("ContainsKey");
-            var newStatement = GetNewExpression(expression, remove);
+            var newExpression = GetNewExpression(expression, remove);
 
-            return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainKey", remove.Arguments));
+            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainKey", remove.Arguments));
         }
     }
 }

@@ -63,16 +63,16 @@ namespace FluentAssertions.Analyzers
             if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeNullAndNotBeEmptySyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("NotBeEmpty");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("NotBeNull");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

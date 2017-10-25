@@ -41,11 +41,11 @@ namespace FluentAssertions.Analyzers
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var remove = NodeReplacement.RemoveAndExtractArguments("OrderBy");
-            var newStatement = GetNewExpression(expression, remove);
+            var newExpression = GetNewExpression(expression, remove);
 
-            newStatement = GetNewExpression(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("Equal", "BeInAscendingOrder"));
+            newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndRemoveFirstArgument("Equal", "BeInAscendingOrder"));
 
-            return GetNewExpression(newStatement, NodeReplacement.PrependArguments("BeInAscendingOrder", remove.Arguments));
+            return GetNewExpression(newExpression, NodeReplacement.PrependArguments("BeInAscendingOrder", remove.Arguments));
         }
     }
 }

@@ -98,28 +98,28 @@ namespace FluentAssertions.Analyzers
             if (properties.VisitorName == nameof(DictionaryShouldContainPairAnalyzer.ShouldContainKeyAndContainValueSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ContainValue");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
                 var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 
-                newStatement = GetNewExpression(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("ContainKey", "Contain"));
+                newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndRemoveFirstArgument("ContainKey", "Contain"));
 
-                newStatement = GetNewExpression(newStatement, NodeReplacement.PrependArguments("Contain", newArguments));
+                newExpression = GetNewExpression(newExpression, NodeReplacement.PrependArguments("Contain", newArguments));
 
-                return newStatement;
+                return newExpression;
             }
             else if (properties.VisitorName == nameof(DictionaryShouldContainPairAnalyzer.ShouldContainValueAndContainKeySyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ContainKey");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
                 var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 
-                newStatement = GetNewExpression(newStatement, NodeReplacement.RenameAndRemoveFirstArgument("ContainValue", "Contain"));
+                newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndRemoveFirstArgument("ContainValue", "Contain"));
 
-                newStatement = GetNewExpression(newStatement, NodeReplacement.PrependArguments("Contain", newArguments));
+                newExpression = GetNewExpression(newExpression, NodeReplacement.PrependArguments("Contain", newArguments));
 
-                return newStatement;
+                return newExpression;
             }
             else
             {

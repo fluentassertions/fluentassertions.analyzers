@@ -59,16 +59,16 @@ namespace FluentAssertions.Analyzers
             if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.AnyShouldBeFalseSyntaxVisitor))
             {
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Any");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.WhereShouldBeEmptySyntaxVisitor))
             {
                 var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Where");
-                var newStatement = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newStatement, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.ShouldOnlyContainNotSyntaxVisitor))
             {

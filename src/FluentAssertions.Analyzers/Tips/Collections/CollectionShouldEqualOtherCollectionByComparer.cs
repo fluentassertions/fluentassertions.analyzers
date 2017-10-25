@@ -52,10 +52,10 @@ namespace FluentAssertions.Analyzers
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             var removeMethodContainingFirstLambda = NodeReplacement.RemoveAndExtractArguments("Select");
-            var newStatement = GetNewExpression(expression, removeMethodContainingFirstLambda);
+            var newExpression = GetNewExpression(expression, removeMethodContainingFirstLambda);
 
             var removeArgument = NodeReplacement.RemoveFirstArgument("Equal");
-            newStatement = GetNewExpression(newStatement, removeArgument);
+            newExpression = GetNewExpression(newExpression, removeArgument);
 
             var argumentInvocation = (InvocationExpressionSyntax)removeArgument.Argument.Expression;
             var identifier = ((MemberAccessExpressionSyntax)argumentInvocation.Expression).Expression;
@@ -68,7 +68,7 @@ namespace FluentAssertions.Analyzers
                 .Add(removeArgument.Argument.WithExpression(CombineLambdas(firstLambda, secondLambda).NormalizeWhitespace()
             ));
 
-            return GetNewExpression(newStatement, NodeReplacement.PrependArguments("Equal", newArguments));
+            return GetNewExpression(newExpression, NodeReplacement.PrependArguments("Equal", newArguments));
         }
 
         private ParenthesizedLambdaExpressionSyntax CombineLambdas(SimpleLambdaExpressionSyntax left, SimpleLambdaExpressionSyntax right) => SyntaxFactory.ParenthesizedLambdaExpression(
