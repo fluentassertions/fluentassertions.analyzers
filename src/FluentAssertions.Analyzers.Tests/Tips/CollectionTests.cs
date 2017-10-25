@@ -191,11 +191,23 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.Count().Should().Be(k{0});",
             newAssertion: "actual.Should().HaveCount(k{0});")]
         [AssertionCodeFix(
+            oldAssertion: "actual.Count().Should().Be(0{0});",
+            newAssertion: "actual.Should().BeEmpty({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Count().Should().Be(1{0});",
+            newAssertion: "actual.Should().ContainSingle({0});")]
+        [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().Be(6{0});",
             newAssertion: "actual.Should().HaveCount(6{0});")]
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().Be(k{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCount(k{0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.AsEnumerable().Count().Should().Be(0{0}).And.ToString();",
+            newAssertion: "actual.AsEnumerable().Should().BeEmpty({0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.AsEnumerable().Count().Should().Be(1{0}).And.ToString();",
+            newAssertion: "actual.AsEnumerable().Should().ContainSingle({0}).And.ToString();")]
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().Be(6{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCount(6{0}).And.ToString();")]

@@ -21,11 +21,27 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
+                yield return new CountShouldBe0SyntaxVisitor();
+                yield return new CountShouldBe1SyntaxVisitor();
                 yield return new CountShouldBeSyntaxVisitor();
             }
         }
 
-        private class CountShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class CountShouldBe0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public CountShouldBe0SyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 0))
+            {
+            }
+        }
+
+        public class CountShouldBe1SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public CountShouldBe1SyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 1))
+            {
+            }
+        }
+
+        public class CountShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public CountShouldBeSyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, new MemberValidator("Be"))
             {
@@ -40,7 +56,19 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("Be", "HaveCount"));
+            if (properties.VisitorName == nameof(CollectionShouldHaveCountAnalyzer.CountShouldBe0SyntaxVisitor))
+            {
+                return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.RenameAndRemoveFirstArgument("Be", "BeEmpty"));
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldHaveCountAnalyzer.CountShouldBe1SyntaxVisitor))
+            {
+                return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.RenameAndRemoveFirstArgument("Be", "ContainSingle"));
+            }
+            else if (properties.VisitorName == nameof(CollectionShouldHaveCountAnalyzer.CountShouldBeSyntaxVisitor))
+            {
+                return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("Be", "HaveCount"));
+            }
+            throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }
     }
 }
