@@ -5,8 +5,6 @@ namespace FluentAssertions.Analyzers.Tests
 {
     public static class GenerateCode
     {
-        public static string ActualVariableName => "actual";
-
         public static string EnumerableCodeBlockAssertion(string assertion) => EnumerableAssertion(
             "        {" + Environment.NewLine +
             "            " + assertion + Environment.NewLine +
@@ -23,7 +21,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("{")
             .AppendLine("    public class TestClass")
             .AppendLine("    {")
-            .AppendLine($"        public void TestMethod(IList<TestComplexClass> {ActualVariableName}, IList<TestComplexClass> expected, IList<TestComplexClass> unexpected, TestComplexClass expectedItem, TestComplexClass unexpectedItem, int k)")
+            .AppendLine($"        public void TestMethod(IList<TestComplexClass> actual, IList<TestComplexClass> expected, IList<TestComplexClass> unexpected, TestComplexClass expectedItem, TestComplexClass unexpectedItem, int k)")
             .AppendLine(bodyExpression)
             .AppendLine("    }")
             .AppendLine("    public class TestComplexClass")
@@ -49,18 +47,18 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("{")
             .AppendLine("    public class TestClass")
             .AppendLine("    {")
-            .AppendLine($"        public void TestMethod(Dictionary<string, TestComplexClass> {ActualVariableName}, IDictionary<string, TestComplexClass> expected, IDictionary<string, TestComplexClass> unexpected, string expectedKey, TestComplexClass expectedValue, string unexpectedKey, TestComplexClass unexpectedValue, KeyValuePair<string, TestComplexClass> pair)")
+            .AppendLine($"        public void TestMethod(Dictionary<string, TestComplexClass> actual, IDictionary<string, TestComplexClass> expected, IDictionary<string, TestComplexClass> unexpected, string expectedKey, TestComplexClass expectedValue, string unexpectedKey, TestComplexClass unexpectedValue, KeyValuePair<string, TestComplexClass> pair, KeyValuePair<string, TestComplexClass> otherPair)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendLine($"    public class TestComplexClass")
+            .AppendLine("    public class TestComplexClass")
             .AppendLine("    {")
             .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("    }")
             .AppendLine("    class Program")
             .AppendLine("    {")
-            .AppendLine($"        public static void Main()")
+            .AppendLine("        public static void Main()")
             .AppendLine("        {")
             .AppendLine("        }")
             .AppendLine("    }")
@@ -72,7 +70,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("{")
             .AppendLine("    class TestClass")
             .AppendLine("    {")
-            .AppendLine($"        void TestMethod(int {ActualVariableName}, int expected)")
+            .AppendLine($"        void TestMethod(int actual, int expected)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")

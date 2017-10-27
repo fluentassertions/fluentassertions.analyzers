@@ -57,7 +57,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         }
 
         [TestMethod]
-        [NotImplemented]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/18")]
         public void DictionaryShouldContainPair_WhenPropertiesOfDifferentVariables_ShouldNotTrigger()
         {
             const string assertion = "actual.Should().ContainValue(pair.Value).And.ContainKey(otherPair.Key);";
