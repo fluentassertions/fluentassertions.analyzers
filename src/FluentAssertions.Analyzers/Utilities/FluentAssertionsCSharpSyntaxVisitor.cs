@@ -1,9 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -14,7 +11,7 @@ namespace FluentAssertions.Analyzers
         public ImmutableStack<MemberValidator> AllMembers { get; }
         public ImmutableStack<MemberValidator> Members { get; private set; }
 
-        public virtual bool IsValid => Members.IsEmpty;
+        public virtual bool IsValid(ExpressionSyntax expression) => Members.IsEmpty;
 
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => ImmutableDictionary<string, string>.Empty
             .Add(Constants.DiagnosticProperties.VisitorName, GetType().Name)

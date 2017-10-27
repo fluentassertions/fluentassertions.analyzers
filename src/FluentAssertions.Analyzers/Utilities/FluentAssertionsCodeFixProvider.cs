@@ -61,7 +61,7 @@ namespace FluentAssertions.Analyzers
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
             expression.Accept(visitor);
-            var members =  new LinkedList<MemberAccessExpressionSyntax>(visitor.Members);
+            var members = new LinkedList<MemberAccessExpressionSyntax>(visitor.Members);
 
             var current = members.Last;
             while (current != null)
@@ -77,25 +77,6 @@ namespace FluentAssertions.Analyzers
             }
 
             throw new System.InvalidOperationException("should not get here");
-        }
-
-        protected class MemberAccessExpressionsCSharpSyntaxVisitor : CSharpSyntaxVisitor
-        {
-            public List<MemberAccessExpressionSyntax> Members { get; } = new List<MemberAccessExpressionSyntax>();
-
-            public override void VisitInvocationExpression(InvocationExpressionSyntax node) => Visit(node.Expression);
-
-            public sealed override void VisitExpressionStatement(ExpressionStatementSyntax node) => Visit(node.Expression);
-
-
-            public sealed override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
-            {
-                if (node.Name.Identifier.Text != "And")
-                {
-                    Members.Add(node);
-                }
-                Visit(node.Expression);
-            }
         }
     }
 }

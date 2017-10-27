@@ -42,7 +42,7 @@ namespace FluentAssertions.Analyzers
                     var visitor = new FluentAssertionsCSharpSyntaxVisitor(new MemberValidator(nameof(Enumerable.Distinct)));
                     invocation.Accept(visitor);
 
-                    return visitor.IsValid && VariableNameExtractor.ExtractVariabeName(arguments.First()) == VariableNameExtractor.ExtractVariabeName(invocation);
+                    return visitor.IsValid(invocation) && VariableNameExtractor.ExtractVariabeName(arguments.First()) == VariableNameExtractor.ExtractVariabeName(invocation);
                 }
                 return false;
             }

@@ -26,18 +26,37 @@ namespace FluentAssertions.Analyzers
                 yield return new ShouldContainValueAndContainKeySyntaxVisitor();
             }
         }
-
-        // TODO: how to extract the property accessing the Key & Value properties and compare them
+        
         public abstract class ContainKeyValueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            private string KeyPropertyParentName;
-            private string ValuePropertyParentName;
-
             protected ContainKeyValueSyntaxVisitor(params MemberValidator[] members) : base(members)
             {
             }
 
-            public override bool IsValid => base.IsValid && KeyPropertyParentName == ValuePropertyParentName;
+            public override bool IsValid(ExpressionSyntax expression)
+            {
+                if (!base.IsValid(expression)) return false;
+
+                var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
+                expression.Accept(visitor);
+
+                var containKey = visitor.Members.Find(member => member.Name.Identifier.Text == "ContainKey");
+                var containValue = visitor.Members.Find(member => member.Name.Identifier.Text == "ContainValue");
+
+                return containKey.Parent is InvocationExpressionSyntax keyInvocation
+                    && containValue.Parent is InvocationExpressionSyntax valueInvocation
+
+                    && keyInvocation.ArgumentList.Arguments is SeparatedSyntaxList<ArgumentSyntax> containKeyArguments
+                    && valueInvocation.ArgumentList.Arguments is SeparatedSyntaxList<ArgumentSyntax> containValueArguments
+
+                    && containKeyArguments.First().Expression is MemberAccessExpressionSyntax keyArgument
+                    && containValueArguments.First().Expression is MemberAccessExpressionSyntax valueArgument
+
+                    && keyArgument.Expression is IdentifierNameSyntax keyIdentifier
+                    && valueArgument.Expression is IdentifierNameSyntax valueIdentifier
+
+                    && keyIdentifier.Identifier.Text == valueIdentifier.Identifier.Text;
+            }
 
             protected static bool KeyIsProperty(SeparatedSyntaxList<ArgumentSyntax> arguments)
             {
@@ -51,13 +70,9 @@ namespace FluentAssertions.Analyzers
             {
                 if (!arguments.Any()) return false;
 
-                if (arguments.First().Expression is MemberAccessExpressionSyntax valueAccess
+                return arguments.First().Expression is MemberAccessExpressionSyntax valueAccess
                     && valueAccess.Expression is IdentifierNameSyntax identifier
-                    && valueAccess.Name.Identifier.Text == "Value")
-                {
-                    return true;
-                }
-                return false;
+                    && valueAccess.Name.Identifier.Text == "Value";
             }
         }
 

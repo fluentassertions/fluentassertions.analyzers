@@ -55,5 +55,15 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
+
+        [TestMethod]
+        [NotImplemented]
+        public void DictionaryShouldContainPair_WhenPropertiesOfDifferentVariables_ShouldNotTrigger()
+        {
+            const string assertion = "actual.Should().ContainValue(pair.Value).And.ContainKey(otherPair.Key);";
+            var source = GenerateCode.DictionaryAssertion(assertion);
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+    }
     }
 }

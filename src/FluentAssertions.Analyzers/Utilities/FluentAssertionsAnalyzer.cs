@@ -56,7 +56,7 @@ namespace FluentAssertions.Analyzers
             {
                 expression.Accept(visitor);
 
-                if (visitor.IsValid)
+                if (visitor.IsValid(expression))
                 {
                     return CreateDiagnostic(visitor, expression);
                 }
