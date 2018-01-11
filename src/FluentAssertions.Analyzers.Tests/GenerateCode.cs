@@ -79,6 +79,8 @@ namespace FluentAssertions.Analyzers.Tests
             .ToString();
 
         public static string StringAssertion(string assertion) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
             .AppendLine("namespace TestNamespace")
             .AppendLine("{")
             .AppendLine("    class TestClass")
@@ -86,6 +88,12 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("        void TestMethod(string actual, string expected)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendLine("    class Program")
+            .AppendLine("    {")
+            .AppendLine("        public static void Main()")
+            .AppendLine("        {")
             .AppendLine("        }")
             .AppendLine("    }")
             .AppendLine("}")
