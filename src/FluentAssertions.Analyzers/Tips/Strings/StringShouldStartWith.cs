@@ -15,20 +15,20 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldStartWith;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().StartWith instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
-                yield return new StringShouldStartWithSyntaxVisitor();
+                yield return new StartWithShouldBeTrueSyntaxVisitor();
             }
         }
 
-		public class StringShouldStartWithSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+		public class StartWithShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public StringShouldStartWithSyntaxVisitor() : base()
+			public StartWithShouldBeTrueSyntaxVisitor() : base(new MemberValidator("StartsWith"), MemberValidator.Should, new MemberValidator("BeTrue"))
 			{
 			}
 		}
@@ -41,7 +41,10 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            var remove = NodeReplacement.RemoveAndExtractArguments("StartsWith");
+            var newExpression = GetNewExpression(expression, remove);
+
+            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "StartWith", remove.Arguments));
+        }
     }
 }
