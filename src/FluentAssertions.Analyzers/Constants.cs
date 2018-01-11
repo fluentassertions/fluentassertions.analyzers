@@ -58,7 +58,13 @@
                 public const string DictionaryShouldNotContainKey = nameof(DictionaryShouldNotContainKey);
                 public const string DictionaryShouldNotContainValue = nameof(DictionaryShouldNotContainValue);
 
-            }
+            }            
+        }
+        public static class CodeSmell
+        {
+            public const string Category = "FluentAssertionCodeSmell";
+
+            public const string NullConditionalAssertion = nameof(NullConditionalAssertion);
         }
     }
 }
