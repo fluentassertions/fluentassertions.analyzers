@@ -69,5 +69,11 @@
                 public const string StringShouldHaveLength = nameof(StringShouldHaveLength);
             }
         }
+        public static class CodeSmell
+        {
+            public const string Category = "FluentAssertionCodeSmell";
+
+            public const string NullConditionalAssertion = nameof(NullConditionalAssertion);
+        }
     }
 }
