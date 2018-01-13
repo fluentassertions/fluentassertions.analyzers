@@ -14,7 +14,7 @@ branches:
   # Whitelist
   only:
     - master
-    - feature/*
+    - /feature/.*/
 
 # Artifacts
 artifacts:
