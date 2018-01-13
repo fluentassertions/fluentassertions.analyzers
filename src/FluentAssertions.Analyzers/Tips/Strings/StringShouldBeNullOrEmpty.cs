@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -15,13 +14,14 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldBeNullOrEmpty;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should() followed by .BeNullOrEmpty() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
+                yield break;
                 yield return new StringShouldBeNullOrEmptySyntaxVisitor();
             }
         }
@@ -31,7 +31,7 @@ namespace FluentAssertions.Analyzers
 			public StringShouldBeNullOrEmptySyntaxVisitor() : base()
 			{
 			}
-		}
+        }
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringShouldBeNullOrEmptyCodeFix)), Shared]

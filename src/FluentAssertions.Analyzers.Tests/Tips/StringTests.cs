@@ -9,7 +9,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.StartsWith(expected).Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.ToString().StartsWith(expected).Should().BeTrue({0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldStartWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringShouldStartWithAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
@@ -19,13 +19,13 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.ToString().StartsWith(expected).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().StartWith(expected{0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldStartWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringShouldStartWithCodeFix, StringShouldStartWithAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.EndsWith(expected).Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.ToString().EndsWith(expected).Should().BeTrue({0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldEndWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringShouldEndWithAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
@@ -35,22 +35,19 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.ToString().EndsWith(expected).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().EndWith(expected{0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldEndWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringShouldEndWithCodeFix, StringShouldEndWithAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().NotBeNull().And.NotBeEmpty({0});")]
         [AssertionDiagnostic("actual.Should().NotBeNull({0}).And.NotBeEmpty();")]
-        [AssertionDiagnostic("actual.Should().NotBeEmpty().And.NotBeNull();")]
-        [AssertionDiagnostic("actual.Should().NotBeEmpty({0}).And.NotBeNull({0});")]
         [AssertionDiagnostic("string.IsNullOrEmpty(actual).Should().BeFalse({0});")]
         [AssertionDiagnostic("actual.ToString().Should().NotBeNull().And.NotBeEmpty({0}).And.ToString();")]
         [AssertionDiagnostic("actual.ToString().Should().NotBeNull({0}).And.NotBeEmpty().And.ToString();")]
-        [AssertionDiagnostic("actual.ToString().Should().NotBeEmpty().And.NotBeNull().And.ToString();")]
         [AssertionDiagnostic("actual.ToString().Should().NotBeEmpty({0}).And.NotBeNull({0}).And.ToString();")]
         [AssertionDiagnostic("string.IsNullOrEmpty(actual).Should().BeFalse({0}).And.ToString();")]
         [NotImplemented]
-        public void StringShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringShouldNotBeNullOrEmptyAnalyzer>(assertion);
+        public void StringShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldNotBeNullOrEmptyAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
@@ -137,7 +134,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Length.Should().Be(k{0});")]
         [AssertionDiagnostic("actual.ToString().Length.Should().Be(k{0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldHaveLength_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringShouldHaveLengthAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
@@ -147,7 +144,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.ToString().Length.Should().Be(k{0}).And.ToString();",
             newAssertion: "actual.ToString().Should().HaveLength(k{0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldHaveLength_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringShouldHaveLengthCodeFix, StringShouldHaveLengthAnalyzer>(oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()

@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 
@@ -31,7 +32,7 @@ namespace FluentAssertions.Analyzers
             {
                 // no op
             }
-            else if(name == "And" )
+            else if (name == "And")
             {
                 if (Members.Peek().Name == "And")
                 {
@@ -45,6 +46,11 @@ namespace FluentAssertions.Analyzers
                 {
                     Members = Members.Pop();
                 }
+            }
+            else if (node.Parent is MemberAccessExpressionSyntax memberAccess && memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression)
+                && name == Members.Peek().Name)
+            {
+                Members = Members.Pop();
             }
             else
             {
@@ -81,7 +87,7 @@ namespace FluentAssertions.Analyzers
         }
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
-        {
+        {            
             VariableName = node.Identifier.Text;
         }
 

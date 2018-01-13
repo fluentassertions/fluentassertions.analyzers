@@ -13,7 +13,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveElementAt0Null;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use .Should()### instead.";
+        public const string Message = "TODO";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 

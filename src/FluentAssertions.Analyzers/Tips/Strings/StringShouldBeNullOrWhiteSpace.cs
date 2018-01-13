@@ -15,13 +15,14 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldBeNullOrWhiteSpace;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should() followed by .IsNullOrWhiteSpace() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
             {
+                yield break;
                 yield return new StringShouldBeNullOrWhiteSpaceSyntaxVisitor();
             }
         }
@@ -31,7 +32,8 @@ namespace FluentAssertions.Analyzers
 			public StringShouldBeNullOrWhiteSpaceSyntaxVisitor() : base()
 			{
 			}
-		}
+            public override bool IsValid(ExpressionSyntax expression) => false;
+        }
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringShouldBeNullOrWhiteSpaceCodeFix)), Shared]

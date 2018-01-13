@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldHaveLength;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().HaveLength() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -26,12 +25,12 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-		public class StringShouldHaveLengthSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-		{
-			public StringShouldHaveLengthSyntaxVisitor() : base()
-			{
-			}
-		}
+        public class StringShouldHaveLengthSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringShouldHaveLengthSyntaxVisitor() : base(new MemberValidator("Length"), MemberValidator.Should, new MemberValidator("Be"))
+            {
+            }
+        }
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringShouldHaveLengthCodeFix)), Shared]
@@ -41,7 +40,11 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            var remove = NodeReplacement.Remove("Length");
+            var newExpression = GetNewExpression(expression, remove);
+
+            return GetNewExpression(newExpression, NodeReplacement.Rename("Be", "HaveLength"));
+
+        }
     }
 }

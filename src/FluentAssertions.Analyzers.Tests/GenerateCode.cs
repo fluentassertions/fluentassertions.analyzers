@@ -85,7 +85,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("{")
             .AppendLine("    class TestClass")
             .AppendLine("    {")
-            .AppendLine("        void TestMethod(string actual, string expected)")
+            .AppendLine("        void TestMethod(string actual, string expected, int k)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
