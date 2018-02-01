@@ -10,7 +10,7 @@ using System.Linq;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldOnlyHaveUniqueItemsAnalyzer : FluentAssertionsAnalyzer
+    public class CollectionShouldOnlyHaveUniqueItemsAnalyzer : CollectionAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldOnlyHaveUniqueItems;
         public const string Category = Constants.Tips.Category;

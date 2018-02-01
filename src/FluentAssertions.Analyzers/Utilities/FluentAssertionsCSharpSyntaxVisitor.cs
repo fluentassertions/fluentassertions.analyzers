@@ -9,11 +9,13 @@ namespace FluentAssertions.Analyzers
     public class FluentAssertionsCSharpSyntaxVisitor : CSharpSyntaxVisitor
     {
         public string VariableName { get; private set; }
+        public IdentifierNameSyntax IdentifierNameVariable { get; private set; }
+
         public ImmutableStack<MemberValidator> AllMembers { get; }
         public ImmutableStack<MemberValidator> Members { get; private set; }
 
         public virtual bool IsValid(ExpressionSyntax expression) => Members.IsEmpty;
-
+        
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => ImmutableDictionary<string, string>.Empty
             .Add(Constants.DiagnosticProperties.VisitorName, GetType().Name)
             .ToImmutableDictionary();
@@ -87,7 +89,8 @@ namespace FluentAssertions.Analyzers
         }
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
-        {            
+        {
+            IdentifierNameVariable = node;
             VariableName = node.Identifier.Text;
         }
 

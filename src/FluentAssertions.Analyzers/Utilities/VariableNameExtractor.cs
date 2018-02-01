@@ -7,10 +7,12 @@ namespace FluentAssertions.Analyzers
     public class VariableNameExtractor : CSharpSyntaxWalker
     {
         public string VariableName { get; private set; }
+        public IdentifierNameSyntax VariableIdentifierName { get; private set; }
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
             VariableName = node.Identifier.Text;
+            VariableIdentifierName = node;
         }
 
         public override void Visit(SyntaxNode node)
@@ -30,6 +32,15 @@ namespace FluentAssertions.Analyzers
             }
             return null;
         }
+
+        public static string ExtractVariabeName(ExpressionSyntax invocation)
+        {
+            var variableExtractor = new VariableNameExtractor();
+            invocation.Accept(variableExtractor);
+
+            return variableExtractor.VariableName;
+        }
+
         public static string ExtractVariabeName(InvocationExpressionSyntax invocation)
         {
             var variableExtractor = new VariableNameExtractor();
