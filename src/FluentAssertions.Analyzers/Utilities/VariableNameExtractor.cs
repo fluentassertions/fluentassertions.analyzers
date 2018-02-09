@@ -6,13 +6,23 @@ namespace FluentAssertions.Analyzers
 {
     public class VariableNameExtractor : CSharpSyntaxWalker
     {
+        private readonly SemanticModel _semanticModel;
+
         public string VariableName { get; private set; }
         public IdentifierNameSyntax VariableIdentifierName { get; private set; }
 
+        public VariableNameExtractor(SemanticModel semanticModel = null)
+        {
+            _semanticModel = semanticModel;
+        }
+
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
-            VariableName = node.Identifier.Text;
-            VariableIdentifierName = node;
+            if (IsVariable(node))
+            {
+                VariableName = node.Identifier.Text;
+                VariableIdentifierName = node;
+            }
         }
 
         public override void Visit(SyntaxNode node)
@@ -33,7 +43,7 @@ namespace FluentAssertions.Analyzers
             return null;
         }
 
-        public static string ExtractVariabeName(ExpressionSyntax invocation)
+        public static string ExtractVariabeName(InvocationExpressionSyntax invocation)
         {
             var variableExtractor = new VariableNameExtractor();
             invocation.Accept(variableExtractor);
@@ -41,12 +51,14 @@ namespace FluentAssertions.Analyzers
             return variableExtractor.VariableName;
         }
 
-        public static string ExtractVariabeName(InvocationExpressionSyntax invocation)
+        private bool IsVariable(IdentifierNameSyntax node)
         {
-            var variableExtractor = new VariableNameExtractor();
-            invocation.Accept(variableExtractor);
+            // TODO: cleanup
+            if (_semanticModel == null) return true;
 
-            return variableExtractor.VariableName;
+            var info = _semanticModel.GetSymbolInfo(node);
+            if (info.Symbol.Kind == SymbolKind.Method) return false;
+            return true;
         }
     }
 }

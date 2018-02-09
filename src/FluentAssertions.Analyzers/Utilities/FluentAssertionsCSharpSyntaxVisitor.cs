@@ -13,7 +13,7 @@ namespace FluentAssertions.Analyzers
 
         public ImmutableStack<MemberValidator> AllMembers { get; }
         public ImmutableStack<MemberValidator> Members { get; private set; }
-
+        
         public virtual bool IsValid(ExpressionSyntax expression) => Members.IsEmpty;
         
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => ImmutableDictionary<string, string>.Empty

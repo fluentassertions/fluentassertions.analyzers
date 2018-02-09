@@ -102,7 +102,9 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDataTestMethod]
         [AssertionDiagnostic("string.IsNullOrWhiteSpace(actual).Should().BeTrue({0});")]
         [AssertionDiagnostic("string.IsNullOrWhiteSpace(actual).Should().BeTrue({0}).And.ToString();")]
-        [NotImplemented]
+        [AssertionDiagnostic("string.IsNullOrWhiteSpace(actual.ToString()).Should().BeTrue({0});")]
+        [AssertionDiagnostic("string.IsNullOrWhiteSpace(actual.ToString()).Should().BeTrue({0}).And.ToString();")]
+        [Implemented]
         public void StringShouldBeNullOrWhiteSpace_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringShouldBeNullOrWhiteSpaceAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
@@ -111,8 +113,14 @@ namespace FluentAssertions.Analyzers.Tests
             newAssertion: "actual.Should().BeNullOrWhiteSpace({0});")]
         [AssertionCodeFix(
             oldAssertion: "string.IsNullOrWhiteSpace(actual).Should().BeTrue({0}).And.ToString();",
+            newAssertion: "actual.Should().BeNullOrWhiteSpace({0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "string.IsNullOrWhiteSpace(actual.ToString()).Should().BeTrue({0});",
+            newAssertion: "actual.ToString().Should().BeNullOrWhiteSpace({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "string.IsNullOrWhiteSpace(actual.ToString()).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().BeNullOrWhiteSpace({0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldBeNullOrWhiteSpace_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringShouldBeNullOrWhiteSpaceCodeFix, StringShouldBeNullOrWhiteSpaceAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]

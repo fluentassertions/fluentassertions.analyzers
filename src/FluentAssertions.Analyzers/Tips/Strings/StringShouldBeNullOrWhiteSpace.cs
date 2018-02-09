@@ -1,11 +1,11 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -22,17 +22,15 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield break;
                 yield return new StringShouldBeNullOrWhiteSpaceSyntaxVisitor();
             }
         }
 
-		public class StringShouldBeNullOrWhiteSpaceSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-		{
-			public StringShouldBeNullOrWhiteSpaceSyntaxVisitor() : base()
-			{
-			}
-            public override bool IsValid(ExpressionSyntax expression) => false;
+        public class StringShouldBeNullOrWhiteSpaceSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringShouldBeNullOrWhiteSpaceSyntaxVisitor() : base(new MemberValidator("IsNullOrWhiteSpace"), MemberValidator.Should, new MemberValidator("BeTrue"))
+            {
+            }
         }
     }
 
@@ -43,7 +41,18 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrWhiteSpace");
+            var newExpression = GetNewExpression(expression, remove);
+
+            var rename = NodeReplacement.Rename("BeTrue", "BeNullOrWhiteSpace");
+            newExpression = GetNewExpression(newExpression, rename);
+
+            var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+            var subject = remove.Arguments.First().Expression;
+
+            newExpression = newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+
+            return newExpression;
+        }
     }
 }

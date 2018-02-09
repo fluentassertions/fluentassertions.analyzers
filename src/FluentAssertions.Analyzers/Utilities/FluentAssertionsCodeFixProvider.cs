@@ -38,7 +38,7 @@ namespace FluentAssertions.Analyzers
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
             var newExpression = GetNewExpression(expression, new FluentAssertionsDiagnosticProperties(properties));
-
+            
             root = root.ReplaceNode(expression, newExpression);
 
             return document.WithSyntaxRoot(root);
