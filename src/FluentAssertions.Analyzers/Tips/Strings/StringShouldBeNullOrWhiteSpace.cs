@@ -50,9 +50,7 @@ namespace FluentAssertions.Analyzers
             var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
             var subject = remove.Arguments.First().Expression;
 
-            newExpression = newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
-
-            return newExpression;
+            return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
         }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -21,16 +22,15 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield break;
                 yield return new StringShouldBeNullOrEmptySyntaxVisitor();
             }
         }
 
-		public class StringShouldBeNullOrEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-		{
-			public StringShouldBeNullOrEmptySyntaxVisitor() : base()
-			{
-			}
+        public class StringShouldBeNullOrEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringShouldBeNullOrEmptySyntaxVisitor() : base(new MemberValidator("IsNullOrEmpty"), MemberValidator.Should, new MemberValidator("BeTrue"))
+            {
+            }
         }
     }
 
@@ -41,7 +41,16 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
+            var newExpression = GetNewExpression(expression, remove);
+
+            var rename = NodeReplacement.Rename("BeTrue", "BeNullOrEmpty");
+            newExpression = GetNewExpression(newExpression, rename);
+
+            var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+            var subject = remove.Arguments.First().Expression;
+
+            return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+        }
     }
 }
