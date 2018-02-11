@@ -10,7 +10,7 @@ using System.Linq;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class StringShouldBeNullOrEmptyAnalyzer : FluentAssertionsAnalyzer
+    public class StringShouldBeNullOrEmptyAnalyzer : StringAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldBeNullOrEmpty;
         public const string Category = Constants.Tips.Category;

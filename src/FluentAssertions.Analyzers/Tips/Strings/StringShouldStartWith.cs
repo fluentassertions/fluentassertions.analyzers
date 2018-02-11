@@ -9,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class StringShouldStartWithAnalyzer : FluentAssertionsAnalyzer
+    public class StringShouldStartWithAnalyzer : StringAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldStartWith;
         public const string Category = Constants.Tips.Category;

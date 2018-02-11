@@ -9,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class StringShouldHaveLengthAnalyzer : FluentAssertionsAnalyzer
+    public class StringShouldHaveLengthAnalyzer : StringAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldHaveLength;
         public const string Category = Constants.Tips.Category;

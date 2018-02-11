@@ -45,9 +45,9 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ToString().Should().NotBeNull().And.NotBeEmpty({0}).And.ToString();")]
         [AssertionDiagnostic("actual.ToString().Should().NotBeNull({0}).And.NotBeEmpty().And.ToString();")]
         [AssertionDiagnostic("actual.ToString().Should().NotBeEmpty({0}).And.NotBeNull({0}).And.ToString();")]
-        [AssertionDiagnostic("string.IsNullOrEmpty(actual).Should().BeFalse({0}).And.ToString();")]
-        [NotImplemented]
-        public void StringShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionShouldNotBeNullOrEmptyAnalyzer>(assertion);
+        [AssertionDiagnostic("string.IsNullOrEmpty(actual.ToString()).Should().BeFalse({0}).And.ToString();")]
+        [Implemented]
+        public void StringShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringShouldNotBeNullOrEmptyAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
@@ -78,9 +78,9 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.ToString().Should().NotBeEmpty().And.NotBeNull({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().NotBeNullOrEmpty({0}).And.ToString();")]
         [AssertionCodeFix(
-            oldAssertion: "string.IsNullOrEmpty(actual).Should().BeFalse({0}).And.ToString();",
+            oldAssertion: "string.IsNullOrEmpty(actual.ToString()).Should().BeFalse({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().NotBeNullOrEmpty({0}).And.ToString();")]
-        [NotImplemented]
+        [Implemented]
         public void StringShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringShouldNotBeNullOrEmptyCodeFix, StringShouldNotBeNullOrEmptyAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -185,7 +185,7 @@ namespace FluentAssertions.Analyzers.Tests
                 Message = message,
                 Locations = new DiagnosticResultLocation[]
                 {
-                    new DiagnosticResultLocation("Test0.cs", 9,13)
+                    new DiagnosticResultLocation("Test0.cs", 9, 13)
                 },
                 Severity = DiagnosticSeverity.Info
             });

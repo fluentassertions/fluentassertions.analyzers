@@ -1,16 +1,16 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class StringShouldNotBeNullOrEmptyAnalyzer : FluentAssertionsAnalyzer
+    public class StringShouldNotBeNullOrEmptyAnalyzer : StringAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Strings.StringShouldNotBeNullOrEmpty;
         public const string Category = Constants.Tips.Category;
@@ -22,17 +22,32 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield break;
-                yield return new StringShouldNotBeNullOrEmptySyntaxVisitor();
+                yield return new StringShouldNotBeNullAndNotBeEmptySyntaxVisitor();
+                yield return new StringShouldNotBeEmptyAndNotBeNullSyntaxVisitor();
+                yield return new StringIsNullOrEmptyShouldBeFalseSyntaxVisitor();
             }
         }
 
-		public class StringShouldNotBeNullOrEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-		{
-			public StringShouldNotBeNullOrEmptySyntaxVisitor() : base()
-			{
-			}
-            public override bool IsValid(ExpressionSyntax expression) => false;
+
+        public class StringShouldNotBeNullAndNotBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringShouldNotBeNullAndNotBeEmptySyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("NotBeNull"), MemberValidator.And, new MemberValidator("NotBeEmpty"))
+            {
+            }
+        }
+
+        public class StringShouldNotBeEmptyAndNotBeNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringShouldNotBeEmptyAndNotBeNullSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("NotBeEmpty"), MemberValidator.And, new MemberValidator("NotBeNull"))
+            {
+            }
+        }
+
+        public class StringIsNullOrEmptyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringIsNullOrEmptyShouldBeFalseSyntaxVisitor() : base(new MemberValidator("IsNullOrEmpty"), MemberValidator.Should, new MemberValidator("BeFalse"))
+            {
+            }
         }
     }
 
@@ -43,7 +58,34 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            if (properties.VisitorName == nameof(StringShouldNotBeNullOrEmptyAnalyzer.StringShouldNotBeNullAndNotBeEmptySyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("NotBeEmpty");
+                var newExpression = GetNewExpression(expression, remove);
+
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
+            }
+            else if (properties.VisitorName == nameof(StringShouldNotBeNullOrEmptyAnalyzer.StringShouldNotBeEmptyAndNotBeNullSyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("NotBeNull");
+                var newExpression = GetNewExpression(expression, remove);
+
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
+            }
+            else if (properties.VisitorName == nameof(StringShouldNotBeNullOrEmptyAnalyzer.StringIsNullOrEmptyShouldBeFalseSyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
+                var newExpression = GetNewExpression(expression, remove);
+
+                var rename = NodeReplacement.Rename("BeFalse", "NotBeNullOrEmpty");
+                newExpression = GetNewExpression(newExpression, rename);
+
+                var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+                var subject = remove.Arguments.First().Expression;
+
+                return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+            }
+            throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+        }
     }
 }
