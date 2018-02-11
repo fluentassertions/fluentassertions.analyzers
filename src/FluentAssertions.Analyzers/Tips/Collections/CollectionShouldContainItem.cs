@@ -9,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldContainItemAnalyzer : FluentAssertionsAnalyzer
+    public class CollectionShouldContainItemAnalyzer : CollectionAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldContainItem;
         public const string Category = Constants.Tips.Category;

@@ -10,7 +10,7 @@ namespace FluentAssertions.Analyzers
 {
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldNotBeEmptyAnalyzer : FluentAssertionsAnalyzer
+    public class CollectionShouldNotBeEmptyAnalyzer : CollectionAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Collections.CollectionsShouldNotBeEmpty;
         public const string Category = Constants.Tips.Category;

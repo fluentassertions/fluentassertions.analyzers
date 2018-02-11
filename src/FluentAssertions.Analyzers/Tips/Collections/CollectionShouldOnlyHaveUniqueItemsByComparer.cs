@@ -9,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer : FluentAssertionsAnalyzer
+    public class CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer : CollectionAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldOnlyHaveUniqueItemsByComparer;
         public const string Category = Constants.Tips.Category;

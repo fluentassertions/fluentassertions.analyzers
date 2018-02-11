@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace FluentAssertions.Analyzers
             {
                 foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
                 {
-                    var diagnostic = AnalyzeExpression(statement.Expression);
+                    var diagnostic = AnalyzeExpression(statement.Expression, context.SemanticModel);
                     if (diagnostic != null)
                     {
                         context.ReportDiagnostic(diagnostic);
@@ -42,7 +43,7 @@ namespace FluentAssertions.Analyzers
             }
             if (method.ExpressionBody != null)
             {
-                var diagnostic = AnalyzeExpression(method.ExpressionBody.Expression);
+                var diagnostic = AnalyzeExpression(method.ExpressionBody.Expression, context.SemanticModel);
                 if (diagnostic != null)
                 {
                     context.ReportDiagnostic(diagnostic);
@@ -50,8 +51,19 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression)
+        protected virtual bool ShouldAnalyzeVariableType(TypeInfo typeInfo)
         {
+            return true;
+        }
+
+        protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
+        {
+            var variableNameExtractor = new VariableNameExtractor(semanticModel);
+            expression.Accept(variableNameExtractor);
+
+            var typeInfo = semanticModel.GetTypeInfo(variableNameExtractor.VariableIdentifierName);
+            if (!ShouldAnalyzeVariableType(typeInfo)) return null;
+
             foreach (var visitor in Visitors)
             {
                 expression.Accept(visitor);

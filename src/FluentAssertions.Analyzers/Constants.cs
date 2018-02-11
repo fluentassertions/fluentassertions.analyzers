@@ -57,8 +57,17 @@
                 public const string DictionaryShouldContainPair = nameof(DictionaryShouldContainPair);
                 public const string DictionaryShouldNotContainKey = nameof(DictionaryShouldNotContainKey);
                 public const string DictionaryShouldNotContainValue = nameof(DictionaryShouldNotContainValue);
-
-            }            
+            }
+            public static class Strings
+            {
+                public const string StringShouldStartWith = nameof(StringShouldStartWith);
+                public const string StringShouldEndWith = nameof(StringShouldEndWith);
+                public const string StringShouldNotBeNullOrEmpty = nameof(StringShouldNotBeNullOrEmpty);
+                public const string StringShouldBeNullOrEmpty = nameof(StringShouldBeNullOrEmpty);
+                public const string StringShouldBeNullOrWhiteSpace = nameof(StringShouldBeNullOrWhiteSpace);
+                public const string StringShouldNotBeNullOrWhiteSpace = nameof(StringShouldNotBeNullOrWhiteSpace);
+                public const string StringShouldHaveLength = nameof(StringShouldHaveLength);
+            }
         }
         public static class CodeSmell
         {

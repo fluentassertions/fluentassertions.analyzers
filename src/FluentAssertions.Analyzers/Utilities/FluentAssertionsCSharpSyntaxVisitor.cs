@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 
@@ -8,11 +9,13 @@ namespace FluentAssertions.Analyzers
     public class FluentAssertionsCSharpSyntaxVisitor : CSharpSyntaxVisitor
     {
         public string VariableName { get; private set; }
+        public IdentifierNameSyntax IdentifierNameVariable { get; private set; }
+
         public ImmutableStack<MemberValidator> AllMembers { get; }
         public ImmutableStack<MemberValidator> Members { get; private set; }
-
+        
         public virtual bool IsValid(ExpressionSyntax expression) => Members.IsEmpty;
-
+        
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => ImmutableDictionary<string, string>.Empty
             .Add(Constants.DiagnosticProperties.VisitorName, GetType().Name)
             .ToImmutableDictionary();
@@ -31,7 +34,7 @@ namespace FluentAssertions.Analyzers
             {
                 // no op
             }
-            else if(name == "And" )
+            else if (name == "And")
             {
                 if (Members.Peek().Name == "And")
                 {
@@ -45,6 +48,11 @@ namespace FluentAssertions.Analyzers
                 {
                     Members = Members.Pop();
                 }
+            }
+            else if (node.Parent is MemberAccessExpressionSyntax memberAccess && memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression)
+                && name == Members.Peek().Name)
+            {
+                Members = Members.Pop();
             }
             else
             {
@@ -82,6 +90,7 @@ namespace FluentAssertions.Analyzers
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
+            IdentifierNameVariable = node;
             VariableName = node.Identifier.Text;
         }
 

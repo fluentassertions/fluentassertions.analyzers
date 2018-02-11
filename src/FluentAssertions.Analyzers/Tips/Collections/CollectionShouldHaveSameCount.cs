@@ -10,7 +10,7 @@ using System.Linq;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldHaveSameCountAnalyzer : FluentAssertionsAnalyzer
+    public class CollectionShouldHaveSameCountAnalyzer : CollectionAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveSameCount;
         public const string Category = Constants.Tips.Category;
