@@ -16,7 +16,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         {
             var code = new StringBuilder()
                 .AppendLine("using System;")
-                .AppendLine("using FluentAssertions;")
+                .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
                 .AppendLine("namespace TestNamespace")
                 .AppendLine("{")
                 .AppendLine("    class TestClass")
