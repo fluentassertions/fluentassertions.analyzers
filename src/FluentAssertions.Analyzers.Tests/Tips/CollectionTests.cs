@@ -227,7 +227,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().BeGreaterThan(6{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCountGreaterThan(6{0}).And.ToString();")]
-        [Implemented, Ignore("Will be available in Fluent Assertions 5.0")]
+        [Implemented]
         public void CollectionShouldHaveCountGreaterThan_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveCountGreaterThanCodeFix, CollectionShouldHaveCountGreaterThanAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -251,7 +251,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().BeGreaterOrEqualTo(6{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCountGreaterOrEqualTo(6{0}).And.ToString();")]
-        [Implemented, Ignore("Will be available in Fluent Assertions 5.0")]
+        [Implemented]
         public void CollectionShouldHaveCountGreaterOrEqualTo_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveCountGreaterOrEqualToCodeFix, CollectionShouldHaveCountGreaterOrEqualToAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -275,7 +275,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().BeLessThan(6{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCountLessThan(6{0}).And.ToString();")]
-        [Implemented, Ignore("Will be available in Fluent Assertions 5.0")]
+        [Implemented]
         public void CollectionShouldHaveCountLessThan_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveCountLessThanCodeFix, CollectionShouldHaveCountLessThanAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -299,7 +299,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().BeLessOrEqualTo(6{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCountLessOrEqualTo(6{0}).And.ToString();")]
-        [Implemented, Ignore("Will be available in Fluent Assertions 5.0")]
+        [Implemented]
         public void CollectionShouldHaveCountLessOrEqualTo_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveCountLessOrEqualToCodeFix, CollectionShouldHaveCountLessOrEqualToAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -323,7 +323,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().NotBe(6{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().NotHaveCount(6{0}).And.ToString();")]
-        [Implemented, Ignore("Will be available in Fluent Assertions 5.0")]
+        [Implemented]
         public void CollectionShouldNotHaveCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotHaveCountCodeFix, CollectionShouldNotHaveCountAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -355,7 +355,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().NotBe(unexpected.Count(){0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().NotHaveSameCount(unexpected{0}).And.ToString();")]
-        [Implemented, Ignore("Will be available in Fluent Assertions 5.0")]
+        [Implemented]
         public void CollectionShouldNotHaveSameCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotHaveSameCountCodeFix, CollectionShouldNotHaveSameCountAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -563,7 +563,8 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Select(x => x.BooleanProperty).Should().NotContainNulls({0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().NotContainNulls(x => x.BooleanProperty{0}).And.ToString();")]
-        [Implemented, Ignore("Will be available in Fluent Assertions 5.0")]
+        [Implemented]
+        [Ignore("What Should Happen?")]
         public void CollectionShouldNotContainNulls_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotContainNullsCodeFix, CollectionShouldNotContainNullsAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
@@ -596,7 +597,6 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems({0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().OnlyHaveUniqueItems(x => x.BooleanProperty{0}).And.ToString();")]
-        [Ignore("Will be available in Fluent Assertions 5.0")]
         public void CollectionShouldOnlyHaveUniqueItemsByComparer_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldOnlyHaveUniqueItemsByComparerCodeFix, CollectionShouldOnlyHaveUniqueItemsByComparerAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]

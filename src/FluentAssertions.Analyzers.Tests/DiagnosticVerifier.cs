@@ -42,6 +42,9 @@ namespace FluentAssertions.Analyzers.Tests
             .Append(GetSystemAssemblyPathByName("System.Private.Xml.Linq.dll"))
             .Append(GetSystemAssemblyPathByName("System.Linq.Expressions.dll"))
             .Append(GetSystemAssemblyPathByName("System.Collections.dll"))
+            .Append(GetSystemAssemblyPathByName("netstandard.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Xml.ReaderWriter.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Private.Xml.dll"))
             .Select(location => (MetadataReference)MetadataReference.CreateFromFile(location))
             .ToImmutableArray();
 
