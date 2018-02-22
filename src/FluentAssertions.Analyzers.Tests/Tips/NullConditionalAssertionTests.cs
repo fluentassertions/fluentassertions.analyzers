@@ -9,6 +9,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
     {
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual?.Should().Be(expected{0});")]
+        [AssertionDiagnostic("actual?.MyProperty.Should().Be(\"test\"{0});")]
+        [AssertionDiagnostic("actual.MyProperty?.Should().Be(\"test\"{0});")]
         [Implemented]
         public void TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion);
 
@@ -21,10 +23,14 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 .AppendLine("{")
                 .AppendLine("    class TestClass")
                 .AppendLine("    {")
-                .AppendLine("        void TestMethod(int? actual, int expected)")
+                .AppendLine("        void TestMethod(MyClass actual, MyClass expected)")
                 .AppendLine("        {")
                 .AppendLine($"            {assertion}")
                 .AppendLine("        }")
+                .AppendLine("    }")
+                .AppendLine("    class MyClass")
+                .AppendLine("    {")
+                .AppendLine("        public string MyProperty { get; set; }")
                 .AppendLine("    }")
                 .AppendLine("    class Program")
                 .AppendLine("    {")
