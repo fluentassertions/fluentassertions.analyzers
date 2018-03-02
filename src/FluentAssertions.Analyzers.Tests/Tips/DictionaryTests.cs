@@ -164,7 +164,7 @@ namespace FluentAssertions.Analyzers.Tests
                 Message = message,
                 Locations = new DiagnosticResultLocation[]
                 {
-                    new DiagnosticResultLocation("Test0.cs", 11,13)
+                    new DiagnosticResultLocation("Test0.cs", 12,13)
                 },
                 Severity = DiagnosticSeverity.Info
             });

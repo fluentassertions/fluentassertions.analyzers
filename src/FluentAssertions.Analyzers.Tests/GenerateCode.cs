@@ -29,12 +29,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("        public string Message { get; set; }")
             .AppendLine("    }")
-            .AppendLine("    class Program")
-            .AppendLine("    {")
-            .AppendLine("        public static void Main()")
-            .AppendLine("        {")
-            .AppendLine("        }")
-            .AppendLine("    }")
+            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -42,7 +37,8 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Linq;")
             .AppendLine("using System;")
-            .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
             .AppendLine("namespace TestNamespace")
             .AppendLine("{")
             .AppendLine("    public class TestClass")
@@ -56,16 +52,14 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("    {")
             .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("    }")
-            .AppendLine("    class Program")
-            .AppendLine("    {")
-            .AppendLine("        public static void Main()")
-            .AppendLine("        {")
-            .AppendLine("        }")
-            .AppendLine("    }")
+            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
         public static string NumericAssertion(string assertion) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
             .AppendLine("namespace TestNamespace")
             .AppendLine("{")
             .AppendLine("    class TestClass")
@@ -75,6 +69,24 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
+        public static string ComparableAssertion(string assertion) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine("        void TestMethod(IComparable<int> actual, int expected)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -90,13 +102,16 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
+        private static StringBuilder AppendMainMethod(this StringBuilder builder) => builder
             .AppendLine("    class Program")
             .AppendLine("    {")
             .AppendLine("        public static void Main()")
             .AppendLine("        {")
             .AppendLine("        }")
-            .AppendLine("    }")
-            .AppendLine("}")
-            .ToString();
+            .AppendLine("    }");
     }
 }
