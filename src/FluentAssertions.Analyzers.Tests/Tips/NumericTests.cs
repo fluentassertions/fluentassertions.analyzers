@@ -38,6 +38,32 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void NumericShouldBeNegative_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeNegativeCodeFix, NumericShouldBeNegativeAnalyzer>(oldAssertion, newAssertion);
 
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper);")]
+        [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower).And.BeLessOrEqualTo(upper{0});")]
+        [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper{0});")]
+        [AssertionDiagnostic("actual.Should().BeLessOrEqualTo(upper{0}).And.BeGreaterOrEqualTo(lower);")]
+        [AssertionDiagnostic("actual.Should().BeLessOrEqualTo(upper).And.BeGreaterOrEqualTo(lower{0});")]
+        [AssertionDiagnostic("actual.Should().BeLessOrEqualTo(upper{0}).And.BeGreaterOrEqualTo(lower{0});")]
+        [Implemented]
+        public void NumericShouldBeInRange_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeInRangeAnalyzer>(assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper);",
+            newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().BeGreaterOrEqualTo(lower).And.BeLessOrEqualTo(upper{0});",
+            newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().BeLessOrEqualTo(upper{0}).And.BeGreaterOrEqualTo(lower);",
+            newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().BeLessOrEqualTo(upper).And.BeGreaterOrEqualTo(lower{0});",
+            newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
+        [NotImplemented]
+        public void NumericShouldBeInRange_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeInRangeCodeFix, NumericShouldBeInRangeAnalyzer>(oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.NumericAssertion(sourceAssertion);
