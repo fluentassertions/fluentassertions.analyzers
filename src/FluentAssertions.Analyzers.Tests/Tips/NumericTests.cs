@@ -22,6 +22,22 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void NumericShouldBePositive_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBePositiveCodeFix, NumericShouldBePositiveAnalyzer>(oldAssertion, newAssertion);
 
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("actual.Should().BeLessThan(0{0});")]
+        [AssertionDiagnostic("actual.Should().BeLessThan(0{0}).ToString();")]
+        [Implemented]
+        public void NumericShouldBeNegative_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeNegativeAnalyzer>(assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().BeLessThan(0{0});",
+            newAssertion: "actual.Should().BeNegative({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().BeLessThan(0{0}).ToString();",
+            newAssertion: "actual.Should().BeNegative({0}).ToString();")]
+        [Implemented]
+        public void NumericShouldBeNegative_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeNegativeCodeFix, NumericShouldBeNegativeAnalyzer>(oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.NumericAssertion(sourceAssertion);

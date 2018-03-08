@@ -79,6 +79,7 @@
             public static class Numeric
             {
                 public const string NumericShouldBePositive = nameof(NumericShouldBePositive);
+                public const string NumericShouldBeNegative = nameof(NumericShouldBeNegative);
             }
         }
 
