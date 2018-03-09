@@ -62,7 +62,19 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             oldAssertion: "actual.Should().BeLessOrEqualTo(upper).And.BeGreaterOrEqualTo(lower{0});",
             newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
         [NotImplemented]
-        public void NumericShouldBeInRange_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeInRangeCodeFix, NumericShouldBeInRangeAnalyzer>(oldAssertion, newAssertion);
+        public void NumericShouldBeInRange_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeApproximatelyCodeFix, NumericShouldBeInRangeAnalyzer>(oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta{0});")]
+        [Implemented]
+        public void NumericShouldBeApproximately_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeApproximatelyAnalyzer>(assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta{0});",
+            newAssertion: "actual.Should().BeApproximately(expected, delta{0});")]
+        [Implemented]
+        public void NumericShouldBeApproximately_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeApproximatelyCodeFix, NumericShouldBeApproximatelyAnalyzer>(oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {

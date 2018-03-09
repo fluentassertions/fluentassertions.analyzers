@@ -81,6 +81,7 @@
                 public const string NumericShouldBePositive = nameof(NumericShouldBePositive);
                 public const string NumericShouldBeNegative = nameof(NumericShouldBeNegative);
                 public const string NumericShouldBeInRange = nameof(NumericShouldBeInRange);
+                public const string NumericShouldBeApproximately = nameof(NumericShouldBeApproximately);
             }
         }
 

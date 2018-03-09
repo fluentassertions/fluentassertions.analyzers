@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +39,7 @@ namespace FluentAssertions.Analyzers
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
             var newExpression = GetNewExpression(expression, new FluentAssertionsDiagnosticProperties(properties));
-            
+
             root = root.ReplaceNode(expression, newExpression);
 
             return document.WithSyntaxRoot(root);
@@ -77,6 +78,14 @@ namespace FluentAssertions.Analyzers
             }
 
             throw new System.InvalidOperationException("should not get here");
+        }
+
+        protected ExpressionSyntax RenameIdentifier(ExpressionSyntax expression, string oldName, string newName)
+        {
+            var identifierNode = expression.DescendantNodes()
+                .OfType<IdentifierNameSyntax>()
+                .First(node => node.Identifier.Text == oldName);
+            return expression.ReplaceNode(identifierNode, identifierNode.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(identifierNode.Identifier)));
         }
     }
 }
