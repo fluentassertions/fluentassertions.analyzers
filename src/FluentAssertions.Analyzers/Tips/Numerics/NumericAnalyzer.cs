@@ -2,7 +2,7 @@
 
 namespace FluentAssertions.Analyzers
 {
-    public abstract class ComparableAnalyzer : FluentAssertionsAnalyzer
+    public abstract class NumericAnalyzer : FluentAssertionsAnalyzer
     {
         protected override bool ShouldAnalyzeVariableType(TypeInfo typeInfo)
         {

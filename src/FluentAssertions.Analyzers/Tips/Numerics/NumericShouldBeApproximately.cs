@@ -12,7 +12,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NumericShouldBeApproximatelyAnalyzer : ComparableAnalyzer
+    public class NumericShouldBeApproximatelyAnalyzer : NumericAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Numeric.NumericShouldBeApproximately;
         public const string Category = Constants.Tips.Category;

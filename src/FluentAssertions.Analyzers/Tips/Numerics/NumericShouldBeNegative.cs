@@ -9,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NumericShouldBeNegativeAnalyzer : ComparableAnalyzer
+    public class NumericShouldBeNegativeAnalyzer : NumericAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Numeric.NumericShouldBeNegative;
         public const string Category = Constants.Tips.Category;

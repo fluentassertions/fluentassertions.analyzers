@@ -10,7 +10,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NumericShouldBeInRangeAnalyzer : ComparableAnalyzer
+    public class NumericShouldBeInRangeAnalyzer : NumericAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Numeric.NumericShouldBeInRange;
         public const string Category = Constants.Tips.Category;
