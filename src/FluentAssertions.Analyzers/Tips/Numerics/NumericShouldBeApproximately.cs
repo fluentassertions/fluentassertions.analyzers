@@ -1,4 +1,3 @@
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -25,8 +25,13 @@ namespace FluentAssertions.Analyzers
             get
             {
                 yield return new MathAbsShouldBeLessOrEqualToSyntaxVisitor();
-                // Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta);
             }
+        }
+
+        private static readonly string[] ValidaTypeNames = { "double", "decimal", "float" };
+        protected override bool ShouldAnalyzeVariableType(TypeInfo typeInfo)
+        {
+            return ValidaTypeNames.Contains(typeInfo.ConvertedType.ToDisplayString(), StringComparer.OrdinalIgnoreCase);
         }
 
         public class MathAbsShouldBeLessOrEqualToSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
@@ -64,7 +69,7 @@ namespace FluentAssertions.Analyzers
             newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeLessOrEqualTo", "BeApproximately", new SeparatedSyntaxList<ArgumentSyntax>().Add(SyntaxFactory.Argument(expected))));
 
             newExpression = RenameIdentifier(newExpression, "Math", actual.Identifier.Text);
-            
+
             return newExpression;
         }
     }

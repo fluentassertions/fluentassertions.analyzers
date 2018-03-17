@@ -57,7 +57,7 @@ namespace FluentAssertions.Analyzers
             if (_semanticModel == null) return true;
 
             var info = _semanticModel.GetSymbolInfo(node);
-            if (info.Symbol.Kind == SymbolKind.Method) return false;
+            if (info.Symbol.Kind == SymbolKind.Method || info.Symbol.IsStatic) return false;
             return true;
         }
     }
