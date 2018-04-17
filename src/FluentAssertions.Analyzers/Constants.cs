@@ -49,6 +49,7 @@
                 public const string CollectionShouldOnlyHaveUniqueItemsByComparer = nameof(CollectionShouldOnlyHaveUniqueItemsByComparer);
                 public const string CollectionShouldHaveElementAt0Null = nameof(CollectionShouldHaveElementAt0Null);
             }
+
             public static class Dictionaries
             {
                 public const string DictionaryShouldContainKey = nameof(DictionaryShouldContainKey);
@@ -58,6 +59,7 @@
                 public const string DictionaryShouldNotContainKey = nameof(DictionaryShouldNotContainKey);
                 public const string DictionaryShouldNotContainValue = nameof(DictionaryShouldNotContainValue);
             }
+
             public static class Strings
             {
                 public const string StringShouldStartWith = nameof(StringShouldStartWith);
@@ -68,7 +70,21 @@
                 public const string StringShouldNotBeNullOrWhiteSpace = nameof(StringShouldNotBeNullOrWhiteSpace);
                 public const string StringShouldHaveLength = nameof(StringShouldHaveLength);
             }
+
+            public static class Comparable
+            {
+                public const string ComparableShouldBePositive = nameof(ComparableShouldBePositive);
+            }
+
+            public static class Numeric
+            {
+                public const string NumericShouldBePositive = nameof(NumericShouldBePositive);
+                public const string NumericShouldBeNegative = nameof(NumericShouldBeNegative);
+                public const string NumericShouldBeInRange = nameof(NumericShouldBeInRange);
+                public const string NumericShouldBeApproximately = nameof(NumericShouldBeApproximately);
+            }
         }
+
         public static class CodeSmell
         {
             public const string Category = "FluentAssertionCodeSmell";
