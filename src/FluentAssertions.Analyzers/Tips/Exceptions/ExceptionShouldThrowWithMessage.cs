@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -28,6 +24,8 @@ namespace FluentAssertions.Analyzers.Tips.Exceptions
             {
                 yield return new ShouldThrowExactlyWhichMessageShouldContain();
                 yield return new ShouldThrowWhichMessageShouldContain();
+                yield return new ShouldThrowExactlyAndMessageShouldContain();
+                yield return new ShouldThrowAndMessageShouldContain();
             }
         }
 
@@ -40,6 +38,18 @@ namespace FluentAssertions.Analyzers.Tips.Exceptions
         public class ShouldThrowWhichMessageShouldContain : FluentAssertionsCSharpSyntaxVisitor
         {
             public ShouldThrowWhichMessageShouldContain() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.Which, new MemberValidator("Message"), MemberValidator.Should, new MemberValidator("Contain"))
+            {
+            }
+        }
+        public class ShouldThrowExactlyAndMessageShouldContain : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public ShouldThrowExactlyAndMessageShouldContain() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.And, new MemberValidator("Message"), MemberValidator.Should, new MemberValidator("Contain"))
+            {
+            }
+        }
+        public class ShouldThrowAndMessageShouldContain : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public ShouldThrowAndMessageShouldContain() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.And, new MemberValidator("Message"), MemberValidator.Should, new MemberValidator("Contain"))
             {
             }
         }
