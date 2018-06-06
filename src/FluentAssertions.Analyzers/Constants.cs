@@ -83,6 +83,11 @@
                 public const string NumericShouldBeInRange = nameof(NumericShouldBeInRange);
                 public const string NumericShouldBeApproximately = nameof(NumericShouldBeApproximately);
             }
+
+            public static class Exceptions
+            {
+                public const string ExceptionShouldThrowWithMessage = nameof(ExceptionShouldThrowWithMessage);
+            }
         }
 
         public static class CodeSmell
