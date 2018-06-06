@@ -17,7 +17,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(expectedMessage{0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithMessage(expectedMessage{0});")]
-        [Implemented]
+        [NotImplemented]
         public void ExceptionShouldThrowWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithMessageCodeFix, ExceptionShouldThrowWithMessageAnalyzer>(oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssersion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
