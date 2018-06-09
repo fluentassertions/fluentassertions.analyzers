@@ -4,9 +4,6 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class StringAnalyzer : FluentAssertionsAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(TypeInfo typeInfo)
-        {
-            return typeInfo.ConvertedType.Name == "String";
-        }
+        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type) => type.Name == "String";
     }
 }
