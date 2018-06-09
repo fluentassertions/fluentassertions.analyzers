@@ -11,7 +11,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         {
             const string assertion = "actual.Count(d => d.Message.Contains(\"a\")).Should().Be(2);";
             var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
-            
+
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
 
@@ -64,6 +64,23 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var source = GenerateCode.DictionaryAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
-    }
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/41")]
+        public void ExpressionBasedFunction_ShouldNotThrow()
+        {
+            const string source = @"
+public class TestClass
+{
+    private SomeClass CreateSomeClass() => new SomeClass();
+ 
+    public class SomeClass
+    { }
+    public static void Main() { }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
     }
 }

@@ -29,10 +29,8 @@ namespace FluentAssertions.Analyzers
         }
 
         private static readonly string[] ValidaTypeNames = { "double", "decimal", "float" };
-        protected override bool ShouldAnalyzeVariableType(TypeInfo typeInfo)
-        {
-            return ValidaTypeNames.Contains(typeInfo.ConvertedType.ToDisplayString(), StringComparer.OrdinalIgnoreCase);
-        }
+        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type)
+            => ValidaTypeNames.Contains(type.ToDisplayString(), StringComparer.OrdinalIgnoreCase);
 
         public class MathAbsShouldBeLessOrEqualToSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
