@@ -414,6 +414,14 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotBeNullOrEmptyCodeFix, CollectionShouldNotBeNullOrEmptyAnalyzer>(oldAssertion, newAssertion);
 
+        [TestMethod]
+        [Implemented]
+        public void CollectionShouldHaveElementAt_ShouldIgnoreDictionaryTypes()
+        {
+            string source = GenerateCode.DictionaryAssertion("actual[\"key\"].Should().Be(expectedValue);");
+            DiagnosticVerifier.VerifyCSharpDiagnostic<CollectionShouldHaveElementAtAnalyzer>(source);
+        }
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.ElementAt(k).Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual.ElementAt(6).Should().Be(expectedItem{0});")]
