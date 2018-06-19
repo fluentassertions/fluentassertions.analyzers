@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -25,6 +26,16 @@ namespace FluentAssertions.Analyzers
                 yield return new IndexerShouldBeSyntaxVisitor();
                 yield return new SkipFirstShouldBeSyntaxVisitor();
             }
+        }
+
+        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type)
+        {
+            if (type.AllInterfaces.Any(@interface => @interface.Name == "IReadOnlyDictionary" || @interface.Name == "IDictionary"))
+            {
+                return false;
+            }
+
+            return base.ShouldAnalyzeVariableType(type);
         }
 
         public class ElementAtIndexShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
