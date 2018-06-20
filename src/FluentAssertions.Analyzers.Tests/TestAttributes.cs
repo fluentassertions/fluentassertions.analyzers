@@ -69,7 +69,7 @@ namespace FluentAssertions.Analyzers.Tests
                 foreach (var assertion in GetTestCases(diagnosticAttribute))
                 {
                     var result = testMethod.Invoke(new[] { assertion });
-                    result.DisplayName = assertion;
+                    result.DisplayName = $"{testMethod.TestMethodName} (\"{assertion}\")";
 
                     results.Add(result);
                 }
@@ -79,7 +79,7 @@ namespace FluentAssertions.Analyzers.Tests
                 foreach (var (oldAssertion, newAssertion) in GetTestCases(codeFixAttribute))
                 {
                     var result = testMethod.Invoke(new[] { oldAssertion, newAssertion });
-                    result.DisplayName = $"{Environment.NewLine}old: \"{oldAssertion}\" {Environment.NewLine}new: \"{newAssertion}\"";
+                    result.DisplayName = $"{testMethod.TestMethodName} ({Environment.NewLine}old: \"{oldAssertion}\" {Environment.NewLine}new: \"{newAssertion}\")";
 
                     results.Add(result);
                 }
