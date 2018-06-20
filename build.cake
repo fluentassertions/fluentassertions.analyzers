@@ -17,6 +17,7 @@ var solutionFile = File("./src/FluentAssertions.Analyzers.sln");
 var testCsproj = File("./src/FluentAssertions.Analyzers.Tests/FluentAssertions.Analyzers.Tests.csproj");
 var nuspecFile = File("./src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.nuspec");
 var version = GetCurrentVersion(Context);
+var testResults = MakeAbsolute(buildDir + File("./testResults.trx"));
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -62,7 +63,8 @@ Task("Run-Unit-Tests")
         DotNetCoreTest(testCsproj, new DotNetCoreTestSettings
         {
             Filter = "TestCategory=Completed",
-            Configuration = configuration
+            Configuration = configuration,
+            ArgumentCustomization = builder => builder.Append($"--logger \"trx;LogFileName={testResults}\"")            
         });
     });
 
@@ -95,6 +97,14 @@ Task("Publish-NuGet")
             Source = apiUrl
         });
 	});
+
+Task("AppVeyor")
+    .IsDependentOn("Run-Unit-Tests")
+    .WithCriteria(AppVeyor.IsRunningOnAppVeyor)
+    .Does(() =>
+    {
+        AppVeyor.UploadTestResults(testResults, AppVeyorTestResultsType.MSTest);
+    });
 
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
