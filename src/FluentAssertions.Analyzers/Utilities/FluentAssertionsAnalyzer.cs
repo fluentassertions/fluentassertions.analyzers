@@ -58,6 +58,7 @@ namespace FluentAssertions.Analyzers
             var variableNameExtractor = new VariableNameExtractor(semanticModel);
             expression.Accept(variableNameExtractor);
 
+            if (variableNameExtractor.VariableIdentifierName == null) return null;
             var typeInfo = semanticModel.GetTypeInfo(variableNameExtractor.VariableIdentifierName);
             if (typeInfo.ConvertedType == null) return null;
             if (!ShouldAnalyzeVariableType(typeInfo.ConvertedType)) return null;

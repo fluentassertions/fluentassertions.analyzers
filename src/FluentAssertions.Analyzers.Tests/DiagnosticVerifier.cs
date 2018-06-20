@@ -28,6 +28,7 @@ namespace FluentAssertions.Analyzers.Tests
             References = new[]
             {
                 typeof(object), // System.Private.CoreLib
+                typeof(Console), // System
                 typeof(Enumerable), // System.Linq
                 typeof(CSharpCompilation), // Microsoft.CodeAnalysis.CSharp
                 typeof(Compilation), // Microsoft.CodeAnalysis

@@ -90,5 +90,21 @@ public class TestClass
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/49")]
+        public void WritingToConsole_ShouldNotThrow()
+        {
+            const string source = @"
+public class TestClass
+{
+    public static void Main()
+    {
+        System.Console.WriteLine();
+    }
+}";
+            
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }    
     }
 }
