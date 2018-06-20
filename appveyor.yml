@@ -16,11 +16,6 @@ branches:
     - master
     - /feature/.*/
 
-# Artifacts
-artifacts:
-- path: ./artifacts/FluentAssertions.Analyzers*.nupkg
-  name: Artifacts
-
 # Build cache
 cache:
 - tools -> build.cake

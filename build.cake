@@ -17,6 +17,7 @@ var solutionFile = File("./src/FluentAssertions.Analyzers.sln");
 var testCsproj = File("./src/FluentAssertions.Analyzers.Tests/FluentAssertions.Analyzers.Tests.csproj");
 var nuspecFile = File("./src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.nuspec");
 var version = GetCurrentVersion(Context);
+
 var testResults = MakeAbsolute(buildDir + File("./testResults.trx"));
 
 //////////////////////////////////////////////////////////////////////
@@ -99,12 +100,17 @@ Task("Publish-NuGet")
 	});
 
 Task("AppVeyor")
+    .IsDependentOn("Update-Version")
     .IsDependentOn("Run-Unit-Tests")
     .IsDependentOn("Pack")
     .WithCriteria(AppVeyor.IsRunningOnAppVeyor)
     .Does(() =>
     {
         AppVeyor.UploadTestResults(testResults, AppVeyorTestResultsType.MSTest);
+
+        var nugetPackage = MakeAbsolute(buildDir + File($"./FluentAssertions.Analyzers.{version}.nupkg"));
+        AppVeyor.UploadArtifact(nugetPackage, new AppVeyorUploadArtifactsSettings()
+            .SetArtifactType(AppVeyorUploadArtifactType.NuGetPackage));
     });
 
 //////////////////////////////////////////////////////////////////////
@@ -112,7 +118,6 @@ Task("AppVeyor")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Update-Version")
     .IsDependentOn("Build")
     .IsDependentOn("Run-Unit-Tests")
     .IsDependentOn("Pack");
