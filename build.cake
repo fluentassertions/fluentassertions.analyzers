@@ -100,6 +100,7 @@ Task("Publish-NuGet")
 
 Task("AppVeyor")
     .IsDependentOn("Run-Unit-Tests")
+    .IsDependentOn("Pack")
     .WithCriteria(AppVeyor.IsRunningOnAppVeyor)
     .Does(() =>
     {
