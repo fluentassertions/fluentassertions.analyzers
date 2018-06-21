@@ -62,19 +62,21 @@ namespace FluentAssertions.Analyzers
         {
             if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeNullAndNotBeEmptySyntaxVisitor))
             {
-                var remove = NodeReplacement.RemoveAndExtractArguments("NotBeEmpty");
-                var newExpression = GetNewExpression(expression, remove);
-
-                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
+                return GetCombinedAssertions(expression, "NotBeEmpty", "NotBeNull");
             }
             else if (properties.VisitorName == nameof(CollectionShouldNotBeNullOrEmptyAnalyzer.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor))
             {
-                var remove = NodeReplacement.RemoveAndExtractArguments("NotBeNull");
-                var newExpression = GetNewExpression(expression, remove);
-
-                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
+                return GetCombinedAssertions(expression, "NotBeNull", "NotBeEmpty");
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+        }
+
+        private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod)
+        {
+            var remove = NodeReplacement.RemoveAndExtractArguments(removeMethod);
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodAfter(removeMethod), remove);
+
+            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(renameMethod, "NotBeNullOrEmpty", remove.Arguments));
         }
     }
 }
