@@ -67,12 +67,14 @@ namespace FluentAssertions.Analyzers
             var current = members.Last;
             while (current != null)
             {
-                if (replacement.IsValidNode(current.Value))
+                if (replacement.IsValidNode(current))
                 {
                     // extract custom data into the replacement object
                     replacement.ExtractValues(current.Value);
 
-                    return expression.ReplaceNode(replacement.ComputeOld(current), replacement.ComputeNew(current));
+                    var oldNode = replacement.ComputeOld(current);
+                    var newNode = replacement.ComputeNew(current);
+                    return expression.ReplaceNode(oldNode, newNode);
                 }
                 current = current.Previous;
             }

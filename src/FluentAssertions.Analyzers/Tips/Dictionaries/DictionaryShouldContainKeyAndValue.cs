@@ -26,7 +26,7 @@ namespace FluentAssertions.Analyzers
                 yield return new ShouldContainValueAndContainKeySyntaxVisitor();
             }
         }
-        
+
         public class ShouldContainKeyAndContainValueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
 
@@ -66,7 +66,7 @@ namespace FluentAssertions.Analyzers
             {
                 var renameKeyArguments = NodeReplacement.RenameAndExtractArguments("ContainKey", "Contain");
                 var removeValueArguments = NodeReplacement.RemoveAndExtractArguments("ContainValue");
-                var newExpression = GetNewExpression(expression, renameKeyArguments, removeValueArguments);
+                var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainValue"), renameKeyArguments, removeValueArguments);
 
                 var newArguments = MergeContainKeyAndContainValueArguments(renameKeyArguments.Arguments, removeValueArguments.Arguments);
 
@@ -76,7 +76,7 @@ namespace FluentAssertions.Analyzers
             {
                 var removeKeyArguments = NodeReplacement.RemoveAndExtractArguments("ContainKey");
                 var renameValueArguments = NodeReplacement.RenameAndExtractArguments("ContainValue", "Contain");
-                var newExpression = GetNewExpression(expression, removeKeyArguments, renameValueArguments);
+                var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainKey"), removeKeyArguments, renameValueArguments);
 
                 var newArguments = MergeContainKeyAndContainValueArguments(removeKeyArguments.Arguments, renameValueArguments.Arguments);
 

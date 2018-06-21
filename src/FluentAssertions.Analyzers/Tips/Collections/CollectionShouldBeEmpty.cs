@@ -71,7 +71,7 @@ namespace FluentAssertions.Analyzers
 
         private class HaveCountNodeReplacement : NodeReplacement
         {
-            public override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == "HaveCount";
+            public override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Name.Identifier.Text == "HaveCount";
             public override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Parent;
             public override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
             {

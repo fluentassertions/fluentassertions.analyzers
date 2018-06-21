@@ -4,18 +4,21 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Diagnostics;
 
 namespace FluentAssertions.Analyzers
 {
     public abstract class NodeReplacement
     {
-        public abstract bool IsValidNode(MemberAccessExpressionSyntax node);
+        public abstract bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode);
         public abstract SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode);
         public abstract SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode);
         public virtual void ExtractValues(MemberAccessExpressionSyntax node) { }
-
+        
         public static NodeReplacement Rename(string oldName, string newName) => new RenameNodeReplacement(oldName, newName);
         public static NodeReplacement Remove(string name) => new RemoveNodeReplacement(name);
+        public static NodeReplacement RemoveOccurrence(string name, int occurrence) => new RemoveOccurrenceNodeReplacement(name, occurrence);
+        public static NodeReplacement RemoveMethodBefore(string name) => new RemoveMethodBeforeNodeReplacement(name);
         public static RemoveAndExtractArgumentsNodeReplacement RemoveAndExtractArguments(string name) => new RemoveAndExtractArgumentsNodeReplacement(name);
         public static NodeReplacement RenameAndPrependArguments(string oldName, string newName, SeparatedSyntaxList<ArgumentSyntax> arguments) => new RenameAndPrependArgumentsNodeReplacement(oldName, newName, arguments);
         public static NodeReplacement RenameAndRemoveInvocationOfMethodOnFirstArgument(string oldName, string newName) => new RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement(oldName, newName);
@@ -27,6 +30,7 @@ namespace FluentAssertions.Analyzers
         public static RenameAndNegateLambdaNodeReplacement RenameAndNegateLambda(string oldName, string newName) => new RenameAndNegateLambdaNodeReplacement(oldName, newName);
         public static WithArgumentsNodeReplacement WithArguments(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) => new WithArgumentsNodeReplacement(name, arguments);
 
+        [DebuggerDisplay("Rename(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameNodeReplacement : NodeReplacement
         {
             private readonly string _oldName;
@@ -40,7 +44,7 @@ namespace FluentAssertions.Analyzers
 
             public virtual InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node) => node;
 
-            public sealed override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == _oldName;
+            public sealed override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Name.Identifier.Text == _oldName;
             public sealed override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Parent;
             public sealed override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
             {
@@ -63,7 +67,7 @@ namespace FluentAssertions.Analyzers
 
             public abstract InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node);
 
-            public sealed override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == _name;
+            public sealed override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Name.Identifier.Text == _name;
             public sealed override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Parent;
             public sealed override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
             {
@@ -71,6 +75,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("Remove(name: \"{_name}\")")]
         public class RemoveNodeReplacement : NodeReplacement
         {
             private readonly string _name;
@@ -80,7 +85,7 @@ namespace FluentAssertions.Analyzers
                 _name = name;
             }
 
-            public sealed override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == _name;
+            public override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode?.Value?.Name?.Identifier.Text == _name;
             public sealed override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode?.Previous?.Value ?? listNode.Value.Parent;
             public sealed override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
             {
@@ -91,18 +96,45 @@ namespace FluentAssertions.Analyzers
 
                 if (next.Parent is InvocationExpressionSyntax nextInvocation)
                 {
-                    if (nextInvocation.Parent is MemberAccessExpressionSyntax access && access.Name.Identifier.Text == "And")
-                    {
-                        return previous.WithExpression(access);
-                    }
                     return previous.WithExpression(nextInvocation);
                 }
-
 
                 return previous.WithExpression(next);
             }
         }
 
+        [DebuggerDisplay("RemoveOccurrence(name: \"{_name}\", occurrence: {_occurrence})")]
+        public class RemoveOccurrenceNodeReplacement : RemoveNodeReplacement
+        {
+            private int _occurrence;
+
+            public RemoveOccurrenceNodeReplacement(string name, int occurrence) : base(name)
+            {
+                _occurrence = occurrence;
+            }
+
+            public sealed override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode)
+            {
+                if (base.IsValidNode(listNode))
+                {
+                    --_occurrence;
+                    return _occurrence == 0;
+                }
+
+                return false;
+            }
+        }
+
+        public class RemoveMethodBeforeNodeReplacement : RemoveNodeReplacement
+        {
+            public RemoveMethodBeforeNodeReplacement(string name): base(name)
+            {
+            }
+
+            public override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => base.IsValidNode(listNode.Previous);
+        }
+
+        [DebuggerDisplay("RemoveAndExtractArguments(name: \"{_name}\")")]
         public class RemoveAndExtractArgumentsNodeReplacement : RemoveNodeReplacement
         {
             public SeparatedSyntaxList<ArgumentSyntax> Arguments { get; private set; }
@@ -119,6 +151,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("RenameAndPrependArguments(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameAndPrependArgumentsNodeReplacement : RenameNodeReplacement
         {
             private readonly SeparatedSyntaxList<ArgumentSyntax> _arguments;
@@ -137,6 +170,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("RenameAndRemoveInvocationOfMethodOnFirstArgument(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement : RenameNodeReplacement
         {
             public RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement(string oldName, string newName) : base(oldName, newName)
@@ -153,6 +187,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("RenameAndRemoveFirstArgument(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameAndRemoveFirstArgumentNodeReplacement : RenameNodeReplacement
         {
             public ArgumentSyntax Argument { get; private set; }
@@ -261,7 +296,7 @@ namespace FluentAssertions.Analyzers
                 _methodAfterIndexer = methodAfterIndexer;
             }
 
-            public sealed override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == _methodAfterIndexer;
+            public sealed override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Name.Identifier.Text == _methodAfterIndexer;
             public sealed override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value;
             public sealed override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
             {
