@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Diagnostics;
 
 namespace FluentAssertions.Analyzers
 {
@@ -16,6 +17,7 @@ namespace FluentAssertions.Analyzers
 
         public static NodeReplacement Rename(string oldName, string newName) => new RenameNodeReplacement(oldName, newName);
         public static NodeReplacement Remove(string name) => new RemoveNodeReplacement(name);
+        public static NodeReplacement RemoveOccurrence(string name, int occurrence) => new RemoveOccurrenceNodeReplacement(name, occurrence);
         public static RemoveAndExtractArgumentsNodeReplacement RemoveAndExtractArguments(string name) => new RemoveAndExtractArgumentsNodeReplacement(name);
         public static NodeReplacement RenameAndPrependArguments(string oldName, string newName, SeparatedSyntaxList<ArgumentSyntax> arguments) => new RenameAndPrependArgumentsNodeReplacement(oldName, newName, arguments);
         public static NodeReplacement RenameAndRemoveInvocationOfMethodOnFirstArgument(string oldName, string newName) => new RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement(oldName, newName);
@@ -27,6 +29,7 @@ namespace FluentAssertions.Analyzers
         public static RenameAndNegateLambdaNodeReplacement RenameAndNegateLambda(string oldName, string newName) => new RenameAndNegateLambdaNodeReplacement(oldName, newName);
         public static WithArgumentsNodeReplacement WithArguments(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) => new WithArgumentsNodeReplacement(name, arguments);
 
+        [DebuggerDisplay("Rename(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameNodeReplacement : NodeReplacement
         {
             private readonly string _oldName;
@@ -71,6 +74,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("Remove(name: \"{_name}\")")]
         public class RemoveNodeReplacement : NodeReplacement
         {
             private readonly string _name;
@@ -80,7 +84,7 @@ namespace FluentAssertions.Analyzers
                 _name = name;
             }
 
-            public sealed override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == _name;
+            public override bool IsValidNode(MemberAccessExpressionSyntax node) => node.Name.Identifier.Text == _name;
             public sealed override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode?.Previous?.Value ?? listNode.Value.Parent;
             public sealed override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
             {
@@ -91,7 +95,7 @@ namespace FluentAssertions.Analyzers
 
                 if (next.Parent is InvocationExpressionSyntax nextInvocation)
                 {
-                    if (nextInvocation.Parent is MemberAccessExpressionSyntax access && access.Name.Identifier.Text == "And")
+                    if (nextInvocation.Parent is MemberAccessExpressionSyntax access && access.Name.Identifier.Text == "And" && _name != "And")
                     {
                         return previous.WithExpression(access);
                     }
@@ -103,6 +107,29 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("RemoveOccurrence(name: \"{_name}\", occurrence: {_occurrence})")]
+        public class RemoveOccurrenceNodeReplacement : RemoveNodeReplacement
+        {
+            private int _occurrence;
+
+            public RemoveOccurrenceNodeReplacement(string name, int occurrence) : base(name)
+            {
+                _occurrence = occurrence;
+            }
+
+            public sealed override bool IsValidNode(MemberAccessExpressionSyntax node)
+            {
+                if (base.IsValidNode(node))
+                {
+                    --_occurrence;
+                    return _occurrence == 0;
+                }
+
+                return false;
+            }
+        }
+
+        [DebuggerDisplay("RemoveAndExtractArguments(name: \"{_name}\")")]
         public class RemoveAndExtractArgumentsNodeReplacement : RemoveNodeReplacement
         {
             public SeparatedSyntaxList<ArgumentSyntax> Arguments { get; private set; }
@@ -119,6 +146,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("RenameAndPrependArguments(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameAndPrependArgumentsNodeReplacement : RenameNodeReplacement
         {
             private readonly SeparatedSyntaxList<ArgumentSyntax> _arguments;
@@ -137,6 +165,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("RenameAndRemoveInvocationOfMethodOnFirstArgument(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement : RenameNodeReplacement
         {
             public RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement(string oldName, string newName) : base(oldName, newName)
@@ -153,6 +182,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        [DebuggerDisplay("RenameAndRemoveFirstArgument(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
         public class RenameAndRemoveFirstArgumentNodeReplacement : RenameNodeReplacement
         {
             public ArgumentSyntax Argument { get; private set; }

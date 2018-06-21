@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FluentAssertions.Analyzers.Tips.Exceptions
 {
@@ -62,10 +63,40 @@ namespace FluentAssertions.Analyzers.Tips.Exceptions
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            var remove = NodeReplacement.RemoveAndExtractArguments("ContainsValue");
-            var newExpression = GetNewExpression(expression, remove);
+            switch (properties.VisitorName)
+            {
+                case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowWhichMessageShouldContain):
+                case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyWhichMessageShouldContain):
+                    return ReplaceContainMessage(expression, "Which");
+                case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowAndMessageShouldContain):
+                case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyAndMessageShouldContain):
+                    return ReplaceContainMessage(expression, "And");
+                default:
+                    throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+            }
+        }
 
-            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContainValue", remove.Arguments));
+        private ExpressionSyntax ReplaceContainMessage(ExpressionSyntax expression, string whichOrAnd)
+        {
+            var replacements = new[]
+            {
+                NodeReplacement.Remove(whichOrAnd),
+                NodeReplacement.Remove("Message"),
+                NodeReplacement.RemoveOccurrence("Should", occurrence: 2)
+            };
+            var newExpression = GetNewExpression(expression, replacements);
+            var rename = NodeReplacement.RenameAndExtractArguments("Contain", "WithMessage");
+            newExpression = GetNewExpression(newExpression, rename);
+
+            if (rename.Arguments[0].Expression is IdentifierNameSyntax identifier)
+            {
+                var interpolatedString = SF.ParseExpression($"$\"*{{{identifier.Identifier.Text}}}*\"");
+                var newArgument = SF.Argument(interpolatedString);
+                var replacement = NodeReplacement.WithArguments("WithMessage", rename.Arguments.Replace(rename.Arguments[0], newArgument));
+                return GetNewExpression(newExpression, replacement);
+            }
+
+            return newExpression;
         }
     }
 }

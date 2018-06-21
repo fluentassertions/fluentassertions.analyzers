@@ -1,12 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers
 {
@@ -21,10 +15,7 @@ namespace FluentAssertions.Analyzers
 
         public sealed override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
-            if (node.Name.Identifier.Text != "And")
-            {
-                Members.Add(node);
-            }
+            Members.Add(node);
             Visit(node.Expression);
         }
     }
