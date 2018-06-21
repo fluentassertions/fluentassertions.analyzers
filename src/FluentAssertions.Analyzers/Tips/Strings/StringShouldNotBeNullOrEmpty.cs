@@ -85,7 +85,7 @@ namespace FluentAssertions.Analyzers
         private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod)
         {
             var remove = NodeReplacement.RemoveAndExtractArguments(removeMethod);
-            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodAfter(removeMethod), remove);
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(removeMethod), remove);
 
             return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(renameMethod, "NotBeNullOrEmpty", remove.Arguments));
         }

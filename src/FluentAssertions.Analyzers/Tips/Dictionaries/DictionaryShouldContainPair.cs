@@ -113,7 +113,7 @@ namespace FluentAssertions.Analyzers
             if (properties.VisitorName == nameof(DictionaryShouldContainPairAnalyzer.ShouldContainKeyAndContainValueSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ContainValue");
-                var newExpression = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainValue"), remove);
 
                 var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 
@@ -126,7 +126,7 @@ namespace FluentAssertions.Analyzers
             else if (properties.VisitorName == nameof(DictionaryShouldContainPairAnalyzer.ShouldContainValueAndContainKeySyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("ContainKey");
-                var newExpression = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainKey"), remove);
 
                 var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 

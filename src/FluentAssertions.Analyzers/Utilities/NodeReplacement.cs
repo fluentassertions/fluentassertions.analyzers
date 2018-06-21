@@ -18,7 +18,7 @@ namespace FluentAssertions.Analyzers
         public static NodeReplacement Rename(string oldName, string newName) => new RenameNodeReplacement(oldName, newName);
         public static NodeReplacement Remove(string name) => new RemoveNodeReplacement(name);
         public static NodeReplacement RemoveOccurrence(string name, int occurrence) => new RemoveOccurrenceNodeReplacement(name, occurrence);
-        public static NodeReplacement RemoveMethodAfter(string name) => new RemoveMethodAfterNodeReplacement(name);
+        public static NodeReplacement RemoveMethodBefore(string name) => new RemoveMethodBeforeNodeReplacement(name);
         public static RemoveAndExtractArgumentsNodeReplacement RemoveAndExtractArguments(string name) => new RemoveAndExtractArgumentsNodeReplacement(name);
         public static NodeReplacement RenameAndPrependArguments(string oldName, string newName, SeparatedSyntaxList<ArgumentSyntax> arguments) => new RenameAndPrependArgumentsNodeReplacement(oldName, newName, arguments);
         public static NodeReplacement RenameAndRemoveInvocationOfMethodOnFirstArgument(string oldName, string newName) => new RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement(oldName, newName);
@@ -125,9 +125,9 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        public class RemoveMethodAfterNodeReplacement : RemoveNodeReplacement
+        public class RemoveMethodBeforeNodeReplacement : RemoveNodeReplacement
         {
-            public RemoveMethodAfterNodeReplacement(string name): base(name)
+            public RemoveMethodBeforeNodeReplacement(string name): base(name)
             {
             }
 
