@@ -61,14 +61,14 @@ namespace FluentAssertions.Analyzers
             if (properties.VisitorName == nameof(StringShouldNotBeNullOrEmptyAnalyzer.StringShouldNotBeNullAndNotBeEmptySyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("NotBeEmpty");
-                var newExpression = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, NodeReplacement.Remove("And"), remove);
 
                 return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeNull", "NotBeNullOrEmpty", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(StringShouldNotBeNullOrEmptyAnalyzer.StringShouldNotBeEmptyAndNotBeNullSyntaxVisitor))
             {
                 var remove = NodeReplacement.RemoveAndExtractArguments("NotBeNull");
-                var newExpression = GetNewExpression(expression, remove);
+                var newExpression = GetNewExpression(expression, NodeReplacement.Remove("And"), remove);
 
                 return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "NotBeNullOrEmpty", remove.Arguments));
             }
