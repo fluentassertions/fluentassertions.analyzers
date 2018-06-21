@@ -154,20 +154,20 @@ namespace FluentAssertions.Analyzers.Tips.Exceptions
                     return ReplaceContainMessage(expression, "Which");
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowAndMessageShouldContain):
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyAndMessageShouldContain):
-                    return ReplaceContainMessage(expression, "And");                
+                    return ReplaceContainMessage(expression, "And");
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowWhichMessageShouldBe):
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyWhichMessageShouldBe):
                     return ReplaceBeMessage(expression, "Which");
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowAndMessageShouldBe):
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyAndMessageShouldBe):
                     return ReplaceBeMessage(expression, "And");
-                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowWhichMessageShouldStartWith):
+                case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowWhichMessageShouldStartWith):
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyWhichMessageShouldStartWith):
                     return ReplaceStartWithMessage(expression, "Which");
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowAndMessageShouldStartWith):
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyAndMessageShouldStartWith):
                     return ReplaceStartWithMessage(expression, "And");
-                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowWhichMessageShouldEndWith):
+                case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowWhichMessageShouldEndWith):
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowExactlyWhichMessageShouldEndWith):
                     return ReplaceEndWithMessage(expression, "Which");
                 case nameof(ExceptionShouldThrowWithMessageAnalyzer.ShouldThrowAndMessageShouldEndWith):
@@ -179,31 +179,7 @@ namespace FluentAssertions.Analyzers.Tips.Exceptions
         }
 
         private ExpressionSyntax ReplaceContainMessage(ExpressionSyntax expression, string whichOrAnd)
-        {
-            var replacements = new[]
-            {
-                NodeReplacement.Remove(whichOrAnd),
-                NodeReplacement.Remove("Message"),
-                NodeReplacement.RemoveOccurrence("Should", occurrence: 2)
-            };
-            var newExpression = GetNewExpression(expression, replacements);
-            var rename = NodeReplacement.RenameAndExtractArguments("Contain", "WithMessage");
-            newExpression = GetNewExpression(newExpression, rename);
-
-            ArgumentSyntax newArgument = null;
-            switch (rename.Arguments[0].Expression)
-            {
-                case IdentifierNameSyntax identifier:
-                    newArgument = SF.Argument(SF.ParseExpression($"$\"*{{{identifier.Identifier.Text}}}*\""));
-                    break;
-                case LiteralExpressionSyntax literal:
-                    newArgument = SF.Argument(SF.ParseExpression($"\"*{literal.Token.ValueText}*\""));
-                    break;
-            }
-            
-            var replacement = NodeReplacement.WithArguments("WithMessage", rename.Arguments.Replace(rename.Arguments[0], newArgument));
-            return GetNewExpression(newExpression, replacement);            
-        }
+            => ReplaceWithMessage(expression, whichOrAnd, renameMethod: "Contain", prefix: "*", postfix: "*");
 
         private ExpressionSyntax ReplaceBeMessage(ExpressionSyntax expression, string whichOrAnd)
         {
@@ -218,33 +194,12 @@ namespace FluentAssertions.Analyzers.Tips.Exceptions
         }
 
         private ExpressionSyntax ReplaceStartWithMessage(ExpressionSyntax expression, string whichOrAnd)
-        {
-            var replacements = new[]
-            {
-                NodeReplacement.Remove(whichOrAnd),
-                NodeReplacement.Remove("Message"),
-                NodeReplacement.RemoveOccurrence("Should", occurrence: 2)
-            };
-            var newExpression = GetNewExpression(expression, replacements);
-            var rename = NodeReplacement.RenameAndExtractArguments("StartWith", "WithMessage");
-            newExpression = GetNewExpression(newExpression, rename);
-
-            ArgumentSyntax newArgument = null;
-            switch (rename.Arguments[0].Expression)
-            {
-                case IdentifierNameSyntax identifier:
-                    newArgument = SF.Argument(SF.ParseExpression($"$\"{{{identifier.Identifier.Text}}}*\""));
-                    break;
-                case LiteralExpressionSyntax literal:
-                    newArgument = SF.Argument(SF.ParseExpression($"\"{literal.Token.ValueText}*\""));
-                    break;
-            }
-
-            var replacement = NodeReplacement.WithArguments("WithMessage", rename.Arguments.Replace(rename.Arguments[0], newArgument));
-            return GetNewExpression(newExpression, replacement);
-        }
+            => ReplaceWithMessage(expression, whichOrAnd, renameMethod: "StartWith", postfix: "*");
 
         private ExpressionSyntax ReplaceEndWithMessage(ExpressionSyntax expression, string whichOrAnd)
+            => ReplaceWithMessage(expression, whichOrAnd, renameMethod: "EndWith", prefix: "*");
+
+        private ExpressionSyntax ReplaceWithMessage(ExpressionSyntax expression, string whichOrAnd, string renameMethod, string prefix = "", string postfix = "")
         {
             var replacements = new[]
             {
@@ -253,17 +208,17 @@ namespace FluentAssertions.Analyzers.Tips.Exceptions
                 NodeReplacement.RemoveOccurrence("Should", occurrence: 2)
             };
             var newExpression = GetNewExpression(expression, replacements);
-            var rename = NodeReplacement.RenameAndExtractArguments("EndWith", "WithMessage");
+            var rename = NodeReplacement.RenameAndExtractArguments(renameMethod, "WithMessage");
             newExpression = GetNewExpression(newExpression, rename);
 
             ArgumentSyntax newArgument = null;
             switch (rename.Arguments[0].Expression)
             {
                 case IdentifierNameSyntax identifier:
-                    newArgument = SF.Argument(SF.ParseExpression($"$\"*{{{identifier.Identifier.Text}}}\""));
+                    newArgument = SF.Argument(SF.ParseExpression($"$\"{prefix}{{{identifier.Identifier.Text}}}{postfix}\""));
                     break;
                 case LiteralExpressionSyntax literal:
-                    newArgument = SF.Argument(SF.ParseExpression($"\"*{literal.Token.ValueText}\""));
+                    newArgument = SF.Argument(SF.ParseExpression($"\"{prefix}{literal.Token.ValueText}{postfix}\""));
                     break;
             }
 
