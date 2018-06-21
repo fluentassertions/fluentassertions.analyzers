@@ -26,6 +26,14 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         }
 
         [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/44")]
+        public void CollectionShouldHaveElementAt_ShouldIgnoreDictionaryTypes()
+        {
+            string source = GenerateCode.DictionaryAssertion("actual[\"key\"].Should().Be(expectedValue);");
+            DiagnosticVerifier.VerifyCSharpDiagnostic<CollectionShouldHaveElementAtAnalyzer>(source);
+        }
+
+        [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/13")]
         public void PropertyOfIndexerShouldBe_ShouldNotThrowException()
         {
@@ -82,5 +90,21 @@ public class TestClass
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/49")]
+        public void WritingToConsole_ShouldNotThrow()
+        {
+            const string source = @"
+public class TestClass
+{
+    public static void Main()
+    {
+        System.Console.WriteLine();
+    }
+}";
+            
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }    
     }
 }
