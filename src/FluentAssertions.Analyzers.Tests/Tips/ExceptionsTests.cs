@@ -1,5 +1,4 @@
-﻿using FluentAssertions.Analyzers.Tips.Exceptions;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FluentAssertions.Analyzers.Tests.Tips

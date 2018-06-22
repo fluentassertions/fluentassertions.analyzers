@@ -26,7 +26,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class ContainsShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ContainsShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public ContainsShouldBeTrueSyntaxVisitor() : base(new MemberValidator("Contains"), MemberValidator.Should, new MemberValidator("BeTrue"))
             {

@@ -25,7 +25,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class CountShouldNotBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class CountShouldNotBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public CountShouldNotBeSyntaxVisitor() : base(MemberValidator.HasNoArguments("Count"), MemberValidator.Should, MemberValidator.ArgumentIsIdentifierOrLiteral("NotBe"))
             {

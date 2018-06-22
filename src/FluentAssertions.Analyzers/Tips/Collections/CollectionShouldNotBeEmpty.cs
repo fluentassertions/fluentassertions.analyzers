@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public AnyShouldBeTrueSyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeTrue"))
             {

@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("HaveSameCount", ArgumentInvokesDistinctMethod))
             {

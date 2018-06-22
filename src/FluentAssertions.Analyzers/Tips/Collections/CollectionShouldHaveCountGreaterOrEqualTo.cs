@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCountGreaterOrEqualTo;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use .Should()### instead.";
+        public const string Message = "Use .Should().HaveCountGreaterOrEqualTo() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -25,7 +25,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class CountShouldBeGreaterOrEqualToSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class CountShouldBeGreaterOrEqualToSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public CountShouldBeGreaterOrEqualToSyntaxVisitor() : base(new MemberValidator("Count"), MemberValidator.Should, new MemberValidator("BeGreaterOrEqualTo"))
             {

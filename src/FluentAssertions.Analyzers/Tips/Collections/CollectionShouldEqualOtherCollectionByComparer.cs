@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class SelectShouldEqualOtherCollectionSelectSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class SelectShouldEqualOtherCollectionSelectSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public SelectShouldEqualOtherCollectionSelectSyntaxVisitor()
                 : base(MemberValidator.MathodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("Equal", MathodContainingArgumentInvokingLambda))

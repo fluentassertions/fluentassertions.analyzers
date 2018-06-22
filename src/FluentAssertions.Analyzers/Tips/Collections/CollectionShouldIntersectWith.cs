@@ -25,7 +25,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class IntersectShouldNotBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class IntersectShouldNotBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public IntersectShouldNotBeEmptySyntaxVisitor() : base(MemberValidator.HasArguments("Intersect"), MemberValidator.Should, new MemberValidator("NotBeEmpty"))
             {

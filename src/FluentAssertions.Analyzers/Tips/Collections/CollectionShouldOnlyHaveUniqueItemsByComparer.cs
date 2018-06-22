@@ -26,7 +26,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class SelectShouldOnlyHaveUniqueItemsSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class SelectShouldOnlyHaveUniqueItemsSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public SelectShouldOnlyHaveUniqueItemsSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("OnlyHaveUniqueItems"))
             {

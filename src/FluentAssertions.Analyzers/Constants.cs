@@ -13,6 +13,7 @@
             public const string ArgumentString = nameof(ArgumentString);
 
             public const string VisitorName = nameof(VisitorName);
+            public const string HelpLink = nameof(HelpLink);
         }
 
         public static class Tips

@@ -23,7 +23,7 @@ namespace FluentAssertions.Analyzers
             {
                 yield return new AnyShouldBeFalseSyntaxVisitor();
                 yield return new WhereShouldBeEmptySyntaxVisitor();
-                yield return new ShouldOnlyContainNotSyntaxVisitor();
+                yield return new ShouldOnlyContainSyntaxVisitor();
             }
         }
 
@@ -41,9 +41,9 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        public class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldOnlyContainSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public ShouldOnlyContainNotSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MathodContainingLambda("OnlyContain"))
+            public ShouldOnlyContainSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MathodContainingLambda("OnlyContain"))
             {
             }
         }
@@ -70,7 +70,7 @@ namespace FluentAssertions.Analyzers
 
                 return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
             }
-            else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.ShouldOnlyContainNotSyntaxVisitor))
+            else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.ShouldOnlyContainSyntaxVisitor))
             {
                 return GetNewExpression(expression, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
             }

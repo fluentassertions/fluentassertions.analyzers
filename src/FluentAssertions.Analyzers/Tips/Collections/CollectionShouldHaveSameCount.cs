@@ -26,7 +26,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class ShouldHaveCountOtherCollectionCountSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldHaveCountOtherCollectionCountSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public ShouldHaveCountOtherCollectionCountSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("HaveCount", HasArgumentInvokingCountMethod))
             {
