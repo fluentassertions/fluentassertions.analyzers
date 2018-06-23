@@ -92,6 +92,22 @@ public class TestClass
         }
 
         [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/58")]
+        public void StaticWithNameof_ShouldNotThrow()
+        {
+            const string source = @"public class TestClass
+{
+    private static string StaticResult { get; set; }
+
+    public static void Main()
+    {
+        StaticResult = nameof(Main);
+    }
+}";
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/49")]
         public void WritingToConsole_ShouldNotThrow()
         {

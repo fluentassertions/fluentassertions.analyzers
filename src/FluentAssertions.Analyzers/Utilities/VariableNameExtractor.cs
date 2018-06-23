@@ -53,11 +53,17 @@ namespace FluentAssertions.Analyzers
 
         private bool IsVariable(IdentifierNameSyntax node)
         {
-            // TODO: cleanup
-            if (_semanticModel == null) return true;
+            if (_semanticModel != null)
+            {
+                SymbolInfo info = _semanticModel.GetSymbolInfo(node);
+                if (info.Symbol == null ||
+                    info.Symbol.Kind == SymbolKind.Method ||
+                    info.Symbol.IsStatic)
+                {
+                    return false;
+                }
+            }
 
-            var info = _semanticModel.GetSymbolInfo(node);
-            if (info.Symbol.Kind == SymbolKind.Method || info.Symbol.IsStatic) return false;
             return true;
         }
     }
