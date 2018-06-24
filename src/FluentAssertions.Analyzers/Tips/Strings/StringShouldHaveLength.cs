@@ -21,13 +21,13 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new StringShouldHaveLengthSyntaxVisitor();
+                yield return new LengthShouldBeSyntaxVisitor();
             }
         }
 
-        public class StringShouldHaveLengthSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class LengthShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public StringShouldHaveLengthSyntaxVisitor() : base(new MemberValidator("Length"), MemberValidator.Should, new MemberValidator("Be"))
+            public LengthShouldBeSyntaxVisitor() : base(new MemberValidator("Length"), MemberValidator.Should, new MemberValidator("Be"))
             {
             }
         }

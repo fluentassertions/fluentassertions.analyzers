@@ -22,13 +22,29 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new StringShouldBeNullOrEmptySyntaxVisitor();
+                yield return new StringShouldBeNullAndBeEmptySyntaxVisitor();
+                yield return new StringShouldBeEmptyAndBeNullSyntaxVisitor();
+                yield return new StringIsNullOrEmptyShouldBeTrueSyntaxVisitor();
             }
         }
 
-        public class StringShouldBeNullOrEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class StringShouldBeNullAndBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public StringShouldBeNullOrEmptySyntaxVisitor() : base(new MemberValidator("IsNullOrEmpty"), MemberValidator.Should, new MemberValidator("BeTrue"))
+            public StringShouldBeNullAndBeEmptySyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("BeNull"), MemberValidator.And, new MemberValidator("BeEmpty"))
+            {
+            }
+        }
+
+        public class StringShouldBeEmptyAndBeNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringShouldBeEmptyAndBeNullSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("BeEmpty"), MemberValidator.And, new MemberValidator("BeNull"))
+            {
+            }
+        }
+
+        public class StringIsNullOrEmptyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public StringIsNullOrEmptyShouldBeTrueSyntaxVisitor() : base(new MemberValidator("IsNullOrEmpty"), MemberValidator.Should, new MemberValidator("BeTrue"))
             {
             }
         }
@@ -41,16 +57,36 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
-            var newExpression = GetNewExpression(expression, remove);
+            if (properties.VisitorName == nameof(StringShouldBeNullOrEmptyAnalyzer.StringShouldBeNullAndBeEmptySyntaxVisitor))
+            {
+                return GetCombinedAssertions(expression, "BeEmpty", "BeNull");
+            }
+            else if (properties.VisitorName == nameof(StringShouldBeNullOrEmptyAnalyzer.StringShouldBeEmptyAndBeNullSyntaxVisitor))
+            {
+                return GetCombinedAssertions(expression, "BeNull", "BeEmpty");
+            }
+            else if (properties.VisitorName == nameof(StringShouldBeNullOrEmptyAnalyzer.StringIsNullOrEmptyShouldBeTrueSyntaxVisitor))
+            {
+                var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
+                var newExpression = GetNewExpression(expression, remove);
 
-            var rename = NodeReplacement.Rename("BeTrue", "BeNullOrEmpty");
-            newExpression = GetNewExpression(newExpression, rename);
+                var rename = NodeReplacement.Rename("BeTrue", "BeNullOrEmpty");
+                newExpression = GetNewExpression(newExpression, rename);
 
-            var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
-            var subject = remove.Arguments.First().Expression;
+                var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+                var subject = remove.Arguments.First().Expression;
 
-            return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+                return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+            }
+            throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+        }
+
+        private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod)
+        {
+            var remove = NodeReplacement.RemoveAndExtractArguments(removeMethod);
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(removeMethod), remove);
+
+            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(renameMethod, "BeNullOrEmpty", remove.Arguments));
         }
     }
 }

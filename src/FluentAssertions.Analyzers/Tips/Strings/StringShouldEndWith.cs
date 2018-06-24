@@ -21,13 +21,13 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new StringShouldEndWithSyntaxVisitor();
+                yield return new EndWithShouldBeTrueSyntaxVisitor();
             }
         }
 
-        public class StringShouldEndWithSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class EndWithShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public StringShouldEndWithSyntaxVisitor() : base(new MemberValidator("EndsWith"), MemberValidator.Should, new MemberValidator("BeTrue"))
+            public EndWithShouldBeTrueSyntaxVisitor() : base(new MemberValidator("EndsWith"), MemberValidator.Should, new MemberValidator("BeTrue"))
             {
             }
         }
