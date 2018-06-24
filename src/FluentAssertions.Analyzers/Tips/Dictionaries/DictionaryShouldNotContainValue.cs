@@ -21,13 +21,13 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new ContainsValueShouldBeFalse();
+                yield return new ContainsValueShouldBeFalseSyntaxVisitor();
             }
         }
 
-        public class ContainsValueShouldBeFalse : FluentAssertionsCSharpSyntaxVisitor
+        public class ContainsValueShouldBeFalseSyntaxVisitor: FluentAssertionsCSharpSyntaxVisitor
         {
-            public ContainsValueShouldBeFalse() : base(new MemberValidator("ContainsValue"), MemberValidator.Should, new MemberValidator("BeFalse"))
+            public ContainsValueShouldBeFalseSyntaxVisitor() : base(new MemberValidator("ContainsValue"), MemberValidator.Should, new MemberValidator("BeFalse"))
             {
             }
         }
