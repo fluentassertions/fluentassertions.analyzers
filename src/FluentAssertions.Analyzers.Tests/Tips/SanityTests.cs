@@ -30,7 +30,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void CollectionShouldHaveElementAt_ShouldIgnoreDictionaryTypes()
         {
             string source = GenerateCode.DictionaryAssertion("actual[\"key\"].Should().Be(expectedValue);");
-            DiagnosticVerifier.VerifyCSharpDiagnostic<CollectionShouldHaveElementAtAnalyzer>(source);
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
 
         [TestMethod]
