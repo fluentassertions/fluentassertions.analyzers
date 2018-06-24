@@ -30,7 +30,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void CollectionShouldHaveElementAt_ShouldIgnoreDictionaryTypes()
         {
             string source = GenerateCode.DictionaryAssertion("actual[\"key\"].Should().Be(expectedValue);");
-            DiagnosticVerifier.VerifyCSharpDiagnostic<CollectionShouldHaveElementAtAnalyzer>(source);
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
 
         [TestMethod]
@@ -88,6 +88,22 @@ public class TestClass
     public static void Main() { }
 }";
 
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/58")]
+        public void StaticWithNameof_ShouldNotThrow()
+        {
+            const string source = @"public class TestClass
+{
+    private static string StaticResult { get; set; }
+
+    public static void Main()
+    {
+        StaticResult = nameof(Main);
+    }
+}";
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
 
