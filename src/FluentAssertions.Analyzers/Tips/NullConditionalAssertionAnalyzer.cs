@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace FluentAssertions.Analyzers.Tips
+namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NullConditionalAssertionAnalyzer : DiagnosticAnalyzer

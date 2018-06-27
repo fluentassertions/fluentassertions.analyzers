@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
 
-namespace FluentAssertions.Analyzers.Tips.Exceptions
+namespace FluentAssertions.Analyzers
 {
     public abstract class ExceptionAnalyzer : FluentAssertionsAnalyzer
     {

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace FluentAssertions.Analyzers.Tips.Exceptions
+namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ExceptionShouldThrowWithMessageAnalyzer : ExceptionAnalyzer
