@@ -50,17 +50,17 @@ namespace FluentAssertions.Analyzers
         {
             if (properties.VisitorName == nameof(CollectionShouldContainPropertyAnalyzer.AnyShouldBeTrueSyntaxVisitor))
             {
-                var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Any");
+                var remove = NodeReplacement.RemoveAndExtractArguments("Any");
                 var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newExpression, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeTrue", "Contain", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "Contain", remove.Arguments));
             }
             else if (properties.VisitorName == nameof(CollectionShouldContainPropertyAnalyzer.WhereShouldNotBeEmptySyntaxVisitor))
             {
-                var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Where");
+                var remove = NodeReplacement.RemoveAndExtractArguments("Where");
                 var newExpression = GetNewExpression(expression, remove);
 
-                return GetNewExpression(newExpression, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("NotBeEmpty", "Contain", remove.Arguments));
+                return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "Contain", remove.Arguments));
             }
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

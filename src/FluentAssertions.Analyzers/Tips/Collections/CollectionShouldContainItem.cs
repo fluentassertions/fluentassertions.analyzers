@@ -41,10 +41,10 @@ namespace FluentAssertions.Analyzers
         
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            var remove = new NodeReplacement.RemoveAndExtractArgumentsNodeReplacement("Contains");
+            var remove = NodeReplacement.RemoveAndExtractArguments("Contains");
             var newExpression = GetNewExpression(expression, remove);
 
-            return GetNewExpression(newExpression, new NodeReplacement.RenameAndPrependArgumentsNodeReplacement("BeTrue", "Contain", remove.Arguments));
+            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "Contain", remove.Arguments));
         }
     }
 }
