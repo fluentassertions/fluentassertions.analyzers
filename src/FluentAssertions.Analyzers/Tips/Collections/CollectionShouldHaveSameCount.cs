@@ -52,7 +52,7 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return GetNewExpression(expression, new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("HaveCount", "HaveSameCount"));
+            return GetNewExpression(expression, NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgument("HaveCount", "HaveSameCount"));
         }
     }
 }

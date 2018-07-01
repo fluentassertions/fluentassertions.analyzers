@@ -2,8 +2,10 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -15,8 +17,10 @@ namespace FluentAssertions.Analyzers
 
         public const string Message = "TODO";
 
+        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors { get; } = Enumerable.Empty<FluentAssertionsCSharpSyntaxVisitor>();
+
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        
+
         protected override Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
         {
             return null;

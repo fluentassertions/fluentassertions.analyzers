@@ -49,10 +49,13 @@ namespace FluentAssertions.Analyzers
     public class CollectionShouldNotHaveSameCountCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotHaveSameCountAnalyzer.DiagnosticId);
-        
+
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return GetNewExpression(expression, NodeReplacement.Remove("Count"), new NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgumentNodeReplacement("NotBe", "NotHaveSameCount"));
+            return GetNewExpression(expression,
+                NodeReplacement.Remove("Count"),
+                NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgument("NotBe", "NotHaveSameCount")
+            );
         }
     }
 }
