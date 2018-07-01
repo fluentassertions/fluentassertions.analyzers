@@ -23,22 +23,14 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new ShouldThrowExactlyWhichInnerExceptionShouldBeOfType();
                 yield return new ShouldThrowWhichInnerExceptionShouldBeOfType();
-                yield return new ShouldThrowExactlyAndInnerExceptionShouldBeOfType();
                 yield return new ShouldThrowAndInnerExceptionShouldBeOfType();
-                yield return new ShouldThrowExactlyWhichInnerExceptionShouldBe();
-                yield return new ShouldThrowWhichInnerExceptionShouldBe();
-                yield return new ShouldThrowExactlyAndInnerExceptionShouldBe();
-                yield return new ShouldThrowAndInnerExceptionShouldBe();
-                yield return new ShouldThrowExactlyWhichInnerExceptionShouldStartWith();
-                yield return new ShouldThrowWhichInnerExceptionShouldStartWith();
-                yield return new ShouldThrowExactlyAndInnerExceptionShouldStartWith();
-                yield return new ShouldThrowAndInnerExceptionShouldStartWith();
-                yield return new ShouldThrowExactlyWhichInnerExceptionShouldEndWith();
-                yield return new ShouldThrowWhichInnerExceptionShouldEndWith();
-                yield return new ShouldThrowExactlyAndInnerExceptionShouldEndWith();
-                yield return new ShouldThrowAndInnerExceptionShouldEndWith();
+                yield return new ShouldThrowExactlyAndInnerExceptionShouldBeOfType();
+                yield return new ShouldThrowExactlyWhichInnerExceptionShouldBeOfType();
+                yield return new ShouldThrowAndInnerExceptionShouldBeAssignableTo();
+                yield return new ShouldThrowWhichInnerExceptionShouldBeAssignableTo();
+                yield return new ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo();
+                yield return new ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo();
             }
         }
 
@@ -48,93 +40,46 @@ namespace FluentAssertions.Analyzers
             {
             }
         }
-        public class ShouldThrowWhichInnerExceptionShouldBeOfType : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowWhichInnerExceptionShouldBeOfType() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeOfType"))
-            {
-            }
-        }
         public class ShouldThrowExactlyAndInnerExceptionShouldBeOfType : FluentAssertionsCSharpSyntaxVisitor
         {
             public ShouldThrowExactlyAndInnerExceptionShouldBeOfType() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeOfType"))
             {
             }
         }
+        public class ShouldThrowWhichInnerExceptionShouldBeOfType : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public ShouldThrowWhichInnerExceptionShouldBeOfType() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeOfType"))
+            {
+            }
+        }        
         public class ShouldThrowAndInnerExceptionShouldBeOfType : FluentAssertionsCSharpSyntaxVisitor
         {
             public ShouldThrowAndInnerExceptionShouldBeOfType() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeOfType"))
             {
             }
         }
-        public class ShouldThrowExactlyWhichInnerExceptionShouldBe : FluentAssertionsCSharpSyntaxVisitor
+
+        public class ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo : FluentAssertionsCSharpSyntaxVisitor
         {
-            public ShouldThrowExactlyWhichInnerExceptionShouldBe() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("Be"))
+            public ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeAssignableTo"))
             {
             }
         }
-        public class ShouldThrowWhichInnerExceptionShouldBe : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo : FluentAssertionsCSharpSyntaxVisitor
         {
-            public ShouldThrowWhichInnerExceptionShouldBe() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("Be"))
+            public ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeAssignableTo"))
             {
             }
         }
-        public class ShouldThrowExactlyAndInnerExceptionShouldBe : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldThrowAndInnerExceptionShouldBeAssignableTo : FluentAssertionsCSharpSyntaxVisitor
         {
-            public ShouldThrowExactlyAndInnerExceptionShouldBe() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("Be"))
+            public ShouldThrowAndInnerExceptionShouldBeAssignableTo() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeAssignableTo"))
             {
             }
-        }
-        public class ShouldThrowAndInnerExceptionShouldBe : FluentAssertionsCSharpSyntaxVisitor
+        }        
+        public class ShouldThrowWhichInnerExceptionShouldBeAssignableTo : FluentAssertionsCSharpSyntaxVisitor
         {
-            public ShouldThrowAndInnerExceptionShouldBe() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("Be"))
-            {
-            }
-        }
-        public class ShouldThrowExactlyWhichInnerExceptionShouldStartWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowExactlyWhichInnerExceptionShouldStartWith() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("StartWith"))
-            {
-            }
-        }
-        public class ShouldThrowWhichInnerExceptionShouldStartWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowWhichInnerExceptionShouldStartWith() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("StartWith"))
-            {
-            }
-        }
-        public class ShouldThrowExactlyAndInnerExceptionShouldStartWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowExactlyAndInnerExceptionShouldStartWith() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("StartWith"))
-            {
-            }
-        }
-        public class ShouldThrowAndInnerExceptionShouldEndWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowAndInnerExceptionShouldEndWith() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("EndWith"))
-            {
-            }
-        }
-        public class ShouldThrowExactlyWhichInnerExceptionShouldEndWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowExactlyWhichInnerExceptionShouldEndWith() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("EndWith"))
-            {
-            }
-        }
-        public class ShouldThrowWhichInnerExceptionShouldEndWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowWhichInnerExceptionShouldEndWith() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("EndWith"))
-            {
-            }
-        }
-        public class ShouldThrowExactlyAndInnerExceptionShouldEndWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowExactlyAndInnerExceptionShouldEndWith() : base(MemberValidator.Should, new MemberValidator("ThrowExactly"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("EndWith"))
-            {
-            }
-        }
-        public class ShouldThrowAndInnerExceptionShouldStartWith : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldThrowAndInnerExceptionShouldStartWith() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.And, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("StartWith"))
+            public ShouldThrowWhichInnerExceptionShouldBeAssignableTo() : base(MemberValidator.Should, new MemberValidator("Throw"), MemberValidator.Which, new MemberValidator("InnerException"), MemberValidator.Should, new MemberValidator("BeAssignableTo"))
             {
             }
         }
@@ -155,51 +100,24 @@ namespace FluentAssertions.Analyzers
                 case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowAndInnerExceptionShouldBeOfType):
                 case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyAndInnerExceptionShouldBeOfType):
                     return ReplaceBeOfTypeInnerException(expression, "And");
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowWhichInnerExceptionShouldBe):
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyWhichInnerExceptionShouldBe):
-                    return ReplaceBeInnerException(expression, "Which");
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowAndInnerExceptionShouldBe):
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyAndInnerExceptionShouldBe):
-                    return ReplaceBeInnerException(expression, "And");
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowWhichInnerExceptionShouldStartWith):
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyWhichInnerExceptionShouldStartWith):
-                    return ReplaceStartWithInnerException(expression, "Which");
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowAndInnerExceptionShouldStartWith):
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyAndInnerExceptionShouldStartWith):
-                    return ReplaceStartWithInnerException(expression, "And");
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowWhichInnerExceptionShouldEndWith):
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyWhichInnerExceptionShouldEndWith):
-                    return ReplaceEndWithInnerException(expression, "Which");
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowAndInnerExceptionShouldEndWith):
-                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyAndInnerExceptionShouldEndWith):
-                    return ReplaceEndWithInnerException(expression, "And");
+                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowWhichInnerExceptionShouldBeAssignableTo):
+                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo):
+                    return ReplaceBeAssignableToInnerException(expression, "Which");
+                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowAndInnerExceptionShouldBeAssignableTo):
+                case nameof(ExceptionShouldThrowWithInnerExceptionAnalyzer.ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo):
+                    return ReplaceBeAssignableToInnerException(expression, "And");
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }
         }
 
         private ExpressionSyntax ReplaceBeOfTypeInnerException(ExpressionSyntax expression, string whichOrAnd)
-            => ReplaceWithInnerException(expression, whichOrAnd, renameMethod: "BeOfType", prefix: "*", postfix: "*");
+            => ReplaceWithInnerException(expression, whichOrAnd, renameFrom: "BeOfType", renameTo: "WithInnerExceptionExactly");
 
-        private ExpressionSyntax ReplaceBeInnerException(ExpressionSyntax expression, string whichOrAnd)
-        {
-            var replacements = new[]
-            {
-                NodeReplacement.Remove(whichOrAnd),
-                NodeReplacement.Remove("InnerException"),
-                NodeReplacement.RemoveOccurrence("Should", occurrence: 2),
-                NodeReplacement.Rename("Be", "WithInnerException")
-            };
-            return GetNewExpression(expression, replacements);
-        }
-
-        private ExpressionSyntax ReplaceStartWithInnerException(ExpressionSyntax expression, string whichOrAnd)
-            => ReplaceWithInnerException(expression, whichOrAnd, renameMethod: "StartWith", postfix: "*");
-
-        private ExpressionSyntax ReplaceEndWithInnerException(ExpressionSyntax expression, string whichOrAnd)
-            => ReplaceWithInnerException(expression, whichOrAnd, renameMethod: "EndWith", prefix: "*");
-
-        private ExpressionSyntax ReplaceWithInnerException(ExpressionSyntax expression, string whichOrAnd, string renameMethod, string prefix = "", string postfix = "")
+        private ExpressionSyntax ReplaceBeAssignableToInnerException(ExpressionSyntax expression, string whichOrAnd)
+            => ReplaceWithInnerException(expression, whichOrAnd, renameFrom: "BeAssignableTo", renameTo: "WithInnerException");
+        
+        private ExpressionSyntax ReplaceWithInnerException(ExpressionSyntax expression, string whichOrAnd, string renameFrom, string renameTo)
         {
             var replacements = new[]
             {
@@ -208,22 +126,8 @@ namespace FluentAssertions.Analyzers
                 NodeReplacement.RemoveOccurrence("Should", occurrence: 2)
             };
             var newExpression = GetNewExpression(expression, replacements);
-            var rename = NodeReplacement.RenameAndExtractArguments(renameMethod, "WithInnerException");
-            newExpression = GetNewExpression(newExpression, rename);
-
-            ArgumentSyntax newArgument = null;
-            switch (rename.Arguments[0].Expression)
-            {
-                case IdentifierNameSyntax identifier:
-                    newArgument = SF.Argument(SF.ParseExpression($"$\"{prefix}{{{identifier.Identifier.Text}}}{postfix}\""));
-                    break;
-                case LiteralExpressionSyntax literal:
-                    newArgument = SF.Argument(SF.ParseExpression($"\"{prefix}{literal.Token.ValueText}{postfix}\""));
-                    break;
-            }
-
-            var replacement = NodeReplacement.WithArguments("WithInnerException", rename.Arguments.Replace(rename.Arguments[0], newArgument));
-            return GetNewExpression(newExpression, replacement);
+            var rename = NodeReplacement.RenameAndExtractArguments(renameFrom, renameTo);
+            return GetNewExpression(newExpression, rename);
         }
     }
 }
