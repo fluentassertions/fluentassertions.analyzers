@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace FluentAssertions.Analyzers.Tests.Tips
+namespace FluentAssertions.Analyzers.Tests
 {
     [TestClass]
     public class NumericTests
