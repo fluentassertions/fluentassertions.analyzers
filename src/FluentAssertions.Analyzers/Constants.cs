@@ -1,4 +1,4 @@
-﻿namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers
 {
     public static class Constants
     {
