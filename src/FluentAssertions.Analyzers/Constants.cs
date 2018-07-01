@@ -80,6 +80,7 @@ namespace FluentAssertions.Analyzers
             public static class Exceptions
             {
                 public const string ExceptionShouldThrowWithMessage = nameof(ExceptionShouldThrowWithMessage);
+                public const string ExceptionShouldThrowWithInnerException = nameof(ExceptionShouldThrowWithInnerException);
             }
         }
 

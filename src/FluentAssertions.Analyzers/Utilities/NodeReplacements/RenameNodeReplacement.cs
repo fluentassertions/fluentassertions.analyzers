@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
             var current = listNode.Value;
             var parent = (InvocationExpressionSyntax)current.Parent;
 
-            var newNode = parent.WithExpression(current.WithName(SyntaxFactory.IdentifierName(_newName)));
+            var newNode = parent.WithExpression(current.WithName(current.Name.WithIdentifier(SyntaxFactory.ParseToken(_newName))));
             return ComputeNew(newNode);
         }
     }
