@@ -89,6 +89,7 @@ namespace FluentAssertions.Analyzers
             public const string Category = "FluentAssertionCodeSmell";
 
             public const string NullConditionalAssertion = nameof(NullConditionalAssertion);
+            public const string AsyncVoid = nameof(AsyncVoid);
         }
     }
 }

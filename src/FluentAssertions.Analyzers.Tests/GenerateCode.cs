@@ -122,6 +122,24 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("}")
             .ToString();
 
+        public static string AsyncFunctionStatement(string statement) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine("        void TestMethod()")
+            .AppendLine("        {")
+            .AppendLine($"            {statement}")
+            .AppendLine("        }")
+            .AppendLine("        async void AsyncVoidMethod() { await Task.CompletedTask; }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
         private static StringBuilder AppendMainMethod(this StringBuilder builder) => builder
             .AppendLine("    class Program")
             .AppendLine("    {")

@@ -6,8 +6,6 @@ namespace FluentAssertions.Analyzers.Tests
     [TestClass]
     public class CollectionTests
     {
-        public TestContext TestContext { get; set; }
-        
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeTrue({0}).And.ToString();")]
