@@ -162,6 +162,35 @@ namespace TestNamespace
         }
 
         [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/65")]
+        public void CustomClass_ShouldNotTrigger_DictionaryAnalyzers()
+        {
+            const string source = @"
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    class MyDict<TKey, TValue>
+    {
+        public bool ContainsKey(TKey key) => false;
+    }
+    
+    public class Program
+    {
+        public static void Main()
+        {
+            var dict = new MyDict<int, string>();
+            dict.ContainsKey(0).Should().BeTrue();
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/64")]
         public void CollectionShouldNotContainProperty_WhenAssertionIsIdiomatic_ShouldNotTrigger()
         {            
