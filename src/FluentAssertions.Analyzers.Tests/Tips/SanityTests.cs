@@ -209,5 +209,29 @@ public class TestClass
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/66")]
+        public void CollectionShouldHaveElementAt_ShouldNotThrow()
+        {
+            const string source = @"
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            var list = new[] { "" FOO "" };
+            list[0].Trim().Should().Be(""FOO"");
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
     }
 }
