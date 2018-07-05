@@ -122,5 +122,33 @@ public class TestClass
             
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }    
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
+        public void Collection_SelectWhereShouldOnlyHaveUniqueItems_ShouldNotTrigger()
+        {
+            const string source = @"
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            var list = new[] { 1, 2, 3 };
+    
+            list.Select(e => e.ToString())
+                .Where(e => e != string.Empty)
+                .Should()
+                .OnlyHaveUniqueItems();
+        }
+    }
+}";
+            
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
     }
 }
