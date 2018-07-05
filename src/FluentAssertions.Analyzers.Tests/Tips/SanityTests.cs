@@ -124,6 +124,44 @@ public class TestClass
         }    
 
         [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
+        public void Collection_SelectWhereShouldOnlyHaveUniqueItems_ShouldNotTrigger()
+        {
+            const string source = @"
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            var list = new[] { 1, 2, 3 };
+    
+            list.Select(e => e.ToString())
+                .Where(e => e != string.Empty)
+                .Should()
+                .OnlyHaveUniqueItems();
+        }
+    }
+}";
+            
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
+        public void StringShouldNotBeEmptyAndShouldNotBeNull_ShouldNotTrigger()
+        {
+            const string assertion = "actual.Should().NotBeEmpty().And.Should().NotBeNull();";
+            var source = GenerateCode.StringAssertion(assertion);
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/64")]
         public void CollectionShouldNotContainProperty_WhenAssertionIsIdiomatic_ShouldNotTrigger()
         {            
