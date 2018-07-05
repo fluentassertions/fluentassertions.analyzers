@@ -7,6 +7,7 @@ namespace FluentAssertions.Analyzers.Tests
     public class AsyncVoidTests
     {
         [TestMethod]
+        [Implemented]
         public void AssignAsyncVoidMethodToAction_TestAnalyzer()
         {
             const string statement = "Action action = AsyncVoidMethod;";
@@ -16,6 +17,7 @@ namespace FluentAssertions.Analyzers.Tests
         }
 
         [TestMethod]
+        [Implemented]
         public void AssignVoidLambdaToAction_TestAnalyzer()
         {
             const string statement = "Action action = () => {};";
@@ -29,6 +31,7 @@ namespace FluentAssertions.Analyzers.Tests
         [DataRow("Action action1 = () => { }, action2 = async () => { await Task.CompletedTask; };")]
         [DataRow("Action action1 = async () => { await Task.CompletedTask; }, action2 = () => { };")]
         [DataTestMethod]
+        [Implemented]
         public void AssignAsyncVoidLambdaToAction_TestAnalyzer(string assertion)
         {
             var source = GenerateCode.AsyncFunctionStatement(assertion);
@@ -45,16 +48,20 @@ namespace FluentAssertions.Analyzers.Tests
             });
         }
 
-        [DataRow(
-            "Action action = async () => { await Task.CompletedTask; };",
-            "Func<Task> action = async () => { await Task.CompletedTask; };")]
-        [DataRow(
-            "Action action1 = async () => { await Task.CompletedTask; }, action2 = async () => { await Task.CompletedTask; };",
-            "Func<Task> action1 = async () => { await Task.CompletedTask; }, action2 = async () => { await Task.CompletedTask; };")]
-        [DataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "Action action = async () => { await Task.CompletedTask; };",
+            newAssertion: "Func<Task> action = async () => { await Task.CompletedTask; };")]
+        [AssertionCodeFix(
+            oldAssertion: "Action action1 = async () => { await Task.CompletedTask; }, action2 = async () => { await Task.CompletedTask; };",
+            newAssertion: "Func<Task> action1 = async () => { await Task.CompletedTask; }, action2 = async () => { await Task.CompletedTask; };")]
+        [AssertionDataTestMethod]
+        [NotImplemented]
         public void AssignAsyncVoidLambdaToAction_TestCodeFix(string oldAssertion, string newAssertion)
         {
+            var oldSource = GenerateCode.AsyncFunctionStatement(oldAssertion);
+            var newSource = GenerateCode.AsyncFunctionStatement(newAssertion);
 
+            DiagnosticVerifier.VerifyCSharpFix<AsyncVoidCodeFix, AsyncVoidAnalyzer>(oldSource, newSource);
         }
     }
 }

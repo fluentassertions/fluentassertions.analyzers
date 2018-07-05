@@ -1,10 +1,13 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers
 {
@@ -64,6 +67,16 @@ namespace FluentAssertions.Analyzers
             }
 
             return null;
+        }
+    }
+
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AsyncVoidCodeFix)), Shared]
+    public class AsyncVoidCodeFix : CodeFixProvider
+    {
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AsyncVoidAnalyzer.DiagnosticId);
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }
