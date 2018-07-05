@@ -60,8 +60,8 @@ namespace FluentAssertions.Analyzers
 
             if (variableNameExtractor.VariableIdentifierName == null) return null;
             var typeInfo = semanticModel.GetTypeInfo(variableNameExtractor.VariableIdentifierName);
-            if (typeInfo.ConvertedType == null) return null;
-            if (!ShouldAnalyzeVariableType(typeInfo.ConvertedType)) return null;
+            if (typeInfo.Type == null) return null;
+            if (!ShouldAnalyzeVariableType(typeInfo.Type)) return null;
 
             foreach (var visitor in Visitors)
             {

@@ -13,9 +13,9 @@ namespace FluentAssertions.Analyzers
 
         public ImmutableStack<MemberValidator> AllMembers { get; }
         public ImmutableStack<MemberValidator> Members { get; private set; }
-        
+
         public virtual bool IsValid(ExpressionSyntax expression) => Members.IsEmpty;
-        
+
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => ImmutableDictionary<string, string>.Empty
             .Add(Constants.DiagnosticProperties.VisitorName, GetType().Name)
             .Add(Constants.DiagnosticProperties.HelpLink, HelpLinks.Get(GetType()))
@@ -48,6 +48,10 @@ namespace FluentAssertions.Analyzers
                 if (member.Name == name && member.AreArgumentsValid(invocation.ArgumentList.Arguments))
                 {
                     Members = Members.Pop();
+                }
+                else
+                {
+                    Members = AllMembers;
                 }
             }
             else if (node.Parent is MemberAccessExpressionSyntax memberAccess && memberAccess.IsKind(SyntaxKind.SimpleMemberAccessExpression)

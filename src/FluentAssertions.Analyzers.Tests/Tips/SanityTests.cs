@@ -122,5 +122,116 @@ public class TestClass
             
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }    
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
+        public void Collection_SelectWhereShouldOnlyHaveUniqueItems_ShouldNotTrigger()
+        {
+            const string source = @"
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            var list = new[] { 1, 2, 3 };
+    
+            list.Select(e => e.ToString())
+                .Where(e => e != string.Empty)
+                .Should()
+                .OnlyHaveUniqueItems();
+        }
+    }
+}";
+            
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
+        public void StringShouldNotBeEmptyAndShouldNotBeNull_ShouldNotTrigger()
+        {
+            const string assertion = "actual.Should().NotBeEmpty().And.Should().NotBeNull();";
+            var source = GenerateCode.StringAssertion(assertion);
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/65")]
+        public void CustomClass_ShouldNotTrigger_DictionaryAnalyzers()
+        {
+            const string source = @"
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    class MyDict<TKey, TValue>
+    {
+        public bool ContainsKey(TKey key) => false;
+    }
+    
+    public class Program
+    {
+        public static void Main()
+        {
+            var dict = new MyDict<int, string>();
+            dict.ContainsKey(0).Should().BeTrue();
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/64")]
+        public void CollectionShouldNotContainProperty_WhenAssertionIsIdiomatic_ShouldNotTrigger()
+        {            
+            const string source = @"
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+public class TestClass
+{
+    public static void Main()
+    {
+        var list = new[] { string.Empty };
+        list.Should().OnlyContain(e => e.Contains(string.Empty));
+    }
+}"; 
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/66")]
+        public void CollectionShouldHaveElementAt_ShouldNotThrow()
+        {
+            const string source = @"
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            var list = new[] { "" FOO "" };
+            list[0].Trim().Should().Be(""FOO"");
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
     }
 }
