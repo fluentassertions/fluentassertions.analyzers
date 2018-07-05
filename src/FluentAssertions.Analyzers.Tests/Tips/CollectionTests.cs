@@ -91,10 +91,10 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any(x => x.BooleanProperty).Should().BeFalse({0});")]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});")]
-        [AssertionDiagnostic("actual.Should().OnlyContain(x => !x.BooleanProperty{0});")]
+        [AssertionDiagnostic("actual.Should().OnlyContain(x => !x.BooleanProperty{0});", ignore: true)]
         [AssertionDiagnostic("actual.AsEnumerable().Any(x => x.BooleanProperty).Should().BeFalse({0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Where(x => x.BooleanProperty).Should().BeEmpty({0}).And.ToString();")]
-        [AssertionDiagnostic("actual.AsEnumerable().Should().OnlyContain(x => !x.BooleanProperty{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.AsEnumerable().Should().OnlyContain(x => !x.BooleanProperty{0}).And.ToString();", ignore: true)]
         [Implemented]
         public void CollectionShouldNotContainProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldNotContainPropertyAnalyzer>(assertion);
 
@@ -387,8 +387,6 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.Should().NotBeEmpty().And.NotBeNull({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeNull().And.NotBeEmpty({0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeEmpty().And.NotBeNull({0}).And.ToString();")]
-        [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeNull().And.HaveCount(2).And.NotBeEmpty({0}).And.ToString();")]
-        [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeEmpty().And.HaveCount(2).And.NotBeNull({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldNotBeNullOrEmptyAnalyzer>(assertion);
 
@@ -405,12 +403,6 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.Should().NotBeEmpty({0}).And.NotBeNull();",
             newAssertion: "actual.Should().NotBeNullOrEmpty({0});")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.AsEnumerable().Should().NotBeNull().And.HaveCount(2).And.NotBeEmpty({0}).And.ToString();",
-            newAssertion: "actual.AsEnumerable().Should().NotBeNullOrEmpty({0}).And.HaveCount(2).And.ToString();")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.AsEnumerable().Should().NotBeEmpty().And.HaveCount(2).And.NotBeNull({0}).And.ToString();",
-            newAssertion: "actual.AsEnumerable().Should().NotBeNullOrEmpty({0}).And.HaveCount(2).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotBeNullOrEmptyCodeFix, CollectionShouldNotBeNullOrEmptyAnalyzer>(oldAssertion, newAssertion);
 
