@@ -12,10 +12,10 @@ namespace FluentAssertions.Analyzers
         public IdentifierNameSyntax IdentifierNameVariable { get; private set; }
 
         public ImmutableStack<MemberValidator> AllMembers { get; }
-        public ImmutableStack<MemberValidator> Members { get; private set; }        
-        
+        public ImmutableStack<MemberValidator> Members { get; private set; }
+
         public virtual bool IsValid(ExpressionSyntax expression) => Members.IsEmpty;
-        
+
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => ImmutableDictionary<string, string>.Empty
             .Add(Constants.DiagnosticProperties.VisitorName, GetType().Name)
             .ToImmutableDictionary();
