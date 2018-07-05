@@ -122,5 +122,25 @@ public class TestClass
             
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }    
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/64")]
+        public void CollectionShouldNotContainProperty_WhenAssertionIsIdiomatic_ShouldNotTrigger()
+        {            
+            const string source = @"
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+public class TestClass
+{
+    public static void Main()
+    {
+        var list = new[] { string.Empty };
+        list.Should().OnlyContain(e => e.Contains(string.Empty));
+    }
+}"; 
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
     }
 }

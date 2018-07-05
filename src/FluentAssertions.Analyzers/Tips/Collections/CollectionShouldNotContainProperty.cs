@@ -23,7 +23,7 @@ namespace FluentAssertions.Analyzers
             {
                 yield return new AnyShouldBeFalseSyntaxVisitor();
                 yield return new WhereShouldBeEmptySyntaxVisitor();
-                yield return new ShouldOnlyContainNotSyntaxVisitor();
+                // TODO: yield return new ShouldOnlyContainNotSyntaxVisitor();
             }
         }
 
@@ -70,10 +70,12 @@ namespace FluentAssertions.Analyzers
 
                 return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
             }
+            /*
             else if (properties.VisitorName == nameof(CollectionShouldNotContainPropertyAnalyzer.ShouldOnlyContainNotSyntaxVisitor))
             {
                 return GetNewExpression(expression, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
             }
+            */
             throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }
     }
