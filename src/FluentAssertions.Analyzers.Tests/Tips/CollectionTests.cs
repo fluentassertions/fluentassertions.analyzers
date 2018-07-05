@@ -91,10 +91,10 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any(x => x.BooleanProperty).Should().BeFalse({0});")]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});")]
-        [AssertionDiagnostic("actual.Should().OnlyContain(x => !x.BooleanProperty{0});")]
+        [AssertionDiagnostic("actual.Should().OnlyContain(x => !x.BooleanProperty{0});", ignore: true)]
         [AssertionDiagnostic("actual.AsEnumerable().Any(x => x.BooleanProperty).Should().BeFalse({0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Where(x => x.BooleanProperty).Should().BeEmpty({0}).And.ToString();")]
-        [AssertionDiagnostic("actual.AsEnumerable().Should().OnlyContain(x => !x.BooleanProperty{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.AsEnumerable().Should().OnlyContain(x => !x.BooleanProperty{0}).And.ToString();", ignore: true)]
         [Implemented]
         public void CollectionShouldNotContainProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldNotContainPropertyAnalyzer>(assertion);
 
