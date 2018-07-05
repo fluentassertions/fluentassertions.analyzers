@@ -10,7 +10,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class DictionaryShouldContainKeyAndValueAnalyzer : FluentAssertionsAnalyzer
+    public class DictionaryShouldContainKeyAndValueAnalyzer : DictionaryAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainKeyAndValue;
         public const string Category = Constants.Tips.Category;

@@ -9,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class DictionaryShouldNotContainKeyAnalyzer : FluentAssertionsAnalyzer
+    public class DictionaryShouldNotContainKeyAnalyzer : DictionaryAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldNotContainKey;
         public const string Category = Constants.Tips.Category;
