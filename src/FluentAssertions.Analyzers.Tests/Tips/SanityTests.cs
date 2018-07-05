@@ -150,5 +150,15 @@ namespace TestNamespace
             
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
+        public void StringShouldNotBeEmptyAndShouldNotBeNull_ShouldNotTrigger()
+        {
+            const string assertion = "actual.Should().NotBeEmpty().And.Should().NotBeNull();";
+            var source = GenerateCode.StringAssertion(assertion);
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
     }
 }
