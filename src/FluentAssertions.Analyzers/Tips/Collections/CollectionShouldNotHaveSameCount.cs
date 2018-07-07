@@ -26,7 +26,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class CountShouldNotBeOtherCollectionCountSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class CountShouldNotBeOtherCollectionCountSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public CountShouldNotBeOtherCollectionCountSyntaxVisitor() : base(MemberValidator.HasNoArguments("Count"), MemberValidator.Should, new MemberValidator("NotBe", HasArgumentInvokingCountMethod))
             {

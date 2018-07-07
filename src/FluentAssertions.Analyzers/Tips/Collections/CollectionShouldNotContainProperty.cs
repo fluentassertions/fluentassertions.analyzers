@@ -41,9 +41,9 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        public class ShouldOnlyContainNotSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class ShouldOnlyContainSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public ShouldOnlyContainNotSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MathodContainingLambda("OnlyContain"))
+            public ShouldOnlyContainSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MathodContainingLambda("OnlyContain"))
             {
             }
         }

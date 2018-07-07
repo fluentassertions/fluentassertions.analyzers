@@ -21,13 +21,13 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new NumericShouldBePositiveSyntaxVisitor();
+                yield return new NumericShouldBeBeGreaterThan0SyntaxVisitor();
             }
         }
 
-        public class NumericShouldBePositiveSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class NumericShouldBeBeGreaterThan0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public NumericShouldBePositiveSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.ArgumentIsLiteral("BeGreaterThan", 0))
+            public NumericShouldBeBeGreaterThan0SyntaxVisitor() : base(MemberValidator.Should, MemberValidator.ArgumentIsLiteral("BeGreaterThan", 0))
             {
             }
         }

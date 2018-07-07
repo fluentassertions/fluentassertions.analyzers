@@ -18,6 +18,7 @@ namespace FluentAssertions.Analyzers
 
         public virtual ImmutableDictionary<string, string> ToDiagnosticProperties() => ImmutableDictionary<string, string>.Empty
             .Add(Constants.DiagnosticProperties.VisitorName, GetType().Name)
+            .Add(Constants.DiagnosticProperties.HelpLink, HelpLinks.Get(GetType()))
             .ToImmutableDictionary();
 
         public FluentAssertionsCSharpSyntaxVisitor(params MemberValidator[] members)

@@ -85,8 +85,6 @@ namespace FluentAssertions.Analyzers.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("string.IsNullOrEmpty(actual).Should().BeTrue({0});")]
-        [AssertionDiagnostic("string.IsNullOrEmpty(actual).Should().BeTrue({0}).And.ToString();")]
-        [AssertionDiagnostic("string.IsNullOrEmpty(actual.ToString()).Should().BeTrue({0});")]
         [AssertionDiagnostic("string.IsNullOrEmpty(actual.ToString()).Should().BeTrue({0}).And.ToString();")]
         [Implemented]
         public void StringShouldBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringShouldBeNullOrEmptyAnalyzer>(assertion);
@@ -95,12 +93,6 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "string.IsNullOrEmpty(actual).Should().BeTrue({0});",
             newAssertion: "actual.Should().BeNullOrEmpty({0});")]
-        [AssertionCodeFix(
-            oldAssertion: "string.IsNullOrEmpty(actual).Should().BeTrue({0}).And.ToString();",
-            newAssertion: "actual.Should().BeNullOrEmpty({0}).And.ToString();")]
-        [AssertionCodeFix(
-            oldAssertion: "string.IsNullOrEmpty(actual.ToString()).Should().BeTrue({0});",
-            newAssertion: "actual.ToString().Should().BeNullOrEmpty({0});")]
         [AssertionCodeFix(
             oldAssertion: "string.IsNullOrEmpty(actual.ToString()).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().BeNullOrEmpty({0}).And.ToString();")]

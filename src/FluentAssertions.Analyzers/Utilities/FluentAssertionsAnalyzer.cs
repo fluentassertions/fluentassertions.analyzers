@@ -79,8 +79,10 @@ namespace FluentAssertions.Analyzers
         {
             var properties = visitor.ToDiagnosticProperties()
                 .Add(Constants.DiagnosticProperties.Title, Title);
+            var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, Rule.MessageFormat, Rule.Category, Rule.DefaultSeverity, true, 
+                helpLinkUri: properties.GetValueOrDefault(Constants.DiagnosticProperties.HelpLink));
             return Diagnostic.Create(
-                descriptor: Rule,
+                descriptor: newRule,
                 location: expression.GetLocation(),
                 properties: properties);
         }

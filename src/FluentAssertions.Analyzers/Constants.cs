@@ -6,6 +6,7 @@ namespace FluentAssertions.Analyzers
         {
             public const string Title = nameof(Title);
             public const string VisitorName = nameof(VisitorName);
+            public const string HelpLink = nameof(HelpLink);
         }
 
         public static class Tips

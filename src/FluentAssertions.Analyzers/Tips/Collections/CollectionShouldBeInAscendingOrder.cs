@@ -25,7 +25,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class OrderByShouldEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class OrderByShouldEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public OrderByShouldEqualSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("OrderBy"), MemberValidator.Should, MemberValidator.ArgumentIsVariable("Equal"))
             {

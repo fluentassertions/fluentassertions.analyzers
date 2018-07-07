@@ -22,13 +22,13 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new StringShouldBeNullOrEmptySyntaxVisitor();
+                yield return new StringIsNullOrEmptyShouldBeTrueSyntaxVisitor();
             }
         }
 
-        public class StringShouldBeNullOrEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class StringIsNullOrEmptyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public StringShouldBeNullOrEmptySyntaxVisitor() : base(new MemberValidator("IsNullOrEmpty"), MemberValidator.Should, new MemberValidator("BeTrue"))
+            public StringIsNullOrEmptyShouldBeTrueSyntaxVisitor() : base(new MemberValidator("IsNullOrEmpty"), MemberValidator.Should, new MemberValidator("BeTrue"))
             {
             }
         }

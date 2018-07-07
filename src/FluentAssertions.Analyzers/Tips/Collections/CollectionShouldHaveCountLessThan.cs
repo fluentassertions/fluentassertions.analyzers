@@ -25,7 +25,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        private class CountShouldBeLessThanSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        public class CountShouldBeLessThanSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public CountShouldBeLessThanSyntaxVisitor() : base(new MemberValidator("Count"), MemberValidator.Should, new MemberValidator("BeLessThan"))
             {
