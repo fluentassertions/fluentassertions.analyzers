@@ -91,32 +91,8 @@ namespace FluentAssertions.Analyzers.Tests
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
-            oldAssertion: "actual.Should().BeNull({0}).And.BeEmpty();",
-            newAssertion: "actual.Should().BeNullOrEmpty({0});")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.Should().BeNull().And.BeEmpty({0});",
-            newAssertion: "actual.Should().BeNullOrEmpty({0});")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.Should().BeEmpty({0}).And.BeNull();",
-            newAssertion: "actual.Should().BeNullOrEmpty({0});")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.Should().BeEmpty().And.BeNull({0});",
-            newAssertion: "actual.Should().BeNullOrEmpty({0});")]
-        [AssertionCodeFix(
             oldAssertion: "string.IsNullOrEmpty(actual).Should().BeTrue({0});",
             newAssertion: "actual.Should().BeNullOrEmpty({0});")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.ToString().Should().BeNull({0}).And.BeEmpty().And.ToString();",
-            newAssertion: "actual.ToString().Should().BeNullOrEmpty({0}).And.ToString();")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.ToString().Should().BeNull().And.BeEmpty({0}).And.ToString();",
-            newAssertion: "actual.ToString().Should().BeNullOrEmpty({0}).And.ToString();")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.ToString().Should().BeEmpty({0}).And.BeNull().And.ToString();",
-            newAssertion: "actual.ToString().Should().BeNullOrEmpty({0}).And.ToString();")]
-        [AssertionCodeFix(
-            oldAssertion: "actual.ToString().Should().BeEmpty().And.BeNull({0}).And.ToString();",
-            newAssertion: "actual.ToString().Should().BeNullOrEmpty({0}).And.ToString();")]
         [AssertionCodeFix(
             oldAssertion: "string.IsNullOrEmpty(actual.ToString()).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().BeNullOrEmpty({0}).And.ToString();")]

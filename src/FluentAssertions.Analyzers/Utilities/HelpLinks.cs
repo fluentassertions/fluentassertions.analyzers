@@ -90,9 +90,7 @@ namespace FluentAssertions.Analyzers
                 [typeof(StringShouldNotBeNullOrEmptyAnalyzer.StringIsNullOrEmptyShouldBeFalseSyntaxVisitor)] = GetHelpLink("Strings-5"),
                 [typeof(StringShouldBeNullOrWhiteSpaceAnalyzer.StringShouldBeNullOrWhiteSpaceSyntaxVisitor)] = GetHelpLink("Strings-6"),
                 [typeof(StringShouldNotBeNullOrWhiteSpaceAnalyzer.StringShouldNotBeNullOrWhiteSpaceSyntaxVisitor)] = GetHelpLink("Strings-7"),
-                [typeof(StringShouldHaveLengthAnalyzer.LengthShouldBeSyntaxVisitor)] = GetHelpLink("Strings-8"),
-                [typeof(StringShouldBeNullOrEmptyAnalyzer.StringShouldBeEmptyAndBeNullSyntaxVisitor)] = GetHelpLink(""), // TODO: add to docs
-                [typeof(StringShouldBeNullOrEmptyAnalyzer.StringShouldBeNullAndBeEmptySyntaxVisitor)] = GetHelpLink(""), // TODO: add to docs
+                [typeof(StringShouldHaveLengthAnalyzer.LengthShouldBeSyntaxVisitor)] = GetHelpLink("Strings-8")
             };
         }
 
