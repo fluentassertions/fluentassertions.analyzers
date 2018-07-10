@@ -87,6 +87,7 @@ namespace FluentAssertions.Analyzers
             public static class MsTest
             {
                 public const string AssertIsTrue = nameof(AssertIsTrue);
+                public const string AssertIsFalse = nameof(AssertIsFalse);
             }
     }
 

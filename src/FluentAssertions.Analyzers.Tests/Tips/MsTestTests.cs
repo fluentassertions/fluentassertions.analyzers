@@ -23,6 +23,23 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertIsTrue_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertIsTrueCodeFix, AssertIsTrueAnalyzer>("bool actual", oldAssertion, newAssertion);
 
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsFalse(actual{0});")]
+        [AssertionDiagnostic("Assert.IsFalse(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsFalse_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertIsFalseAnalyzer>("bool actual", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.IsFalse(actual{0});",
+            newAssertion: "actual.Should().BeFalse({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.IsFalse(bool.Parse(\"true\"){0});",
+            newAssertion: "bool.Parse(\"true\").Should().BeFalse({0});")]
+        [Implemented]
+        public void AssertIsFalse_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsFalseCodeFix, AssertIsFalseAnalyzer>("bool actual", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.MsTestAssertion(methodArguments, assertion);
