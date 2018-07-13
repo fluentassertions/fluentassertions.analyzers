@@ -15,33 +15,31 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.AssertAreNotSame;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().NotBeSameAs() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new AssertAreNotSameSyntaxVisitor();
             }
         }
 
 		public class AssertAreNotSameSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public AssertAreNotSameSyntaxVisitor() : base()
+			public AssertAreNotSameSyntaxVisitor() : base(new MemberValidator("AreNotSame"))
 			{
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertAreNotSameCodeFix)), Shared]
-    public class AssertAreNotSameCodeFix : FluentAssertionsCodeFixProvider
+    public class AssertAreNotSameCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreNotSameAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-        {
-			return null;
-		}
+            => RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotSame", "NotBeSameAs", "Assert");
     }
 }
