@@ -8,7 +8,7 @@ namespace FluentAssertions.Analyzers
     public abstract class MsTestAnalyzer : FluentAssertionsAnalyzer
     {
         private static readonly NameSyntax MsTestNamespace = SyntaxFactory.ParseName("Microsoft.VisualStudio.TestTools.UnitTesting");
-        
+
         protected override bool ShouldAnalyzeMethod(MethodDeclarationSyntax method)
         {
             var compilation = method.FirstAncestorOrSelf<CompilationUnitSyntax>();
@@ -47,7 +47,7 @@ namespace FluentAssertions.Analyzers
             var newExpression = GetNewExpression(expression, rename);
 
             var actual = rename.Arguments[1];
-            
+
             newExpression = ReplaceIdentifier(newExpression, assert, Expressions.SubjectShould(actual.Expression));
 
             return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, rename.Arguments.RemoveAt(1)));

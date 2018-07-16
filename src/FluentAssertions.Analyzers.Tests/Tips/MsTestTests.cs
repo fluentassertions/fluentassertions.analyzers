@@ -73,7 +73,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.IsInstanceOfType(actual, type{0});")]
         [AssertionDiagnostic("Assert.IsInstanceOfType(actual, typeof(string){0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertIsInstanceOfType_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertIsInstanceOfTypeAnalyzer>("object actual, Type type", assertion);
 
         [AssertionDataTestMethod]
@@ -83,7 +83,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.IsInstanceOfType(actual, typeof(string){0});",
             newAssertion: "actual.Should().BeOfType<string>({0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertIsInstanceOfType_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertIsInstanceOfTypeCodeFix, AssertIsInstanceOfTypeAnalyzer>("object actual, Type type", oldAssertion, newAssertion);
 
@@ -242,27 +242,27 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreSame(expected, actual{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertAreSame_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreSameAnalyzer>("object actual, object expected", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreSame(expected, actual{0});",
             newAssertion: "actual.Should().BeSameAs(expected{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertAreSame_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreSameCodeFix, AssertAreSameAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreNotSame(expected, actual{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertAreNotSame_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreNotSameAnalyzer>("object actual, object expected", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreNotSame(expected, actual{0});",
             newAssertion: "actual.Should().NotBeSameAs(expected{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertAreNotSame_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreNotSameCodeFix, AssertAreNotSameAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
