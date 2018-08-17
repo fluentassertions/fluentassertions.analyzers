@@ -119,9 +119,9 @@ public class TestClass
         System.Console.WriteLine();
     }
 }";
-            
+
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
-        }    
+        }
 
         [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
@@ -147,7 +147,7 @@ namespace TestNamespace
         }
     }
 }";
-            
+
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
 
@@ -193,7 +193,7 @@ namespace TestNamespace
         [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/64")]
         public void CollectionShouldNotContainProperty_WhenAssertionIsIdiomatic_ShouldNotTrigger()
-        {            
+        {
             const string source = @"
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -205,7 +205,7 @@ public class TestClass
         var list = new[] { string.Empty };
         list.Should().OnlyContain(e => e.Contains(string.Empty));
     }
-}"; 
+}";
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -227,6 +227,31 @@ namespace TestNamespace
         {
             var list = new[] { "" FOO "" };
             list[0].Trim().Should().Be(""FOO"");
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/77")]
+        public void DictionaryShouldHaveCount1_ShouldNotReport()
+        {
+            const string source = @"
+using System.Linq;
+using System.Collections.Generic;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            var dict = new Dictionary<string, object>();
+            dict.Should().HaveCount(1);
         }
     }
 }";
