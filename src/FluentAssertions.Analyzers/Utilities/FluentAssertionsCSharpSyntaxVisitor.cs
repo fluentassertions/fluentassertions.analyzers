@@ -71,12 +71,15 @@ namespace FluentAssertions.Analyzers
         {
             const string name = "[]";
 
-            var member = Members.Peek();
             if (Members.IsEmpty)
             {
-                // no op
+                Members = AllMembers;
+                Visit(node.Expression);
+                return;
             }
-            else if (member.Name == name && member.AreArgumentsValid(node.ArgumentList.Arguments))
+
+            var member = Members.Peek();
+            if (member.Name == name && member.AreArgumentsValid(node.ArgumentList.Arguments))
             {
                 Members = Members.Pop();
             }
