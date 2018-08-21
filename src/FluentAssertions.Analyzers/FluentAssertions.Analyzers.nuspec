@@ -25,7 +25,7 @@
     <releaseNotes>
       See https://github.com/fluentassertions/fluentassertions.analyzers/releases/
     </releaseNotes>
-    <repository type="git" url="https://github.com/fluentassertions/fluentassertions.analyzers.git">
+    <repository type="git" url="https://github.com/fluentassertions/fluentassertions.analyzers.git" />
   </metadata>
   <files>
     <file src="bin\*\netstandard1.3\*.dll" target="analyzers\dotnet\cs" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
