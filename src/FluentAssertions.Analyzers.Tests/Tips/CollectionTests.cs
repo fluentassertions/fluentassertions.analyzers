@@ -382,6 +382,17 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldContainSingle_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldContainSingleCodeFix, CollectionShouldContainSingleAnalyzer>(oldAssertion, newAssertion);
 
+        [TestMethod]
+        public void CollectionShouldContainSingle_XmlNodeListShouldNotProduceInfo()
+        {
+            var sourceAssertion = @"
+    System.Xml.XmlNodeList childNodes = new System.Xml.XmlDocument().ChildNodes;
+    childNodes.Should().HaveCount(1);
+";
+            var source = GenerateCode.EnumerableCodeBlockAssertion(sourceAssertion);
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().NotBeNull().And.NotBeEmpty({0});")]
         [AssertionDiagnostic("actual.Should().NotBeEmpty().And.NotBeNull({0});")]
