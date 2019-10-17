@@ -37,7 +37,7 @@ using [cake](https://cakebuild.net/)
 
 #### windows:
 
-```ps
+```ps1
 .\build.ps1
 ```
 
@@ -45,4 +45,10 @@ using [cake](https://cakebuild.net/)
 
 ```sh
 . build.sh
+```
+
+### Run Tests
+
+```ps1
+.\build.ps1 -Target Run-Unit-Tests
 ```
