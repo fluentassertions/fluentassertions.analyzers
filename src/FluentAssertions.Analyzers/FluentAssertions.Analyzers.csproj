@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <RootNamespace>FluentAssertions.Analyzers</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
     <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
   </ItemGroup>
 
