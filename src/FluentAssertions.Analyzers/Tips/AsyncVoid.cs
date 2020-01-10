@@ -76,7 +76,7 @@ namespace FluentAssertions.Analyzers
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AsyncVoidAnalyzer.DiagnosticId);
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }
