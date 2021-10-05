@@ -10,5 +10,5 @@ jobs:
       - name: install dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.x'
+          dotnet-version: '5.x'
       - run: dotnet run test src/FluentAssertions.Analyzers.sln
