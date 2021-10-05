@@ -11,4 +11,4 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.x'
-      - run: dotnet test src/FluentAssertions.Analyzers.sln
+      - run: dotnet test src/FluentAssertions.Analyzers.sln --configuration Release  --filter 'TestCategory=Completed'
