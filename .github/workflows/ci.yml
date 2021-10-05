@@ -11,8 +11,4 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.x'
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Build
-        shell: pwsh
-        run: .\build.ps1
+      - run: dotnet run test
