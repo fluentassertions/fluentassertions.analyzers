@@ -28,27 +28,16 @@ using the latest prerelease version:
 Install-Package FluentAssertions.Analyzers -IncludePrerelease -Source https://ci.appveyor.com/nuget/fluentassertions-bestpractices
 ```
 
-
 ## Getting Started
 
 ### Build
 
-using [cake](https://cakebuild.net/)
-
-#### windows:
-
-```ps1
-.\build.ps1
+```bash
+dotnet build src
 ```
 
-#### linux
+### Tests
 
-```sh
-. build.sh
-```
-
-### Run Tests
-
-```ps1
-.\build.ps1 -Target Run-Unit-Tests
+```bash
+dotnet test src --configuration Release  --filter 'TestCategory=Completed'
 ```
