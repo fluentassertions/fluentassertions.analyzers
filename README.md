@@ -22,12 +22,6 @@ using the latest stable version:
 Install-Package FluentAssertions.Analyzers
 ```
 
-using the latest prerelease version:
-
-```powershell
-Install-Package FluentAssertions.Analyzers -IncludePrerelease -Source https://ci.appveyor.com/nuget/fluentassertions-bestpractices
-```
-
 ## Getting Started
 
 ### Build
