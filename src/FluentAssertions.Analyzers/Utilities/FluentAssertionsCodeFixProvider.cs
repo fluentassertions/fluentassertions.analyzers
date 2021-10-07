@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace FluentAssertions.Analyzers
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var newExpression = GetNewExpression(expression, new FluentAssertionsDiagnosticProperties(properties));
+            var newExpression = GetNewExpressionSafely(expression, new FluentAssertionsDiagnosticProperties(properties));
 
             root = root.ReplaceNode(expression, newExpression);
 
@@ -88,6 +89,19 @@ namespace FluentAssertions.Analyzers
                 .OfType<IdentifierNameSyntax>()
                 .First(node => node.Identifier.Text == oldName);
             return expression.ReplaceNode(identifierNode, identifierNode.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(identifierNode.Identifier)));
+        }
+
+        private ExpressionSyntax GetNewExpressionSafely(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        {
+            try
+            {
+                return GetNewExpression(expression, properties);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine($"Failed to get new expression in {GetType().FullName}.\n{e}");
+                return expression;
+            }
         }
     }
 }

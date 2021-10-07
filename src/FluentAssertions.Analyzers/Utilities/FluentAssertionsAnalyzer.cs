@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 
 namespace FluentAssertions.Analyzers
@@ -33,7 +34,7 @@ namespace FluentAssertions.Analyzers
             {
                 foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
                 {
-                    var diagnostic = AnalyzeExpression(statement.Expression, context.SemanticModel);
+                    var diagnostic = AnalyzeExpressionSafely(statement.Expression, context.SemanticModel);
                     if (diagnostic != null)
                     {
                         context.ReportDiagnostic(diagnostic);
@@ -43,7 +44,7 @@ namespace FluentAssertions.Analyzers
             }
             if (method.ExpressionBody != null)
             {
-                var diagnostic = AnalyzeExpression(method.ExpressionBody.Expression, context.SemanticModel);
+                var diagnostic = AnalyzeExpressionSafely(method.ExpressionBody.Expression, context.SemanticModel);
                 if (diagnostic != null)
                 {
                     context.ReportDiagnostic(diagnostic);
@@ -85,6 +86,19 @@ namespace FluentAssertions.Analyzers
                 descriptor: newRule,
                 location: expression.GetLocation(),
                 properties: properties);
+        }
+
+        private Diagnostic AnalyzeExpressionSafely(ExpressionSyntax expression, SemanticModel semanticModel)
+        {
+            try
+            {
+                return AnalyzeExpression(expression, semanticModel);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}.\n{e}");
+                return null;
+            }
         }
     }
 
