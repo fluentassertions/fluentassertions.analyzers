@@ -34,7 +34,7 @@ namespace FluentAssertions.Analyzers
             {
                 foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
                 {
-                    var diagnostic = SafeAnalyzeExpression(statement.Expression, context.SemanticModel);
+                    var diagnostic = AnalyzeExpressionSafely(statement.Expression, context.SemanticModel);
                     if (diagnostic != null)
                     {
                         context.ReportDiagnostic(diagnostic);
@@ -44,7 +44,7 @@ namespace FluentAssertions.Analyzers
             }
             if (method.ExpressionBody != null)
             {
-                var diagnostic = SafeAnalyzeExpression(method.ExpressionBody.Expression, context.SemanticModel);
+                var diagnostic = AnalyzeExpressionSafely(method.ExpressionBody.Expression, context.SemanticModel);
                 if (diagnostic != null)
                 {
                     context.ReportDiagnostic(diagnostic);
@@ -88,7 +88,7 @@ namespace FluentAssertions.Analyzers
                 properties: properties);
         }
 
-        private Diagnostic SafeAnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
+        private Diagnostic AnalyzeExpressionSafely(ExpressionSyntax expression, SemanticModel semanticModel)
         {
             try
             {

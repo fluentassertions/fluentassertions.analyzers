@@ -39,7 +39,7 @@ namespace FluentAssertions.Analyzers
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var newExpression = GetNewExpressionSafe(expression, new FluentAssertionsDiagnosticProperties(properties));
+            var newExpression = GetNewExpressionSafely(expression, new FluentAssertionsDiagnosticProperties(properties));
 
             root = root.ReplaceNode(expression, newExpression);
 
@@ -91,7 +91,7 @@ namespace FluentAssertions.Analyzers
             return expression.ReplaceNode(identifierNode, identifierNode.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(identifierNode.Identifier)));
         }
 
-        private ExpressionSyntax GetNewExpressionSafe(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        private ExpressionSyntax GetNewExpressionSafely(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
             try
             {
