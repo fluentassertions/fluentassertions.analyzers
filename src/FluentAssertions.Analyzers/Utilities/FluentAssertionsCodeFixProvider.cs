@@ -39,14 +39,17 @@ namespace FluentAssertions.Analyzers
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var newExpression = GetNewExpressionSafely(expression, new FluentAssertionsDiagnosticProperties(properties));
+            var newExpression = await GetNewExpressionSafelyAsync(expression, document, new FluentAssertionsDiagnosticProperties(properties), cancellationToken);
 
             root = root.ReplaceNode(expression, newExpression);
 
             return document.WithSyntaxRoot(root);
         }
 
-        protected abstract ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties);
+        protected virtual Task<ExpressionSyntax> GetNewExpressionAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
+            => Task.FromResult(GetNewExpression(expression, properties));
+
+        protected virtual ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties) => expression;
 
         protected ExpressionSyntax GetNewExpression(ExpressionSyntax expression, params NodeReplacement[] replacements)
         {
@@ -91,16 +94,16 @@ namespace FluentAssertions.Analyzers
             return expression.ReplaceNode(identifierNode, identifierNode.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(identifierNode.Identifier)));
         }
 
-        private ExpressionSyntax GetNewExpressionSafely(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        private Task<ExpressionSyntax> GetNewExpressionSafelyAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
         {
             try
             {
-                return GetNewExpression(expression, properties);
+                return GetNewExpressionAsync(expression, document, properties, cancellationToken);
             }
             catch (Exception e)
             {
                 Console.Error.WriteLine($"Failed to get new expression in {GetType().FullName}.\n{e}");
-                return expression;
+                return Task.FromResult(expression);
             }
         }
     }

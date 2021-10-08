@@ -6,7 +6,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers.Tips
@@ -36,33 +38,8 @@ namespace FluentAssertions.Analyzers.Tips
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ShouldEqualsBeCodeFix)), Shared]
-    public class ShouldEqualsBeCodeFix : FluentAssertionsCodeFixProvider
-    {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ShouldEqualsAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties) 
-            => GetNewExpression(expression, NodeReplacement.Rename("Equals", "Be"));
-
-        protected override async Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context)
-        {
-            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-
-            var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
-            expression.Accept(visitor);
-
-            var member = visitor.Members[visitor.Members.Count - 1];
-            var info = model.GetTypeInfo(member.Expression);
-
-            var ienumerableInfo = model.Compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
-            var stringInfo = model.Compilation.GetTypeByMetadataName(typeof(string).FullName);
-
-            return info.Type.Equals(stringInfo) || !info.Type.AllInterfaces.Contains(ienumerableInfo);
-        }
-    }
-
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ShouldEqualsEqualCodeFix)), Shared]
-    public class ShouldEqualsEqualCodeFix : FluentAssertionsCodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ShouldEqualsCodeFix)), Shared]
+    public class ShouldEqualsCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ShouldEqualsAnalyzer.DiagnosticId);
 
@@ -76,13 +53,39 @@ namespace FluentAssertions.Analyzers.Tips
             var member = visitor.Members[visitor.Members.Count - 1];
             var info = model.GetTypeInfo(member.Expression);
 
-            var ienumerableInfo = model.Compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
-            var stringInfo = model.Compilation.GetTypeByMetadataName(typeof(string).FullName);
+            var taskCompletionSourceInfo = model.Compilation.GetTypeByMetadataName(typeof(TaskCompletionSource<>).FullName);
+            if (info.Type.Equals(taskCompletionSourceInfo)) return false;
 
-            return !info.Type.Equals(stringInfo) && info.Type.AllInterfaces.Contains(ienumerableInfo);
+            var streamInfo = model.Compilation.GetTypeByMetadataName(typeof(Stream).FullName);
+            if (info.Type.AllInterfaces.Contains(streamInfo)) return false;
+
+            return true;
         }
 
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => GetNewExpression(expression, NodeReplacement.Rename("Equals", "Equal"));
+        protected override async Task<ExpressionSyntax> GetNewExpressionAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
+        {
+            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+
+            var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
+            expression.Accept(visitor);
+
+            var member = visitor.Members[visitor.Members.Count - 1];
+            var info = model.GetTypeInfo(member.Expression);
+
+            var stringInfo = model.Compilation.GetTypeByMetadataName(typeof(string).FullName);
+
+            if (info.Type.Equals(stringInfo))
+            {
+                return GetNewExpression(expression, NodeReplacement.Rename("Equals", "Be"));
+            }
+
+            var ienumerableInfo = model.Compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
+            if (info.Type.AllInterfaces.Contains(ienumerableInfo))
+            {
+                return GetNewExpression(expression, NodeReplacement.Rename("Equals", "Equal"));
+            }
+
+            return GetNewExpression(expression, NodeReplacement.Rename("Equals", "Be"));
+        }
     }
 }
