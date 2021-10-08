@@ -1,10 +1,6 @@
 ﻿using FluentAssertions.Analyzers.Tips;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers.Tests.Tips
 {
@@ -54,8 +50,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var newSource = GenerateCode.EnumerableCodeBlockAssertion("actual.Should().Equal(expected);");
 
             DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
-
-            Stream s = new MemoryStream(); s.Should();
         }
 
         private void VerifyCSharpDiagnosticExpressionBody(string sourceAssertion)
