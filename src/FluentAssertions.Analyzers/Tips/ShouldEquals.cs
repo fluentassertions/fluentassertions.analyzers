@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -16,7 +16,8 @@ namespace FluentAssertions.Analyzers.Tips
     {
         public const string DiagnosticId = Constants.CodeSmell.ShouldEquals;
         public const string Category = Constants.CodeSmell.Category;
-        public const string Message = "Use .Should().Equal() instead.";
+        public const string Message = ".Should().Equals() is not an assertion, it just calls the native Object.Equals method.\n"
+            + "Use .Should().Equal() for collections or .Should().Be() for other types";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -35,12 +36,36 @@ namespace FluentAssertions.Analyzers.Tips
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ShouldEqualsCodeFix)), Shared]
-    public class ShouldEqualsCodeFix : FluentAssertionsCodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ShouldEqualsBeCodeFix)), Shared]
+    public class ShouldEqualsBeCodeFix : FluentAssertionsCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ShouldEqualsAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties) 
             => GetNewExpression(expression, NodeReplacement.Rename("Equals", "Be"));
+    }
+
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ShouldEqualsEqualCodeFix)), Shared]
+    public class ShouldEqualsEqualCodeFix : FluentAssertionsCodeFixProvider
+    {
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ShouldEqualsAnalyzer.DiagnosticId);
+
+        protected override async Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context)
+        {
+            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
+            var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
+            expression.Accept(visitor);
+
+            var member = visitor.Members[visitor.Members.Count - 1];
+            var info = model.GetTypeInfo(member.Expression);
+
+            var ienumerableInfo = model.Compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
+
+            return info.Type.AllInterfaces.Contains(ienumerableInfo);
+        }
+
+        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+            => GetNewExpression(expression, NodeReplacement.Rename("Equals", "Equal"));
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers
 {
@@ -48,7 +49,7 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldContainKeyAndValueAnalyzer.DiagnosticId);
 
-        protected override bool CanRewriteAssertion(ExpressionSyntax expression)
+        protected override Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context)
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
             expression.Accept(visitor);
@@ -56,8 +57,10 @@ namespace FluentAssertions.Analyzers
             var containKey = visitor.Members.Find(member => member.Name.Identifier.Text == "ContainKey");
             var containValue = visitor.Members.Find(member => member.Name.Identifier.Text == "ContainValue");
 
-            return !(containKey.Parent is InvocationExpressionSyntax containKeyInvocation && containKeyInvocation.ArgumentList.Arguments.Count > 1
-                && containValue.Parent is InvocationExpressionSyntax containValueInvocation && containValueInvocation.ArgumentList.Arguments.Count > 1);
+            return Task.FromResult(
+                !(containKey.Parent is InvocationExpressionSyntax containKeyInvocation && containKeyInvocation.ArgumentList.Arguments.Count > 1
+                && containValue.Parent is InvocationExpressionSyntax containValueInvocation && containValueInvocation.ArgumentList.Arguments.Count > 1)
+            );
         }
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)

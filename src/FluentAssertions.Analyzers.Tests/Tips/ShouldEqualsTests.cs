@@ -1,11 +1,7 @@
 ﻿using FluentAssertions.Analyzers.Tips;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers.Tests.Tips
 {
@@ -19,10 +15,79 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [TestMethod]
         [Implemented]
-        public void ShouldEquals_TestCodeFix()
-            => VerifyCSharpFixCodeBlock(
-                oldSourceAssertion: "actual.Should().Equals(expected);",
-                newSourceAssertion: "actual.Should().Be(expected);");
+        public void ShouldEquals_ShouldBe_ObjectType_TestCodeFix()
+        {
+            var oldSource = GenerateCode.ObjectStatement("actual.Should().Equals(expected);");
+            var newSource = GenerateCode.ObjectStatement("actual.Should().Be(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsBeCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ShouldBe_NumberType_TestCodeFix()
+        {
+            var oldSource = GenerateCode.NumericAssertion("actual.Should().Equals(expected);");
+            var newSource = GenerateCode.NumericAssertion("actual.Should().Be(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsBeCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ShouldBe_StringType_TestCodeFix()
+        {
+            var oldSource = GenerateCode.StringAssertion("actual.Should().Equals(expected);");
+            var newSource = GenerateCode.StringAssertion("actual.Should().Be(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsBeCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ShouldBe_EnumerableType_TestCodeFix()
+        {
+            var source = GenerateCode.EnumerableCodeBlockAssertion("actual.Should().Equals(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsBeCodeFix, ShouldEqualsAnalyzer>(source, source);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ShouldEqual_EnumerableType_TestCodeFix()
+        {
+            var oldSource = GenerateCode.EnumerableCodeBlockAssertion("actual.Should().Equals(expected);");
+            var newSource = GenerateCode.EnumerableCodeBlockAssertion("actual.Should().Equal(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsEqualCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ShouldEqual_ObjectType_TestCodeFix()
+        {
+            var source = GenerateCode.ObjectStatement("actual.Should().Equals(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsEqualCodeFix, ShouldEqualsAnalyzer>(source, source);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ShouldEqual_NumberType_TestCodeFix()
+        {
+            var source = GenerateCode.NumericAssertion("actual.Should().Equals(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsEqualCodeFix, ShouldEqualsAnalyzer>(source, source);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ShouldEqual_StringType_TestCodeFix()
+        {
+            var source = GenerateCode.StringAssertion("actual.Should().Equals(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsEqualCodeFix, ShouldEqualsAnalyzer>(source, source);
+        }
 
         private void VerifyCSharpDiagnosticExpressionBody(string sourceAssertion)
         {
@@ -37,14 +102,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 },
                 Severity = DiagnosticSeverity.Info
             });
-        }
-
-        private void VerifyCSharpFixCodeBlock(string oldSourceAssertion, string newSourceAssertion)
-        {
-            var oldSource = GenerateCode.ObjectStatement(oldSourceAssertion);
-            var newSource = GenerateCode.ObjectStatement(newSourceAssertion);
-
-            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
         }
     }
 }
