@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers
 {
@@ -46,7 +47,7 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeNullOrEmptyAnalyzer.DiagnosticId);
 
-        protected override bool CanRewriteAssertion(ExpressionSyntax expression)
+        protected override Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context)
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
             expression.Accept(visitor);
@@ -54,8 +55,10 @@ namespace FluentAssertions.Analyzers
             var notBeEmpty = visitor.Members.Find(member => member.Name.Identifier.Text == "NotBeEmpty");
             var notBeNull = visitor.Members.Find(member => member.Name.Identifier.Text == "NotBeNull");
 
-            return !(notBeEmpty.Parent is InvocationExpressionSyntax notBeEmptyInvocation && notBeEmptyInvocation.ArgumentList.Arguments.Any()
-                && notBeNull.Parent is InvocationExpressionSyntax notBeNullInvocation && notBeNullInvocation.ArgumentList.Arguments.Any());
+            return Task.FromResult(
+                !(notBeEmpty.Parent is InvocationExpressionSyntax notBeEmptyInvocation && notBeEmptyInvocation.ArgumentList.Arguments.Any()
+                && notBeNull.Parent is InvocationExpressionSyntax notBeNullInvocation && notBeNullInvocation.ArgumentList.Arguments.Any())
+            );
         }
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
