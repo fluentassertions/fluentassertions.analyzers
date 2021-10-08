@@ -43,6 +43,22 @@ namespace FluentAssertions.Analyzers.Tips
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties) 
             => GetNewExpression(expression, NodeReplacement.Rename("Equals", "Be"));
+
+        protected override async Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context)
+        {
+            var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
+            var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
+            expression.Accept(visitor);
+
+            var member = visitor.Members[visitor.Members.Count - 1];
+            var info = model.GetTypeInfo(member.Expression);
+
+            var ienumerableInfo = model.Compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
+            var stringInfo = model.Compilation.GetTypeByMetadataName(typeof(string).FullName);
+
+            return info.Type.Equals(stringInfo) || !info.Type.AllInterfaces.Contains(ienumerableInfo);
+        }
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ShouldEqualsEqualCodeFix)), Shared]
@@ -61,8 +77,9 @@ namespace FluentAssertions.Analyzers.Tips
             var info = model.GetTypeInfo(member.Expression);
 
             var ienumerableInfo = model.Compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
+            var stringInfo = model.Compilation.GetTypeByMetadataName(typeof(string).FullName);
 
-            return info.Type.AllInterfaces.Contains(ienumerableInfo);
+            return !info.Type.Equals(stringInfo) && info.Type.AllInterfaces.Contains(ienumerableInfo);
         }
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
