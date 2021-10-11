@@ -609,7 +609,7 @@ namespace FluentAssertions.Analyzers.Tests
 
         private void VerifyCSharpDiagnosticCodeBlock<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
-            var source = GenerateCode.EnumerableCodeBlockAssertion(sourceAssertion);
+            var source = GenerateCode.GenericIListCodeBlockAssertion(sourceAssertion);
 
             var type = typeof(TDiagnosticAnalyzer);
             var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
@@ -629,7 +629,7 @@ namespace FluentAssertions.Analyzers.Tests
 
         private void VerifyCSharpDiagnosticExpressionBody<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
-            var source = GenerateCode.EnumerableExpressionBodyAssertion(sourceAssertion);
+            var source = GenerateCode.GenericIListExpressionBodyAssertion(sourceAssertion);
 
             var type = typeof(TDiagnosticAnalyzer);
             var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
@@ -651,8 +651,8 @@ namespace FluentAssertions.Analyzers.Tests
             where TCodeFixProvider : Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider, new()
             where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
-            var oldSource = GenerateCode.EnumerableCodeBlockAssertion(oldSourceAssertion);
-            var newSource = GenerateCode.EnumerableCodeBlockAssertion(newSourceAssertion);
+            var oldSource = GenerateCode.GenericIListCodeBlockAssertion(oldSourceAssertion);
+            var newSource = GenerateCode.GenericIListCodeBlockAssertion(newSourceAssertion);
 
             DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
         }
@@ -661,15 +661,15 @@ namespace FluentAssertions.Analyzers.Tests
             where TCodeFixProvider : Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider, new()
             where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
-            var oldSource = GenerateCode.EnumerableExpressionBodyAssertion(oldSourceAssertion);
-            var newSource = GenerateCode.EnumerableExpressionBodyAssertion(newSourceAssertion);
+            var oldSource = GenerateCode.GenericIListExpressionBodyAssertion(oldSourceAssertion);
+            var newSource = GenerateCode.GenericIListExpressionBodyAssertion(newSourceAssertion);
 
             DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
         }
 
         private void VerifyCSharpNoDiagnosticsCodeBlock(string assertion)
         {
-            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+            var source = GenerateCode.GenericIListCodeBlockAssertion(assertion);
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
     }
