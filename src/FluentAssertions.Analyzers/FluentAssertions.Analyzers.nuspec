@@ -21,7 +21,7 @@
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
-    <copyright>Copyright Meir Blachman 2017-2018</copyright>
+    <copyright>Copyright Meir Blachman 2017-2021</copyright>
     <releaseNotes>
       See https://github.com/fluentassertions/fluentassertions.analyzers/releases/
     </releaseNotes>
