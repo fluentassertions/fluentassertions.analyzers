@@ -52,7 +52,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type) => true;
+        protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => true;
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
         {
@@ -62,7 +62,7 @@ namespace FluentAssertions.Analyzers
             if (variableNameExtractor.VariableIdentifierName == null) return null;
             var typeInfo = semanticModel.GetTypeInfo(variableNameExtractor.VariableIdentifierName);
             if (typeInfo.Type == null) return null;
-            if (!ShouldAnalyzeVariableType(typeInfo.Type)) return null;
+            if (!ShouldAnalyzeVariableType(typeInfo.Type, semanticModel)) return null;
 
             foreach (var visitor in Visitors)
             {
