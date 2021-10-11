@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -24,6 +25,16 @@ namespace FluentAssertions.Analyzers
                 yield return new WhereShouldHaveCount1SyntaxVisitor();
                 yield return new ShouldHaveCount1SyntaxVisitor();
             }
+        }
+
+        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel)
+        {
+            if (!type.AllInterfaces.Any(@interface => @interface.SpecialType == SpecialType.System_Collections_Generic_IEnumerable_T))
+            {
+                return false;
+            }
+
+            return base.ShouldAnalyzeVariableType(type, semanticModel);
         }
 
         public class WhereShouldHaveCount1SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
