@@ -4,6 +4,7 @@
     <id>FluentAssertions.Analyzers</id>
     <title>Fluent Assertions Analyzers</title>
     <version>0.12.0</version>
+    <readme>docs\README.md</readme>
     <owners>Meir Blachman</owners>
     <authors>Meir Blachman</authors>
     <summary>
@@ -13,7 +14,7 @@
       Analyzers to help writing fluentassertions the right way.
     </description>
     <language>en-US</language>
-    <licenseUrl>https://github.com/fluentassertions/fluentassertions.analyzers/blob/master/LICENSE</licenseUrl>
+    <license type="file">LICENSE</license>
     <iconUrl>https://raw.githubusercontent.com/fluentassertions/fluentassertions.analyzers/master/assets/fluent_assertions.svg.png</iconUrl>
     <projectUrl>https://github.com/fluentassertions/fluentassertions.analyzers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -30,5 +31,7 @@
   <files>
     <file src="bin\**\*.dll" target="analyzers\dotnet\cs" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
     <file src="tools\*.ps1" target="tools\" />
+    <file src="..\..\README.md" target="docs\" />
+    <file src="..\..\LICENSE" target="\LICENSE" />
   </files>
 </package>
