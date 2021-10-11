@@ -1,10 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using FluentAssertions.Analyzers.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
@@ -24,6 +26,16 @@ namespace FluentAssertions.Analyzers
                 yield return new WhereShouldHaveCount1SyntaxVisitor();
                 yield return new ShouldHaveCount1SyntaxVisitor();
             }
+        }
+
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
+        {
+            if (!type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T))
+            {
+                return false;
+            }
+
+            return base.ShouldAnalyzeVariableType(type, semanticModel);
         }
 
         public class WhereShouldHaveCount1SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor

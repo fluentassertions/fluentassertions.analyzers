@@ -26,8 +26,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void ShouldEquals_ShouldBe_NumberType_TestCodeFix()
         {
-            var oldSource = GenerateCode.NumericAssertion("actual.Should().Equals(expected);");
-            var newSource = GenerateCode.NumericAssertion("actual.Should().Be(expected);");
+            var oldSource = GenerateCode.DoubleAssertion("actual.Should().Equals(expected);");
+            var newSource = GenerateCode.DoubleAssertion("actual.Should().Be(expected);");
 
             DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
         }
@@ -46,8 +46,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void ShouldEquals_ShouldEqual_EnumerableType_TestCodeFix()
         {
-            var oldSource = GenerateCode.EnumerableCodeBlockAssertion("actual.Should().Equals(expected);");
-            var newSource = GenerateCode.EnumerableCodeBlockAssertion("actual.Should().Equal(expected);");
+            var oldSource = GenerateCode.GenericIListCodeBlockAssertion("actual.Should().Equals(expected);");
+            var newSource = GenerateCode.GenericIListCodeBlockAssertion("actual.Should().Equal(expected);");
 
             DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
         }
