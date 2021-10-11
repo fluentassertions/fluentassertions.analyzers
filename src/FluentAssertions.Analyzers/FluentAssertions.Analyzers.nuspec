@@ -3,7 +3,7 @@
   <metadata>
     <id>FluentAssertions.Analyzers</id>
     <title>Fluent Assertions Analyzers</title>
-    <version>0.11.4</version>
+    <version>0.12.0</version>
     <owners>Meir Blachman</owners>
     <authors>Meir Blachman</authors>
     <summary>
@@ -28,7 +28,7 @@
     <repository type="git" url="https://github.com/fluentassertions/fluentassertions.analyzers.git" />
   </metadata>
   <files>
-    <file src="bin\*\netstandard1.3\*.dll" target="analyzers\dotnet\cs" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
+    <file src="bin\**\*.dll" target="analyzers\dotnet\cs" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
     <file src="tools\*.ps1" target="tools\" />
   </files>
 </package>
