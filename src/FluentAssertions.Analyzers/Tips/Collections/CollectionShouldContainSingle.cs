@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using FluentAssertions.Analyzers.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -29,7 +30,7 @@ namespace FluentAssertions.Analyzers
 
         protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel)
         {
-            if (!type.AllInterfaces.Any(@interface => @interface.SpecialType == SpecialType.System_Collections_Generic_IEnumerable_T))
+            if (!type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T))
             {
                 return false;
             }

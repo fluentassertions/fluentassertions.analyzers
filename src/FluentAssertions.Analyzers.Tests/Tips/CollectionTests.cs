@@ -358,6 +358,34 @@ namespace FluentAssertions.Analyzers.Tests
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
+        [Implemented]
+        public void CollectionShouldContainSingle_TestAnalyzer_NonGenericIEnumerableShouldNotReport(string assertion)
+        {
+            var source = GenerateCode.IEnumerableAssertion(assertion);
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
+        [Implemented]
+        public void CollectionShouldContainSingle_TestAnalyzer_GenericIEnumerableShouldReport(string assertion)
+        {
+            var source = GenerateCode.GenericIEnumerableAssertion(assertion);
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
+            {
+                Id = CollectionShouldContainSingleAnalyzer.DiagnosticId,
+                Message = CollectionShouldContainSingleAnalyzer.Message,
+                Locations = new DiagnosticResultLocation[]
+                {
+                    new DiagnosticResultLocation("Test0.cs", 11,13)
+                },
+                Severity = DiagnosticSeverity.Info
+            });
+        }
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().HaveCount(1{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Where(x => x.BooleanProperty).Should().HaveCount(1{0}).And.ToString();")]
@@ -665,12 +693,6 @@ namespace FluentAssertions.Analyzers.Tests
             var newSource = GenerateCode.GenericIListExpressionBodyAssertion(newSourceAssertion);
 
             DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
-        }
-
-        private void VerifyCSharpNoDiagnosticsCodeBlock(string assertion)
-        {
-            var source = GenerateCode.GenericIListCodeBlockAssertion(assertion);
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
     }
 }
