@@ -5,6 +5,6 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class ExceptionAnalyzer : FluentAssertionsAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => type.Name == nameof(Action);
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == nameof(Action);
     }
 }

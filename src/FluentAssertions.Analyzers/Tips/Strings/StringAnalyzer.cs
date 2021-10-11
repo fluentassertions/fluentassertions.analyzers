@@ -4,6 +4,6 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class StringAnalyzer : FluentAssertionsAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => type.Name == "String";
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "String";
     }
 }

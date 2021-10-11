@@ -28,7 +28,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel)
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
             if (!type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T))
             {

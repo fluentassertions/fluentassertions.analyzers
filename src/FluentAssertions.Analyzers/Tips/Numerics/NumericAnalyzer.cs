@@ -4,6 +4,6 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class NumericAnalyzer : FluentAssertionsAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => true;
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
     }
 }

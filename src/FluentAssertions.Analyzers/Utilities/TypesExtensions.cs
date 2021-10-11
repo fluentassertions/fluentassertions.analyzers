@@ -11,9 +11,9 @@ namespace FluentAssertions.Analyzers.Utilities
     {
         public static bool IsTypeOrConstructedFromTypeOrImplementsType(this ITypeSymbol type, SpecialType specialType)
         {
-            return type.SpecialType == specialType
-                || type.OriginalDefinition?.SpecialType == specialType
-                || type.AllInterfaces.Any(@interface => @interface.SpecialType == specialType);
+            var abstractType = type.OriginalDefinition;
+            return abstractType.SpecialType == specialType 
+                || abstractType.AllInterfaces.Any(@interface => @interface.OriginalDefinition.SpecialType == specialType);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel)
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
             if (type.AllInterfaces.Any(@interface => @interface.Name == "IReadOnlyDictionary" || @interface.Name == "IDictionary"))
             {
