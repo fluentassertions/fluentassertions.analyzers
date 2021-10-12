@@ -33,24 +33,6 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("}")
             .ToString();
 
-        public static string IEnumerableAssertion(string assertion) => new StringBuilder()
-            .AppendLine("using System.Collections;")
-            .AppendLine("using System.Linq;")
-            .AppendLine("using System;")
-            .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
-            .AppendLine("namespace TestNamespace")
-            .AppendLine("{")
-            .AppendLine("    public class TestClass")
-            .AppendLine("    {")
-            .AppendLine("        public void TestMethod(IEnumerable actual, IEnumerable expected)")
-            .AppendLine("        {")
-            .AppendLine($"            {assertion}")
-            .AppendLine("        }")
-            .AppendLine("    }")
-            .AppendMainMethod()
-            .AppendLine("}")
-            .ToString();
-
         public static string GenericIEnumerableAssertion(string assertion) => new StringBuilder()
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Linq;")

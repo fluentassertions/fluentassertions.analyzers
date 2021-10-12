@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -252,31 +252,6 @@ namespace TestNamespace
         {
             var dict = new Dictionary<string, object>();
             dict.Should().HaveCount(1);
-        }
-    }
-}";
-
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
-        }
-
-        [TestMethod]
-        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/82")]
-        public void XmlNodeListShouldHaveCount1_ShouldNotReport()
-        {
-            const string source = @"
-using System.Xml;
-using System.Collections.Generic;
-using FluentAssertions;
-using FluentAssertions.Extensions;
-
-namespace TestNamespace
-{
-    public class Program
-    {
-        public static void Main()
-        {
-            XmlNodeList childNodes = new XmlDocument().ChildNodes;
-            childNodes.Should().HaveCount(1);
         }
     }
 }";
