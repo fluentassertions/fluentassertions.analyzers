@@ -155,7 +155,7 @@ namespace TestNamespace
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
         public void StringShouldNotBeEmptyAndShouldNotBeNull_ShouldNotTrigger()
         {
-            const string assertion = "actual.Should().NotBeEmpty().And.Should().NotBeNull();";
+            const string assertion = "actual.Should().NotBeEmpty().And.Subject.Should().NotBeNull();";
             var source = GenerateCode.StringAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
@@ -252,31 +252,6 @@ namespace TestNamespace
         {
             var dict = new Dictionary<string, object>();
             dict.Should().HaveCount(1);
-        }
-    }
-}";
-
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
-        }
-
-        [TestMethod]
-        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/82")]
-        public void XmlNodeListShouldHaveCount1_ShouldNotReport()
-        {
-            const string source = @"
-using System.Xml;
-using System.Collections.Generic;
-using FluentAssertions;
-using FluentAssertions.Extensions;
-
-namespace TestNamespace
-{
-    public class Program
-    {
-        public static void Main()
-        {
-            XmlNodeList childNodes = new XmlDocument().ChildNodes;
-            childNodes.Should().HaveCount(1);
         }
     }
 }";

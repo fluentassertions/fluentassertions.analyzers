@@ -359,15 +359,6 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
         [Implemented]
-        public void CollectionShouldContainSingle_TestAnalyzer_NonGenericIEnumerableShouldNotReport(string assertion)
-        {
-            var source = GenerateCode.IEnumerableAssertion(assertion);
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
-        }
-
-        [AssertionDataTestMethod]
-        [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
-        [Implemented]
         public void CollectionShouldContainSingle_TestAnalyzer_GenericIEnumerableShouldReport(string assertion)
         {
             var source = GenerateCode.GenericIEnumerableAssertion(assertion);

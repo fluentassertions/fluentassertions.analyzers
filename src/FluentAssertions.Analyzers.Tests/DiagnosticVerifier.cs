@@ -35,6 +35,8 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
             }.Select(type => type.GetTypeInfo().Assembly.Location)
+            .Append(GetSystemAssemblyPathByName("System.Runtime.Extensions.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Data.Common.dll"))
             .Append(GetSystemAssemblyPathByName("System.Threading.Tasks.dll"))
             .Append(GetSystemAssemblyPathByName("System.Runtime.dll"))
             .Append(GetSystemAssemblyPathByName("System.Reflection.dll"))
