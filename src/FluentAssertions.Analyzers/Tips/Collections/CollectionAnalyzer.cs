@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Linq;
+﻿using FluentAssertions.Analyzers.Utilities;
+using Microsoft.CodeAnalysis;
 
 namespace FluentAssertions.Analyzers
 {
@@ -7,9 +7,10 @@ namespace FluentAssertions.Analyzers
     {
         protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
-            return type.Name != "String"
-                && type.AllInterfaces.Any(@interface => @interface.Name == "IEnumerable")
-                && !type.AllInterfaces.Any(@interface => @interface.Name == "IDictionary");
+            var iDictionaryType = semanticModel.GetGenericIDictionaryType();
+            return type.SpecialType != SpecialType.System_String
+                && type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T)
+                && !type.IsTypeOrConstructedFromTypeOrImplementsType(iDictionaryType);
         }
     }
 }
