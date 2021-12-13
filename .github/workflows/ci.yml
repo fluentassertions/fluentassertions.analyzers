@@ -1,0 +1,21 @@
+name: CI
+on: [pull_request]
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - uses: nuget/setup-nuget@v1
+        with:
+          nuget-version: '5.x'
+      - run: dotnet test src --configuration Release  --filter 'TestCategory=Completed'
+      - run: nuget pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.nuspec

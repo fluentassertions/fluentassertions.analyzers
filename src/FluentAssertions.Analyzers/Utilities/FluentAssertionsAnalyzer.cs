@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 
 namespace FluentAssertions.Analyzers
@@ -35,7 +36,7 @@ namespace FluentAssertions.Analyzers
             {
                 foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
                 {
-                    var diagnostic = AnalyzeExpression(statement.Expression, context.SemanticModel);
+                    var diagnostic = AnalyzeExpressionSafely(statement.Expression, context.SemanticModel);
                     if (diagnostic != null)
                     {
                         context.ReportDiagnostic(diagnostic);
@@ -45,7 +46,7 @@ namespace FluentAssertions.Analyzers
             }
             if (method.ExpressionBody != null)
             {
-                var diagnostic = AnalyzeExpression(method.ExpressionBody.Expression, context.SemanticModel);
+                var diagnostic = AnalyzeExpressionSafely(method.ExpressionBody.Expression, context.SemanticModel);
                 if (diagnostic != null)
                 {
                     context.ReportDiagnostic(diagnostic);
@@ -53,9 +54,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected virtual bool ShouldAnalyzeMethod(MethodDeclarationSyntax method) => true;
-
-        protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type) => true;
+        protected virtual bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
         {
@@ -64,8 +63,8 @@ namespace FluentAssertions.Analyzers
 
             if (variableNameExtractor.VariableIdentifierName == null) return null;
             var typeInfo = semanticModel.GetTypeInfo(variableNameExtractor.VariableIdentifierName);
-            if (typeInfo.Type == null) return null;
-            if (!ShouldAnalyzeVariableType(typeInfo.Type)) return null;
+            if (!(typeInfo.Type is INamedTypeSymbol namedType)) return null;
+            if (!ShouldAnalyzeVariableType(namedType, semanticModel)) return null;
 
             foreach (var visitor in Visitors)
             {
@@ -89,6 +88,19 @@ namespace FluentAssertions.Analyzers
                 descriptor: newRule,
                 location: expression.GetLocation(),
                 properties: properties);
+        }
+
+        private Diagnostic AnalyzeExpressionSafely(ExpressionSyntax expression, SemanticModel semanticModel)
+        {
+            try
+            {
+                return AnalyzeExpression(expression, semanticModel);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}.\n{e}");
+                return null;
+            }
         }
     }
 

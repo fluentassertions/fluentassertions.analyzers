@@ -1,14 +1,16 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Linq;
+﻿using FluentAssertions.Analyzers.Utilities;
+using Microsoft.CodeAnalysis;
 
 namespace FluentAssertions.Analyzers
 {
     public abstract class CollectionAnalyzer : FluentAssertionsAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type)
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
-            return type.Name != "String"
-                && type.AllInterfaces.Any(@interface => @interface.Name == "IEnumerable");
+            var iDictionaryType = semanticModel.GetGenericIDictionaryType();
+            return type.SpecialType != SpecialType.System_String
+                && type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T)
+                && !type.IsTypeOrConstructedFromTypeOrImplementsType(iDictionaryType);
         }
     }
 }

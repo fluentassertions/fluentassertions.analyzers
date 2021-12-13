@@ -6,7 +6,7 @@
 
 * Latest stable nuget [![NuGet Badge](https://buildstats.info/nuget/fluentassertions.analyzers)](https://www.nuget.org/packages/fluentassertions.analyzers/)
 * Latest nuget [![NuGet Badge](https://buildstats.info/nuget/fluentassertions.analyzers?includePreReleases=true)](https://www.nuget.org/packages/fluentassertions.analyzers/)
-* The build status is [![Build status](https://ci.appveyor.com/api/projects/status/xxx1txj7qmxwobej?svg=true)](https://ci.appveyor.com/project/Meir017/fluentassertions-bestpractices)
+* The build status is [![CI](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml/badge.svg)](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml)
 
 A collection of Analyzers based on the best practices [tips](https://fluentassertions.com/tips/).
 
@@ -22,27 +22,16 @@ using the latest stable version:
 Install-Package FluentAssertions.Analyzers
 ```
 
-using the latest prerelease version:
-
-```powershell
-Install-Package FluentAssertions.Analyzers -IncludePrerelease -Source https://ci.appveyor.com/nuget/fluentassertions-bestpractices
-```
-
-
 ## Getting Started
 
 ### Build
 
-using [cake](https://cakebuild.net/)
-
-#### windows:
-
-```ps
-.\build.ps1
+```bash
+dotnet build src
 ```
 
-#### linux
+### Tests
 
-```sh
-. build.sh
+```bash
+dotnet test src --configuration Release  --filter 'TestCategory=Completed'
 ```

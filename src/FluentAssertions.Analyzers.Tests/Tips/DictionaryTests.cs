@@ -152,7 +152,7 @@ namespace FluentAssertions.Analyzers.Tests
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssersion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
-            var source = GenerateCode.DictionaryAssertion(sourceAssersion);
+            var source = GenerateCode.GenericIDictionaryAssertion(sourceAssersion);
 
             var type = typeof(TDiagnosticAnalyzer);
             var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
@@ -174,8 +174,8 @@ namespace FluentAssertions.Analyzers.Tests
             where TCodeFixProvider : Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider, new()
             where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
-            var oldSource = GenerateCode.DictionaryAssertion(oldSourceAssertion);
-            var newSource = GenerateCode.DictionaryAssertion(newSourceAssertion);
+            var oldSource = GenerateCode.GenericIDictionaryAssertion(oldSourceAssertion);
+            var newSource = GenerateCode.GenericIDictionaryAssertion(newSourceAssertion);
 
             DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
         }

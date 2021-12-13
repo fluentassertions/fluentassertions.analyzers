@@ -5,14 +5,14 @@ namespace FluentAssertions.Analyzers.Tests
 {
     public static class GenerateCode
     {
-        public static string EnumerableCodeBlockAssertion(string assertion) => EnumerableAssertion(
+        public static string GenericIListCodeBlockAssertion(string assertion) => GenericIListAssertion(
             "        {" + Environment.NewLine +
             "            " + assertion + Environment.NewLine +
             "        }");
-        public static string EnumerableExpressionBodyAssertion(string assertion) => EnumerableAssertion(
+        public static string GenericIListExpressionBodyAssertion(string assertion) => GenericIListAssertion(
             "            => " + assertion);
 
-        private static string EnumerableAssertion(string bodyExpression) => new StringBuilder()
+        private static string GenericIListAssertion(string bodyExpression) => new StringBuilder()
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Linq;")
             .AppendLine("using System;")
@@ -33,7 +33,25 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("}")
             .ToString();
 
-        public static string DictionaryAssertion(string assertion) => new StringBuilder()
+        public static string GenericIEnumerableAssertion(string assertion) => new StringBuilder()
+            .AppendLine("using System.Collections.Generic;")
+            .AppendLine("using System.Linq;")
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    public class TestClass")
+            .AppendLine("    {")
+            .AppendLine("        public void TestMethod<T>(IEnumerable<T> actual, IEnumerable<T> expected)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
+        public static string GenericIDictionaryAssertion(string assertion) => new StringBuilder()
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Linq;")
             .AppendLine("using System;")
@@ -56,7 +74,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("}")
             .ToString();
 
-        public static string NumericAssertion(string assertion) => new StringBuilder()
+        public static string DoubleAssertion(string assertion) => new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -73,7 +91,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("}")
             .ToString();
 
-        public static string ComparableAssertion(string assertion) => new StringBuilder()
+        public static string ComparableInt32Assertion(string assertion) => new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -116,6 +134,41 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("        void TestMethod(Action action, string expectedMessage)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
+        public static string AsyncFunctionStatement(string statement) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine("        void TestMethod()")
+            .AppendLine("        {")
+            .AppendLine($"            {statement}")
+            .AppendLine("        }")
+            .AppendLine("        async void AsyncVoidMethod() { await Task.CompletedTask; }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
+        public static string ObjectStatement(string statement) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine("        void TestMethod(object actual, object expected)")
+            .AppendLine("        {")
+            .AppendLine($"            {statement}")
             .AppendLine("        }")
             .AppendLine("    }")
             .AppendMainMethod()

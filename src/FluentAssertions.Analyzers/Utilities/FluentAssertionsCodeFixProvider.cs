@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace FluentAssertions.Analyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 var expression = (ExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan);
-                if (CanRewriteAssertion(expression))
+                if (await CanRewriteAssertion(expression, context).ConfigureAwait(false))
                 {
                     context.RegisterCodeFix(CodeAction.Create(
                         title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
@@ -32,22 +33,25 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected virtual bool CanRewriteAssertion(ExpressionSyntax expression) => true;
+        protected virtual Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context) => Task.FromResult(true);
 
         protected async Task<Document> RewriteAssertion(Document document, ExpressionSyntax expression, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var newExpression = GetNewExpression(expression, new FluentAssertionsDiagnosticProperties(properties));
+            var newExpression = await GetNewExpressionSafelyAsync(expression, document, new FluentAssertionsDiagnosticProperties(properties), cancellationToken);
 
             root = root.ReplaceNode(expression, newExpression);
 
             return document.WithSyntaxRoot(root);
         }
 
-        protected abstract ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties);
+        protected virtual Task<ExpressionSyntax> GetNewExpressionAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
+            => Task.FromResult(GetNewExpression(expression, properties));
 
-        protected static ExpressionSyntax GetNewExpression(ExpressionSyntax expression, params NodeReplacement[] replacements)
+        protected virtual ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties) => expression;
+
+        protected ExpressionSyntax GetNewExpression(ExpressionSyntax expression, params NodeReplacement[] replacements)
         {
             var newStatement = expression;
             foreach (var replacement in replacements)
@@ -88,6 +92,19 @@ namespace FluentAssertions.Analyzers
                 .OfType<IdentifierNameSyntax>()
                 .First(node => node.Identifier.Text == oldName);
             return expression.ReplaceNode(identifierNode, identifierNode.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(identifierNode.Identifier)));
+        }
+
+        private Task<ExpressionSyntax> GetNewExpressionSafelyAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return GetNewExpressionAsync(expression, document, properties, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine($"Failed to get new expression in {GetType().FullName}.\n{e}");
+                return Task.FromResult(expression);
+            }
         }
 
         protected static ExpressionSyntax ReplaceIdentifier(ExpressionSyntax expression, string name, ExpressionSyntax identifierReplacement)

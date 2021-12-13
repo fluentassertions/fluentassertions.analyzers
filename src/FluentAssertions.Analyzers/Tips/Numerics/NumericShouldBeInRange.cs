@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers
 {
@@ -46,7 +47,7 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(NumericShouldBeInRangeAnalyzer.DiagnosticId);
 
-        protected override bool CanRewriteAssertion(ExpressionSyntax expression)
+        protected override Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context)
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
             expression.Accept(visitor);
@@ -54,8 +55,10 @@ namespace FluentAssertions.Analyzers
             var beLessOrEqualTo = visitor.Members.Find(member => member.Name.Identifier.Text == "BeLessOrEqualTo");
             var beGreaterOrEqualTo = visitor.Members.Find(member => member.Name.Identifier.Text == "BeGreaterOrEqualTo");
 
-            return !(beLessOrEqualTo.Parent is InvocationExpressionSyntax beLessOrEqualToInvocation && beLessOrEqualToInvocation.ArgumentList.Arguments.Count > 1
-                && beGreaterOrEqualTo.Parent is InvocationExpressionSyntax beGreaterOrEqualToInvocation && beGreaterOrEqualToInvocation.ArgumentList.Arguments.Count > 1);
+            return Task.FromResult(
+                !(beLessOrEqualTo.Parent is InvocationExpressionSyntax beLessOrEqualToInvocation && beLessOrEqualToInvocation.ArgumentList.Arguments.Count > 1
+                && beGreaterOrEqualTo.Parent is InvocationExpressionSyntax beGreaterOrEqualToInvocation && beGreaterOrEqualToInvocation.ArgumentList.Arguments.Count > 1)
+            );
         }
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)

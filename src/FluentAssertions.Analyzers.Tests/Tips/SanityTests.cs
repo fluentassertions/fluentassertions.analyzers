@@ -10,7 +10,7 @@ namespace FluentAssertions.Analyzers.Tests
         public void CountWithPredicate()
         {
             const string assertion = "actual.Count(d => d.Message.Contains(\"a\")).Should().Be(2);";
-            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+            var source = GenerateCode.GenericIListCodeBlockAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -20,7 +20,7 @@ namespace FluentAssertions.Analyzers.Tests
         public void AssertionCallMultipleMethodWithTheSameNameAndArguments()
         {
             const string assertion = "actual.Should().Contain(d => d.Message.Contains(\"a\")).And.Contain(d => d.Message.Contains(\"c\"));";
-            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+            var source = GenerateCode.GenericIListCodeBlockAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -29,7 +29,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/44")]
         public void CollectionShouldHaveElementAt_ShouldIgnoreDictionaryTypes()
         {
-            string source = GenerateCode.DictionaryAssertion("actual[\"key\"].Should().Be(expectedValue);");
+            string source = GenerateCode.GenericIDictionaryAssertion("actual[\"key\"].Should().Be(expectedValue);");
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
 
@@ -38,7 +38,7 @@ namespace FluentAssertions.Analyzers.Tests
         public void PropertyOfIndexerShouldBe_ShouldNotThrowException()
         {
             const string assertion = "actual[0].Message.Should().Be(\"test\");";
-            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+            var source = GenerateCode.GenericIListCodeBlockAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -48,7 +48,7 @@ namespace FluentAssertions.Analyzers.Tests
         public void PropertyOfElementAtShouldBe_ShouldNotTriggerDiagnostic()
         {
             const string assertion = "actual.ElementAt(0).Message.Should().Be(\"test\");";
-            var source = GenerateCode.EnumerableCodeBlockAssertion(assertion);
+            var source = GenerateCode.GenericIListCodeBlockAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -59,7 +59,7 @@ namespace FluentAssertions.Analyzers.Tests
         {
             const string declaration = "var nestedList = new List<List<int>>();";
             const string assertion = "nestedList.Should().NotBeNull().And.ContainSingle().Which.Should().NotBeEmpty();";
-            var source = GenerateCode.EnumerableCodeBlockAssertion(declaration + assertion);
+            var source = GenerateCode.GenericIListCodeBlockAssertion(declaration + assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -69,7 +69,7 @@ namespace FluentAssertions.Analyzers.Tests
         public void DictionaryShouldContainPair_WhenPropertiesOfDifferentVariables_ShouldNotTrigger()
         {
             const string assertion = "actual.Should().ContainValue(pair.Value).And.ContainKey(otherPair.Key);";
-            var source = GenerateCode.DictionaryAssertion(assertion);
+            var source = GenerateCode.GenericIDictionaryAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -119,9 +119,9 @@ public class TestClass
         System.Console.WriteLine();
     }
 }";
-            
+
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
-        }    
+        }
 
         [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
@@ -147,7 +147,7 @@ namespace TestNamespace
         }
     }
 }";
-            
+
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
 
@@ -155,7 +155,7 @@ namespace TestNamespace
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/63")]
         public void StringShouldNotBeEmptyAndShouldNotBeNull_ShouldNotTrigger()
         {
-            const string assertion = "actual.Should().NotBeEmpty().And.Should().NotBeNull();";
+            const string assertion = "actual.Should().NotBeEmpty().And.Subject.Should().NotBeNull();";
             var source = GenerateCode.StringAssertion(assertion);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
@@ -193,7 +193,7 @@ namespace TestNamespace
         [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/64")]
         public void CollectionShouldNotContainProperty_WhenAssertionIsIdiomatic_ShouldNotTrigger()
-        {            
+        {
             const string source = @"
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -205,7 +205,7 @@ public class TestClass
         var list = new[] { string.Empty };
         list.Should().OnlyContain(e => e.Contains(string.Empty));
     }
-}"; 
+}";
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
@@ -227,6 +227,31 @@ namespace TestNamespace
         {
             var list = new[] { "" FOO "" };
             list[0].Trim().Should().Be(""FOO"");
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/77")]
+        public void DictionaryShouldHaveCount1_ShouldNotReport()
+        {
+            const string source = @"
+using System.Linq;
+using System.Collections.Generic;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestNamespace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            var dict = new Dictionary<string, object>();
+            dict.Should().HaveCount(1);
         }
     }
 }";
