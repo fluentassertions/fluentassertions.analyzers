@@ -180,6 +180,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
             .AppendLine("using Microsoft.VisualStudio.TestTools.UnitTesting;")
+            .AppendLine("using System.Threading.Tasks;")
             .AppendLine("namespace TestNamespace")
             .AppendLine("{")
             .AppendLine("    class TestClass")

@@ -268,27 +268,27 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.ThrowsException<ArgumentException>(action{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertThrowsException_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertThrowsExceptionAnalyzer>("Action action", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.ThrowsException<ArgumentException>(action{0});",
-            newAssertion: "actual.Should().ThrowExactly<ArgumentException>({0});")]
-        [NotImplemented]
+            newAssertion: "action.Should().ThrowExactly<ArgumentException>({0});")]
+        [Implemented]
         public void AssertThrowsException_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertThrowsExceptionCodeFix, AssertThrowsExceptionAnalyzer>("Action action", oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.ThrowsExceptionAsync<ArgumentException>(action{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertThrowsExceptionAsync_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertThrowsExceptionAsyncAnalyzer>("Func<Task> action", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.ThrowsExceptionAsync<ArgumentException>(action{0});",
-            newAssertion: "actual.Should().ThrowExactly<ArgumentException>({0});")]
-        [NotImplemented]
+            newAssertion: "action.Should().ThrowExactlyAsync<ArgumentException>({0});")]
+        [Implemented]
         public void AssertThrowsExceptionAsync_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertThrowsExceptionAsyncCodeFix, AssertThrowsExceptionAsyncAnalyzer>("Func<Task> action", oldAssertion, newAssertion);
 
@@ -306,7 +306,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 Message = message,
                 Locations = new DiagnosticResultLocation[]
                 {
-                    new DiagnosticResultLocation("Test0.cs", 11,13)
+                    new DiagnosticResultLocation("Test0.cs", 12, 13)
                 },
                 Severity = DiagnosticSeverity.Info
             });

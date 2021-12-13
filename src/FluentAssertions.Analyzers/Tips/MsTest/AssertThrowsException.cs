@@ -15,33 +15,31 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.AssertThrowsException;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().ThrowExactly<TException>() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new AssertThrowsExceptionSyntaxVisitor();
             }
         }
 
 		public class AssertThrowsExceptionSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public AssertThrowsExceptionSyntaxVisitor() : base()
-			{
+			public AssertThrowsExceptionSyntaxVisitor() : base(new MemberValidator("ThrowsException"))
+            {
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertThrowsExceptionCodeFix)), Shared]
-    public class AssertThrowsExceptionCodeFix : FluentAssertionsCodeFixProvider
+    public class AssertThrowsExceptionCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertThrowsExceptionAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-        {
-			return null;
-		}
+            => RenameMethodAndReplaceWithSubjectShould(expression, "ThrowsException", "ThrowExactly", "Assert");
     }
 }
