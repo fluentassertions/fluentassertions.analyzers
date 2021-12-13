@@ -54,6 +54,8 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        protected virtual bool ShouldAnalyzeMethod(MethodDeclarationSyntax method) => true;
+
         protected virtual bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)

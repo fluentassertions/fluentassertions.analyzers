@@ -21,15 +21,15 @@ namespace FluentAssertions.Analyzers
 
     public abstract class MsTestAssertAnalyzer : MsTestAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type) => type.Name == "Assert";
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "Assert";
     }
     public abstract class MsTestStringAssertAnalyzer : MsTestAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type) => type.Name == "StringAssert";
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "StringAssert";
     }
     public abstract class MsTestCollectionAssertAnalyzer : MsTestAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(ITypeSymbol type) => type.Name == "CollectionAssert";
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "CollectionAssert";
     }
 
     public abstract class MsTestCodeFixProvider : FluentAssertionsCodeFixProvider
