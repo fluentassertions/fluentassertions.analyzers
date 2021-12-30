@@ -8,19 +8,30 @@ namespace FluentAssertions.Analyzers
     [DebuggerDisplay("{Name}")]
     public class MemberValidator
     {
+        private readonly Func<SeparatedSyntaxList<ArgumentSyntax>, bool> _argumentsPredicate;
+
         public string Name { get; }
-        public Func<SeparatedSyntaxList<ArgumentSyntax>, bool> AreArgumentsValid { get; }
 
         public MemberValidator(string name)
         {
             Name = name;
-            AreArgumentsValid = _ => true;
+            _argumentsPredicate = _ => true;
         }
 
         public MemberValidator(string name, Func<SeparatedSyntaxList<ArgumentSyntax>, bool> argumentsPredicate)
         {
             Name = name;
-            AreArgumentsValid = argumentsPredicate;
+            _argumentsPredicate = argumentsPredicate;
+        }
+
+        public bool MatchesInvocationExpression(InvocationExpressionSyntax invocation)
+        {
+            return _argumentsPredicate(invocation.ArgumentList.Arguments);
+        }
+
+        public bool MatchesElementAccessExpression(ElementAccessExpressionSyntax elementAccess)
+        {
+            return _argumentsPredicate(elementAccess.ArgumentList.Arguments);
         }
 
         public static MemberValidator And { get; } = new MemberValidator(nameof(And));
@@ -34,6 +45,7 @@ namespace FluentAssertions.Analyzers
         public static MemberValidator ArgumentIsIdentifierOrLiteral(string name) => new MemberValidator(name, ArgumentIsIdentifierOrLiteralPredicate);
         public static MemberValidator HasArguments(string name) => new MemberValidator(name, arguments => arguments.Any());
         public static MemberValidator HasNoArguments(string name) => new MemberValidator(name, arguments => !arguments.Any());
+        public static MemberValidator ArgumentsMatch(string name, params Predicate<ArgumentSyntax>[] predicates) => new MemberValidator(name, arguments => ArgumentsMatchPredicate(arguments, predicates));
 
         public static bool MethodNotContainingLambdaPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments)
         {
@@ -79,6 +91,21 @@ namespace FluentAssertions.Analyzers
             var argumentsExpression = arguments.First().Expression;
             return argumentsExpression is IdentifierNameSyntax || argumentsExpression is LiteralExpressionSyntax;
         }
+        public static bool ArgumentsMatchPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments, Predicate<ArgumentSyntax>[] predicates)
+        {
+            if (arguments.Count < predicates.Length) return false;
 
+            for (int i = 0; i < predicates.Length; i++)
+            {
+                if (!predicates[i](arguments[i])) return false;
+            }
+
+            return true;
+        }
+    }
+
+    public class ArgumentValidator
+    {
+        public static Func<ArgumentSyntax, bool> IsType(ITypeSymbol type) => null;
     }
 }

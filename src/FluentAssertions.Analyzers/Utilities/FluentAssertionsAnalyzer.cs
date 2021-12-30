@@ -70,6 +70,7 @@ namespace FluentAssertions.Analyzers
 
             foreach (var visitor in Visitors)
             {
+                visitor.SemanticModel = semanticModel;
                 expression.Accept(visitor);
 
                 if (visitor.IsValid(expression))
