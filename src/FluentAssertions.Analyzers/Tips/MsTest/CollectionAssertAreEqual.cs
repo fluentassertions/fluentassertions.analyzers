@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -28,20 +27,20 @@ namespace FluentAssertions.Analyzers
 
 		public class CollectionAssertAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertAreEqualSyntaxVisitor() : base(new MemberValidator("Equal"))
+			public CollectionAssertAreEqualSyntaxVisitor() : base(new MemberValidator("AreEqual"))
 			{
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAreEqualCodeFix)), Shared]
-    public class CollectionAssertAreEqualCodeFix : FluentAssertionsCodeFixProvider
+    public class CollectionAssertAreEqualCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAreEqualAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "Equal", "CollectionAssert");
 		}
     }
 }

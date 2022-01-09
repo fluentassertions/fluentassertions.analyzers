@@ -308,6 +308,55 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertThrowsExceptionAsync_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertThrowsExceptionAsyncCodeFix, AssertThrowsExceptionAsyncAnalyzer>("Func<Task> action", oldAssertion, newAssertion);
 
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, type{0});")]
+        [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(int){0});")]
+        [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(Int32){0});")]
+        [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(System.Int32){0});")]
+        [Implemented]
+        public void CollectionAssertAllItemsAreInstancesOfType_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertAllItemsAreInstancesOfTypeAnalyzer>("System.Collections.Generic.List<int> actual, Type type", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.AllItemsAreInstancesOfType(actual, type{0});",
+            newAssertion: "actual.Should().AllBeOfType(type{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(int){0});",
+            newAssertion: "actual.Should().AllBeOfType<int>({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(Int32){0});",
+            newAssertion: "actual.Should().AllBeOfType<Int32>({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(System.Int32){0});",
+            newAssertion: "actual.Should().AllBeOfType<System.Int32>({0});")]
+        [Implemented]
+        public void CollectionAssertAllItemsAreInstancesOfType_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertAllItemsAreInstancesOfTypeCodeFix, CollectionAssertAllItemsAreInstancesOfTypeAnalyzer>("System.Collections.Generic.List<int> actual, Type type", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual{0});")]
+        [Implemented] 
+        public void CollectionAssertAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertAreEqualAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.AreEqual(expected, actual{0});",
+            newAssertion: "actual.Should().Equal(expected{0});")]
+        [Implemented]
+        public void CollectionAssertAreEqual_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertAreEqualCodeFix, CollectionAssertAreEqualAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("CollectionAssert.AreNotEqual(expected, actual{0});")]
+        [Implemented]
+        public void CollectionAssertAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertAreNotEqualAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.AreNotEqual(expected, actual{0});",
+            newAssertion: "actual.Should().NotEqual(expected{0});")]
+        [Implemented]
+        public void CollectionAssertAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertAreNotEqualCodeFix, CollectionAssertAreNotEqualAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", oldAssertion, newAssertion);
+
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.MsTestAssertion(methodArguments, assertion);
