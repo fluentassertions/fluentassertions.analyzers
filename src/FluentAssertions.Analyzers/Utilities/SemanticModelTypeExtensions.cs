@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace FluentAssertions.Analyzers.Utilities
 {
@@ -9,6 +10,21 @@ namespace FluentAssertions.Analyzers.Utilities
     {
         public static INamedTypeSymbol GetActionType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, typeof(Action));
+
+        public static INamedTypeSymbol GetFloatType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, typeof(float));
+
+        public static INamedTypeSymbol GetDoubleType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, SpecialType.System_Double);
+
+        public static INamedTypeSymbol GetStringType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, SpecialType.System_String);
+
+        public static INamedTypeSymbol GetCultureInfoType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, typeof(CultureInfo));
+
+        public static INamedTypeSymbol GetBooleanType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, SpecialType.System_Boolean);
 
         public static INamedTypeSymbol GetGenericIEnumerableType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, SpecialType.System_Collections_Generic_IEnumerable_T);

@@ -34,12 +34,12 @@ namespace FluentAssertions.Analyzers
             {
             }
 
-            private static bool MathodContainingArgumentInvokingLambda(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            private static bool MathodContainingArgumentInvokingLambda(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
             {
                 if (!arguments.Any()) return false;
 
                 return arguments[0].Expression is InvocationExpressionSyntax invocation
-                    && MemberValidator.MethodContainingLambdaPredicate(invocation.ArgumentList.Arguments);
+                    && MemberValidator.MethodContainingLambdaPredicate(invocation.ArgumentList.Arguments, semanticModel);
             }
         }
     }

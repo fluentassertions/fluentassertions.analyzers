@@ -46,7 +46,7 @@ namespace FluentAssertions.Analyzers
             else if (node.Parent is InvocationExpressionSyntax invocation)
             {
                 var member = Members.Peek();
-                if (member.Name == name && member.MatchesInvocationExpression(invocation))
+                if (member.Name == name && member.MatchesInvocationExpression(invocation, SemanticModel))
                 {
                     Members = Members.Pop();
                 }
@@ -80,7 +80,7 @@ namespace FluentAssertions.Analyzers
             }
 
             var member = Members.Peek();
-            if (member.Name == name && member.MatchesElementAccessExpression(node))
+            if (member.Name == name && member.MatchesElementAccessExpression(node, SemanticModel))
             {
                 Members = Members.Pop();
             }

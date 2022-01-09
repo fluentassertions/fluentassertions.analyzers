@@ -1,3 +1,4 @@
+using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -5,6 +6,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+
+using TypeSelector = FluentAssertions.Analyzers.Utilities.SemanticModelTypeExtensions;
 
 namespace FluentAssertions.Analyzers
 {
@@ -21,33 +24,35 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                // order: 
-                // Assert.AreEqual<T>(T actual, T expected)
-                // Assert.AreEqual(float actual, float expected, float delta)
-                // Assert.AreEqual(double actual, double expected, double delta)
-                // Assert.AreEqual(string expected, string actual, bool ignoreCase, CultureInfo culture)
-                // Assert.AreEqual(object actual, object expected)
-                yield break;
-
-                yield return new AssertGenericAreEqualSyntaxVisitor();
-                yield return new AssertAreEqualWithDeltaSyntaxVisitor();
-                yield return new AssertObjectAreEqualSyntaxVisitor();
+                yield return new AssertFloatAreEqualWithDeltaSyntaxVisitor();
+                yield return new AssertDoubleAreEqualWithDeltaSyntaxVisitor();
                 yield return new AssertStringAreEqualSyntaxVisitor();
+                yield return new AssertObjectAreEqualSyntaxVisitor();
             }
         }
 
-        // two arguments with same type
-        public class AssertGenericAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        // all three arguments are float
+        public class AssertFloatAreEqualWithDeltaSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public AssertGenericAreEqualSyntaxVisitor() : base()
+            public AssertFloatAreEqualWithDeltaSyntaxVisitor() : base(
+                MemberValidator.ArgumentsMatch("AreEqual", 
+                    ArgumentValidator.IsType(TypeSelector.GetFloatType), 
+                    ArgumentValidator.IsType(TypeSelector.GetFloatType), 
+                    ArgumentValidator.IsType(TypeSelector.GetFloatType))
+                )
             {
             }
         }
 
-        // all three arguments are float/double
-        public class AssertAreEqualWithDeltaSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        // all three arguments are double
+        public class AssertDoubleAreEqualWithDeltaSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public AssertAreEqualWithDeltaSyntaxVisitor() : base(MemberValidator.ArgumentsMatch("AreEqual", ArgumentValidator.IsType("float"), ArgumentValidator.IsType("float"), ArgumentValidator.IsType("float"))
+            public AssertDoubleAreEqualWithDeltaSyntaxVisitor() : base(
+                MemberValidator.ArgumentsMatch("AreEqual",
+                    ArgumentValidator.IsType(TypeSelector.GetDoubleType),
+                    ArgumentValidator.IsType(TypeSelector.GetDoubleType),
+                    ArgumentValidator.IsType(TypeSelector.GetDoubleType))
+                )
             {
             }
         }
@@ -55,7 +60,12 @@ namespace FluentAssertions.Analyzers
         // three or four arguments, first and second are string, third is boolean, fourth is CultureInfo
         public class AssertStringAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public AssertStringAreEqualSyntaxVisitor() : base()
+            public AssertStringAreEqualSyntaxVisitor() : base(
+                MemberValidator.ArgumentsMatch("AreEqual",
+                    ArgumentValidator.IsType(TypeSelector.GetStringType),
+                    ArgumentValidator.IsType(TypeSelector.GetStringType),
+                    ArgumentValidator.IsType(TypeSelector.GetBooleanType),
+                    ArgumentValidator.IsType(TypeSelector.GetCultureInfoType)))
             {
             }
         }
@@ -63,7 +73,7 @@ namespace FluentAssertions.Analyzers
         // two arguments with different types
         public class AssertObjectAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public AssertObjectAreEqualSyntaxVisitor() : base()
+            public AssertObjectAreEqualSyntaxVisitor() : base(new MemberValidator("AreEqual"))
             {
             }
         }
@@ -78,19 +88,16 @@ namespace FluentAssertions.Analyzers
         {
             switch (properties.VisitorName)
             {
-                case nameof(AssertAreEqualAnalyzer.AssertGenericAreEqualSyntaxVisitor):
-                    return expression;
-                case nameof(AssertAreEqualAnalyzer.AssertAreEqualWithDeltaSyntaxVisitor):
-                    return expression;
+                case nameof(AssertAreEqualAnalyzer.AssertFloatAreEqualWithDeltaSyntaxVisitor):
+                case nameof(AssertAreEqualAnalyzer.AssertDoubleAreEqualWithDeltaSyntaxVisitor):
+                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "BeApproximately", "Assert");
                 case nameof(AssertAreEqualAnalyzer.AssertObjectAreEqualSyntaxVisitor):
-                    return expression;
+                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "Be", "Assert");
                 case nameof(AssertAreEqualAnalyzer.AssertStringAreEqualSyntaxVisitor):
-                    return expression;
+                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "Be", "Assert");
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }
-
-            return null;
         }
     }
 }

@@ -59,7 +59,7 @@ namespace FluentAssertions.Analyzers
                     && keyIdentifier.Identifier.Text == valueIdentifier.Identifier.Text;
             }
 
-            protected static bool KeyIsProperty(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            protected static bool KeyIsProperty(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
             {
                 if (!arguments.Any()) return false;
 
@@ -67,7 +67,7 @@ namespace FluentAssertions.Analyzers
                     && valueAccess.Expression is IdentifierNameSyntax identifier
                     && valueAccess.Name.Identifier.Text == "Key";
             }
-            protected static bool ValueIsProperty(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            protected static bool ValueIsProperty(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
             {
                 if (!arguments.Any()) return false;
 

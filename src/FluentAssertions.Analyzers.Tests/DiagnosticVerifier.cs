@@ -36,6 +36,7 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(AssertionExtensions), // FluentAssertions
                 typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert) // MsTest
             }.Select(type => type.GetTypeInfo().Assembly.Location)
+            .Append(GetSystemAssemblyPathByName("System.Globalization.dll"))
             .Append(GetSystemAssemblyPathByName("System.Runtime.Extensions.dll"))
             .Append(GetSystemAssemblyPathByName("System.Data.Common.dll"))
             .Append(GetSystemAssemblyPathByName("System.Threading.Tasks.dll"))

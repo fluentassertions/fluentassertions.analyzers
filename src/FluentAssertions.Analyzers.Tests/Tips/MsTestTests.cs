@@ -106,21 +106,21 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertObjectAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("object actual, object expected", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual{0});",
             newAssertion: "actual.Should().Be(expected{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertObjectAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, delta{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, 0.6{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertDoubleAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("double actual, double expected, double delta", assertion);
 
         [AssertionDataTestMethod]
@@ -130,24 +130,24 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, 0.6{0});",
             newAssertion: "actual.Should().BeApproximately(expected, 0.6{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertDoubleAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>("double actual, double expected, double delta", oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, delta{0});")]
-        [AssertionDiagnostic("Assert.AreEqual(expected, actual, 0.6{0});")]
-        [NotImplemented]
+        [AssertionDiagnostic("Assert.AreEqual(expected, actual, 0.6f{0});")]
+        [Implemented]
         public void AssertFloatAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("float actual, float expected, float delta", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, delta{0});",
-            newAssertion: "actual.Should().BeApproximately(expected{0});")]
+            newAssertion: "actual.Should().BeApproximately(expected, delta{0});")]
         [AssertionCodeFix(
-            oldAssertion: "Assert.AreEqual(expected, actual, 0.6{0});",
-            newAssertion: "actual.Should().BeApproximately(expected, 0.6{0});")]
-        [NotImplemented]
+            oldAssertion: "Assert.AreEqual(expected, actual, 0.6f{0});",
+            newAssertion: "actual.Should().BeApproximately(expected, 0.6f{0});")]
+        [Implemented]
         public void AssertFloatAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>("float actual, float expected, float delta", oldAssertion, newAssertion);
 
@@ -155,7 +155,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.AreEqual(expected, actual{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, false{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, true{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertStringAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("string actual, string expected", assertion);
 
         [AssertionDataTestMethod]

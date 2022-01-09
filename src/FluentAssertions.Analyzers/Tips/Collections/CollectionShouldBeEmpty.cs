@@ -40,7 +40,7 @@ namespace FluentAssertions.Analyzers
             {
             }
 
-            private static bool HaveCountArgumentsValidator(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            private static bool HaveCountArgumentsValidator(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
             {
                 if (!arguments.Any()) return false;
 
