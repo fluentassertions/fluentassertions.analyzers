@@ -5,7 +5,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-
+using System.Threading;
+using System.Threading.Tasks;
 using TypeSelector = FluentAssertions.Analyzers.Utilities.SemanticModelTypeExtensions;
 
 namespace FluentAssertions.Analyzers
@@ -63,8 +64,7 @@ namespace FluentAssertions.Analyzers
                 MemberValidator.ArgumentsMatch("AreEqual",
                     ArgumentValidator.IsType(TypeSelector.GetStringType),
                     ArgumentValidator.IsType(TypeSelector.GetStringType),
-                    ArgumentValidator.IsType(TypeSelector.GetBooleanType),
-                    ArgumentValidator.IsType(TypeSelector.GetCultureInfoType)))
+                    ArgumentValidator.IsType(TypeSelector.GetBooleanType)))
             {
             }
         }
@@ -84,7 +84,7 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreEqualAnalyzer.DiagnosticId);
 
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        protected override async Task<ExpressionSyntax> GetNewExpressionAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
         {
             switch (properties.VisitorName)
             {
@@ -94,7 +94,8 @@ namespace FluentAssertions.Analyzers
                 case nameof(AssertAreEqualAnalyzer.AssertObjectAreEqualSyntaxVisitor):
                     return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "Be", "Assert");
                 case nameof(AssertAreEqualAnalyzer.AssertStringAreEqualSyntaxVisitor):
-                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "Be", "Assert");
+                    var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+                    return GetNewExpressionForAreNotEqualOrAreEqualStrings(expression, semanticModel, "AreEqual", "Be", "BeEquivalentTo", "Assert");
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }

@@ -1,11 +1,14 @@
+using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-
+using System.Threading;
+using System.Threading.Tasks;
 using TypeSelector = FluentAssertions.Analyzers.Utilities.SemanticModelTypeExtensions;
 
 namespace FluentAssertions.Analyzers
@@ -63,8 +66,8 @@ namespace FluentAssertions.Analyzers
                 MemberValidator.ArgumentsMatch("AreNotEqual",
                     ArgumentValidator.IsType(TypeSelector.GetStringType),
                     ArgumentValidator.IsType(TypeSelector.GetStringType),
-                    ArgumentValidator.IsType(TypeSelector.GetBooleanType),
-                    ArgumentValidator.IsType(TypeSelector.GetCultureInfoType)))
+                    ArgumentValidator.IsType(TypeSelector.GetBooleanType))
+                )
             {
             }
         }
@@ -84,7 +87,7 @@ namespace FluentAssertions.Analyzers
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreNotEqualAnalyzer.DiagnosticId);
 
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        protected override async Task<ExpressionSyntax> GetNewExpressionAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
         {
             switch (properties.VisitorName)
             {
@@ -94,7 +97,8 @@ namespace FluentAssertions.Analyzers
                 case nameof(AssertAreNotEqualAnalyzer.AssertObjectAreNotEqualSyntaxVisitor):
                     return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotEqual", "NotBe", "Assert");
                 case nameof(AssertAreNotEqualAnalyzer.AssertStringAreNotEqualSyntaxVisitor):
-                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotEqual", "NotBe", "Assert");
+                    var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+                    return GetNewExpressionForAreNotEqualOrAreEqualStrings(expression, semanticModel, "AreNotEqual", "NotBe", "NotBeEquivalentTo", "Assert");
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }

@@ -155,6 +155,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.AreEqual(expected, actual{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, false{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, true{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(expected, actual, false, System.Globalization.CultureInfo.CurrentCulture{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(expected, actual, true, System.Globalization.CultureInfo.CurrentCulture{0});")]
         [Implemented]
         public void AssertStringAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("string actual, string expected", assertion);
 
@@ -168,20 +170,26 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, true{0});",
             newAssertion: "actual.Should().BeEquivalentTo(expected{0});")]
-        [NotImplemented]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(expected, actual, false, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().Be(expected{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(expected, actual, true, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().BeEquivalentTo(expected{0});")]
+        [Implemented]
         public void AssertStringAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertObjectAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreNotEqualAnalyzer>("object actual, object expected", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreNotEqual(expected, actual{0});",
             newAssertion: "actual.Should().NotBe(expected{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertObjectAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreNotEqualCodeFix, AssertAreNotEqualAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
@@ -223,7 +231,9 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual{0});")]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, false{0});")]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, true{0});")]
-        [NotImplemented]
+        [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, false, System.Globalization.CultureInfo.CurrentCulture{0});")]
+        [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, true, System.Globalization.CultureInfo.CurrentCulture{0});")]
+        [Implemented]
         public void AssertStringAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreNotEqualAnalyzer>("string actual, string expected", assertion);
 
         [AssertionDataTestMethod]
@@ -236,7 +246,13 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.AreNotEqual(expected, actual, true{0});",
             newAssertion: "actual.Should().NotBeEquivalentTo(expected{0});")]
-        [NotImplemented]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreNotEqual(expected, actual, false, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().NotBe(expected{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreNotEqual(expected, actual, true, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().NotBeEquivalentTo(expected{0});")]
+        [Implemented]
         public void AssertStringAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreNotEqualCodeFix, AssertAreNotEqualAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
 
