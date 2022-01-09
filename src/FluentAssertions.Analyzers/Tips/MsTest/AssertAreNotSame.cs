@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertAreNotSameAnalyzer : MsTestAnalyzer
+    public class AssertAreNotSameAnalyzer : MsTestAssertAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.MsTest.AssertAreNotSame;
         public const string Category = Constants.Tips.Category;

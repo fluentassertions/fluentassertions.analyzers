@@ -12,7 +12,7 @@ using TypeSelector = FluentAssertions.Analyzers.Utilities.SemanticModelTypeExten
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertAreEqualAnalyzer : MsTestAnalyzer
+    public class AssertAreEqualAnalyzer : MsTestAssertAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.MsTest.AssertAreEqual;
         public const string Category = Constants.Tips.Category;

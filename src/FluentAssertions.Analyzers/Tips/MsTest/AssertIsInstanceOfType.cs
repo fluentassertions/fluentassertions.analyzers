@@ -11,7 +11,7 @@ using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertIsInstanceOfTypeAnalyzer : MsTestAnalyzer
+    public class AssertIsInstanceOfTypeAnalyzer : MsTestAssertAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.MsTest.AssertIsInstanceOfType;
         public const string Category = Constants.Tips.Category;

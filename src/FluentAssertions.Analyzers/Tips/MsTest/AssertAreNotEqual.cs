@@ -1,7 +1,5 @@
-using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
@@ -14,7 +12,7 @@ using TypeSelector = FluentAssertions.Analyzers.Utilities.SemanticModelTypeExten
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertAreNotEqualAnalyzer : MsTestAnalyzer
+    public class AssertAreNotEqualAnalyzer : MsTestAssertAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.MsTest.AssertAreNotEqual;
         public const string Category = Constants.Tips.Category;

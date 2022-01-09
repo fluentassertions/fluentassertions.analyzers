@@ -9,7 +9,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertIsNullAnalyzer : MsTestAnalyzer
+    public class AssertIsNullAnalyzer : MsTestAssertAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.MsTest.AssertIsNull;
         public const string Category = Constants.Tips.Category;
