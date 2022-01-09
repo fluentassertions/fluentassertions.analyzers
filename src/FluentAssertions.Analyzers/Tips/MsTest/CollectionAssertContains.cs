@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertContains;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().Contain() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new CollectionAssertContainsSyntaxVisitor();
             }
         }
 
 		public class CollectionAssertContainsSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertContainsSyntaxVisitor() : base()
+			public CollectionAssertContainsSyntaxVisitor() : base(new MemberValidator("Contains"))
 			{
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertContainsCodeFix)), Shared]
-    public class CollectionAssertContainsCodeFix : FluentAssertionsCodeFixProvider
+    public class CollectionAssertContainsCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertContainsAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
+            return RenameMethodAndReplaceWithSubjectShould(expression, "Contains", "Contain", "CollectionAssert");
 		}
     }
 }

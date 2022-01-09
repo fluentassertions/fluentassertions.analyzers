@@ -404,7 +404,17 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void CollectionAssertAllItemsAreUnique_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertAllItemsAreUniqueCodeFix, CollectionAssertAllItemsAreUniqueAnalyzer>("System.Collections.Generic.List<int> actual", oldAssertion, newAssertion);
 
-        // CollectionAssertAllItemsAreUnique
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("CollectionAssert.Contains(actual, expected{0});")]
+        [Implemented]
+        public void CollectionAssertContains_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertContainsAnalyzer>("System.Collections.Generic.List<int> actual, int expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.Contains(actual, expected{0});",
+            newAssertion: "actual.Should().Contain(expected{0});")]
+        [Implemented]
+        public void CollectionAssertContains_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertContainsCodeFix, CollectionAssertContainsAnalyzer>("System.Collections.Generic.List<int> actual, int expected", oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
