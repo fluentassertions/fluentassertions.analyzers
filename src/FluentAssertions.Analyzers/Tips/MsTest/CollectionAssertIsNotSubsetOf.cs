@@ -10,7 +10,7 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionAssertIsNotSubsetOfAnalyzer : MsTestAnalyzer
+    public class CollectionAssertIsNotSubsetOfAnalyzer : MsTestCollectionAssertAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertIsNotSubsetOf;
         public const string Category = Constants.Tips.Category;

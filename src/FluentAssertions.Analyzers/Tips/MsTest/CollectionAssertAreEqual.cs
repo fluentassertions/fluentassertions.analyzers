@@ -10,25 +10,25 @@ using System.Composition;
 namespace FluentAssertions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionAssertAreEqualAnalyzer : MsTestAnalyzer
+    public class CollectionAssertAreEqualAnalyzer : MsTestCollectionAssertAnalyzer
     {
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAreEqual;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().Equal() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new CollectionAssertAreEqualSyntaxVisitor();
             }
         }
 
 		public class CollectionAssertAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertAreEqualSyntaxVisitor() : base()
+			public CollectionAssertAreEqualSyntaxVisitor() : base(new MemberValidator("Equal"))
 			{
 			}
 		}
