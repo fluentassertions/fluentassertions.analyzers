@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAllItemsAreNotNull;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().NotContainNulls() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new CollectionAssertAllItemsAreNotNullSyntaxVisitor();
             }
         }
 
 		public class CollectionAssertAllItemsAreNotNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertAllItemsAreNotNullSyntaxVisitor() : base()
+			public CollectionAssertAllItemsAreNotNullSyntaxVisitor() : base(new MemberValidator("AllItemsAreNotNull"))
 			{
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAllItemsAreNotNullCodeFix)), Shared]
-    public class CollectionAssertAllItemsAreNotNullCodeFix : FluentAssertionsCodeFixProvider
+    public class CollectionAssertAllItemsAreNotNullCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAllItemsAreNotNullAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
+            return RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreNotNull", "NotContainNulls", "CollectionAssert");
 		}
     }
 }

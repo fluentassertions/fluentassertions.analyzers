@@ -380,6 +380,18 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void CollectionAssertAreNotEquivalent_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertAreNotEquivalentCodeFix, CollectionAssertAreNotEquivalentAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", oldAssertion, newAssertion);
 
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("CollectionAssert.AllItemsAreNotNull(actual{0});")]
+        [Implemented]
+        public void CollectionAssertAllItemsAreNotNull_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertAllItemsAreNotNullAnalyzer>("System.Collections.Generic.List<int> actual", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.AllItemsAreNotNull(actual{0});",
+            newAssertion: "actual.Should().NotContainNulls({0});")]
+        [Implemented]
+        public void CollectionAssertAllItemsAreNotNull_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertAllItemsAreNotNullCodeFix, CollectionAssertAllItemsAreNotNullAnalyzer>("System.Collections.Generic.List<int> actual", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.MsTestAssertion(methodArguments, assertion);
