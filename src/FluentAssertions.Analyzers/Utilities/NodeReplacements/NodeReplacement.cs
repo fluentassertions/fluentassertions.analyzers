@@ -26,5 +26,6 @@ namespace FluentAssertions.Analyzers
         public static RemoveAndRetrieveIndexerArgumentsNodeReplacement RemoveAndRetrieveIndexerArguments(string methodAfterIndexer) => new RemoveAndRetrieveIndexerArgumentsNodeReplacement(methodAfterIndexer);
         public static RenameAndNegateLambdaNodeReplacement RenameAndNegateLambda(string oldName, string newName) => new RenameAndNegateLambdaNodeReplacement(oldName, newName);
         public static WithArgumentsNodeReplacement WithArguments(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) => new WithArgumentsNodeReplacement(name, arguments);
+        public static NodeReplacement AddTypeArgument(string name, TypeSyntax type) => new AddTypeArgumentNodeReplacement(name, type);
     }
 }

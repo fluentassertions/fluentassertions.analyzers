@@ -57,7 +57,6 @@ namespace FluentAssertions.Analyzers
             foreach (var replacement in replacements)
             {
                 newStatement = GetNewExpression(newStatement, replacement);
-                var code = newStatement.ToFullString();
             }
             return newStatement;
         }

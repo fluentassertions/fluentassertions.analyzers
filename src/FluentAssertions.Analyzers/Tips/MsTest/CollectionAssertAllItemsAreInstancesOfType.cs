@@ -15,33 +15,44 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAllItemsAreInstancesOfType;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().AllBeOfType() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new CollectionAssertAllItemsAreInstancesOfTypeSyntaxVisitor();
             }
         }
 
-		public class CollectionAssertAllItemsAreInstancesOfTypeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-		{
-			public CollectionAssertAllItemsAreInstancesOfTypeSyntaxVisitor() : base()
-			{
-			}
-		}
+        public class CollectionAssertAllItemsAreInstancesOfTypeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public CollectionAssertAllItemsAreInstancesOfTypeSyntaxVisitor() : base(new MemberValidator("AllItemsAreInstancesOfType"))
+            {
+            }
+        }
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAllItemsAreInstancesOfTypeCodeFix)), Shared]
-    public class CollectionAssertAllItemsAreInstancesOfTypeCodeFix : FluentAssertionsCodeFixProvider
+    public class CollectionAssertAllItemsAreInstancesOfTypeCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAllItemsAreInstancesOfTypeAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            var newExpression = RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreInstancesOfType", "AllBeOfType", "CollectionAssert");
+
+            var argumentsReplacer = NodeReplacement.RemoveFirstArgument("AllBeOfType");
+            var possibleNewExpression = GetNewExpression(newExpression, argumentsReplacer);
+
+            if (argumentsReplacer.Argument.Expression is TypeOfExpressionSyntax typeOfExpression)
+            {
+                var addTypeArgument = NodeReplacement.AddTypeArgument("AllBeOfType", typeOfExpression.Type);
+                return GetNewExpression(possibleNewExpression, addTypeArgument);
+            }
+
+            return newExpression;
+        }
     }
 }
