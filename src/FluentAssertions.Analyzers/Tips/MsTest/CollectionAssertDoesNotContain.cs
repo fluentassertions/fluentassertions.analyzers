@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
 
 		public class CollectionAssertDoesNotContainSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertDoesNotContainSyntaxVisitor() : base()
+			public CollectionAssertDoesNotContainSyntaxVisitor() : base(new MemberValidator("DoesNotContain"))
 			{
 			}
 		}
