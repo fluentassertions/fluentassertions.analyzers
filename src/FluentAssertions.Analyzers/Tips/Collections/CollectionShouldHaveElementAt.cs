@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 
 namespace FluentAssertions.Analyzers
 {
