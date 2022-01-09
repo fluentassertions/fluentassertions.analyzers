@@ -14,7 +14,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.AssertIsNotNull;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should().NotBeNull() instead.";
+        public const string Message = "Use .Should().NotBeNull() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors

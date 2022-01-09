@@ -16,7 +16,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.AssertIsNotInstanceOfType;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should().NotBeOfType() instead.";
+        public const string Message = "Use .Should().NotBeOfType() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
