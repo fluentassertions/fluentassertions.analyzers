@@ -1,4 +1,3 @@
-using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,7 +16,7 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.AssertAreEqual;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().BeApproximately() for complex numbers and .Should().Be() for other cases.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
@@ -31,7 +30,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        // all three arguments are float
+        // public static void AreEqual(float expected, float actual, float delta)
         public class AssertFloatAreEqualWithDeltaSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public AssertFloatAreEqualWithDeltaSyntaxVisitor() : base(
@@ -44,7 +43,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        // all three arguments are double
+        // public static void AreEqual(double expected, double actual, double delta)
         public class AssertDoubleAreEqualWithDeltaSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public AssertDoubleAreEqualWithDeltaSyntaxVisitor() : base(
@@ -57,7 +56,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        // three or four arguments, first and second are string, third is boolean, fourth is CultureInfo
+        // public static void AreEqual(string expected, string actual, bool ignoreCase, CultureInfo culture
         public class AssertStringAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public AssertStringAreEqualSyntaxVisitor() : base(
@@ -70,7 +69,8 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        // two arguments with different types
+        // public static void AreEqual<T>(T expected, T actual)
+        // public static void AreEqual(object expected, object actual)
         public class AssertObjectAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public AssertObjectAreEqualSyntaxVisitor() : base(new MemberValidator("AreEqual"))

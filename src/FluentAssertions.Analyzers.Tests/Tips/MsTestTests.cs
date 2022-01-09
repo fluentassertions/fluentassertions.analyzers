@@ -188,7 +188,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, delta{0});")]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, 0.6{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertDoubleAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreNotEqualAnalyzer>("double actual, double expected, double delta", assertion);
 
         [AssertionDataTestMethod]
@@ -198,24 +198,24 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.AreNotEqual(expected, actual, 0.6{0});",
             newAssertion: "actual.Should().NotBeApproximately(expected, 0.6{0});")]
-        [NotImplemented]
+        [Implemented]
         public void AssertDoubleAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreNotEqualCodeFix, AssertAreNotEqualAnalyzer>("double actual, double expected, double delta", oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, delta{0});")]
-        [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, 0.6{0});")]
-        [NotImplemented]
+        [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, 0.6f{0});")]
+        [Implemented]
         public void AssertFloatAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreNotEqualAnalyzer>("float actual, float expected, float delta", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreNotEqual(expected, actual, delta{0});",
-            newAssertion: "actual.Should().NotBeApproximately(expected{0});")]
+            newAssertion: "actual.Should().NotBeApproximately(expected, delta{0});")]
         [AssertionCodeFix(
-            oldAssertion: "Assert.AreNotEqual(expected, actual, 0.6{0});",
-            newAssertion: "actual.Should().NotBeApproximately(expected, 0.6{0});")]
-        [NotImplemented]
+            oldAssertion: "Assert.AreNotEqual(expected, actual, 0.6f{0});",
+            newAssertion: "actual.Should().NotBeApproximately(expected, 0.6f{0});")]
+        [Implemented]
         public void AssertFloatAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreNotEqualCodeFix, AssertAreNotEqualAnalyzer>("float actual, float expected, float delta", oldAssertion, newAssertion);
 
