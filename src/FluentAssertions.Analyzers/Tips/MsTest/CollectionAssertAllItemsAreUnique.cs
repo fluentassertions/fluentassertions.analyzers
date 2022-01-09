@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAllItemsAreUnique;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().OnlyHaveUniqueItems() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new CollectionAssertAllItemsAreUniqueSyntaxVisitor();
             }
         }
 
 		public class CollectionAssertAllItemsAreUniqueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertAllItemsAreUniqueSyntaxVisitor() : base()
+			public CollectionAssertAllItemsAreUniqueSyntaxVisitor() : base(new MemberValidator("AllItemsAreUnique"))
 			{
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAllItemsAreUniqueCodeFix)), Shared]
-    public class CollectionAssertAllItemsAreUniqueCodeFix : FluentAssertionsCodeFixProvider
+    public class CollectionAssertAllItemsAreUniqueCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAllItemsAreUniqueAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            return RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreUnique", "OnlyHaveUniqueItems", "CollectionAssert");
+        }
     }
 }
