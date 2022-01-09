@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAreNotEquivalent;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().NotBeEquivalentTo() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new CollectionAssertAreNotEquivalentSyntaxVisitor();
             }
         }
 
 		public class CollectionAssertAreNotEquivalentSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertAreNotEquivalentSyntaxVisitor() : base()
+			public CollectionAssertAreNotEquivalentSyntaxVisitor() : base(new MemberValidator("AreNotEquivalent"))
 			{
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAreNotEquivalentCodeFix)), Shared]
-    public class CollectionAssertAreNotEquivalentCodeFix : FluentAssertionsCodeFixProvider
+    public class CollectionAssertAreNotEquivalentCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAreNotEquivalentAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
-		}
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotEquivalent", "NotBeEquivalentTo", "CollectionAssert");
+        }
     }
 }
