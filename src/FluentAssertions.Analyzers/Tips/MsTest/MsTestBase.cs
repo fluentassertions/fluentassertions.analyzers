@@ -35,36 +35,18 @@ namespace FluentAssertions.Analyzers
         protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "CollectionAssert";
     }
 
-    public abstract class MsTestCodeFixProvider : FluentAssertionsCodeFixProvider
+    public abstract class MsTestAssertCodeFixProvider : TestingLibraryCodeFixBase
     {
-        protected ExpressionSyntax RenameMethodAndReplaceWithSubjectShould(ExpressionSyntax expression, string oldName, string newName, string assert)
-        {
-            var rename = NodeReplacement.RenameAndRemoveFirstArgument(oldName, newName);
-            var newExpression = GetNewExpression(expression, rename);
+        protected override string AssertClassName => "Assert";
 
-            return ReplaceIdentifier(newExpression, assert, Expressions.SubjectShould(rename.Argument.Expression));
-        }
-
-        protected ExpressionSyntax RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(ExpressionSyntax expression, string oldName, string newName, string assert)
+        protected ExpressionSyntax GetNewExpressionForAreNotEqualOrAreEqualStrings(ExpressionSyntax expression, SemanticModel semanticModel, string oldName, string newName, string newNameIgnoreCase)
         {
             var rename = NodeReplacement.RenameAndExtractArguments(oldName, newName);
             var newExpression = GetNewExpression(expression, rename);
 
             var actual = rename.Arguments[1];
 
-            newExpression = ReplaceIdentifier(newExpression, assert, Expressions.SubjectShould(actual.Expression));
-
-            return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, rename.Arguments.RemoveAt(1)));
-        }
-
-        protected ExpressionSyntax GetNewExpressionForAreNotEqualOrAreEqualStrings(ExpressionSyntax expression, SemanticModel semanticModel, string oldName, string newName, string newNameIgnoreCase, string assert)
-        {
-            var rename = NodeReplacement.RenameAndExtractArguments(oldName, newName);
-            var newExpression = GetNewExpression(expression, rename);
-
-            var actual = rename.Arguments[1];
-
-            newExpression = ReplaceIdentifier(newExpression, assert, Expressions.SubjectShould(actual.Expression));
+            newExpression = ReplaceIdentifier(newExpression, AssertClassName, Expressions.SubjectShould(actual.Expression));
 
             var newArguments = rename.Arguments.Remove(actual);
 
@@ -89,5 +71,15 @@ namespace FluentAssertions.Analyzers
 
             return newExpression;
         }
+    }
+
+    public abstract class MsTestCollectionAssertCodeFixProvider : TestingLibraryCodeFixBase
+    {
+        protected override string AssertClassName => "CollectionAssert";
+    }
+
+    public abstract class MsTestStringAssertCodeFixProvider : TestingLibraryCodeFixBase
+    {
+        protected override string AssertClassName => "StringAssert";
     }
 }

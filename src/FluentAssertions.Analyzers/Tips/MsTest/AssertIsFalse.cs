@@ -34,11 +34,11 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsFalseCodeFix)), Shared]
-    public class AssertIsFalseCodeFix : MsTestCodeFixProvider
+    public class AssertIsFalseCodeFix : MsTestAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeEmptyAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReplaceWithSubjectShould(expression, "IsFalse", "BeFalse", "Assert");
+            => RenameMethodAndReplaceWithSubjectShould(expression, "IsFalse", "BeFalse");
     }
 }

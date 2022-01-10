@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAllItemsAreUniqueCodeFix)), Shared]
-    public class CollectionAssertAllItemsAreUniqueCodeFix : MsTestCodeFixProvider
+    public class CollectionAssertAllItemsAreUniqueCodeFix : MsTestCollectionAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAllItemsAreUniqueAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreUnique", "OnlyHaveUniqueItems", "CollectionAssert");
+            return RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreUnique", "OnlyHaveUniqueItems");
         }
     }
 }

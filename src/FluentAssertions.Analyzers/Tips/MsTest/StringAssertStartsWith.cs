@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringAssertStartsWithCodeFix)), Shared]
-    public class StringAssertStartsWithCodeFix : MsTestCodeFixProvider
+    public class StringAssertStartsWithCodeFix : MsTestStringAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringAssertStartsWithAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "StartsWith", "StartWith", "StringAssert");
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "StartsWith", "StartWith");
 		}
     }
 }

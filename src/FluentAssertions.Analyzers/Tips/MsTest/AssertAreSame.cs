@@ -34,11 +34,11 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertAreSameCodeFix)), Shared]
-    public class AssertAreSameCodeFix : MsTestCodeFixProvider
+    public class AssertAreSameCodeFix : MsTestAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreSameAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreSame", "BeSameAs", "Assert");
+            => RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreSame", "BeSameAs");
     }
 }

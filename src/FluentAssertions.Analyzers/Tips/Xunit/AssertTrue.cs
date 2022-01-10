@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers.Xunit
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class AssertTrueAnalyzer : XunitAnalyzer
@@ -40,7 +40,7 @@ namespace FluentAssertions.Analyzers
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReplaceWithSubjectShould(expression, "True", "BeTrue", "Assert");
+            return RenameMethodAndReplaceWithSubjectShould(expression, "True", "BeTrue");
 		}
     }
 }

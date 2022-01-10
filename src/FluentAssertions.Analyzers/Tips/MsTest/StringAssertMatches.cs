@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringAssertMatchesCodeFix)), Shared]
-    public class StringAssertMatchesCodeFix : MsTestCodeFixProvider
+    public class StringAssertMatchesCodeFix : MsTestStringAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringAssertMatchesAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReplaceWithSubjectShould(expression, "Matches", "MatchRegex", "StringAssert");
+            return RenameMethodAndReplaceWithSubjectShould(expression, "Matches", "MatchRegex");
 		}
     }
 }
