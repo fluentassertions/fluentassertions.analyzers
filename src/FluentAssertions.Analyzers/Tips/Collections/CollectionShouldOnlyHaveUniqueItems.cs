@@ -33,7 +33,7 @@ namespace FluentAssertions.Analyzers
             {
             }
 
-            private static bool ArgumentInvokesDistinctMethod(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            private static bool ArgumentInvokesDistinctMethod(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
             {
                 if (!arguments.Any()) return false;
 

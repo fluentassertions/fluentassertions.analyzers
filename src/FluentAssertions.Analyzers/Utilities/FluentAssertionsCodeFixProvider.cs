@@ -57,12 +57,11 @@ namespace FluentAssertions.Analyzers
             foreach (var replacement in replacements)
             {
                 newStatement = GetNewExpression(newStatement, replacement);
-                var code = newStatement.ToFullString();
             }
             return newStatement;
         }
 
-        protected ExpressionSyntax GetNewExpression(ExpressionSyntax expression, NodeReplacement replacement)
+        protected static ExpressionSyntax GetNewExpression(ExpressionSyntax expression, NodeReplacement replacement)
         {
             var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
             expression.Accept(visitor);
@@ -86,7 +85,7 @@ namespace FluentAssertions.Analyzers
             throw new System.InvalidOperationException("should not get here");
         }
 
-        protected ExpressionSyntax RenameIdentifier(ExpressionSyntax expression, string oldName, string newName)
+        protected static ExpressionSyntax RenameIdentifier(ExpressionSyntax expression, string oldName, string newName)
         {
             var identifierNode = expression.DescendantNodes()
                 .OfType<IdentifierNameSyntax>()
@@ -105,6 +104,14 @@ namespace FluentAssertions.Analyzers
                 Console.Error.WriteLine($"Failed to get new expression in {GetType().FullName}.\n{e}");
                 return Task.FromResult(expression);
             }
+        }
+
+        protected static ExpressionSyntax ReplaceIdentifier(ExpressionSyntax expression, string name, ExpressionSyntax identifierReplacement)
+        {
+            var identifierNode = expression.DescendantNodes()
+                .OfType<IdentifierNameSyntax>()
+                .First(node => node.Identifier.Text == name);
+            return expression.ReplaceNode(identifierNode, identifierReplacement.WithTriviaFrom(identifierNode));
         }
     }
 }

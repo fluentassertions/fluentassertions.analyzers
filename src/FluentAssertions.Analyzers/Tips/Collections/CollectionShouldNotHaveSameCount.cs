@@ -32,7 +32,7 @@ namespace FluentAssertions.Analyzers
             {
             }
 
-            private static bool HasArgumentInvokingCountMethod(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            private static bool HasArgumentInvokingCountMethod(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
             {
                 if (!arguments.Any()) return false;
 

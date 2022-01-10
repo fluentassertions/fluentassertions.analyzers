@@ -38,7 +38,7 @@ namespace FluentAssertions.Analyzers
             {
             }
 
-            private static bool IsSubtractExpression(SeparatedSyntaxList<ArgumentSyntax> arguments)
+            private static bool IsSubtractExpression(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
             {
                 if (arguments.Count != 1) return false;
 

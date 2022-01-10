@@ -5,22 +5,36 @@ using System.Diagnostics;
 
 namespace FluentAssertions.Analyzers
 {
+    public delegate bool ArgumentsPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel);
+    public delegate bool ArgumentPredicate(ArgumentSyntax argument, SemanticModel semanticModel);
+
     [DebuggerDisplay("{Name}")]
     public class MemberValidator
     {
+        private readonly ArgumentsPredicate _argumentsPredicate;
+
         public string Name { get; }
-        public Func<SeparatedSyntaxList<ArgumentSyntax>, bool> AreArgumentsValid { get; }
 
         public MemberValidator(string name)
         {
             Name = name;
-            AreArgumentsValid = _ => true;
+            _argumentsPredicate = (arguments, semanticModel) => true;
         }
 
-        public MemberValidator(string name, Func<SeparatedSyntaxList<ArgumentSyntax>, bool> argumentsPredicate)
+        public MemberValidator(string name, ArgumentsPredicate argumentsPredicate)
         {
             Name = name;
-            AreArgumentsValid = argumentsPredicate;
+            _argumentsPredicate = argumentsPredicate;
+        }
+
+        public bool MatchesInvocationExpression(InvocationExpressionSyntax invocation, SemanticModel semanticModel)
+        {
+            return _argumentsPredicate(invocation.ArgumentList.Arguments, semanticModel);
+        }
+
+        public bool MatchesElementAccessExpression(ElementAccessExpressionSyntax elementAccess, SemanticModel semanticModel)
+        {
+            return _argumentsPredicate(elementAccess.ArgumentList.Arguments, semanticModel);
         }
 
         public static MemberValidator And { get; } = new MemberValidator(nameof(And));
@@ -30,24 +44,25 @@ namespace FluentAssertions.Analyzers
         public static MemberValidator MathodNotContainingLambda(string name) => new MemberValidator(name, MethodNotContainingLambdaPredicate);
         public static MemberValidator MathodContainingLambda(string name) => new MemberValidator(name, MethodContainingLambdaPredicate);
         public static MemberValidator ArgumentIsVariable(string name) => new MemberValidator(name, ArgumentIsVariablePredicate);
-        public static MemberValidator ArgumentIsLiteral<T>(string name, T value) => new MemberValidator(name, arguments => ArgumentIsLiteralPredicate(arguments, value));
+        public static MemberValidator ArgumentIsLiteral<T>(string name, T value) => new MemberValidator(name, (arguments, semanticModel) => ArgumentIsLiteralPredicate(arguments, value));
         public static MemberValidator ArgumentIsIdentifierOrLiteral(string name) => new MemberValidator(name, ArgumentIsIdentifierOrLiteralPredicate);
-        public static MemberValidator HasArguments(string name) => new MemberValidator(name, arguments => arguments.Any());
-        public static MemberValidator HasNoArguments(string name) => new MemberValidator(name, arguments => !arguments.Any());
+        public static MemberValidator HasArguments(string name) => new MemberValidator(name, (arguments, semanticModel) => arguments.Any());
+        public static MemberValidator HasNoArguments(string name) => new MemberValidator(name, (arguments, semanticModel) => !arguments.Any());
+        public static MemberValidator ArgumentsMatch(string name, params ArgumentPredicate[] predicates) => new MemberValidator(name, (arguments, semanticModel) => ArgumentsMatchPredicate(arguments, predicates, semanticModel));
 
-        public static bool MethodNotContainingLambdaPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments)
+        public static bool MethodNotContainingLambdaPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
         {
             if (!arguments.Any()) return true;
 
             return !(arguments.First().Expression is LambdaExpressionSyntax);
         }
-        public static bool MethodContainingLambdaPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments)
+        public static bool MethodContainingLambdaPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
         {
             if (!arguments.Any()) return false;
 
             return arguments.First().Expression is LambdaExpressionSyntax;
         }
-        public static bool ArgumentIsVariablePredicate(SeparatedSyntaxList<ArgumentSyntax> arguments)
+        public static bool ArgumentIsVariablePredicate(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
         {
             if (!arguments.Any()) return false;
 
@@ -72,13 +87,32 @@ namespace FluentAssertions.Analyzers
                 && literal.Token.Value is T argument
                 && argument.Equals(value);
         }
-        public static bool ArgumentIsIdentifierOrLiteralPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments)
+        public static bool ArgumentIsIdentifierOrLiteralPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
         {
             if (!arguments.Any()) return false;
 
             var argumentsExpression = arguments.First().Expression;
             return argumentsExpression is IdentifierNameSyntax || argumentsExpression is LiteralExpressionSyntax;
         }
+        public static bool ArgumentsMatchPredicate(SeparatedSyntaxList<ArgumentSyntax> arguments, ArgumentPredicate[] validators, SemanticModel semanticModel)
+        {
+            for (int i = 0; i < validators.Length && i < arguments.Count; i++)
+            {
+                if (!validators[i](arguments[i], semanticModel)) return false;
+            }
 
+            return true;
+        }
+    }
+
+    public class ArgumentValidator
+    {
+        public static ArgumentPredicate IsType(Func<SemanticModel, INamedTypeSymbol> typeSelector)
+        {
+            return (argument, semanticModel) =>
+            {
+                return semanticModel.GetTypeInfo(argument.Expression).Type.Equals(typeSelector(semanticModel));
+            };
+        }
     }
 }

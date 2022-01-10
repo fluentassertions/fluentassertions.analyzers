@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 
 namespace FluentAssertions.Analyzers
@@ -30,6 +29,8 @@ namespace FluentAssertions.Analyzers
             var method = context.CodeBlock as MethodDeclarationSyntax;
             if (method == null) return;
 
+            if (!ShouldAnalyzeMethod(method)) return;
+
             if (method.Body != null)
             {
                 foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
@@ -52,6 +53,8 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        protected virtual bool ShouldAnalyzeMethod(MethodDeclarationSyntax method) => true;
+
         protected virtual bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
@@ -66,6 +69,7 @@ namespace FluentAssertions.Analyzers
 
             foreach (var visitor in Visitors)
             {
+                visitor.SemanticModel = semanticModel;
                 expression.Accept(visitor);
 
                 if (visitor.IsValid(expression))

@@ -9,6 +9,7 @@
 
   <PropertyGroup>
     <RootNamespace>FluentAssertions.Analyzers</RootNamespace>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -13,6 +13,7 @@ namespace FluentAssertions.Analyzers
 
         public ImmutableStack<MemberValidator> AllMembers { get; }
         public ImmutableStack<MemberValidator> Members { get; private set; }
+        public SemanticModel SemanticModel { get; set; }
 
         public virtual bool IsValid(ExpressionSyntax expression) => Members.IsEmpty;
 
@@ -45,7 +46,7 @@ namespace FluentAssertions.Analyzers
             else if (node.Parent is InvocationExpressionSyntax invocation)
             {
                 var member = Members.Peek();
-                if (member.Name == name && member.AreArgumentsValid(invocation.ArgumentList.Arguments))
+                if (member.Name == name && member.MatchesInvocationExpression(invocation, SemanticModel))
                 {
                     Members = Members.Pop();
                 }
@@ -79,7 +80,7 @@ namespace FluentAssertions.Analyzers
             }
 
             var member = Members.Peek();
-            if (member.Name == name && member.AreArgumentsValid(node.ArgumentList.Arguments))
+            if (member.Name == name && member.MatchesElementAccessExpression(node, SemanticModel))
             {
                 Members = Members.Pop();
             }

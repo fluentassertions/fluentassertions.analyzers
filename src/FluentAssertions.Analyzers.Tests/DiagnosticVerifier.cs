@@ -34,7 +34,10 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(Compilation), // Microsoft.CodeAnalysis
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
+                typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert) // MsTest
             }.Select(type => type.GetTypeInfo().Assembly.Location)
+            .Append(GetSystemAssemblyPathByName("System.Globalization.dll"))
+            .Append(GetSystemAssemblyPathByName("System.Text.RegularExpressions.dll"))
             .Append(GetSystemAssemblyPathByName("System.Runtime.Extensions.dll"))
             .Append(GetSystemAssemblyPathByName("System.Data.Common.dll"))
             .Append(GetSystemAssemblyPathByName("System.Threading.Tasks.dll"))
@@ -641,7 +644,7 @@ namespace FluentAssertions.Analyzers.Tests
 
         private static DiagnosticAnalyzer[] CreateAllAnalyzers()
         {
-            var assembly = typeof(Constants).Assembly;            
+            var assembly = typeof(Constants).Assembly;
             var analyzersTypes = assembly.GetTypes()
                 .Where(type => !type.IsAbstract && typeof(DiagnosticAnalyzer).IsAssignableFrom(type));
             var analyzers = analyzersTypes.Select(type => (DiagnosticAnalyzer)Activator.CreateInstance(type));
