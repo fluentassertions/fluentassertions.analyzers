@@ -14,9 +14,10 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
-      - uses: nuget/setup-nuget@v1
+      - name: Setup .NET 5
+        uses: actions/setup-dotnet@v1
         with:
-          nuget-version: '5.x'
+          dotnet-version: '5.0.x'
       - run: dotnet test src --configuration Release  --filter 'TestCategory=Completed'
       - run: nuget pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.nuspec
       - run: dotnet restore src/FluentAssertions.Analyzers.Tests.Net5 --source ./ --no-cache -verbosity:d --warnAsError
