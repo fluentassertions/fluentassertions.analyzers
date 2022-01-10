@@ -15,7 +15,7 @@
     </description>
     <language>en-US</language>
     <license type="file">LICENSE</license>
-    <icon>fluent_assertions.png</icon>
+    <icon>fluent_assertions.svg.png</icon>
     <projectUrl>https://github.com/fluentassertions/fluentassertions.analyzers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>FluentAssertions Analyzers</tags>
@@ -32,7 +32,7 @@
     <file src="bin\**\*.dll" target="analyzers\dotnet\cs" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
     <file src="tools\*.ps1" target="tools\" />
     <file src="..\..\README.md" target="docs\" />
-    <file src="..\..\fluent_assertions.png" target="\" />
+    <file src="..\..\assets\fluent_assertions.svg.png" target="\" />
     <file src="..\..\LICENSE" target="\LICENSE" />
   </files>
 </package>
