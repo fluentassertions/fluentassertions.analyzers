@@ -3,7 +3,7 @@
   <metadata>
     <id>FluentAssertions.Analyzers</id>
     <title>Fluent Assertions Analyzers</title>
-    <version>0.13.0</version>
+    <version>0.14.0</version>
     <readme>docs\README.md</readme>
     <owners>Meir Blachman</owners>
     <authors>Meir Blachman</authors>
