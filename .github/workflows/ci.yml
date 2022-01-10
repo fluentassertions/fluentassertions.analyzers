@@ -19,7 +19,7 @@ jobs:
           nuget-version: '5.x'
       - run: dotnet test src --configuration Release  --filter 'TestCategory=Completed'
       - run: nuget pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.nuspec
-      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.Net5 --source src/FluentAssertions.Analyzers/ --no-cache -verbosity:d --warnAsError
-      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.Net6 --source src/FluentAssertions.Analyzers/ --no-cache -verbosity:d --warnAsError
-      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.NetStandard2.0 --source src/FluentAssertions.Analyzers/ --no-cache -verbosity:d --warnAsError
-      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.NetStandard2.1 --source src/FluentAssertions.Analyzers/ --no-cache -verbosity:d --warnAsError
+      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.Net5 --source ./ --no-cache -verbosity:d --warnAsError
+      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.Net6 --source ./ --no-cache -verbosity:d --warnAsError
+      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.NetStandard2.0 --source ./ --no-cache -verbosity:d --warnAsError
+      - run: dotnet restore src/FluentAssertions.Analyzers.Tests.NetStandard2.1 --source ./ --no-cache -verbosity:d --warnAsError
