@@ -34,7 +34,8 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(Compilation), // Microsoft.CodeAnalysis
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
-                typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert) // MsTest
+                typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
+                typeof(Xunit.Assert), // Xunit
             }.Select(type => type.GetTypeInfo().Assembly.Location)
             .Append(GetSystemAssemblyPathByName("System.Globalization.dll"))
             .Append(GetSystemAssemblyPathByName("System.Text.RegularExpressions.dll"))
