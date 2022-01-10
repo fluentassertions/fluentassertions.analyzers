@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertIsSubsetOf;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().BeSubsetOf() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new CollectionAssertIsSubsetOfSyntaxVisitor();
             }
         }
 
 		public class CollectionAssertIsSubsetOfSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public CollectionAssertIsSubsetOfSyntaxVisitor() : base()
+			public CollectionAssertIsSubsetOfSyntaxVisitor() : base(new MemberValidator("IsSubsetOf"))
 			{
 			}
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertIsSubsetOfCodeFix)), Shared]
-    public class CollectionAssertIsSubsetOfCodeFix : FluentAssertionsCodeFixProvider
+    public class CollectionAssertIsSubsetOfCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertIsSubsetOfAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsSubsetOf", "BeSubsetOf", "CollectionAssert");
 		}
     }
 }

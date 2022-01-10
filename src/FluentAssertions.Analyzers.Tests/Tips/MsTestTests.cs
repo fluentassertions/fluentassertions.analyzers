@@ -428,6 +428,30 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void CollectionAssertDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertDoesNotContainCodeFix, CollectionAssertDoesNotContainAnalyzer>("System.Collections.Generic.List<int> actual, int expected", oldAssertion, newAssertion);
 
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("CollectionAssert.IsSubsetOf(expected, actual{0});")]
+        [Implemented] 
+        public void CollectionAssertIsSubsetOf_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertIsSubsetOfAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.IsSubsetOf(expected, actual{0});",
+            newAssertion: "actual.Should().BeSubsetOf(expected{0});")]
+        [Implemented]
+        public void CollectionAssertIsSubsetOf_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertIsSubsetOfCodeFix, CollectionAssertIsSubsetOfAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("CollectionAssert.IsNotSubsetOf(expected, actual{0});")]
+        [Implemented]
+        public void CollectionAssertIsNotSubsetOf_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertIsNotSubsetOfAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "CollectionAssert.IsNotSubsetOf(expected, actual{0});",
+            newAssertion: "actual.Should().NotBeSubsetOf(expected{0});")]
+        [Implemented]
+        public void CollectionAssertIsNotSubsetOf_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertIsNotSubsetOfCodeFix, CollectionAssertIsNotSubsetOfAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.MsTestAssertion(methodArguments, assertion);
