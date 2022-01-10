@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.StringAssertEndsWith;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().EndWith() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new StringAssertEndsWithSyntaxVisitor();
             }
         }
 
 		public class StringAssertEndsWithSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public StringAssertEndsWithSyntaxVisitor() : base()
-			{
-			}
+			public StringAssertEndsWithSyntaxVisitor() : base(new MemberValidator("EndsWith"))
+            {
+            }
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringAssertEndsWithCodeFix)), Shared]
-    public class StringAssertEndsWithCodeFix : FluentAssertionsCodeFixProvider
+    public class StringAssertEndsWithCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringAssertEndsWithAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "EndsWith", "EndWith", "StringAssert");
 		}
     }
 }

@@ -452,6 +452,66 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void CollectionAssertIsNotSubsetOf_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<CollectionAssertIsNotSubsetOfCodeFix, CollectionAssertIsNotSubsetOfAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", oldAssertion, newAssertion);
 
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("StringAssert.Contains(expected, actual{0});")]
+        [Implemented]
+        public void StringAssertContains_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringAssertContainsAnalyzer>("string actual, string expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "StringAssert.Contains(expected, actual{0});",
+            newAssertion: "actual.Should().Contain(expected{0});")]
+        [Implemented]
+        public void StringAssertContains_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringAssertContainsCodeFix, StringAssertContainsAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("StringAssert.StartsWith(expected, actual{0});")]
+        [Implemented]
+        public void StringAssertStartsWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringAssertStartsWithAnalyzer>("string actual, string expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "StringAssert.StartsWith(expected, actual{0});",
+            newAssertion: "actual.Should().StartWith(expected{0});")]
+        [Implemented]
+        public void StringAssertStartsWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringAssertStartsWithCodeFix, StringAssertStartsWithAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("StringAssert.EndsWith(expected, actual{0});")]
+        [Implemented]
+        public void StringAssertEndsWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringAssertEndsWithAnalyzer>("string actual, string expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "StringAssert.EndsWith(expected, actual{0});",
+            newAssertion: "actual.Should().EndWith(expected{0});")]
+        [Implemented]
+        public void StringAssertEndsWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringAssertEndsWithCodeFix, StringAssertEndsWithAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("StringAssert.Matches(actual, pattern{0});")]
+        [Implemented]
+        public void StringAssertMatches_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringAssertMatchesAnalyzer>("string actual, System.Text.RegularExpressions.Regex pattern", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "StringAssert.Matches(actual, pattern{0});",
+            newAssertion: "actual.Should().MatchRegex(pattern{0});")]
+        [Implemented]
+        public void StringAssertMatches_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringAssertMatchesCodeFix, StringAssertMatchesAnalyzer>("string actual, System.Text.RegularExpressions.Regex pattern", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("StringAssert.DoesNotMatch(actual, pattern{0});")]
+        [Implemented]
+        public void StringAssertDoesNotMatch_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<StringAssertDoesNotMatchAnalyzer>("string actual, System.Text.RegularExpressions.Regex pattern", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "StringAssert.DoesNotMatch(actual, pattern{0});",
+            newAssertion: "actual.Should().NotMatchRegex(pattern{0});")]
+        [Implemented]
+        public void StringAssertDoesNotMatch_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringAssertDoesNotMatchCodeFix, StringAssertDoesNotMatchAnalyzer>("string actual, System.Text.RegularExpressions.Regex pattern", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.MsTestAssertion(methodArguments, assertion);

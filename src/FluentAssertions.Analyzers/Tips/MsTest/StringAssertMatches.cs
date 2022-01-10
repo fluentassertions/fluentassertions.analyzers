@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.StringAssertMatches;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().MatchRegex() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new StringAssertMatchesSyntaxVisitor();
             }
         }
 
 		public class StringAssertMatchesSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public StringAssertMatchesSyntaxVisitor() : base()
-			{
-			}
+			public StringAssertMatchesSyntaxVisitor() : base(new MemberValidator("Matches"))
+            {
+            }
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringAssertMatchesCodeFix)), Shared]
-    public class StringAssertMatchesCodeFix : FluentAssertionsCodeFixProvider
+    public class StringAssertMatchesCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringAssertMatchesAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
+            return RenameMethodAndReplaceWithSubjectShould(expression, "Matches", "MatchRegex", "StringAssert");
 		}
     }
 }

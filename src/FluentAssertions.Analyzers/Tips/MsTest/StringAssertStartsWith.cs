@@ -14,33 +14,33 @@ namespace FluentAssertions.Analyzers
         public const string DiagnosticId = Constants.Tips.MsTest.StringAssertStartsWith;
         public const string Category = Constants.Tips.Category;
 
-        public const string Message = "Use {0} .Should() followed by ### instead.";
+        public const string Message = "Use .Should().StartWith() instead.";
 
         protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
         protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
         {
             get
-            {yield break;
+            {
                 yield return new StringAssertStartsWithSyntaxVisitor();
             }
         }
 
 		public class StringAssertStartsWithSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
-			public StringAssertStartsWithSyntaxVisitor() : base()
-			{
-			}
+			public StringAssertStartsWithSyntaxVisitor() : base(new MemberValidator("StartsWith"))
+            {
+            }
 		}
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringAssertStartsWithCodeFix)), Shared]
-    public class StringAssertStartsWithCodeFix : FluentAssertionsCodeFixProvider
+    public class StringAssertStartsWithCodeFix : MsTestCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringAssertStartsWithAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-			return null;
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "StartsWith", "StartWith", "StringAssert");
 		}
     }
 }
