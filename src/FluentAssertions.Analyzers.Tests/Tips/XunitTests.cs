@@ -57,6 +57,33 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertFalse_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertFalseCodeFix, AssertFalseAnalyzer>("bool actual", oldAssertion, newAssertion);
 
+
+        [DataTestMethod]
+        [DataRow("Assert.Same(expected, actual);")]
+        [Implemented]
+        public void AssertSame_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertSameAnalyzer>("object actual, object expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Same(expected, actual);",
+            /* newAssertion: */ "actual.Should().BeSameAs(expected);")]
+        [Implemented]
+        public void AssertSame_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertSameCodeFix, AssertSameAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.NotSame(expected, actual);")]
+        [Implemented]
+        public void AssertNotSame_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertNotSameAnalyzer>("object actual, object expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.NotSame(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotBeSameAs(expected);")]
+        [Implemented]
+        public void AssertNotSame_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertNotSameCodeFix, AssertNotSameAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);

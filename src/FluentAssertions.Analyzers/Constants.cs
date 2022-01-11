@@ -120,6 +120,8 @@ namespace FluentAssertions.Analyzers
             {
                 public const string AssertTrue = nameof(AssertTrue);
                 public const string AssertFalse = nameof(AssertFalse);
+                public const string AssertSame = nameof(AssertSame);
+                public const string AssertNotSame = nameof(AssertNotSame);
             }
         }
 
