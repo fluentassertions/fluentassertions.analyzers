@@ -80,7 +80,7 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertAreEqualCodeFix)), Shared]
-    public class AssertAreEqualCodeFix : MsTestCodeFixProvider
+    public class AssertAreEqualCodeFix : MsTestAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreEqualAnalyzer.DiagnosticId);
 
@@ -90,12 +90,12 @@ namespace FluentAssertions.Analyzers
             {
                 case nameof(AssertAreEqualAnalyzer.AssertFloatAreEqualWithDeltaSyntaxVisitor):
                 case nameof(AssertAreEqualAnalyzer.AssertDoubleAreEqualWithDeltaSyntaxVisitor):
-                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "BeApproximately", "Assert");
+                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "BeApproximately");
                 case nameof(AssertAreEqualAnalyzer.AssertObjectAreEqualSyntaxVisitor):
-                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "Be", "Assert");
+                    return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEqual", "Be");
                 case nameof(AssertAreEqualAnalyzer.AssertStringAreEqualSyntaxVisitor):
                     var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-                    return GetNewExpressionForAreNotEqualOrAreEqualStrings(expression, semanticModel, "AreEqual", "Be", "BeEquivalentTo", "Assert");
+                    return GetNewExpressionForAreNotEqualOrAreEqualStrings(expression, semanticModel, "AreEqual", "Be", "BeEquivalentTo");
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }

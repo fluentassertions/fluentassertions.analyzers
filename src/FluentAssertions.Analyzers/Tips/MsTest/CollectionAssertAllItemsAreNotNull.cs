@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAllItemsAreNotNullCodeFix)), Shared]
-    public class CollectionAssertAllItemsAreNotNullCodeFix : MsTestCodeFixProvider
+    public class CollectionAssertAllItemsAreNotNullCodeFix : MsTestCollectionAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAllItemsAreNotNullAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreNotNull", "NotContainNulls", "CollectionAssert");
+            return RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreNotNull", "NotContainNulls");
 		}
     }
 }

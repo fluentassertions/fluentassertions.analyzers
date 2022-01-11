@@ -16,6 +16,8 @@ using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Reflection;
 
+using XunitAssert = Xunit.Assert;
+
 namespace FluentAssertions.Analyzers.Tests
 {
     /// <summary>
@@ -34,7 +36,8 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(Compilation), // Microsoft.CodeAnalysis
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
-                typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert) // MsTest
+                typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
+                typeof(XunitAssert), // Xunit
             }.Select(type => type.GetTypeInfo().Assembly.Location)
             .Append(GetSystemAssemblyPathByName("System.Globalization.dll"))
             .Append(GetSystemAssemblyPathByName("System.Text.RegularExpressions.dll"))

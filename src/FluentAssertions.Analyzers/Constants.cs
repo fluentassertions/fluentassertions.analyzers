@@ -115,6 +115,12 @@ namespace FluentAssertions.Analyzers
                 public const string CollectionAssertIsSubsetOf = nameof(CollectionAssertIsSubsetOf);
                 public const string CollectionAssertIsNotSubsetOf = nameof(CollectionAssertIsNotSubsetOf);
             }
+
+            public static class Xunit
+            {
+                public const string AssertTrue = nameof(AssertTrue);
+                public const string AssertFalse = nameof(AssertFalse);
+            }
         }
 
         public static class CodeSmell

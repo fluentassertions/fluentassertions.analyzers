@@ -194,6 +194,25 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("}")
             .ToString();
 
+        public static string XunitAssertion(string methodArguments, string assertion) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using Xunit;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod({methodArguments})")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
         private static StringBuilder AppendMainMethod(this StringBuilder builder) => builder
             .AppendLine("    class Program")
             .AppendLine("    {")

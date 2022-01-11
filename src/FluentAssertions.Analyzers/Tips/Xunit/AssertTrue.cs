@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers.Xunit
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertIsTrueAnalyzer : MsTestAssertAnalyzer
+    public class AssertTrueAnalyzer : XunitAnalyzer
     {
-        public const string DiagnosticId = Constants.Tips.MsTest.AssertIsTrue;
+        public const string DiagnosticId = Constants.Tips.Xunit.AssertTrue;
         public const string Category = Constants.Tips.Category;
 
         public const string Message = "Use .Should().BeTrue() instead.";
@@ -21,24 +21,26 @@ namespace FluentAssertions.Analyzers
         {
             get
             {
-                yield return new AssertIsTrueSyntaxVisitor();
+                yield return new AssertTrueSyntaxVisitor();
             }
         }
 
-        public class AssertIsTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public AssertIsTrueSyntaxVisitor() : base(new MemberValidator("IsTrue"))
+		public class AssertTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+		{
+			public AssertTrueSyntaxVisitor() : base(new MemberValidator("True"))
             {
             }
-        }
+		}
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsTrueCodeFix)), Shared]
-    public class AssertIsTrueCodeFix : MsTestAssertCodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertTrueCodeFix)), Shared]
+    public class AssertTrueCodeFix : XunitCodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeEmptyAnalyzer.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertTrueAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReplaceWithSubjectShould(expression, "IsTrue", "BeTrue");
+        {
+            return RenameMethodAndReplaceWithSubjectShould(expression, "True", "BeTrue");
+		}
     }
 }

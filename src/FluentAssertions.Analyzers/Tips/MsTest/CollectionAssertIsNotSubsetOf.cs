@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertIsNotSubsetOfCodeFix)), Shared]
-    public class CollectionAssertIsNotSubsetOfCodeFix : MsTestCodeFixProvider
+    public class CollectionAssertIsNotSubsetOfCodeFix : MsTestCollectionAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertIsNotSubsetOfAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsNotSubsetOf", "NotBeSubsetOf", "CollectionAssert");
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsNotSubsetOf", "NotBeSubsetOf");
 		}
     }
 }

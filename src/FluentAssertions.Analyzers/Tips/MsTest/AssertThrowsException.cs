@@ -34,11 +34,11 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertThrowsExceptionCodeFix)), Shared]
-    public class AssertThrowsExceptionCodeFix : MsTestCodeFixProvider
+    public class AssertThrowsExceptionCodeFix : MsTestAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertThrowsExceptionAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReplaceWithSubjectShould(expression, "ThrowsException", "ThrowExactly", "Assert");
+            => RenameMethodAndReplaceWithSubjectShould(expression, "ThrowsException", "ThrowExactly");
     }
 }

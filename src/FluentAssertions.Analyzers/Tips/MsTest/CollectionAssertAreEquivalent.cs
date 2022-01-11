@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAreEquivalentCodeFix)), Shared]
-    public class CollectionAssertAreEquivalentCodeFix : MsTestCodeFixProvider
+    public class CollectionAssertAreEquivalentCodeFix : MsTestCollectionAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAreEquivalentAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEquivalent", "BeEquivalentTo", "CollectionAssert");
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEquivalent", "BeEquivalentTo");
         }
     }
 }

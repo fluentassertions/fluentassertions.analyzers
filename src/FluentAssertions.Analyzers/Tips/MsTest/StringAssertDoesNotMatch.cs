@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringAssertDoesNotMatchCodeFix)), Shared]
-    public class StringAssertDoesNotMatchCodeFix : MsTestCodeFixProvider
+    public class StringAssertDoesNotMatchCodeFix : MsTestStringAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringAssertDoesNotMatchAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            return RenameMethodAndReplaceWithSubjectShould(expression, "DoesNotMatch", "NotMatchRegex", "StringAssert");
+            return RenameMethodAndReplaceWithSubjectShould(expression, "DoesNotMatch", "NotMatchRegex");
 		}
     }
 }

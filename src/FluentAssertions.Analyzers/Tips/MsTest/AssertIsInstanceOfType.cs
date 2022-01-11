@@ -36,13 +36,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsInstanceOfTypeCodeFix)), Shared]
-    public class AssertIsInstanceOfTypeCodeFix : MsTestCodeFixProvider
+    public class AssertIsInstanceOfTypeCodeFix : MsTestAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertIsInstanceOfTypeAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            var newExpression = RenameMethodAndReplaceWithSubjectShould(expression, "IsInstanceOfType", "BeOfType", "Assert");
+            var newExpression = RenameMethodAndReplaceWithSubjectShould(expression, "IsInstanceOfType", "BeOfType");
 
             var beOfType = newExpression.DescendantNodes()
                 .OfType<MemberAccessExpressionSyntax>()

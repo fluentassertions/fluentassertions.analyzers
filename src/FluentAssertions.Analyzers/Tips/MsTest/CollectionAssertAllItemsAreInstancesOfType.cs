@@ -34,13 +34,13 @@ namespace FluentAssertions.Analyzers
     }
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAllItemsAreInstancesOfTypeCodeFix)), Shared]
-    public class CollectionAssertAllItemsAreInstancesOfTypeCodeFix : MsTestCodeFixProvider
+    public class CollectionAssertAllItemsAreInstancesOfTypeCodeFix : MsTestCollectionAssertCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAllItemsAreInstancesOfTypeAnalyzer.DiagnosticId);
 
         protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
         {
-            var newExpression = RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreInstancesOfType", "AllBeOfType", "CollectionAssert");
+            var newExpression = RenameMethodAndReplaceWithSubjectShould(expression, "AllItemsAreInstancesOfType", "AllBeOfType");
 
             var argumentsReplacer = NodeReplacement.RemoveFirstArgument("AllBeOfType");
             var possibleNewExpression = GetNewExpression(newExpression, argumentsReplacer);
