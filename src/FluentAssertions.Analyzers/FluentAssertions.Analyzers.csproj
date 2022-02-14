@@ -18,7 +18,6 @@
     <Copyright>Copyright Meir Blachman 2017-2022</Copyright>
     
     <Description>Analyzers to help writing fluentassertions the right way.</Description>
-    <Summary>Analyzers to help writing fluentassertions the right way.</Summary>
     <PackageTags>FluentAssertions Analyzers</PackageTags>
     <PackageReleaseNotes>See https://github.com/fluentassertions/fluentassertions.analyzers/releases/</PackageReleaseNotes>
     
