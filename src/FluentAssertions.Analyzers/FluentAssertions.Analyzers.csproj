@@ -1,32 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
-  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net48;net6.0</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>FluentAssertions.Analyzers</RootNamespace>
+
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
 
   <PropertyGroup>
-    <RootNamespace>FluentAssertions.Analyzers</RootNamespace>
-    <LangVersion>8.0</LangVersion>
+    <PackageId>FluentAssertions.Analyzers</PackageId>
+    <Version>0.15.0</Version>
+    <Authors>Meir Blachman</Authors>
+    <Copyright>Copyright Meir Blachman 2017-2022</Copyright>
+    
+    <Description>Analyzers to help writing fluentassertions the right way.</Description>
+    <PackageTags>FluentAssertions Analyzers</PackageTags>
+    <PackageReleaseNotes>See https://github.com/fluentassertions/fluentassertions.analyzers/releases/</PackageReleaseNotes>
+    
+    <PackageReadmeFile>docs\README.md</PackageReadmeFile>
+    <PackageIcon>fluent_assertions.svg.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/fluentassertions/fluentassertions.analyzers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fluentassertions/fluentassertions.analyzers</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-
+	
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
-    <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
+	<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" />
+	<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.11.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="FluentAssertions.Analyzers.nuspec">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="tools\install.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="tools\uninstall.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="..\..\README.md" Pack="true" PackagePath="docs" />
+    <None Include="..\..\assets\fluent_assertions.svg.png" Pack="true" PackagePath="" />
+    <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
 </Project>

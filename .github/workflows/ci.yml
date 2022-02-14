@@ -13,9 +13,6 @@ jobs:
       - name: Setup .NET 6
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x'
-      - uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: '5.x'
-      - run: dotnet test src --configuration Release  --filter 'TestCategory=Completed'
-      - run: nuget pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.nuspec
+          dotnet-version: 6.0.x
+      - run: dotnet test src --configuration Release --filter 'TestCategory=Completed'
+      - run: dotnet pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.csproj
