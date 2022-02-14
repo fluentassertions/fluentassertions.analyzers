@@ -15,4 +15,4 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - run: dotnet test src --configuration Release --filter 'TestCategory=Completed'
-      - run: dotnet pack src\FluentAssertions.Analyzers\FluentAssertions.Analyzers.csproj
+      - run: dotnet pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.csproj
