@@ -15,20 +15,19 @@
     <PackageId>FluentAssertions.Analyzers</PackageId>
     <Version>0.15.0</Version>
     <Authors>Meir Blachman</Authors>
+    <Copyright>Copyright Meir Blachman 2017-2022</Copyright>
     
     <Description>Analyzers to help writing fluentassertions the right way.</Description>
     <Summary>Analyzers to help writing fluentassertions the right way.</Summary>
-    <PackageTags>FluentAssertions, Analyzers</PackageTags>
+    <PackageTags>FluentAssertions Analyzers</PackageTags>
     <PackageReleaseNotes>See https://github.com/fluentassertions/fluentassertions.analyzers/releases/</PackageReleaseNotes>
     
-    <Copyright>Copyright Meir Blachman 2017-2022</Copyright>
     <PackageReadmeFile>docs\README.md</PackageReadmeFile>
+    <PackageIcon>fluent_assertions.svg.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    
     <PackageProjectUrl>https://github.com/fluentassertions/fluentassertions.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/fluentassertions/fluentassertions.analyzers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageIcon>fluent_assertions.svg.png</PackageIcon>
   </PropertyGroup>
 	
   <ItemGroup>
@@ -38,7 +37,7 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="docs" />
-    <None Include="..\..\assets\fluent_assertions.svg.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\assets\fluent_assertions.svg.png" Pack="true" PackagePath="" />
     <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
