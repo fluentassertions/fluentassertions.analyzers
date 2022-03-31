@@ -138,6 +138,54 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .ToString());
 
         [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace6_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks; using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;")
+            .AppendLine("using Microsoft . VisualStudio . TestTools . UnitTesting;")
+            .AppendLine("namespace Testing")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace7_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks; using MsAssert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;")
+            .AppendLine("using Microsoft . VisualStudio . TestTools . UnitTesting;")
+            .AppendLine("namespace Testing")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.IsTrue(actual{0});",
             newAssertion: "actual.Should().BeTrue({0});")]
