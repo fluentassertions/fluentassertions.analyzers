@@ -7,8 +7,8 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class MsTestAnalyzer : TestingLibraryAnalyzerBase
     {
-        private static readonly NameSyntax MsTestNamespace = SyntaxFactory.ParseName("Microsoft.VisualStudio.TestTools.UnitTesting");
-        protected override NameSyntax TestingLibraryNamespace => MsTestNamespace;
+        private static readonly string MsTestNamespace = "Microsoft.VisualStudio.TestTools.UnitTesting";
+        protected override string TestingLibraryNamespace => MsTestNamespace;
     }
 
     public abstract class MsTestAssertAnalyzer : MsTestAnalyzer

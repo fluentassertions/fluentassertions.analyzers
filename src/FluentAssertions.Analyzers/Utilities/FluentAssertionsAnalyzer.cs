@@ -1,10 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FluentAssertions.Analyzers
 {
@@ -112,7 +114,7 @@ namespace FluentAssertions.Analyzers
 
     public abstract class TestingLibraryAnalyzerBase : FluentAssertionsAnalyzer
     {
-        protected abstract NameSyntax TestingLibraryNamespace { get; }
+        protected abstract string TestingLibraryNamespace { get; }
 
         protected override bool ShouldAnalyzeMethod(MethodDeclarationSyntax method)
         {
@@ -120,7 +122,34 @@ namespace FluentAssertions.Analyzers
 
             if (compilation == null) return false;
 
-            return compilation.Usings.Any(usingDirective => usingDirective.Name.IsEquivalentTo(TestingLibraryNamespace));
+            foreach (var @using in compilation.Usings)
+            {
+                if (@using.Name.NormalizeWhitespace().ToString().Equals(TestingLibraryNamespace)) return true;
+            }
+
+            var parentNamespace = method.FirstAncestorOrSelf<NamespaceDeclarationSyntax>();
+            if (parentNamespace != null)
+            {
+                var namespaces = new List<NamespaceDeclarationSyntax>();
+                while(parentNamespace != null)
+                {
+                    namespaces.Add(parentNamespace);
+                    parentNamespace = parentNamespace.Parent as NamespaceDeclarationSyntax;
+                }
+                namespaces.Reverse();
+
+                for (int i = 0; i < namespaces.Count; i++)
+                {
+                    var baseNamespace = string.Join(".", namespaces.Take(i+1).Select(ns => ns.Name));
+                    foreach (var @using in namespaces[i].Usings)
+                    {
+                        var fullUsing = SF.ParseName($"{baseNamespace}.{@using.Name}").NormalizeWhitespace().ToString();
+                        if (fullUsing.Equals(TestingLibraryNamespace)) return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -213,7 +213,7 @@ namespace FluentAssertions.Analyzers.Tests
             .AppendLine("}")
             .ToString();
 
-        private static StringBuilder AppendMainMethod(this StringBuilder builder) => builder
+        public static StringBuilder AppendMainMethod(this StringBuilder builder) => builder
             .AppendLine("    class Program")
             .AppendLine("    {")
             .AppendLine("        public static void Main()")
