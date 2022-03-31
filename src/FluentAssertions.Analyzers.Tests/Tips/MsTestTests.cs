@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -15,6 +16,174 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace1_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("namespace Microsoft.VisualStudio.TestTools")
+            .AppendLine("{")
+            .AppendLine("    using UnitTesting;")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace2_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("namespace Microsoft.VisualStudio")
+            .AppendLine("{")
+            .AppendLine("    using TestTools.UnitTesting;")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace3_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("namespace Microsoft")
+            .AppendLine("{ namespace VisualStudio {")
+            .AppendLine("    using TestTools.UnitTesting;")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }}")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace4_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("namespace Microsoft")
+            .AppendLine("{ namespace VisualStudio {")
+            .AppendLine("    using TestTools   .   UnitTesting;")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }}")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace5_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("using Microsoft . VisualStudio . TestTools . UnitTesting;")
+            .AppendLine("namespace Testing")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace6_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks; using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;")
+            .AppendLine("using Microsoft . VisualStudio . TestTools . UnitTesting;")
+            .AppendLine("namespace Testing")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
+        [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
+        [Implemented]
+        public void AssertIsTrue_NestedUsingInNamespace7_TestAnalyzer(string assertion)
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using System.Threading.Tasks; using MsAssert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;")
+            .AppendLine("using Microsoft . VisualStudio . TestTools . UnitTesting;")
+            .AppendLine("namespace Testing")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod(bool actual)")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString());
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
@@ -512,10 +681,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void StringAssertDoesNotMatch_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringAssertDoesNotMatchCodeFix, StringAssertDoesNotMatchAnalyzer>("string actual, System.Text.RegularExpressions.Regex pattern", oldAssertion, newAssertion);
 
-        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
+        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion, string source) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
-            var source = GenerateCode.MsTestAssertion(methodArguments, assertion);
-
             var type = typeof(TDiagnosticAnalyzer);
             var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
             var message = (string)type.GetField("Message").GetValue(null);
@@ -531,6 +698,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 Severity = DiagnosticSeverity.Info
             });
         }
+        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new() 
+            => VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(methodArguments, assertion, GenerateCode.MsTestAssertion(methodArguments, assertion));
 
         private void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(string methodArguments, string oldAssertion, string newAssertion)
             where TCodeFixProvider : Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider, new()
