@@ -109,4 +109,18 @@ namespace FluentAssertions.Analyzers
     public abstract class FluentAssertionsAnalyzer : FluentAssertionsAnalyzer<FluentAssertionsCSharpSyntaxVisitor>
     {
     }
+
+    public abstract class TestingLibraryAnalyzerBase : FluentAssertionsAnalyzer
+    {
+        protected abstract NameSyntax TestingLibraryNamespace { get; }
+
+        protected override bool ShouldAnalyzeMethod(MethodDeclarationSyntax method)
+        {
+            var compilation = method.FirstAncestorOrSelf<CompilationUnitSyntax>();
+
+            if (compilation == null) return false;
+
+            return compilation.Usings.Any(usingDirective => usingDirective.Name.IsEquivalentTo(TestingLibraryNamespace));
+        }
+    }
 }
