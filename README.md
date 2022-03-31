@@ -35,3 +35,6 @@ dotnet build src
 ```bash
 dotnet test src --configuration Release  --filter 'TestCategory=Completed'
 ```
+
+## Example Usages
+- https://github.com/SonarSource/sonar-dotnet/pull/2072
