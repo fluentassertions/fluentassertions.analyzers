@@ -143,6 +143,8 @@ namespace FluentAssertions.Analyzers
                     var baseNamespace = string.Join(".", namespaces.Take(i+1).Select(ns => ns.Name));
                     foreach (var @using in namespaces[i].Usings)
                     {
+                        if (@using.Name.NormalizeWhitespace().ToString().Equals(TestingLibraryNamespace)) return true;
+
                         var fullUsing = SF.ParseName($"{baseNamespace}.{@using.Name}").NormalizeWhitespace().ToString();
                         if (fullUsing.Equals(TestingLibraryNamespace)) return true;
                     }
