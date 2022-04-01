@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <PackageId>FluentAssertions.Analyzers</PackageId>
-    <Version>0.17.1</Version>
+    <Version>0.17.2</Version>
     <Authors>Meir Blachman</Authors>
     <Copyright>Copyright Meir Blachman 2017-2022</Copyright>
     
