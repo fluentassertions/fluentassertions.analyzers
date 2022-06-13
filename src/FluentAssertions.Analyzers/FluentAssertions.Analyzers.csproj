@@ -22,7 +22,7 @@
     <PackageReleaseNotes>See https://github.com/fluentassertions/fluentassertions.analyzers/releases/</PackageReleaseNotes>
     
     <PackageReadmeFile>docs\README.md</PackageReadmeFile>
-    <PackageIcon>fluent_assertions.svg.png</PackageIcon>
+    <PackageIcon>FluentAssertions.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/fluentassertions/fluentassertions.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/fluentassertions/fluentassertions.analyzers</RepositoryUrl>
@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="docs" />
-    <None Include="..\..\assets\fluent_assertions.svg.png" Pack="true" PackagePath="" />
+    <None Include="..\..\assets\FluentAssertions.png" Pack="true" PackagePath="" />
     <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>

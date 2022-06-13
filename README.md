@@ -1,6 +1,6 @@
 # [FluentAssertions](http://fluentassertions.com/) Analyzers
 
-<img src="./assets/fluent_assertions.svg.png" width="400">
+<img src="./assets/FluentAssertions.png" width="400">
 
 ***"With Fluent Assertions, the assertions look beautiful, natural and most importantly, extremely readable"*** -[_Girish_](https://twitter.com/girishracharya)
 
