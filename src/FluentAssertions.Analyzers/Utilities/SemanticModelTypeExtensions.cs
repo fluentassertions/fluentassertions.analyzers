@@ -11,11 +11,23 @@ namespace FluentAssertions.Analyzers.Utilities
         public static INamedTypeSymbol GetActionType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, typeof(Action));
 
+        public static INamedTypeSymbol GetIntType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, SpecialType.System_Int32);
+        
         public static INamedTypeSymbol GetFloatType(this SemanticModel semanticModel)
-            => GetTypeFrom(semanticModel, typeof(float));
+            => GetTypeFrom(semanticModel, SpecialType.System_Single);
 
         public static INamedTypeSymbol GetDoubleType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, SpecialType.System_Double);
+        
+        public static INamedTypeSymbol GetDecimalType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, SpecialType.System_Decimal);
+
+        public static INamedTypeSymbol GetDateTimeType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, SpecialType.System_DateTime);
+
+        public static INamedTypeSymbol GetTimeSpanType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, typeof(TimeSpan));
 
         public static INamedTypeSymbol GetStringType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, SpecialType.System_String);
