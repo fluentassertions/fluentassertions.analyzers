@@ -47,6 +47,7 @@ namespace FluentAssertions.Analyzers
         public static MemberValidator ArgumentIsLiteral<T>(string name, T value) => new MemberValidator(name, (arguments, semanticModel) => ArgumentIsLiteralPredicate(arguments, value));
         public static MemberValidator ArgumentIsIdentifierOrLiteral(string name) => new MemberValidator(name, ArgumentIsIdentifierOrLiteralPredicate);
         public static MemberValidator HasArguments(string name) => new MemberValidator(name, (arguments, semanticModel) => arguments.Any());
+        public static MemberValidator HasArguments(string name, int count) => new MemberValidator(name, (arguments, semanticModel) => arguments.Count == count);
         public static MemberValidator HasNoArguments(string name) => new MemberValidator(name, (arguments, semanticModel) => !arguments.Any());
         public static MemberValidator ArgumentsMatch(string name, params ArgumentPredicate[] predicates) => new MemberValidator(name, (arguments, semanticModel) => ArgumentsMatchPredicate(arguments, predicates, semanticModel));
 
