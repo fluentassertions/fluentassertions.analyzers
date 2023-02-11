@@ -112,7 +112,7 @@ namespace FluentAssertions.Analyzers
         {
             return (argument, semanticModel) =>
             {
-                return semanticModel.GetTypeInfo(argument.Expression).Type.Equals(typeSelector(semanticModel));
+                return semanticModel.GetTypeInfo(argument.Expression).Type.Equals(typeSelector(semanticModel), SymbolEqualityComparer.Default);
             };
         }
     }
