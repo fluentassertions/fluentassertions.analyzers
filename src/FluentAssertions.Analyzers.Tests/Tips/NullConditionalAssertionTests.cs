@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -14,23 +15,28 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("(actual.MyProperty)?.Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("(actual?.MyProperty)?.Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("actual?.MyProperty.Should().Be(actual?.MyProperty{0});")]
+        [AssertionDiagnostic("actual.MyList?.Where(obj => obj?.ToString() == null).Count().Should().Be(0{0});")]
         [Implemented]
         public void NullConditionalMayNotExecuteTest(string assertion) => VerifyCSharpDiagnostic(assertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("(actual?.MyProperty).Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("actual.MyProperty.Should().Be(actual?.MyProperty{0});")]
-        [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() is {}).Should().Be(\"test\"{0});")]
+        [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() == null).Count().Should().Be(0{0});")]
         [Implemented]
         public void NullConditionalWillStillExecuteTest(string assertion) => VerifyCSharpDiagnosticPass(assertion);
 
         public void Test()
         {
+            List<object> list = new List<object>();
+            list.Where(obj => obj?.ToString() is { }).Should();
         }
 
         private static string Code(string assertion) =>
             new StringBuilder()
                 .AppendLine("using System;")
+                .AppendLine("using System.Collections.Generic;")
+                .AppendLine("using System.Linq;")
                 .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
                 .AppendLine("namespace TestNamespace")
                 .AppendLine("{")
@@ -66,7 +72,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 Severity = Microsoft.CodeAnalysis.DiagnosticSeverity.Warning,
                 Locations = new DiagnosticResultLocation[]
                 {
-                    new DiagnosticResultLocation("Test0.cs", 9, 13)
+                    new DiagnosticResultLocation("Test0.cs", 11, 13)
                 }
             });
     }

@@ -80,6 +80,12 @@ namespace FluentAssertions.Analyzers
                 _foundConditionalAccessInCurrentScope = false;
             }
 
+            public override void VisitArgumentList(ArgumentListSyntax node)
+            {
+                base.DefaultVisit(node);
+                _foundConditionalAccessInCurrentScope = false;
+            }
+
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
                 if (_foundConditionalAccessInCurrentScope && node.Identifier.ValueText == "Should")
