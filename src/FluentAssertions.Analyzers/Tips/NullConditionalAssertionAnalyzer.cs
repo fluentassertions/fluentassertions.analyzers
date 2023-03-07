@@ -62,25 +62,29 @@ namespace FluentAssertions.Analyzers
 
         private class ConditionalAccessExpressionVisitor : CSharpSyntaxWalker
         {
-            private bool _foundConditionalAccess;
-            private bool _foundShouldMethod;
+            private bool _foundConditionalAccessInCurrentScope;
+            private bool _foundShouldMethodAfterConditionalAccess;
 
-            public bool CodeSmells => _foundShouldMethod && _foundConditionalAccess;
-            public Location ConditionalAccess { get; private set; }
+            public bool CodeSmells => _foundShouldMethodAfterConditionalAccess;
 
             public override void VisitConditionalAccessExpression(ConditionalAccessExpressionSyntax node)
             {
-                if (!_foundConditionalAccess)
-                {
-                    _foundConditionalAccess = true;
-                }
-                base.VisitConditionalAccessExpression(node);
+                Visit(node.Expression);
+                _foundConditionalAccessInCurrentScope = true;
+                Visit(node.WhenNotNull);
             }
+
+            public override void VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
+            {
+                base.DefaultVisit(node);
+                _foundConditionalAccessInCurrentScope = false;
+            }
+
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
-                if(_foundConditionalAccess && node.Identifier.ValueText == "Should")
+                if (_foundConditionalAccessInCurrentScope && node.Identifier.ValueText == "Should")
                 {
-                    _foundShouldMethod = true;
+                    _foundShouldMethodAfterConditionalAccess = true;
                 }
             }
         }

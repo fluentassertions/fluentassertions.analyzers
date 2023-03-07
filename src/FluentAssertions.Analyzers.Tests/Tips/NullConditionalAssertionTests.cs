@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 
-namespace FluentAssertions.Analyzers.Tests
+namespace FluentAssertions.Analyzers.Tests.Tips
 {
     [TestClass]
     public class NullConditionalAssertionTests
@@ -10,12 +10,20 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual?.Should().Be(expected{0});")]
         [AssertionDiagnostic("actual?.MyProperty.Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("actual.MyProperty?.Should().Be(\"test\"{0});")]
+        [AssertionDiagnostic("(actual.MyProperty)?.Should().Be(\"test\"{0});")]
+        [AssertionDiagnostic("(actual?.MyProperty)?.Should().Be(\"test\"{0});")]
+        [AssertionDiagnostic("((actual?.MyProperty)?.Should().Be(\"test\"{0})).And.NotBe(\"alternative\");")]
         [Implemented]
-        public void TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion);
+        public void NullConditionalMayNotExecuteTest(string assertion) => VerifyCSharpDiagnostic(assertion);
 
-        private void VerifyCSharpDiagnostic(string assertion)
-        {
-            var code = new StringBuilder()
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("(actual?.MyProperty).Should().Be(\"test\"{0});")]
+        [AssertionDiagnostic("((actual?.MyProperty).Should().Be(\"test\"{0})).And.NotBe(\"alternative\");")]
+        [Implemented]
+        public void NullConditionalWillStillExecuteTest(string assertion) => VerifyCSharpDiagnosticPass(assertion);
+
+        private static string Code(string assertion) =>
+            new StringBuilder()
                 .AppendLine("using System;")
                 .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
                 .AppendLine("namespace TestNamespace")
@@ -40,7 +48,11 @@ namespace FluentAssertions.Analyzers.Tests
                 .AppendLine("}")
                 .ToString();
 
-            DiagnosticVerifier.VerifyCSharpDiagnostic<NullConditionalAssertionAnalyzer>(code, new DiagnosticResult
+        private static void VerifyCSharpDiagnosticPass(string assertion)
+            => DiagnosticVerifier.VerifyCSharpDiagnostic<NullConditionalAssertionAnalyzer>(Code(assertion));
+
+        private static void VerifyCSharpDiagnostic(string assertion)
+            => DiagnosticVerifier.VerifyCSharpDiagnostic<NullConditionalAssertionAnalyzer>(Code(assertion), new DiagnosticResult
             {
                 Id = NullConditionalAssertionAnalyzer.DiagnosticId,
                 Message = NullConditionalAssertionAnalyzer.Message,
@@ -50,6 +62,5 @@ namespace FluentAssertions.Analyzers.Tests
                     new DiagnosticResultLocation("Test0.cs", 9, 13)
                 }
             });
-        }
     }
 }
