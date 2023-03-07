@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Text;
 
 namespace FluentAssertions.Analyzers.Tests.Tips
@@ -12,15 +13,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("actual.MyProperty?.Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("(actual.MyProperty)?.Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("(actual?.MyProperty)?.Should().Be(\"test\"{0});")]
-        [AssertionDiagnostic("((actual?.MyProperty)?.Should().Be(\"test\"{0})).And.NotBe(\"alternative\");")]
+        [AssertionDiagnostic("actual?.MyProperty.Should().Be(actual?.MyProperty{0});")]
         [Implemented]
         public void NullConditionalMayNotExecuteTest(string assertion) => VerifyCSharpDiagnostic(assertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("(actual?.MyProperty).Should().Be(\"test\"{0});")]
-        [AssertionDiagnostic("((actual?.MyProperty).Should().Be(\"test\"{0})).And.NotBe(\"alternative\");")]
+        [AssertionDiagnostic("actual.MyProperty.Should().Be(actual?.MyProperty{0});")]
+        [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() is {}).Should().Be(\"test\"{0});")]
         [Implemented]
         public void NullConditionalWillStillExecuteTest(string assertion) => VerifyCSharpDiagnosticPass(assertion);
+
+        public void Test()
+        {
+        }
 
         private static string Code(string assertion) =>
             new StringBuilder()
@@ -38,6 +44,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 .AppendLine("    class MyClass")
                 .AppendLine("    {")
                 .AppendLine("        public string MyProperty { get; set; }")
+                .AppendLine("        public List<object> MyList { get; set; }")
                 .AppendLine("    }")
                 .AppendLine("    class Program")
                 .AppendLine("    {")
