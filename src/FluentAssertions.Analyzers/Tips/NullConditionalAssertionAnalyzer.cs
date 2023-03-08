@@ -78,13 +78,6 @@ namespace FluentAssertions.Analyzers
                 _foundConditionalAccess.Pop();
             }
 
-            public override void VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
-            {
-                _foundConditionalAccess.Push(false);
-                base.DefaultVisit(node);
-                _foundConditionalAccess.Pop();
-            }
-
             public override void VisitArgumentList(ArgumentListSyntax node)
             {
                 _foundConditionalAccess.Push(false);
