@@ -1,6 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace FluentAssertions.Analyzers.Tests.Tips
@@ -25,12 +23,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() == null).Count().Should().Be(0{0});")]
         [Implemented]
         public void NullConditionalWillStillExecuteTest(string assertion) => VerifyCSharpDiagnosticPass(assertion);
-
-        public void Test()
-        {
-            List<object> list = new List<object>();
-            list.Where(obj => obj?.ToString() is { }).Should();
-        }
 
         private static string Code(string assertion) =>
             new StringBuilder()
