@@ -64,8 +64,8 @@ namespace FluentAssertions.Analyzers
         private class ConditionalAccessExpressionVisitor : CSharpSyntaxWalker
         {
             private readonly Stack<bool> _foundConditionalAccess = new();
-
             private bool _foundShouldMethodAfterConditionalAccess;
+
             private bool FoundConditionalAccessInCurrentScope => _foundConditionalAccess.Any() && _foundConditionalAccess.Peek();
 
             public bool CodeSmells => _foundShouldMethodAfterConditionalAccess;
