@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 using System.Diagnostics;
 
 namespace FluentAssertions.Analyzers
@@ -103,17 +102,6 @@ namespace FluentAssertions.Analyzers
             }
 
             return true;
-        }
-    }
-
-    public class ArgumentValidator
-    {
-        public static ArgumentPredicate IsType(Func<SemanticModel, INamedTypeSymbol> typeSelector)
-        {
-            return (argument, semanticModel) =>
-            {
-                return semanticModel.GetTypeInfo(argument.Expression).Type.Equals(typeSelector(semanticModel), SymbolEqualityComparer.Default);
-            };
         }
     }
 }

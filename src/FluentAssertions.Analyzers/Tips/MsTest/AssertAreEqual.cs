@@ -27,6 +27,7 @@ namespace FluentAssertions.Analyzers
                 yield return new AssertFloatAreEqualWithDeltaSyntaxVisitor();
                 yield return new AssertDoubleAreEqualWithDeltaSyntaxVisitor();
                 yield return new AssertStringAreEqualSyntaxVisitor();
+                yield return new AssertObjectAreEqualNullSyntaxVisitor();
                 yield return new AssertObjectAreEqualSyntaxVisitor();
             }
         }
@@ -65,6 +66,16 @@ namespace FluentAssertions.Analyzers
                     ArgumentValidator.IsType(TypeSelector.GetStringType),
                     ArgumentValidator.IsType(TypeSelector.GetStringType),
                     ArgumentValidator.IsType(TypeSelector.GetBooleanType)))
+            {
+            }
+        }
+
+        public class AssertObjectAreEqualNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public AssertObjectAreEqualNullSyntaxVisitor() : base(
+                MemberValidator.ArgumentsMatch("AreEqual",
+                    ArgumentValidator.IsIdentifier(),
+                    ArgumentValidator.IsNull()))
             {
             }
         }
