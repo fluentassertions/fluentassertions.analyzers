@@ -429,6 +429,33 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertDoubleAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreNotEqualCodeFix, AssertAreNotEqualAnalyzer>("double actual, double expected, double delta", oldAssertion, newAssertion);
 
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.AreNotEqual(expected, actual{0});")]
+        [Implemented]
+        public void AssertOptionalIntAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreNotEqualAnalyzer>("int? actual, int? expected", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreNotEqual(expected, actual{0});",
+            newAssertion: "actual.Should().NotBe(expected{0});")]
+        [Implemented]
+        public void AssertOptionalIntAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertAreNotEqualCodeFix, AssertAreNotEqualAnalyzer>("int? actual, int? expected", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.AreNotEqual(actual, null{0});")]
+        [Implemented]
+        public void AssertOptionalIntAndNullAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreNotEqualAnalyzer>("int? actual", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreNotEqual(actual, null{0});",
+            newAssertion: "actual.Should().NotBeNull({0});")]
+        [Implemented]
+        public void AssertOptionalIntAndNullAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertAreNotEqualCodeFix, AssertAreNotEqualAnalyzer>("int? actual", oldAssertion, newAssertion);
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, delta{0});")]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, 0.6f{0});")]
