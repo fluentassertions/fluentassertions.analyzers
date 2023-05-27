@@ -107,6 +107,9 @@ namespace FluentAssertions.Analyzers
                 case nameof(AssertAreEqualAnalyzer.AssertStringAreEqualSyntaxVisitor):
                     var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
                     return GetNewExpressionForAreNotEqualOrAreEqualStrings(expression, semanticModel, "AreEqual", "Be", "BeEquivalentTo");
+                case nameof(AssertAreEqualAnalyzer.AssertObjectAreEqualNullSyntaxVisitor):
+                    expression = RenameMethodAndReplaceWithSubjectShould(expression, "AreEqual", "BeNull");
+                    return GetNewExpression(expression, NodeReplacement.RemoveFirstArgument("BeNull"));
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }
