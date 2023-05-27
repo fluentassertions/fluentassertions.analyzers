@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -62,25 +63,33 @@ namespace FluentAssertions.Analyzers
 
         private class ConditionalAccessExpressionVisitor : CSharpSyntaxWalker
         {
-            private bool _foundConditionalAccess;
-            private bool _foundShouldMethod;
+            private readonly Stack<bool> _foundConditionalAccess = new();
+            private bool _foundShouldMethodAfterConditionalAccessInSameScope;
 
-            public bool CodeSmells => _foundShouldMethod && _foundConditionalAccess;
-            public Location ConditionalAccess { get; private set; }
+            private bool FoundConditionalAccessInCurrentScope => _foundConditionalAccess.Any() && _foundConditionalAccess.Peek();
+
+            public bool CodeSmells => _foundShouldMethodAfterConditionalAccessInSameScope;
 
             public override void VisitConditionalAccessExpression(ConditionalAccessExpressionSyntax node)
             {
-                if (!_foundConditionalAccess)
-                {
-                    _foundConditionalAccess = true;
-                }
-                base.VisitConditionalAccessExpression(node);
+                Visit(node.Expression);
+                _foundConditionalAccess.Push(true);
+                Visit(node.WhenNotNull);
+                _foundConditionalAccess.Pop();
             }
+
+            public override void VisitArgumentList(ArgumentListSyntax node)
+            {
+                _foundConditionalAccess.Push(false);
+                base.DefaultVisit(node);
+                _foundConditionalAccess.Pop();
+            }
+
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
-                if(_foundConditionalAccess && node.Identifier.ValueText == "Should")
+                if (FoundConditionalAccessInCurrentScope && node.Identifier.ValueText == "Should")
                 {
-                    _foundShouldMethod = true;
+                    _foundShouldMethodAfterConditionalAccessInSameScope = true;
                 }
             }
         }

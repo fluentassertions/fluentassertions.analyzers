@@ -48,7 +48,7 @@ namespace FluentAssertions.Analyzers
                 ignoreCase = possibleIgnoreCaseArg.Token.IsKind(SyntaxKind.TrueKeyword);
             }
 
-            if (newArguments.Count >= 2 && semanticModel.GetCultureInfoType().Equals(semanticModel.GetTypeInfo(rename.Arguments[3].Expression).Type))
+            if (newArguments.Count >= 2 && semanticModel.GetCultureInfoType().Equals(semanticModel.GetTypeInfo(rename.Arguments[3].Expression).Type, SymbolEqualityComparer.Default))
             {
                 newArguments = newArguments.Remove(newArguments[1]);
             }

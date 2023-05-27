@@ -27,6 +27,7 @@ namespace FluentAssertions.Analyzers
                 yield return new AssertFloatAreEqualWithDeltaSyntaxVisitor();
                 yield return new AssertDoubleAreEqualWithDeltaSyntaxVisitor();
                 yield return new AssertStringAreEqualSyntaxVisitor();
+                yield return new AssertObjectAreEqualNullSyntaxVisitor();
                 yield return new AssertObjectAreEqualSyntaxVisitor();
             }
         }
@@ -69,6 +70,16 @@ namespace FluentAssertions.Analyzers
             }
         }
 
+        public class AssertObjectAreEqualNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+        {
+            public AssertObjectAreEqualNullSyntaxVisitor() : base(
+                MemberValidator.ArgumentsMatch("AreEqual",
+                    ArgumentValidator.IsIdentifier(),
+                    ArgumentValidator.IsNull()))
+            {
+            }
+        }
+
         // public static void AreEqual<T>(T expected, T actual)
         // public static void AreEqual(object expected, object actual)
         public class AssertObjectAreEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
@@ -96,6 +107,9 @@ namespace FluentAssertions.Analyzers
                 case nameof(AssertAreEqualAnalyzer.AssertStringAreEqualSyntaxVisitor):
                     var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
                     return GetNewExpressionForAreNotEqualOrAreEqualStrings(expression, semanticModel, "AreEqual", "Be", "BeEquivalentTo");
+                case nameof(AssertAreEqualAnalyzer.AssertObjectAreEqualNullSyntaxVisitor):
+                    expression = RenameMethodAndReplaceWithSubjectShould(expression, "AreEqual", "BeNull");
+                    return GetNewExpression(expression, NodeReplacement.RemoveFirstArgument("BeNull"));
                 default:
                     throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
             }

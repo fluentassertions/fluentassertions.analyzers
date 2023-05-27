@@ -15,8 +15,8 @@ namespace FluentAssertions.Analyzers.Utilities
         public static bool IsTypeOrConstructedFromTypeOrImplementsType(this INamedTypeSymbol type, INamedTypeSymbol other)
         {
             var abstractType = type.OriginalDefinition;
-            return abstractType.Equals(other)
-                || abstractType.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(other));
+            return abstractType.Equals(other, SymbolEqualityComparer.Default)
+                || abstractType.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(other, SymbolEqualityComparer.Default));
         }
     }
 }
