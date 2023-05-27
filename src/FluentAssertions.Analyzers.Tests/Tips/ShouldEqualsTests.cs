@@ -54,6 +54,23 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [TestMethod]
         [Implemented]
+        public void ShouldEquals_ActualIsMethodInvoaction_TestAnalyzer()
+            => VerifyCSharpDiagnosticExpressionBody("object ResultSupplier() { return null; } \n" 
+            + "ResultSupplier().Should().Equals(expected);", 11, 0);
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_ActualIsMethodInvoaction_ShouldBe_ObjectType_TestCodeFix()
+        {
+            const string methodInvocation = "object ResultSupplier() { return null; } \n";
+            var oldSource = GenerateCode.ObjectStatement(methodInvocation + "ResultSupplier().Should().Equals(expected);");
+            var newSource = GenerateCode.ObjectStatement(methodInvocation + "ResultSupplier().Should().Be(expected);");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented]
         public void ShouldEquals_ShouldBe_NumberType_TestCodeFix()
         {
             var oldSource = GenerateCode.DoubleAssertion("actual.Should().Equals(expected);");
