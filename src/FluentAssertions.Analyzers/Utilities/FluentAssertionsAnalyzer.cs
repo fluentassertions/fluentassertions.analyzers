@@ -23,35 +23,26 @@ namespace FluentAssertions.Analyzers
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCodeBlockAction(AnalyzeCodeBlock);
+            context.RegisterSyntaxNodeAction(AnalyzeExpressionStatementSyntax, SyntaxKind.ExpressionStatement, SyntaxKind.ArrowExpressionClause);
         }
 
-        private void AnalyzeCodeBlock(CodeBlockAnalysisContext context)
+        private void AnalyzeExpressionStatementSyntax(SyntaxNodeAnalysisContext context)
         {
-            var method = context.CodeBlock as MethodDeclarationSyntax;
-            if (method == null) return;
-
-            if (!ShouldAnalyzeMethod(method)) return;
-
-            if (method.Body != null)
+            ExpressionSyntax expression = context.Node.Kind() switch
             {
-                foreach (var statement in method.Body.Statements.OfType<ExpressionStatementSyntax>())
-                {
-                    var diagnostic = AnalyzeExpressionSafely(statement.Expression, context.SemanticModel);
-                    if (diagnostic != null)
-                    {
-                        context.ReportDiagnostic(diagnostic);
-                    }
-                }
+                SyntaxKind.ExpressionStatement => ((ExpressionStatementSyntax)context.Node).Expression,
+                SyntaxKind.ArrowExpressionClause => ((ArrowExpressionClauseSyntax)context.Node).Expression,
+                _ => null
+            };
+            if (expression == null)
+            {
                 return;
             }
-            if (method.ExpressionBody != null)
+
+            var diagnostic = AnalyzeExpressionSafely(expression, context.SemanticModel);
+            if (diagnostic != null)
             {
-                var diagnostic = AnalyzeExpressionSafely(method.ExpressionBody.Expression, context.SemanticModel);
-                if (diagnostic != null)
-                {
-                    context.ReportDiagnostic(diagnostic);
-                }
+                context.ReportDiagnostic(diagnostic);
             }
         }
 
