@@ -24,6 +24,36 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [TestMethod]
         [Implemented]
+        public void ShouldEquals_NestedInsideIfBlock_TestAnalyzer()
+            => VerifyCSharpDiagnosticExpressionBody("if(true) { actual.Should().Equals(expected); }", 10, 24);
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_NestedInsideIfBlock_ShouldBe_ObjectType_TestCodeFix()
+        {
+            var oldSource = GenerateCode.ObjectStatement("if(true) { actual.Should().Equals(expected); }");
+            var newSource = GenerateCode.ObjectStatement("if(true) { actual.Should().Be(expected); }");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_NestedInsideWhileBlock_TestAnalyzer()
+            => VerifyCSharpDiagnosticExpressionBody("while(true) { actual.Should().Equals(expected); }", 10, 27);
+
+        [TestMethod]
+        [Implemented]
+        public void ShouldEquals_NestedInsideWhileBlock_ShouldBe_ObjectType_TestCodeFix()
+        {
+            var oldSource = GenerateCode.ObjectStatement("while(true) { actual.Should().Equals(expected); }");
+            var newSource = GenerateCode.ObjectStatement("while(true) { actual.Should().Be(expected); }");
+
+            DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented]
         public void ShouldEquals_ShouldBe_NumberType_TestCodeFix()
         {
             var oldSource = GenerateCode.DoubleAssertion("actual.Should().Equals(expected);");
@@ -52,7 +82,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             DiagnosticVerifier.VerifyCSharpFix<ShouldEqualsCodeFix, ShouldEqualsAnalyzer>(oldSource, newSource);
         }
 
-        private void VerifyCSharpDiagnosticExpressionBody(string sourceAssertion)
+        private void VerifyCSharpDiagnosticExpressionBody(string sourceAssertion) => VerifyCSharpDiagnosticExpressionBody(sourceAssertion, 10, 13);
+        private void VerifyCSharpDiagnosticExpressionBody(string sourceAssertion, int line, int column)
         {
             var source = GenerateCode.ObjectStatement(sourceAssertion);
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
@@ -61,7 +92,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 Message = ShouldEqualsAnalyzer.Message,
                 Locations = new DiagnosticResultLocation[]
                 {
-                    new DiagnosticResultLocation("Test0.cs", 10,13)
+                    new DiagnosticResultLocation("Test0.cs", line, column)
                 },
                 Severity = DiagnosticSeverity.Info
             });
