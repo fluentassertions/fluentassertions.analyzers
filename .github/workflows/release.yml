@@ -1,0 +1,38 @@
+name: Publish NuGet package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build & Pack NuGet package
+        shell: pwsh
+        run: |
+          $tag = $env:GITHUB_REF.Substring('refs/tags/v'.Length)
+          dotnet pack src/FluentAssertions.Analyzers/ --output out --configuration Release --include-symbols -p:Version=$tag
+
+      - name: Publish NuGet package
+        shell: pwsh
+        run: |
+          $symbols = Get-ChildItem out/*.symbols.nupkg | ForEach-Object FullName;
+          foreach ($symbol in $symbols) {
+            Write-Host "Pushing symbols $symbol";
+            $nupkg = $symbol.Replace(".symbols.nupkg",".nupkg");
+            Write-Host "Pushing nupkg $nupkg";
+            dotnet nuget push $nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json;
+          }
