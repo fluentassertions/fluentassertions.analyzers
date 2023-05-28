@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions.Analyzers.Xunit;
+using FluentAssertions.Analyzers.TestUtils;
 
 namespace FluentAssertions.Analyzers.Tests.Tips
 {

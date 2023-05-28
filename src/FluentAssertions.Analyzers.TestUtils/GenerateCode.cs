@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace FluentAssertions.Analyzers.Tests
+namespace FluentAssertions.Analyzers.TestUtils
 {
     public static class GenerateCode
     {

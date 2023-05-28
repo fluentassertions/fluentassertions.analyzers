@@ -1,4 +1,5 @@
-﻿using FluentAssertions.Analyzers.Tips;
+﻿using FluentAssertions.Analyzers.TestUtils;
+using FluentAssertions.Analyzers.Tips;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions.Analyzers.TestUtils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FluentAssertions.Analyzers.Tests
 {
