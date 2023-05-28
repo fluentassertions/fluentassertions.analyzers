@@ -5,6 +5,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using FluentAssertions.Analyzers.TestUtils;
 using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 
 namespace FluentAssertions.Analyzers.BenchmarkTests
 {
@@ -46,7 +48,7 @@ namespace FluentAssertions.Analyzers.BenchmarkTests
                 ["CS1702"] = ReportDiagnostic.Suppress,
                 ["CS1705"] = ReportDiagnostic.Suppress,
                 ["CS8019"] = ReportDiagnostic.Suppress // TODO: Unnecessary using directive
-            })).WithAnalyzers(CodeAnalyzersUtils.GetAllAnalyzers.ToImmutableArray());
+            })).WithAnalyzers(CodeAnalyzersUtils.GetAllAnalyzers().ToImmutableArray());
         }
     }
 }
