@@ -14,5 +14,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
+      - run: dotnet build
       - run: dotnet test src --configuration Release --filter 'TestCategory=Completed'
       - run: dotnet pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.csproj
