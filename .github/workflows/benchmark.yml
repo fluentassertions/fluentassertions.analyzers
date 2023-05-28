@@ -1,6 +1,10 @@
 name: Benchmark tests
 on: [pull_request]
 
+permissions:
+    contents: write
+    deployments: write
+
 jobs:
   benchmark:
     name: Performance regression check
@@ -11,9 +15,8 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.x'
-      - run: dotnet build src/FluentAssertions.Analyzers.BenchmarkTests -c Release
       - name: Run benchmark
-        run: src/FluentAssertions.Analyzers.BenchmarkTests/bin/Release/net6.0/FluentAssertions.Analyzers.BenchmarkTests.exe
+        run: cd src/FluentAssertions.Analyzers.BenchmarkTests && dotnet run -c Release --exporters json --filter '*'
       # Download previous benchmark result from cache (if exists)
       - name: Download previous benchmark data
         uses: actions/cache@v1
