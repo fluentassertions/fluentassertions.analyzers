@@ -1,0 +1,34 @@
+name: Benchmark tests
+on: [pull_request]
+
+jobs:
+  benchmark:
+    name: Performance regression check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+      - run: dotnet build src/FluentAssertions.Analyzers.BenchmarkTests -c Release
+      - name: Run benchmark
+        run: src/FluentAssertions.Analyzers.BenchmarkTests/bin/Release/net6.0/FluentAssertions.Analyzers.BenchmarkTests.exe
+      # Download previous benchmark result from cache (if exists)
+      - name: Download previous benchmark data
+        uses: actions/cache@v1
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+      # Run `github-action-benchmark` action
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          # What benchmark tool the output.txt came from
+          tool: 'gobenchmarkdotnet'
+          # Where the output from the benchmark tool is stored
+          output-file-path: output.txt
+          # Where the previous data file is stored
+          external-data-json-path: ./cache/benchmark-data.json
+          # Workflow will fail when an alert happens
+          fail-on-alert: true
