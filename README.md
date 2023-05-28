@@ -6,7 +6,7 @@
 
 * Latest stable nuget [![NuGet Badge](https://buildstats.info/nuget/fluentassertions.analyzers)](https://www.nuget.org/packages/fluentassertions.analyzers/)
 * Latest nuget [![NuGet Badge](https://buildstats.info/nuget/fluentassertions.analyzers?includePreReleases=true)](https://www.nuget.org/packages/fluentassertions.analyzers/)
-* The build status is [![CI](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml/badge.svg)](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml)
+* The build status is [![CI](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml)
 
 A collection of Analyzers based on the best practices [tips](https://fluentassertions.com/tips/).
 
