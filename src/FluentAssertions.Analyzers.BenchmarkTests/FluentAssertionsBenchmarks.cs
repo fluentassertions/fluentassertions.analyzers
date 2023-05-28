@@ -22,8 +22,7 @@ namespace FluentAssertions.Analyzers.BenchmarkTests
         [GlobalSetup]
         public async Task GlobalSetup()
         {
-            new CsProjectGenerator();
-            // MinimalCompiliation = await CreateCompilationFromAsync(GenerateCode.ObjectStatement("actual.Should().Equals(expected);"));
+            MinimalCompiliation = await CreateCompilationFromAsync(GenerateCode.ObjectStatement("actual.Should().Equals(expected);"));
         }
 
         [Benchmark]
