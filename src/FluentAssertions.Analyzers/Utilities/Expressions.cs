@@ -26,6 +26,14 @@ namespace FluentAssertions.Analyzers
         
         public static InvocationExpressionSyntax SubjectShould(ExpressionSyntax subject)
         {
+            if (subject.IsKind(SyntaxKind.CastExpression))
+            {
+                return SF.InvocationExpression(
+                    SF.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SF.ParenthesizedExpression(subject), SF.IdentifierName("Should")),
+                    SF.ArgumentList()
+                );    
+            }
+
             return SF.InvocationExpression(
                 SF.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, subject, SF.IdentifierName("Should")),
                 SF.ArgumentList()
