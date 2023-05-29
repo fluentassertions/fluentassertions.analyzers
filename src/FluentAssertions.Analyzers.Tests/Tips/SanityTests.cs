@@ -258,5 +258,49 @@ namespace TestNamespace
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
         }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/172")]
+        public void AssertAreEqualDoesNotCompile()
+        {
+            const string oldSource = @"
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestProject
+{
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    public class Program
+    {
+        public static void Main()
+        {
+            double x = 5;
+
+            Assert.AreEqual(1, (int)x);
+        }
+    }
+}";
+            const string newSource = @"
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestProject
+{
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    public class Program
+    {
+        public static void Main()
+        {
+            double x = 5;
+
+            ((int)x).Should().Be(1);
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>(oldSource, newSource);
+        }
     }
 }
