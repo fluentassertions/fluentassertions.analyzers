@@ -314,8 +314,8 @@ namespace TestProject
         {
             const string globalUsings = @"
 global using Xunit;
-using FluentAssertions;
-using FluentAssertions.Extensions;";
+global using FluentAssertions;
+global using FluentAssertions.Extensions;";
             const string source = @"
 public class TestClass
 {
@@ -323,6 +323,11 @@ public class TestClass
     {
         var x = false;
         Assert.True(x);
+        TestClass.True(x);
+    }
+
+    public static void True(bool input)
+    {
     }
 }";
 
