@@ -5,8 +5,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FluentAssertions.Analyzers
 {
@@ -103,6 +101,10 @@ namespace FluentAssertions.Analyzers
 
     public abstract class TestingLibraryAnalyzerBase : FluentAssertionsAnalyzer
     {
-        protected abstract string TestingLibraryNamespace { get; }
+        protected abstract string TestingLibraryModule { get; }
+        protected abstract string TestingLibraryAssertionType { get; }
+
+        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
+            => type.Name == TestingLibraryAssertionType && type.ContainingModule.Name == TestingLibraryModule + ".dll";
     }
 }

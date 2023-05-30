@@ -6,8 +6,8 @@ namespace FluentAssertions.Analyzers.Xunit
 {
     public abstract class XunitAnalyzer : TestingLibraryAnalyzerBase
     {
-        private static readonly string XunitNamespace = "Xunit";
-        protected override string TestingLibraryNamespace => XunitNamespace;
+        protected override string TestingLibraryModule => "xunit.assert";
+        protected override string TestingLibraryAssertionType => "Assert";
 
         protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "Assert";
     }
