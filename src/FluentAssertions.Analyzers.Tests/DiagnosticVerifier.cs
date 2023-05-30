@@ -450,6 +450,13 @@ namespace FluentAssertions.Analyzers.Tests
             VerifyDiagnosticResults(diagnostics, analyzers, expected);
         }
 
+        public static void VerifyCSharpDiagnosticUsingAllAnalyzers(string[] sources, params DiagnosticResult[] expected)
+        {
+            var analyzers = CreateAllAnalyzers();
+            var diagnostics = GetSortedDiagnostics(sources, LanguageNames.CSharp, analyzers);
+            VerifyDiagnosticResults(diagnostics, analyzers, expected);
+        }
+
         /// <summary>
         /// General method that gets a collection of actual diagnostics found in the source after the analyzer is run,
         /// then verifies each of them.

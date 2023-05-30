@@ -7,23 +7,22 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class MsTestAnalyzer : TestingLibraryAnalyzerBase
     {
-        private static readonly string MsTestNamespace = "Microsoft.VisualStudio.TestTools.UnitTesting";
-        protected override string TestingLibraryNamespace => MsTestNamespace;
+        protected override string TestingLibraryModule => "Microsoft.VisualStudio.TestPlatform.TestFramework";
     }
 
     public abstract class MsTestAssertAnalyzer : MsTestAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "Assert";
+        override protected string TestingLibraryAssertionType => "Assert";
     }
 
     public abstract class MsTestStringAssertAnalyzer : MsTestAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "StringAssert";
+        override protected string TestingLibraryAssertionType => "StringAssert";
     }
 
     public abstract class MsTestCollectionAssertAnalyzer : MsTestAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "CollectionAssert";
+        override protected string TestingLibraryAssertionType => "CollectionAssert";
     }
 
     public abstract class MsTestAssertCodeFixProvider : TestingLibraryCodeFixBase

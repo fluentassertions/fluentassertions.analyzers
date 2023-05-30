@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions.Analyzers.Xunit;
 
+using XunitAssert = Xunit.Assert;
+
 namespace FluentAssertions.Analyzers.Tests.Tips
 {
     [TestClass]

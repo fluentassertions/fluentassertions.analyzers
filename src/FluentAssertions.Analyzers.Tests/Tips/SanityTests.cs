@@ -1,4 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions.Analyzers.Xunit;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -301,6 +306,38 @@ namespace TestProject
 }";
 
             DiagnosticVerifier.VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/163")]
+        public void GlobalUsingsWithAssert()
+        {
+            const string globalUsings = @"
+global using Xunit;
+global using FluentAssertions;
+global using FluentAssertions.Extensions;";
+            const string source = @"
+public class TestClass
+{
+    public static void Main()
+    {
+        var x = false;
+        Assert.True(x);
+        TestClass.True(x);
+    }
+
+    public static void True(bool input)
+    {
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source, globalUsings }, new DiagnosticResult()
+            {
+                Id = AssertTrueAnalyzer.DiagnosticId,
+                Message = AssertTrueAnalyzer.Message,
+                Severity = DiagnosticSeverity.Info,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
+            });
         }
     }
 }
