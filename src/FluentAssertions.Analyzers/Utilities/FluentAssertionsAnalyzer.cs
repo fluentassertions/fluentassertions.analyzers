@@ -46,8 +46,6 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected virtual bool ShouldAnalyzeMethod(MethodDeclarationSyntax method) => true;
-
         protected virtual bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
@@ -77,7 +75,7 @@ namespace FluentAssertions.Analyzers
         {
             var properties = visitor.ToDiagnosticProperties()
                 .Add(Constants.DiagnosticProperties.Title, Title);
-            var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, Rule.MessageFormat, Rule.Category, Rule.DefaultSeverity, true, 
+            var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, Rule.MessageFormat, Rule.Category, Rule.DefaultSeverity, true,
                 helpLinkUri: properties.GetValueOrDefault(Constants.DiagnosticProperties.HelpLink));
             return Diagnostic.Create(
                 descriptor: newRule,
@@ -106,43 +104,5 @@ namespace FluentAssertions.Analyzers
     public abstract class TestingLibraryAnalyzerBase : FluentAssertionsAnalyzer
     {
         protected abstract string TestingLibraryNamespace { get; }
-
-        protected override bool ShouldAnalyzeMethod(MethodDeclarationSyntax method)
-        {
-            var compilation = method.FirstAncestorOrSelf<CompilationUnitSyntax>();
-
-            if (compilation == null) return false;
-
-            foreach (var @using in compilation.Usings)
-            {
-                if (@using.Name.NormalizeWhitespace().ToString().Equals(TestingLibraryNamespace)) return true;
-            }
-
-            var parentNamespace = method.FirstAncestorOrSelf<NamespaceDeclarationSyntax>();
-            if (parentNamespace != null)
-            {
-                var namespaces = new List<NamespaceDeclarationSyntax>();
-                while(parentNamespace != null)
-                {
-                    namespaces.Add(parentNamespace);
-                    parentNamespace = parentNamespace.Parent as NamespaceDeclarationSyntax;
-                }
-                namespaces.Reverse();
-
-                for (int i = 0; i < namespaces.Count; i++)
-                {
-                    var baseNamespace = string.Join(".", namespaces.Take(i+1).Select(ns => ns.Name));
-                    foreach (var @using in namespaces[i].Usings)
-                    {
-                        if (@using.Name.NormalizeWhitespace().ToString().Equals(TestingLibraryNamespace)) return true;
-
-                        var fullUsing = SF.ParseName($"{baseNamespace}.{@using.Name}").NormalizeWhitespace().ToString();
-                        if (fullUsing.Equals(TestingLibraryNamespace)) return true;
-                    }
-                }
-            }
-
-            return false;
-        }
     }
 }
