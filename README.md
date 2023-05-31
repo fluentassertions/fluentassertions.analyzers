@@ -4,7 +4,6 @@
 
 ***"With Fluent Assertions, the assertions look beautiful, natural and most importantly, extremely readable"*** -[_Girish_](https://twitter.com/girishracharya)
 
-* Latest stable nuget [![NuGet Badge](https://buildstats.info/nuget/fluentassertions.analyzers)](https://www.nuget.org/packages/fluentassertions.analyzers/)
 * Latest nuget [![NuGet Badge](https://buildstats.info/nuget/fluentassertions.analyzers?includePreReleases=true)](https://www.nuget.org/packages/fluentassertions.analyzers/)
 * The build status is [![CI](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml)
 
