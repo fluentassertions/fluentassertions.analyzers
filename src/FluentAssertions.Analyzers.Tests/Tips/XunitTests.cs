@@ -312,6 +312,33 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertObjectNotStrictEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertNotStrictEqualCodeFix, AssertNotStrictEqualAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.Null(actual);")]
+        [Implemented]
+        public void AssertNull_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertNullAnalyzer>("object actual", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Null(actual);",
+            /* newAssertion: */ "actual.Should().BeNull();")]
+        [Implemented]
+        public void AssertNull_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertNullCodeFix, AssertNullAnalyzer>("object actual", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.NotNull(actual);")]
+        [Implemented]
+        public void AssertNotNull_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertNotNullAnalyzer>("object actual", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.NotNull(actual);",
+            /* newAssertion: */ "actual.Should().NotBeNull();")]
+        [Implemented]
+        public void AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertNotNullCodeFix, AssertNotNullAnalyzer>("object actual", oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
