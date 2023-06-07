@@ -1,5 +1,4 @@
-# [FluentAssertions](http://fluentassertions.com/) Analyzers
-Analyzers for <a href="https://www.fluentassertions.com"><img src="assets/images/fluent_assertions_analyzers_large_horizontal.svg" style="width:400px"/></a>
+<a href="https://www.fluentassertions.com"><img src="assets/images/fluent_assertions_analyzers_large_horizontal.svg" style="width:400px"/></a>
 
 ***"With Fluent Assertions, the assertions look beautiful, natural and most importantly, extremely readable"*** -[_Girish_](https://twitter.com/girishracharya)
 
