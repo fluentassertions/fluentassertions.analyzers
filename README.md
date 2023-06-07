@@ -9,6 +9,8 @@
 
 A collection of Analyzers based on the best practices [tips](https://fluentassertions.com/tips/).
 
+![Alt](https://repobeats.axiom.co/api/embed/92fd2e6496fc171c00616eaf672c3c757a1a29ac.svg "Repobeats analytics image")
+
 ## Analysis and Code Fix in Action
 
 ![Demo](assets/demo.gif)
