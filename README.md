@@ -3,10 +3,14 @@
 # Extension methods to fluently assert the outcome of .NET tests
 
 [![CI](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fluentassertions/fluentassertions.analyzers/actions/workflows/ci.yml)
-
-***"With Fluent Assertions, the assertions look beautiful, natural and most importantly, extremely readable"*** -[_Girish_](https://twitter.com/girishracharya)
-
-* Latest nuget [![NuGet Badge](https://buildstats.info/nuget/fluentassertions.analyzers?includePreReleases=true)](https://www.nuget.org/packages/fluentassertions.analyzers/)
+[![](https://img.shields.io/github/release/fluentassertions/fluentassertions.analyzers.svg?label=latest%20release&color=007edf)](https://github.com/fluentassertions/fluentassertions.analyzers/releases/latest)
+[![](https://img.shields.io/nuget/dt/fluentassertions.analyzers.svg?label=downloads&color=007edf&logo=nuget)](https://www.nuget.org/packages/fluentassertions.analyzers)
+[![](https://img.shields.io/librariesio/dependents/nuget/fluentassertions.analyzers.svg?label=dependent%20libraries)](https://libraries.io/nuget/fluentassertions.analyzers)
+[![GitHub Repo stars](https://img.shields.io/github/stars/fluentassertions/fluentassertions.analyzers)](https://github.com/fluentassertions/fluentassertions.analyzers/stargazers)
+[![GitHub contributors](https://img.shields.io/github/contributors/fluentassertions/fluentassertions.analyzers)](https://github.com/fluentassertions/fluentassertions.analyzers/graphs/contributors)
+[![GitHub last commit](https://img.shields.io/github/last-commit/fluentassertions/fluentassertions.analyzers)](https://github.com/fluentassertions/fluentassertions.analyzers)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/fluentassertions/fluentassertions.analyzers)](https://github.com/fluentassertions/fluentassertions.analyzers/graphs/commit-activity)
+[![open issues](https://img.shields.io/github/issues/fluentassertions/fluentassertions.analyzers)](https://github.com/fluentassertions/fluentassertions.analyzers/issues)
 
 A collection of Analyzers based on the best practices [tips](https://fluentassertions.com/tips/).
 
