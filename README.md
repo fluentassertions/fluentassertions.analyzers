@@ -29,13 +29,13 @@ Install-Package FluentAssertions.Analyzers
 ### Build
 
 ```bash
-dotnet build src
+dotnet build
 ```
 
 ### Tests
 
 ```bash
-dotnet test src --configuration Release  --filter 'TestCategory=Completed'
+dotnet test --configuration Release  --filter 'TestCategory=Completed'
 ```
 
 ## Example Usages

@@ -18,7 +18,7 @@ jobs:
           dotnet-version: '6.x'
 
       - name: Restore dependencies
-        run: dotnet restore src
+        run: dotnet restore
 
       - name: Build & Pack NuGet package
         shell: pwsh
