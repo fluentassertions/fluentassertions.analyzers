@@ -326,14 +326,27 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(actual, null{0});")]
         [Implemented]
-        public void AssertOptionalIntAndNullAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("int? actual", assertion);
+        public void AssertOptionalIntAndNullAreEqual1_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("int? actual", assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(actual, null{0});",
             newAssertion: "actual.Should().BeNull({0});")]
         [Implemented]
-        public void AssertOptionalIntAndNullAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
+        public void AssertOptionalIntAndNullAreEqual1_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>("int? actual", oldAssertion, newAssertion);
+
+        [AssertionDataTestMethod]
+        [AssertionDiagnostic("Assert.AreEqual(null, actual{0});")]
+        [Implemented]
+        public void AssertOptionalIntAndNullAreEqual2_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<AssertAreEqualAnalyzer>("int? actual", assertion);
+
+        [AssertionDataTestMethod]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(null, actual{0});",
+            newAssertion: "actual.Should().BeNull({0});")]
+        [Implemented]
+        public void AssertOptionalIntAndNullAreEqual2_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>("int? actual", oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
