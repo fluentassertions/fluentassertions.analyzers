@@ -10,7 +10,7 @@ namespace FluentAssertions.Analyzers
         public static ArgumentPredicate IsIdentifier() 
             => (argument, semanticModel) => argument.Expression.IsKind(SyntaxKind.IdentifierName);
         public static ArgumentPredicate IsType(Func<SemanticModel, INamedTypeSymbol> typeSelector) 
-            => (argument, semanticModel) => semanticModel.GetTypeInfo(argument.Expression).Type.Equals(typeSelector(semanticModel), SymbolEqualityComparer.Default);
+            => (argument, semanticModel) => semanticModel.GetTypeInfo(argument.Expression).Type?.Equals(typeSelector(semanticModel), SymbolEqualityComparer.Default) ?? false;
         public static ArgumentPredicate IsNull() 
             => (argument, semanticModel) => argument.Expression is LiteralExpressionSyntax literal && literal.Token.IsKind(SyntaxKind.NullKeyword);
     }
