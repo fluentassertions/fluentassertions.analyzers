@@ -240,31 +240,6 @@ namespace TestNamespace
         }
 
         [TestMethod]
-        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/77")]
-        public void DictionaryShouldHaveCount1_ShouldNotReport()
-        {
-            const string source = @"
-using System.Linq;
-using System.Collections.Generic;
-using FluentAssertions;
-using FluentAssertions.Extensions;
-
-namespace TestNamespace
-{
-    public class Program
-    {
-        public static void Main()
-        {
-            var dict = new Dictionary<string, object>();
-            dict.Should().HaveCount(1);
-        }
-    }
-}";
-
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
-        }
-
-        [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/172")]
         public void AssertAreEqualDoesNotCompile()
         {

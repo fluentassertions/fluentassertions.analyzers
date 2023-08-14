@@ -7,10 +7,8 @@ namespace FluentAssertions.Analyzers
     {
         protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
-            var iDictionaryType = semanticModel.GetGenericIDictionaryType();
             return type.SpecialType != SpecialType.System_String
-                && type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T)
-                && !type.IsTypeOrConstructedFromTypeOrImplementsType(iDictionaryType);
+                && type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T);
         }
     }
 }
