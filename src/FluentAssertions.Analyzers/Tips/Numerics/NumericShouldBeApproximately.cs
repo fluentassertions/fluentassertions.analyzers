@@ -29,7 +29,7 @@ namespace FluentAssertions.Analyzers
         }
 
         private static readonly string[] ValidaTypeNames = { "double", "decimal", "float" };
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
+        protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
             => ValidaTypeNames.Contains(type.ToDisplayString(), StringComparer.OrdinalIgnoreCase);
 
         public class MathAbsShouldBeLessOrEqualToSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor

@@ -27,14 +27,14 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
+        protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
             if (!type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T))
             {
                 return false;
             }
 
-            return base.ShouldAnalyzeVariableType(type, semanticModel);
+            return base.ShouldAnalyzeVariableNamedType(type, semanticModel);
         }
 
         public class WhereShouldHaveCount1SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor

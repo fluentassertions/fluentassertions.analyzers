@@ -9,7 +9,7 @@ namespace FluentAssertions.Analyzers.Xunit
         protected override string TestingLibraryModule => "xunit.assert";
         protected override string TestingLibraryAssertionType => "Assert";
 
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "Assert";
+        protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "Assert";
     }
 
     public abstract class XunitCodeFixProvider : TestingLibraryCodeFixBase
