@@ -5,7 +5,7 @@ namespace FluentAssertions.Analyzers
 {
     public abstract class DictionaryAnalyzer : FluentAssertionsAnalyzer
     {
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
+        protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
             var iDictionaryType = semanticModel.GetGenericIDictionaryType();
             return type.IsTypeOrConstructedFromTypeOrImplementsType(iDictionaryType);

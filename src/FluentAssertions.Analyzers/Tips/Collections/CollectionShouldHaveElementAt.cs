@@ -28,7 +28,7 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
+        protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
         {
             var iReadOnlyDictionaryType = semanticModel.GetIReadOnlyDictionaryType();
             var iDictionaryType = semanticModel.GetGenericIDictionaryType();
@@ -38,7 +38,7 @@ namespace FluentAssertions.Analyzers
                 return false;
             }
 
-            return base.ShouldAnalyzeVariableType(type, semanticModel);
+            return base.ShouldAnalyzeVariableNamedType(type, semanticModel);
         }
 
         public class ElementAtIndexShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor

@@ -18,5 +18,11 @@ namespace FluentAssertions.Analyzers.Utilities
             return abstractType.Equals(other, SymbolEqualityComparer.Default)
                 || abstractType.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(other, SymbolEqualityComparer.Default));
         }
+
+        public static bool IsTypeOrConstructedFromTypeOrImplementsType(this ITypeSymbol type, SpecialType specialType)
+        {
+            return type.SpecialType == specialType 
+                || type.AllInterfaces.Any(@interface => @interface.OriginalDefinition.SpecialType == specialType);
+        }
     }
 }

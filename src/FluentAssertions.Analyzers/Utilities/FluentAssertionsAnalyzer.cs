@@ -44,7 +44,18 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        protected virtual bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
+        protected virtual bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
+        protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => true;
+
+        private bool ShouldAnalyzeVariableTypeCore(ITypeSymbol type, SemanticModel semanticModel)
+        {
+            if (type is INamedTypeSymbol namedType)
+            {
+                return ShouldAnalyzeVariableNamedType(namedType, semanticModel);
+            }
+
+            return ShouldAnalyzeVariableType(type, semanticModel);
+        }
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
         {
@@ -53,8 +64,7 @@ namespace FluentAssertions.Analyzers
 
             if (variableNameExtractor.VariableIdentifierName == null) return null;
             var typeInfo = semanticModel.GetTypeInfo(variableNameExtractor.VariableIdentifierName);
-            if (!(typeInfo.Type is INamedTypeSymbol namedType)) return null;
-            if (!ShouldAnalyzeVariableType(namedType, semanticModel)) return null;
+            if (!ShouldAnalyzeVariableTypeCore(typeInfo.Type, semanticModel)) return null;
 
             foreach (var visitor in Visitors)
             {
@@ -104,7 +114,7 @@ namespace FluentAssertions.Analyzers
         protected abstract string TestingLibraryModule { get; }
         protected abstract string TestingLibraryAssertionType { get; }
 
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
+        protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
             => type.Name == TestingLibraryAssertionType && type.ContainingModule.Name == TestingLibraryModule + ".dll";
     }
 }
