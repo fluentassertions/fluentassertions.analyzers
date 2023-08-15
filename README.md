@@ -46,3 +46,4 @@ dotnet test --configuration Release  --filter 'TestCategory=Completed'
 - https://github.com/SonarSource/sonar-dotnet/pull/2072
 - https://github.com/microsoft/component-detection/pull/634
 - https://github.com/microsoft/onefuzz/pull/3314
+- https://github.com/chocolatey/choco/pull/2908
