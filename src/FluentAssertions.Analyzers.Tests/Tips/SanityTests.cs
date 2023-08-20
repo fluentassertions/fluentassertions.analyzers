@@ -314,5 +314,37 @@ public class TestClass
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
             });
         }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/207")]
+        public void PropertiesOfTypes()
+        {
+            const string globalUsings = @"
+global using Xunit;
+global using FluentAssertions;
+global using FluentAssertions.Extensions;";
+            const string source = @"
+public class TestClass
+{
+    public static void Main()
+    {
+        var x = new TestType();
+        x.List.Any().Should().BeTrue();
+    }
+}
+
+public class TestType
+{
+    public List<int> List { get; set; }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source, globalUsings }, new DiagnosticResult()
+            {
+                Id = AssertTrueAnalyzer.DiagnosticId,
+                Message = AssertTrueAnalyzer.Message,
+                Severity = DiagnosticSeverity.Info,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
+            });
+        }
     }
 }
