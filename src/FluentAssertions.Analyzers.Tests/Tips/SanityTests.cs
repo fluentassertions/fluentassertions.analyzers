@@ -328,6 +328,7 @@ public class TestClass
     {
         var x = new TestType1();
         x.Prop1.Prop2.List.Any().Should().BeTrue();
+        x.Prop1.Prop2.Count.Should().BeGreaterThan(10);
     }
 }
 
@@ -342,6 +343,7 @@ public class TestType2
 public class TestType3
 {
     public List<int> List { get; set; }
+    public int Count { get; set; }
 }";
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source }, new DiagnosticResult()
