@@ -57,7 +57,7 @@ namespace FluentAssertions.Analyzers
 
         public class SkipFirstShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public SkipFirstShouldBeSyntaxVisitor() : base(new MemberValidator("Skip"), MemberValidator.MethodNotContainingLambda("First"), MemberValidator.Should, new MemberValidator("Be"))
+            public SkipFirstShouldBeSyntaxVisitor() : base(new MemberValidator("Skip"), MemberValidator.MathodNotContainingLambda("First"), MemberValidator.Should, new MemberValidator("Be"))
             {
             }
         }

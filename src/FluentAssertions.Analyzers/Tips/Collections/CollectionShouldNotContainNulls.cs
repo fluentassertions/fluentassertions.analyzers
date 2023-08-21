@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
 
         public class SelectShouldNotContainNullsSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public SelectShouldNotContainNullsSyntaxVisitor() : base(MemberValidator.MethodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("NotContainNulls"))
+            public SelectShouldNotContainNullsSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("NotContainNulls"))
             {
             }
         }

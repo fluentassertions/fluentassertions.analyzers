@@ -29,21 +29,21 @@ namespace FluentAssertions.Analyzers
 
         public class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public AnyShouldBeFalseSyntaxVisitor() : base(MemberValidator.MethodContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeFalse"))
+            public AnyShouldBeFalseSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeFalse"))
             {
             }
         }
 
         public class WhereShouldBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public WhereShouldBeEmptySyntaxVisitor() : base(MemberValidator.MethodContainingLambda("Where"), MemberValidator.Should, new MemberValidator("BeEmpty"))
+            public WhereShouldBeEmptySyntaxVisitor() : base(MemberValidator.MathodContainingLambda("Where"), MemberValidator.Should, new MemberValidator("BeEmpty"))
             {
             }
         }
 
         public class ShouldOnlyContainSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public ShouldOnlyContainSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MethodContainingLambda("OnlyContain"))
+            public ShouldOnlyContainSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MathodContainingLambda("OnlyContain"))
             {
             }
         }
