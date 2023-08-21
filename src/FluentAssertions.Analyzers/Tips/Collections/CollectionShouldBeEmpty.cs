@@ -29,7 +29,7 @@ namespace FluentAssertions.Analyzers
 
         public class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public AnyShouldBeFalseSyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeFalse"))
+            public AnyShouldBeFalseSyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeFalse"))
             {
             }
         }

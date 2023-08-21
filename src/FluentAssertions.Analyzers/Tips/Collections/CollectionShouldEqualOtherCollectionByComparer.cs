@@ -30,7 +30,7 @@ namespace FluentAssertions.Analyzers
         public class SelectShouldEqualOtherCollectionSelectSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
             public SelectShouldEqualOtherCollectionSelectSyntaxVisitor()
-                : base(MemberValidator.MathodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("Equal", MathodContainingArgumentInvokingLambda))
+                : base(MemberValidator.MethodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("Equal", MathodContainingArgumentInvokingLambda))
             {
             }
 

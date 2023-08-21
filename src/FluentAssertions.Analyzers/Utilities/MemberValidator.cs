@@ -40,8 +40,8 @@ namespace FluentAssertions.Analyzers
         public static MemberValidator Which { get; } = new MemberValidator(nameof(Which));
         public static MemberValidator Should { get; } = new MemberValidator(nameof(Should));
 
-        public static MemberValidator MathodNotContainingLambda(string name) => new MemberValidator(name, MethodNotContainingLambdaPredicate);
-        public static MemberValidator MathodContainingLambda(string name) => new MemberValidator(name, MethodContainingLambdaPredicate);
+        public static MemberValidator MethodNotContainingLambda(string name) => new MemberValidator(name, MethodNotContainingLambdaPredicate);
+        public static MemberValidator MethodContainingLambda(string name) => new MemberValidator(name, MethodContainingLambdaPredicate);
         public static MemberValidator ArgumentIsVariable(string name) => new MemberValidator(name, ArgumentIsVariablePredicate);
         public static MemberValidator ArgumentIsLiteral<T>(string name, T value) => new MemberValidator(name, (arguments, semanticModel) => ArgumentIsLiteralPredicate(arguments, value));
         public static MemberValidator ArgumentIsIdentifierOrLiteral(string name) => new MemberValidator(name, ArgumentIsIdentifierOrLiteralPredicate);

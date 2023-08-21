@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers
 
         public class OrderByDescendingShouldEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public OrderByDescendingShouldEqualSyntaxVisitor() : base(MemberValidator.MathodContainingLambda("OrderByDescending"), MemberValidator.Should, MemberValidator.ArgumentIsVariable("Equal"))
+            public OrderByDescendingShouldEqualSyntaxVisitor() : base(MemberValidator.MethodContainingLambda("OrderByDescending"), MemberValidator.Should, MemberValidator.ArgumentIsVariable("Equal"))
             {
             }
         }

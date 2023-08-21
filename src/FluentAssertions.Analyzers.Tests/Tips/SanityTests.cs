@@ -1,8 +1,5 @@
 ﻿using FluentAssertions.Analyzers.Xunit;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FluentAssertions.Analyzers.Tests
@@ -319,11 +316,12 @@ public class TestClass
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/207")]
         public void PropertiesOfTypes()
         {
-            const string globalUsings = @"
-global using Xunit;
-global using FluentAssertions;
-global using FluentAssertions.Extensions;";
             const string source = @"
+using Xunit;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 public class TestClass
 {
     public static void Main()
@@ -338,12 +336,12 @@ public class TestType
     public List<int> List { get; set; }
 }";
 
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source, globalUsings }, new DiagnosticResult()
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source }, new DiagnosticResult()
             {
-                Id = AssertTrueAnalyzer.DiagnosticId,
-                Message = AssertTrueAnalyzer.Message,
+                Id = CollectionShouldNotBeEmptyAnalyzer.DiagnosticId,
+                Message = CollectionShouldNotBeEmptyAnalyzer.Message,
                 Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 8, 9) }
             });
         }
     }
