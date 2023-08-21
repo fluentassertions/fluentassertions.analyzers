@@ -326,12 +326,20 @@ public class TestClass
 {
     public static void Main()
     {
-        var x = new TestType();
-        x.List.Any().Should().BeTrue();
+        var x = new TestType1();
+        x.Prop1.Prop2.List.Any().Should().BeTrue();
     }
 }
 
-public class TestType
+public class TestType1
+{
+    public TestType2 Prop1 { get; set; }
+}
+public class TestType2
+{
+    public TestType3 Prop2 { get; set; }
+}
+public class TestType3
 {
     public List<int> List { get; set; }
 }";
