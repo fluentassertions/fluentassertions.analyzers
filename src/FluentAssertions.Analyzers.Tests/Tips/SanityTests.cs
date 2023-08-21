@@ -349,7 +349,7 @@ public class TestType3
                 Id = CollectionShouldNotBeEmptyAnalyzer.DiagnosticId,
                 Message = CollectionShouldNotBeEmptyAnalyzer.Message,
                 Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 8, 9) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 12, 9) }
             });
         }
     }
