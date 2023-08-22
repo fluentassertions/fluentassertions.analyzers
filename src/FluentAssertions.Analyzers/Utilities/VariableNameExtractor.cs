@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 
 namespace FluentAssertions.Analyzers
 {
@@ -8,8 +9,10 @@ namespace FluentAssertions.Analyzers
     {
         private readonly SemanticModel _semanticModel;
 
-        public string VariableName { get; private set; }
-        public IdentifierNameSyntax VariableIdentifierName { get; private set; }
+        public string VariableName => VariableIdentifierName?.Identifier.Text;
+        public IdentifierNameSyntax VariableIdentifierName => PropertiesAccessed.Count > 0 ? PropertiesAccessed[0] : null;
+
+        public List<IdentifierNameSyntax> PropertiesAccessed { get; } = new List<IdentifierNameSyntax>();
 
         public VariableNameExtractor(SemanticModel semanticModel = null)
         {
@@ -20,17 +23,7 @@ namespace FluentAssertions.Analyzers
         {
             if (IsVariable(node))
             {
-                VariableName = node.Identifier.Text;
-                VariableIdentifierName = node;
-            }
-        }
-
-        public override void Visit(SyntaxNode node)
-        {
-            // the first identifier encountered will be the one at the bottom of the syntax tree
-            if (VariableName == null)
-            {
-                base.Visit(node);
+                PropertiesAccessed.Add(node);
             }
         }
 
