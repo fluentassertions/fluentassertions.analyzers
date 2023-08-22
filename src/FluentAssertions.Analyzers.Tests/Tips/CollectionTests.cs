@@ -396,6 +396,10 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().HaveCount(1{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Where(x => x.BooleanProperty).Should().HaveCount(1{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.Should().HaveCount(1{0}).And.Contain(item => item == expectedItem);")]
+        [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0}).And.Contain(item => item == expectedItem);")]
+        [AssertionDiagnostic("actual.AsEnumerable().Should().HaveCount(1{0}).And.Contain(item => item == expectedItem).And.ToString();")]
+        [AssertionDiagnostic("actual.AsEnumerable().Where(x => x.BooleanProperty).Should().HaveCount(1{0}).And.Contain(item => item == expectedItem).And.ToString();")]
         [Implemented]
         public void CollectionShouldContainSingle_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldContainSingleAnalyzer>(assertion);
 
@@ -412,6 +416,12 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Should().HaveCount(1{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().ContainSingle({0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().HaveCount(1{0}).And.Contain(item => item == expectedItem);",
+            newAssertion: "actual.Should().ContainSingle({0}).Which.Should().Be(expectedItem);")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.AsEnumerable().Should().HaveCount(1{0}).And.Contain(item => item == expectedItem).And.ToString();",
+            newAssertion: "actual.AsEnumerable().Should().ContainSingle({0}).Which.Should().Be(expectedItem).And.ToString();")]
         [Implemented]
         public void CollectionShouldContainSingle_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldContainSingleCodeFix, CollectionShouldContainSingleAnalyzer>(oldAssertion, newAssertion);
 
