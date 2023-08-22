@@ -27,16 +27,16 @@ namespace FluentAssertions.Analyzers
             }
         }
 
-        public static string ExtractVariabeName(ArgumentSyntax argument)
+        public static string ExtractVariableName(ArgumentSyntax argument)
         {
             if (argument.Parent is ArgumentListSyntax argumentList && argumentList.Parent is InvocationExpressionSyntax invocation)
             {
-                return ExtractVariabeName(invocation);
+                return ExtractVariableName(invocation);
             }
             return null;
         }
 
-        public static string ExtractVariabeName(InvocationExpressionSyntax invocation)
+        public static string ExtractVariableName(InvocationExpressionSyntax invocation)
         {
             var variableExtractor = new VariableNameExtractor();
             invocation.Accept(variableExtractor);
