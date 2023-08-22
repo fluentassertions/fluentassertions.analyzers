@@ -29,21 +29,21 @@ namespace FluentAssertions.Analyzers
 
         public class CountShouldBe0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public CountShouldBe0SyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 0))
+            public CountShouldBe0SyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 0))
             {
             }
         }
 
         public class CountShouldBe1SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public CountShouldBe1SyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 1))
+            public CountShouldBe1SyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 1))
             {
             }
         }
 
         public class CountShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
         {
-            public CountShouldBeSyntaxVisitor() : base(MemberValidator.MathodNotContainingLambda("Count"), MemberValidator.Should, new MemberValidator("Be"))
+            public CountShouldBeSyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Count"), MemberValidator.Should, new MemberValidator("Be"))
             {
             }
         }
