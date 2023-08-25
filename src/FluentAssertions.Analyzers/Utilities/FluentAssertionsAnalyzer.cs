@@ -101,7 +101,11 @@ namespace FluentAssertions.Analyzers
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}.\n{e}");
+                var expressionString = "UNKNOWN";
+                try {
+                    expressionString = expression.ToString();
+                } catch {}
+                Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}. expression: {expressionString}\n{e}");
                 return null;
             }
         }
