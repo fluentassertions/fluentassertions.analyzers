@@ -354,5 +354,43 @@ public class TestType3
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 12, 9) }
             });
         }
+        
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/215")]
+        public void ShouldNotFailToAnalyze()
+        {
+            const string source = @"
+#nullable enable
+using Xunit;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+public class TestClass
+{
+    public static void Main()
+    {
+        var otherComponent = new OtherComponent();
+        otherComponent.Name.Should().Be(""SomeOtherComponent"");
+        otherComponent.Version.Should().Be(""1.2.3"");
+        otherComponent.DownloadUrl.Should().Be(new Uri(""https://sampleurl.com""));
+        otherComponent.Hash.Should().Be(""SampleHash"");
+    }
+}
+
+public class OtherComponent
+{
+    public string? Name { get; set; }
+
+    public string? Version { get; set; }
+
+    public Uri? DownloadUrl { get; set; }
+
+    public string? Hash { get; set; }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+        }
     }
 }
