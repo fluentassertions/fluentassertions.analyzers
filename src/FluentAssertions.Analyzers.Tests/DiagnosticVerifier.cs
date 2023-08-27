@@ -31,6 +31,7 @@ namespace FluentAssertions.Analyzers.Tests
             {
                 typeof(object), // System.Private.CoreLib
                 typeof(Console), // System
+                typeof(Uri), // System.Private.Uri
                 typeof(Enumerable), // System.Linq
                 typeof(CSharpCompilation), // Microsoft.CodeAnalysis.CSharp
                 typeof(Compilation), // Microsoft.CodeAnalysis
