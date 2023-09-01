@@ -7,6 +7,20 @@ on:
     branches: 
     - main
 jobs:
+  build-debug:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - run: dotnet test --configuration Debug --filter 'TestCategory=Completed' /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
   build:
     strategy:
       matrix:

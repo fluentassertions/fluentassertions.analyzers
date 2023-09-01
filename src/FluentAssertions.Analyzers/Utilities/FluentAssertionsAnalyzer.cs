@@ -47,14 +47,20 @@ namespace FluentAssertions.Analyzers
         protected virtual bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
         protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => true;
 
-        private bool ShouldAnalyzeVariableTypeCore(ITypeSymbol type, SemanticModel semanticModel)
+        private bool ShouldAnalyzeVariableTypeCore(IdentifierNameSyntax identifier, SemanticModel semanticModel)
         {
-            if (type is INamedTypeSymbol namedType)
+            ISymbol symbol = semanticModel.GetTypeInfo(identifier).Type ?? semanticModel.GetSymbolInfo(identifier).Symbol;  
+            if (symbol is INamedTypeSymbol namedType)
             {
                 return ShouldAnalyzeVariableNamedType(namedType, semanticModel);
             }
 
-            return ShouldAnalyzeVariableType(type, semanticModel);
+            if (symbol is ITypeSymbol typeSymbol)
+            {
+                return ShouldAnalyzeVariableType(typeSymbol, semanticModel);
+            }
+
+            return false;
         }
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
@@ -62,9 +68,7 @@ namespace FluentAssertions.Analyzers
             var variableNameExtractor = new VariableNameExtractor(semanticModel);
             expression.Accept(variableNameExtractor);
 
-            if (variableNameExtractor.PropertiesAccessed
-                .ConvertAll(identifier => semanticModel.GetTypeInfo(identifier))
-                .TrueForAll(typeInfo => !ShouldAnalyzeVariableTypeCore(typeInfo.Type, semanticModel))) {
+            if (variableNameExtractor.PropertiesAccessed.TrueForAll(identifier => !ShouldAnalyzeVariableTypeCore(identifier, semanticModel))) {
                 return null;
             }
 
@@ -106,7 +110,12 @@ namespace FluentAssertions.Analyzers
                     expressionString = expression.ToString();
                 } catch {}
                 Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}. expression: {expressionString}\n{e}");
+
+                #if DEBUG
+                throw e;
+                #else
                 return null;
+                #endif
             }
         }
     }
