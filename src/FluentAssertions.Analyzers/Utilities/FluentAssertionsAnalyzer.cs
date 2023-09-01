@@ -47,9 +47,9 @@ namespace FluentAssertions.Analyzers
         protected virtual bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
         protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => true;
 
-        private bool ShouldAnalyzeVariableTypeCore(TypeInfo typeInfo, SymbolInfo symbolInfo, SemanticModel semanticModel)
+        private bool ShouldAnalyzeVariableTypeCore(IdentifierNameSyntax identifier, SemanticModel semanticModel)
         {
-            ISymbol symbol = typeInfo.Type ?? symbolInfo.Symbol;  
+            ISymbol symbol = semanticModel.GetTypeInfo(identifier).Type ?? semanticModel.GetSymbolInfo(identifier).Symbol;  
             if (symbol is INamedTypeSymbol namedType)
             {
                 return ShouldAnalyzeVariableNamedType(namedType, semanticModel);
@@ -68,9 +68,7 @@ namespace FluentAssertions.Analyzers
             var variableNameExtractor = new VariableNameExtractor(semanticModel);
             expression.Accept(variableNameExtractor);
 
-            if (variableNameExtractor.PropertiesAccessed
-                .ConvertAll(identifier => (type: semanticModel.GetTypeInfo(identifier), symbol: semanticModel.GetSymbolInfo(identifier)))
-                .TrueForAll(x => !ShouldAnalyzeVariableTypeCore(x.type, x.symbol, semanticModel))) {
+            if (variableNameExtractor.PropertiesAccessed.TrueForAll(identifier => !ShouldAnalyzeVariableTypeCore(identifier, semanticModel))) {
                 return null;
             }
 
@@ -112,7 +110,12 @@ namespace FluentAssertions.Analyzers
                     expressionString = expression.ToString();
                 } catch {}
                 Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}. expression: {expressionString}\n{e}");
+
+                #if DEBUG
+                throw e;
+                #else
                 return null;
+                #endif
             }
         }
     }
