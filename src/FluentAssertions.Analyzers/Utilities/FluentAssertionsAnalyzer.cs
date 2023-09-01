@@ -47,14 +47,20 @@ namespace FluentAssertions.Analyzers
         protected virtual bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
         protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => true;
 
-        private bool ShouldAnalyzeVariableTypeCore(ITypeSymbol type, SemanticModel semanticModel)
+        private bool ShouldAnalyzeVariableTypeCore(TypeInfo typeInfo, SymbolInfo symbolInfo, SemanticModel semanticModel)
         {
-            if (type is INamedTypeSymbol namedType)
+            ISymbol symbol = typeInfo.Type ?? symbolInfo.Symbol;  
+            if (symbol is INamedTypeSymbol namedType)
             {
                 return ShouldAnalyzeVariableNamedType(namedType, semanticModel);
             }
 
-            return ShouldAnalyzeVariableType(type, semanticModel);
+            if (symbol is ITypeSymbol typeSymbol)
+            {
+                return ShouldAnalyzeVariableType(typeSymbol, semanticModel);
+            }
+
+            return false;
         }
 
         protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
@@ -63,8 +69,8 @@ namespace FluentAssertions.Analyzers
             expression.Accept(variableNameExtractor);
 
             if (variableNameExtractor.PropertiesAccessed
-                .ConvertAll(identifier => semanticModel.GetTypeInfo(identifier))
-                .TrueForAll(typeInfo => !ShouldAnalyzeVariableTypeCore(typeInfo.Type, semanticModel))) {
+                .ConvertAll(identifier => (type: semanticModel.GetTypeInfo(identifier), symbol: semanticModel.GetSymbolInfo(identifier)))
+                .TrueForAll(x => !ShouldAnalyzeVariableTypeCore(x.type, x.symbol, semanticModel))) {
                 return null;
             }
 
