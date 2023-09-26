@@ -129,6 +129,7 @@ namespace FluentAssertions.Analyzers
                 public const string AssertNotStrictEqual = $"{DiagnosticProperties.IdPrefix}0707";
                 public const string AssertNull = $"{DiagnosticProperties.IdPrefix}0708";
                 public const string AssertNotNull = $"{DiagnosticProperties.IdPrefix}0709";
+                public const string AssertContains = $"{DiagnosticProperties.IdPrefix}0710";
             }
         }
 
