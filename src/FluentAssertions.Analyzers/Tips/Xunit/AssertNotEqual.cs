@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using TypeSelector = FluentAssertions.Analyzers.Utilities.SemanticModelTypeExtensions;
+using FluentAssertions.Analyzers.Utilities;
 
 namespace FluentAssertions.Analyzers.Xunit;
 
