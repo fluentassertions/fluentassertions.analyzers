@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace FluentAssertions.Analyzers.Utilities
 {
-    internal static class SemanticModelTypeExtensions
+    internal static class TypeSelector
     {
         public static INamedTypeSymbol GetActionType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, typeof(Action));

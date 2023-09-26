@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using TypeSelector = FluentAssertions.Analyzers.Utilities.SemanticModelTypeExtensions;
+using FluentAssertions.Analyzers.Utilities;
 
 namespace FluentAssertions.Analyzers
 {
