@@ -130,6 +130,7 @@ namespace FluentAssertions.Analyzers
                 public const string AssertNull = $"{DiagnosticProperties.IdPrefix}0708";
                 public const string AssertNotNull = $"{DiagnosticProperties.IdPrefix}0709";
                 public const string AssertContains = $"{DiagnosticProperties.IdPrefix}0710";
+                public const string AssertDoesNotContain = $"{DiagnosticProperties.IdPrefix}0711";
             }
         }
 

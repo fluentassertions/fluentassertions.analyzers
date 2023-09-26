@@ -354,6 +354,21 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertStringContains_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertContainsCodeFix, AssertContainsAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotContain(expected, actual);")]
+        [Implemented]
+        public void AssertStringDoesNotContain_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertDoesNotContainAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);")]
+        [Implemented]
+        public void AssertStringDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertDoesNotContainCodeFix, AssertDoesNotContainAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
