@@ -368,6 +368,33 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertStringDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertDoesNotContainCodeFix, AssertDoesNotContainAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.Matches(expectedRegexPattern, actual);")]
+        [Implemented]
+        public void AssertStringMatches_String_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertMatchesAnalyzer>("string actual, string expectedRegexPattern", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Matches(expectedRegexPattern, actual);",
+            /* newAssertion: */ "actual.Should().MatchRegex(expectedRegexPattern);")]
+        [Implemented]
+        public void AssertStringMatches_String_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertMatchesCodeFix, AssertMatchesAnalyzer>("string actual, string expectedRegexPattern", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.Matches(expectedRegex, actual);")]
+        [Implemented]
+        public void AssertStringMatches_Regex_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertMatchesAnalyzer>("string actual, Regex expectedRegex", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Matches(expectedRegex, actual);",
+            /* newAssertion: */ "actual.Should().MatchRegex(expectedRegex);")]
+        [Implemented]
+        public void AssertStringMatches_Regex_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertMatchesCodeFix, AssertMatchesAnalyzer>("string actual, Regex expectedRegex", oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {

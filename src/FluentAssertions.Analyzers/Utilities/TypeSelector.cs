@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace FluentAssertions.Analyzers.Utilities
 {
@@ -31,6 +32,9 @@ namespace FluentAssertions.Analyzers.Utilities
 
         public static INamedTypeSymbol GetStringType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, SpecialType.System_String);
+
+        public static INamedTypeSymbol GetRegexType(this SemanticModel semanticModel)
+            => GetTypeFrom(semanticModel, typeof(Regex));
 
         public static INamedTypeSymbol GetCultureInfoType(this SemanticModel semanticModel)
             => GetTypeFrom(semanticModel, typeof(CultureInfo));
