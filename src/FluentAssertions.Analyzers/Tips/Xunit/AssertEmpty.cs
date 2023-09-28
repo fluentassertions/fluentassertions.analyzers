@@ -48,7 +48,7 @@ public class AssertEmptyCodeFix : XunitCodeFixProvider
         switch (properties.VisitorName)
         {
             case nameof(AssertEmptyAnalyzer.AssertEmptyStringSyntaxVisitor):
-                return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "Empty", "BeEmpty");
+                return RenameMethodAndReplaceWithSubjectShould(expression, "Empty", "BeEmpty");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }
