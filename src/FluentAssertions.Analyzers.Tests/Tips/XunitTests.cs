@@ -424,6 +424,19 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertStringDoesNotMatch_Regex_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertDoesNotMatchCodeFix, AssertDoesNotMatchAnalyzer>("string actual, Regex expectedRegex", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.Empty(actual);")]
+        [Implemented]
+        public void AssertEmpty_String_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertEmptyAnalyzer>("string actual", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Empty(actual);",
+            /* newAssertion: */ "actual.Should().BeEmpty();")]
+        [Implemented]
+        public void AssertEmpty_String_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertEmptyCodeFix, AssertEmptyAnalyzer>("string actual", oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
