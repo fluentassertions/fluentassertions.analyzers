@@ -132,6 +132,7 @@ namespace FluentAssertions.Analyzers
                 public const string AssertContains = $"{DiagnosticProperties.IdPrefix}0710";
                 public const string AssertDoesNotContain = $"{DiagnosticProperties.IdPrefix}0711";
                 public const string AssertMatches = $"{DiagnosticProperties.IdPrefix}0712";
+                public const string AssertDoesNotMatch = $"{DiagnosticProperties.IdPrefix}0713";
             }
         }
 

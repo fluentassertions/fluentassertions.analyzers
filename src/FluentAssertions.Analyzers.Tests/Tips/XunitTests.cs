@@ -396,6 +396,35 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertStringMatches_Regex_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertMatchesCodeFix, AssertMatchesAnalyzer>("string actual, Regex expectedRegex", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotMatch(expectedRegexPattern, actual);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_String_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertDoesNotMatchAnalyzer>("string actual, string expectedRegexPattern", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotMatch(expectedRegexPattern, actual);",
+            /* newAssertion: */ "actual.Should().NotMatchRegex(expectedRegexPattern);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_String_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertDoesNotMatchCodeFix, AssertDoesNotMatchAnalyzer>("string actual, string expectedRegexPattern", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotMatch(expectedRegex, actual);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_Regex_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertDoesNotMatchAnalyzer>("string actual, Regex expectedRegex", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotMatch(expectedRegex, actual);",
+            /* newAssertion: */ "actual.Should().NotMatchRegex(expectedRegex);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_Regex_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertDoesNotMatchCodeFix, AssertDoesNotMatchAnalyzer>("string actual, Regex expectedRegex", oldAssertion, newAssertion);
+
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
