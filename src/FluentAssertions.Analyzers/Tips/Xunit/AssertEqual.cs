@@ -22,6 +22,7 @@ public class AssertEqualAnalyzer : XunitAnalyzer
     protected override DiagnosticDescriptor Rule => new(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
     protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors => new FluentAssertionsCSharpSyntaxVisitor[]
     {
+        new AssertStringEqualSyntaxVisitor(),
         new AssertFloatEqualWithToleranceSyntaxVisitor(),
         new AssertDoubleEqualWithToleranceSyntaxVisitor(),
         new AssertDoubleEqualWithPrecisionSyntaxVisitor(),
@@ -30,7 +31,18 @@ public class AssertEqualAnalyzer : XunitAnalyzer
         new AssertObjectEqualWithComparerSyntaxVisitor(),
         new AssertObjectEqualSyntaxVisitor()
     };
-    
+
+    // public static void Equal(string? expected, string? actual)
+    public class AssertStringEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+    {
+        public AssertStringEqualSyntaxVisitor() : base(
+            MemberValidator.ArgumentsMatch("Equal", 
+                ArgumentValidator.IsType(TypeSelector.GetStringType), 
+                ArgumentValidator.IsType(TypeSelector.GetStringType)))
+        {
+        }
+    }
+
     // public static void Equal(float expected, float actual, float tolerance)
     public class AssertFloatEqualWithToleranceSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
@@ -137,6 +149,7 @@ public class AssertEqualCodeFix : XunitCodeFixProvider
             case nameof(AssertEqualAnalyzer.AssertDateTimeEqualSyntaxVisitor):
                 return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "Equal", "BeCloseTo");
             case nameof(AssertEqualAnalyzer.AssertObjectEqualSyntaxVisitor):
+            case nameof(AssertEqualAnalyzer.AssertStringEqualSyntaxVisitor):
                 return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "Equal", "Be");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
