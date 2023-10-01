@@ -15,7 +15,7 @@ public class AssertEmptyAnalyzer : XunitAnalyzer
     public const string DiagnosticId = Constants.Tips.Xunit.AssertEmpty;
     public const string Category = Constants.Tips.Category;
 
-    public const string Message = "Use .Should().NotMatchRegex()";
+    public const string Message = "Use .Should().BeEmpty()";
 
     protected override DiagnosticDescriptor Rule => new(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 

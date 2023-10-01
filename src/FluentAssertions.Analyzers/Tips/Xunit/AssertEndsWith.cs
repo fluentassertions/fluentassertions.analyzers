@@ -15,7 +15,7 @@ public class AssertEndsWithAnalyzer : XunitAnalyzer
     public const string DiagnosticId = Constants.Tips.Xunit.AssertEndsWith;
     public const string Category = Constants.Tips.Category;
 
-    public const string Message = "Use .Should().NotMatchRegex()";
+    public const string Message = "Use .Should().EndWith()";
 
     protected override DiagnosticDescriptor Rule => new(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
@@ -49,7 +49,7 @@ public class AssertEndsWithCodeFix : XunitCodeFixProvider
         switch (properties.VisitorName)
         {
             case nameof(AssertEndsWithAnalyzer.AssertEndsWithStringSyntaxVisitor):
-                return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "EndsWith", "EndWith");
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "EndsWith", "EndWith");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }
