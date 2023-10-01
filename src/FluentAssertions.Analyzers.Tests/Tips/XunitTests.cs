@@ -215,6 +215,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             => VerifyCSharpFix<AssertEqualCodeFix, AssertEqualAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
         [DataTestMethod]
+        [DataRow("Assert.Equal(expected, actual);")]
+        [Implemented]
+        public void AssertStringEqual_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertEqualAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Equal(expected, actual);",
+            /* newAssertion: */ "actual.Should().Be(expected);")]
+        [Implemented]
+        public void AssertStringEqual_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertEqualCodeFix, AssertEqualAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
         [DataRow("Assert.StrictEqual(expected, actual);")]
         [Implemented]
         public void AssertStrictEqual_TestAnalyzer(string assertion) =>
