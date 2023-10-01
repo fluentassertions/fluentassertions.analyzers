@@ -134,6 +134,7 @@ namespace FluentAssertions.Analyzers
                 public const string AssertMatches = $"{DiagnosticProperties.IdPrefix}0712";
                 public const string AssertDoesNotMatch = $"{DiagnosticProperties.IdPrefix}0713";
                 public const string AssertEmpty = $"{DiagnosticProperties.IdPrefix}0714";
+                public const string AssertEndsWith = $"{DiagnosticProperties.IdPrefix}0715";
             }
         }
 
