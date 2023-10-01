@@ -10,25 +10,26 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace FluentAssertions.Analyzers.Xunit;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class AssertEmptyAnalyzer : XunitAnalyzer
+public class AssertEndsWithAnalyzer : XunitAnalyzer
 {
-    public const string DiagnosticId = Constants.Tips.Xunit.AssertEmpty;
+    public const string DiagnosticId = Constants.Tips.Xunit.AssertEndsWith;
     public const string Category = Constants.Tips.Category;
 
-    public const string Message = "Use .Should().BeEmpty()";
+    public const string Message = "Use .Should().EndWith()";
 
     protected override DiagnosticDescriptor Rule => new(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
 
     protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors => new FluentAssertionsCSharpSyntaxVisitor[]
     {
-        new AssertEmptyStringSyntaxVisitor()
+        new AssertEndsWithStringSyntaxVisitor()
     };
 
-    //public static void Empty(string value)
-    public class AssertEmptyStringSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+    //public static void EndsWith(string? expectedEndString, string? actualString)
+    public class AssertEndsWithStringSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public AssertEmptyStringSyntaxVisitor() : base(
-            MemberValidator.ArgumentsMatch("Empty",
+        public AssertEndsWithStringSyntaxVisitor() : base(
+            MemberValidator.ArgumentsMatch("EndsWith",
+                ArgumentValidator.IsType(TypeSelector.GetStringType),
                 ArgumentValidator.IsType(TypeSelector.GetStringType))
         )
         {
@@ -36,10 +37,10 @@ public class AssertEmptyAnalyzer : XunitAnalyzer
     }
 }
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertEmptyCodeFix)), Shared]
-public class AssertEmptyCodeFix : XunitCodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertEndsWithCodeFix)), Shared]
+public class AssertEndsWithCodeFix : XunitCodeFixProvider
 {
-    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertEmptyAnalyzer.DiagnosticId);
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertEndsWithAnalyzer.DiagnosticId);
 
     protected override ExpressionSyntax GetNewExpression(
         ExpressionSyntax expression,
@@ -47,8 +48,8 @@ public class AssertEmptyCodeFix : XunitCodeFixProvider
     {
         switch (properties.VisitorName)
         {
-            case nameof(AssertEmptyAnalyzer.AssertEmptyStringSyntaxVisitor):
-                return RenameMethodAndReplaceWithSubjectShould(expression, "Empty", "BeEmpty");
+            case nameof(AssertEndsWithAnalyzer.AssertEndsWithStringSyntaxVisitor):
+            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "EndsWith", "EndWith");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

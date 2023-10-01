@@ -438,6 +438,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertEmpty_String_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertEmptyCodeFix, AssertEmptyAnalyzer>("string actual", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.EndsWith(expected, actual);")]
+        [Implemented]
+        public void AssertEndsWith_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertEndsWithAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.EndsWith(expected, actual);",
+            /* newAssertion: */ "actual.Should().EndWith(expected);")]
+        [Implemented]
+        public void AssertEndsWith_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertEndsWithCodeFix, AssertEndsWithAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
