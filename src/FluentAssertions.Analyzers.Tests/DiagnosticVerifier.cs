@@ -17,6 +17,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Reflection;
 
 using XunitAssert = Xunit.Assert;
+using System.Net.Http;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -37,6 +38,7 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(Compilation), // Microsoft.CodeAnalysis
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
+                typeof(HttpRequestMessage), // System.Net.Http
                 typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
                 typeof(XunitAssert), // Xunit
             }.Select(type => type.GetTypeInfo().Assembly.Location)
