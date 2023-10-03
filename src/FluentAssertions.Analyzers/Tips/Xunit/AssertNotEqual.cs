@@ -77,7 +77,7 @@ public class AssertNotEqualAnalyzer : XunitAnalyzer
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertNotEqualCodeFix)), Shared]
 public class AssertNotEqualCodeFix : XunitCodeFixProvider
 {
-    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertEqualAnalyzer.DiagnosticId);
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertNotEqualAnalyzer.DiagnosticId);
 
     protected override ExpressionSyntax GetNewExpression(
         ExpressionSyntax expression,
