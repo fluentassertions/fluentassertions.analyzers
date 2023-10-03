@@ -161,6 +161,8 @@ namespace FluentAssertions.Analyzers.Tests
                 }
             }
 
+            codeFixProvider.FixableDiagnosticIds.Should().BeEquivalentTo(analyzer.SupportedDiagnostics.Select(d => d.Id));
+
             //after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = GetStringFromDocument(document);
             actual.Should().Be(newSource);
