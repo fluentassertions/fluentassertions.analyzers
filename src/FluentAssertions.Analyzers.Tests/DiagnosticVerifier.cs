@@ -19,6 +19,7 @@ using System.Reflection;
 using XunitAssert = Xunit.Assert;
 using System.Net.Http;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -42,6 +43,7 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(HttpRequestMessage), // System.Net.Http
                 typeof(ImmutableArray), // System.Collections.Immutable
                 typeof(ConcurrentBag<>), // System.Collections.Concurrent
+                typeof(Collection<>), // System.ObjectModel
                 typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
                 typeof(XunitAssert), // Xunit
             }.Select(type => type.GetTypeInfo().Assembly.Location)
