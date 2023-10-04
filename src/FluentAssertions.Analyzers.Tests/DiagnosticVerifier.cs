@@ -43,7 +43,7 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(HttpRequestMessage), // System.Net.Http
                 typeof(ImmutableArray), // System.Collections.Immutable
                 typeof(ConcurrentBag<>), // System.Collections.Concurrent
-                typeof(Collection<>), // System.ObjectModel
+                typeof(ReadOnlyDictionary<,>), // System.ObjectModel
                 typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
                 typeof(XunitAssert), // Xunit
             }.Select(type => type.GetTypeInfo().Assembly.Location)
