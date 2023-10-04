@@ -2,8 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions.Analyzers.Xunit;
 
-using XunitAssert = Xunit.Assert;
-
 namespace FluentAssertions.Analyzers.Tests.Tips
 {
     [TestClass]
@@ -369,6 +367,36 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             => VerifyCSharpFix<AssertContainsCodeFix, AssertContainsAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
 
         [DataTestMethod]
+        [DataRow("Assert.Contains(expected, actual);", "ISet<string> actual, string expected")]
+        [DataRow("Assert.Contains(expected, actual);", "IReadOnlySet<string> actual, string expected")]
+        [DataRow("Assert.Contains(expected, actual);", "HashSet<string> actual, string expected")]
+        [DataRow("Assert.Contains(expected, actual);", "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetContains_TestAnalyzer(string assertion, string arguments) =>
+            VerifyCSharpDiagnostic<AssertContainsAnalyzer>(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "ISet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "IReadOnlySet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "HashSet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetContains_TestCodeFix(string oldAssertion, string newAssertion, string arguments)
+            => VerifyCSharpFix<AssertContainsCodeFix, AssertContainsAnalyzer>(arguments, oldAssertion, newAssertion);
+
+        [DataTestMethod]
         [DataRow("Assert.DoesNotContain(expected, actual);")]
         [Implemented]
         public void AssertStringDoesNotContain_TestAnalyzer(string assertion) =>
@@ -494,7 +522,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 Message = message,
                 Locations = new DiagnosticResultLocation[]
                 {
-                    new("Test0.cs", 14, 13)
+                    new("Test0.cs", 15, 13)
                 },
                 Severity = DiagnosticSeverity.Info
             });

@@ -225,6 +225,7 @@ namespace FluentAssertions.Analyzers.Tests
         public static string XunitAssertion(string methodArguments, string assertion) => new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using System.Collections.Generic;")
+            .AppendLine("using System.Collections.Immutable;")
             .AppendLine("using System.Text.RegularExpressions;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
