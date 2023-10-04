@@ -21,7 +21,8 @@ public class AssertContainsAnalyzer : XunitAnalyzer
 
     protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors => new FluentAssertionsCSharpSyntaxVisitor[]
     {
-        new AssertContainsStringSyntaxVisitor()
+        new AssertContainsStringSyntaxVisitor(),
+        new AssertContainsSetSyntaxVisitor()
     };
 
     //public static void Contains(string expectedSubstring, string? actualString)
@@ -31,6 +32,21 @@ public class AssertContainsAnalyzer : XunitAnalyzer
             MemberValidator.ArgumentsMatch("Contains",
                 ArgumentValidator.IsType(TypeSelector.GetStringType),
                 ArgumentValidator.IsType(TypeSelector.GetStringType))
+        )
+        {
+        }
+    }
+
+    //public static void Contains<T>(T expected, ISet<T> actual)
+    //public static void Contains<T>(T expected, IReadOnlySet<T> actual)
+    //public static void Contains<T>(T expected, HashSet<T> actual)
+    //public static void Contains<T>(T expected, ImmutableHashSet<T> actual)
+    public class AssertContainsSetSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+    {
+        public AssertContainsSetSyntaxVisitor() : base(
+            MemberValidator.ArgumentsMatch("Contains",
+                ArgumentValidator.Exists(),
+                ArgumentValidator.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_IEnumerable))
         )
         {
         }
@@ -49,6 +65,7 @@ public class AssertContainsCodeFix : XunitCodeFixProvider
         switch (properties.VisitorName)
         {
             case nameof(AssertContainsAnalyzer.AssertContainsStringSyntaxVisitor):
+            case nameof(AssertContainsAnalyzer.AssertContainsSetSyntaxVisitor):
                 return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "Contains", "Contain");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
