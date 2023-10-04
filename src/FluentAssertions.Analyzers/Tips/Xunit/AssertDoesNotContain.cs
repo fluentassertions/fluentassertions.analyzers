@@ -21,7 +21,8 @@ public class AssertDoesNotContainAnalyzer : XunitAnalyzer
 
     protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors => new FluentAssertionsCSharpSyntaxVisitor[]
     {
-        new AssertDoesNotContainStringSyntaxVisitor()
+        new AssertDoesNotContainStringSyntaxVisitor(),
+        new AssertDoesNotContainSetSyntaxVisitor()
     };
 
     //public static void DoesNotContain(string expectedSubstring, string? actualString)
@@ -31,6 +32,21 @@ public class AssertDoesNotContainAnalyzer : XunitAnalyzer
             MemberValidator.ArgumentsMatch("DoesNotContain",
                 ArgumentValidator.IsType(TypeSelector.GetStringType),
                 ArgumentValidator.IsType(TypeSelector.GetStringType))
+        )
+        {
+        }
+    }
+
+    //public static void DoesNotContain<T>(T expected, ISet<T> actual)
+    //public static void DoesNotContain<T>(T expected, IReadOnlySet<T> actual)
+    //public static void DoesNotContain<T>(T expected, HashSet<T> actual)
+    //public static void DoesNotContain<T>(T expected, ImmutableHashSet<T> actual)
+    public class AssertDoesNotContainSetSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+    {
+        public AssertDoesNotContainSetSyntaxVisitor() : base(
+            MemberValidator.ArgumentsMatch("DoesNotContain",
+                ArgumentValidator.Exists(),
+                ArgumentValidator.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_IEnumerable))
         )
         {
         }
@@ -49,6 +65,7 @@ public class AssertDoesNotContainCodeFix : XunitCodeFixProvider
         switch (properties.VisitorName)
         {
             case nameof(AssertDoesNotContainAnalyzer.AssertDoesNotContainStringSyntaxVisitor):
+            case nameof(AssertDoesNotContainAnalyzer.AssertDoesNotContainSetSyntaxVisitor):
                 return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "DoesNotContain", "NotContain");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");

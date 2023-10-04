@@ -39,6 +39,7 @@ namespace FluentAssertions.Analyzers.Tests
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
                 typeof(HttpRequestMessage), // System.Net.Http
+                typeof(ImmutableArray), // System.Collections.Immutable
                 typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
                 typeof(XunitAssert), // Xunit
             }.Select(type => type.GetTypeInfo().Assembly.Location)
