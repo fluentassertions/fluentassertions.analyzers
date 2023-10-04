@@ -410,6 +410,38 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertStringDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertDoesNotContainCodeFix, AssertDoesNotContainAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
 
+
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "ISet<string> actual, string expected")]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "IReadOnlySet<string> actual, string expected")]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "HashSet<string> actual, string expected")]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetDoesNotContain_TestAnalyzer(string assertion, string arguments) =>
+            VerifyCSharpDiagnostic<AssertDoesNotContainAnalyzer>(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "ISet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "IReadOnlySet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "HashSet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion, string arguments)
+            => VerifyCSharpFix<AssertDoesNotContainCodeFix, AssertDoesNotContainAnalyzer>(arguments, oldAssertion, newAssertion);
+
+
         [DataTestMethod]
         [DataRow("Assert.Matches(expectedRegexPattern, actual);")]
         [Implemented]
