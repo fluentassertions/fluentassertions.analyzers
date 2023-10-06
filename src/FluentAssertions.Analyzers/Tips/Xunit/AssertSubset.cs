@@ -49,7 +49,7 @@ public class AssertSubsetCodeFix : XunitCodeFixProvider
         switch (properties.VisitorName)
         {
             case nameof(AssertSubsetAnalyzer.AssertSubsetSyntaxVisitor):
-                return RenameMethodAndReplaceWithSubjectShould(expression, "Subset", "BeSubset");
+                return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "Subset", "BeSubsetOf");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }
