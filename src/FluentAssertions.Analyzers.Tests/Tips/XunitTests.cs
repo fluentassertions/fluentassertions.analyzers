@@ -540,6 +540,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertStartsWith_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertStartsWithCodeFix, AssertStartsWithAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.Subset(expected, actual);")]
+        [Implemented]
+        public void AssertSubset_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertSubsetAnalyzer>("ISet<string> actual, ISet<string> expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Subset(expected, actual);",
+            /* newAssertion: */ "actual.Should().BeSubsetOf(expected);")]
+        [Implemented]
+        public void AssertSubset_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertSubsetCodeFix, AssertSubsetAnalyzer>("ISet<string> actual, ISet<string> expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
