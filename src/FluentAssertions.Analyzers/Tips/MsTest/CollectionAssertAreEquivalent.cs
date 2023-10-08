@@ -6,24 +6,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class CollectionAssertAreEquivalentAnalyzer : MsTestCollectionAssertAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionAssertAreEquivalentAnalyzer : MsTestCollectionAssertAnalyzer
+    public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAreEquivalent;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().BeEquivalentTo() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAreEquivalent;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().BeEquivalentTo() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new CollectionAssertAreEquivalentSyntaxVisitor();
-            }
+            yield return new CollectionAssertAreEquivalentSyntaxVisitor();
         }
+    }
 
 		public class CollectionAssertAreEquivalentSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
@@ -31,16 +31,15 @@ namespace FluentAssertions.Analyzers
 			{
 			}
 		}
-    }
+}
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAreEquivalentCodeFix)), Shared]
-    public class CollectionAssertAreEquivalentCodeFix : MsTestCollectionAssertCodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAreEquivalentCodeFix)), Shared]
+public class CollectionAssertAreEquivalentCodeFix : MsTestCollectionAssertCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAreEquivalentAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAreEquivalentAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-        {
-            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEquivalent", "BeEquivalentTo");
-        }
+        return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreEquivalent", "BeEquivalentTo");
     }
 }

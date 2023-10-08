@@ -7,52 +7,51 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class CollectionShouldHaveSameCountAnalyzer : CollectionAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldHaveSameCountAnalyzer : CollectionAnalyzer
+    public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveSameCount;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().HaveSameCount() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveSameCount;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().HaveSameCount() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new ShouldHaveCountOtherCollectionCountSyntaxVisitor();
-            }
-        }
-
-        public class ShouldHaveCountOtherCollectionCountSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldHaveCountOtherCollectionCountSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("HaveCount", HasArgumentInvokingCountMethod))
-            {
-            }
-
-            private static bool HasArgumentInvokingCountMethod(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
-            {
-                if (!arguments.Any()) return false;
-
-                return arguments.First().Expression is InvocationExpressionSyntax invocation
-                    && invocation.Expression is MemberAccessExpressionSyntax memberAccess
-                    && memberAccess.Name.Identifier.Text == nameof(Enumerable.Count)
-                    && memberAccess.Expression is IdentifierNameSyntax;
-                    
-            }
+            yield return new ShouldHaveCountOtherCollectionCountSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveSameCountCodeFix)), Shared]
-    public class CollectionShouldHaveSameCountCodeFix : FluentAssertionsCodeFixProvider
+    public class ShouldHaveCountOtherCollectionCountSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveSameCountAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        public ShouldHaveCountOtherCollectionCountSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("HaveCount", HasArgumentInvokingCountMethod))
         {
-            return GetNewExpression(expression, NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgument("HaveCount", "HaveSameCount"));
         }
+
+        private static bool HasArgumentInvokingCountMethod(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
+        {
+            if (!arguments.Any()) return false;
+
+            return arguments.First().Expression is InvocationExpressionSyntax invocation
+                && invocation.Expression is MemberAccessExpressionSyntax memberAccess
+                && memberAccess.Name.Identifier.Text == nameof(Enumerable.Count)
+                && memberAccess.Expression is IdentifierNameSyntax;
+                
+        }
+    }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveSameCountCodeFix)), Shared]
+public class CollectionShouldHaveSameCountCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveSameCountAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+    {
+        return GetNewExpression(expression, NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgument("HaveCount", "HaveSameCount"));
     }
 }

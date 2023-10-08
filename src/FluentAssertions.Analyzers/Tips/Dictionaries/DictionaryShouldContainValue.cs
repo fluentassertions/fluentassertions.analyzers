@@ -6,44 +6,43 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class DictionaryShouldContainValueAnalyzer : DictionaryAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class DictionaryShouldContainValueAnalyzer : DictionaryAnalyzer
+    public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainValue;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().ContainValue() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainValue;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().ContainValue() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new ContainsValueShouldBeTrueSyntaxVisitor();
-            }
-        }
-
-        public class ContainsValueShouldBeTrueSyntaxVisitor: FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ContainsValueShouldBeTrueSyntaxVisitor() : base(new MemberValidator("ContainsValue"), MemberValidator.Should, new MemberValidator("BeTrue"))
-            {
-            }
+            yield return new ContainsValueShouldBeTrueSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DictionaryShouldContainValueCodeFix)), Shared]
-    public class DictionaryShouldContainValueCodeFix : FluentAssertionsCodeFixProvider
+    public class ContainsValueShouldBeTrueSyntaxVisitor: FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldContainValueAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        public ContainsValueShouldBeTrueSyntaxVisitor() : base(new MemberValidator("ContainsValue"), MemberValidator.Should, new MemberValidator("BeTrue"))
         {
-            var remove = NodeReplacement.RemoveAndExtractArguments("ContainsValue");
-            var newExpression = GetNewExpression(expression, remove);
-
-            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainValue", remove.Arguments));
         }
+    }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DictionaryShouldContainValueCodeFix)), Shared]
+public class DictionaryShouldContainValueCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldContainValueAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+    {
+        var remove = NodeReplacement.RemoveAndExtractArguments("ContainsValue");
+        var newExpression = GetNewExpression(expression, remove);
+
+        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainValue", remove.Arguments));
     }
 }

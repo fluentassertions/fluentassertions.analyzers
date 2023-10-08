@@ -3,26 +3,25 @@ using Microsoft.CodeAnalysis;
 using System;
 using System.Diagnostics;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DebuggerDisplay("RenameAndNegateLambda(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
+public class RenameAndNegateLambdaNodeReplacement : RenameNodeReplacement
 {
-    [DebuggerDisplay("RenameAndNegateLambda(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
-    public class RenameAndNegateLambdaNodeReplacement : RenameNodeReplacement
+    public RenameAndNegateLambdaNodeReplacement(string oldName, string newName) : base(oldName, newName)
     {
-        public RenameAndNegateLambdaNodeReplacement(string oldName, string newName) : base(oldName, newName)
-        {
-        }
+    }
 
-        public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node)
-        {
-            var oldLambda = (LambdaExpressionSyntax)node.ArgumentList.Arguments[0].Expression;
-            var newLambda = NagateLambda(oldLambda);
+    public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node)
+    {
+        var oldLambda = (LambdaExpressionSyntax)node.ArgumentList.Arguments[0].Expression;
+        var newLambda = NagateLambda(oldLambda);
 
-            return node.ReplaceNode(oldLambda, newLambda);
-        }
+        return node.ReplaceNode(oldLambda, newLambda);
+    }
 
-        private LambdaExpressionSyntax NagateLambda(LambdaExpressionSyntax lambda)
-        {
-            throw new NotImplementedException();
-        }
+    private LambdaExpressionSyntax NagateLambda(LambdaExpressionSyntax lambda)
+    {
+        throw new NotImplementedException();
     }
 }

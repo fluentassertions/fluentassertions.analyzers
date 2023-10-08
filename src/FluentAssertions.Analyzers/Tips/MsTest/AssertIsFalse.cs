@@ -6,39 +6,38 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class AssertIsFalseAnalyzer : MsTestAssertAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertIsFalseAnalyzer : MsTestAssertAnalyzer
+    public const string DiagnosticId = Constants.Tips.MsTest.AssertIsFalse;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().BeFalse() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.MsTest.AssertIsFalse;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().BeFalse() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new AssertIsFalseSyntaxVisitor();
-            }
-        }
-
-        public class AssertIsFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public AssertIsFalseSyntaxVisitor() : base(new MemberValidator("IsFalse"))
-            {
-            }
+            yield return new AssertIsFalseSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsFalseCodeFix)), Shared]
-    public class AssertIsFalseCodeFix : MsTestAssertCodeFixProvider
+    public class AssertIsFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertIsFalseAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReplaceWithSubjectShould(expression, "IsFalse", "BeFalse");
+        public AssertIsFalseSyntaxVisitor() : base(new MemberValidator("IsFalse"))
+        {
+        }
     }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsFalseCodeFix)), Shared]
+public class AssertIsFalseCodeFix : MsTestAssertCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertIsFalseAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        => RenameMethodAndReplaceWithSubjectShould(expression, "IsFalse", "BeFalse");
 }

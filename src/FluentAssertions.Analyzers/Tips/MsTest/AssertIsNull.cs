@@ -6,39 +6,38 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class AssertIsNullAnalyzer : MsTestAssertAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertIsNullAnalyzer : MsTestAssertAnalyzer
+    public const string DiagnosticId = Constants.Tips.MsTest.AssertIsNull;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().BeNull() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.MsTest.AssertIsNull;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().BeNull() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new AssertIsNullSyntaxVisitor();
-            }
-        }
-
-        public class AssertIsNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public AssertIsNullSyntaxVisitor() : base(new MemberValidator("IsNull"))
-            {
-            }
+            yield return new AssertIsNullSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFix)), Shared]
-    public class AssertIsNullCodeFix : MsTestAssertCodeFixProvider
+    public class AssertIsNullSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertIsNullAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReplaceWithSubjectShould(expression, "IsNull", "BeNull");
+        public AssertIsNullSyntaxVisitor() : base(new MemberValidator("IsNull"))
+        {
+        }
     }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFix)), Shared]
+public class AssertIsNullCodeFix : MsTestAssertCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertIsNullAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        => RenameMethodAndReplaceWithSubjectShould(expression, "IsNull", "BeNull");
 }

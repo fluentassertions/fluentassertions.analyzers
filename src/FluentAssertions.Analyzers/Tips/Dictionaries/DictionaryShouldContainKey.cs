@@ -6,24 +6,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class DictionaryShouldContainKeyAnalyzer : DictionaryAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class DictionaryShouldContainKeyAnalyzer : DictionaryAnalyzer
+    public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainKey;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().ContainKey() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Dictionaries.DictionaryShouldContainKey;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().ContainKey() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new ContainsKeyShouldBeTrueSyntaxVisitor();
-            }
+            yield return new ContainsKeyShouldBeTrueSyntaxVisitor();
         }
+    }
 
 		public class ContainsKeyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
@@ -31,19 +31,18 @@ namespace FluentAssertions.Analyzers
 			{
 			}
 		}
-    }
+}
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DictionaryShouldContainKeyCodeFix)), Shared]
-    public class DictionaryShouldContainKeyCodeFix : FluentAssertionsCodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DictionaryShouldContainKeyCodeFix)), Shared]
+public class DictionaryShouldContainKeyCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldContainKeyAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DictionaryShouldContainKeyAnalyzer.DiagnosticId);
+        var remove = NodeReplacement.RemoveAndExtractArguments("ContainsKey");
+        var newExpression = GetNewExpression(expression, remove);
 
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-        {
-            var remove = NodeReplacement.RemoveAndExtractArguments("ContainsKey");
-            var newExpression = GetNewExpression(expression, remove);
-
-            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainKey", remove.Arguments));
-        }
+        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "ContainKey", remove.Arguments));
     }
 }
