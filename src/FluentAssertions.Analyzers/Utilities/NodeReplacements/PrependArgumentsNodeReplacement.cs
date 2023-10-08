@@ -3,24 +3,23 @@ using Microsoft.CodeAnalysis;
 using System.Linq;
 using System.Diagnostics;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DebuggerDisplay("PrependArguments(name: \"{_name}\")")]
+public class PrependArgumentsNodeReplacement : EditNodeReplacement
 {
-    [DebuggerDisplay("PrependArguments(name: \"{_name}\")")]
-    public class PrependArgumentsNodeReplacement : EditNodeReplacement
+    private readonly SeparatedSyntaxList<ArgumentSyntax> _arguments;
+
+    public PrependArgumentsNodeReplacement(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) : base(name)
     {
-        private readonly SeparatedSyntaxList<ArgumentSyntax> _arguments;
+        _arguments = arguments;
+    }
 
-        public PrependArgumentsNodeReplacement(string name, SeparatedSyntaxList<ArgumentSyntax> arguments) : base(name)
-        {
-            _arguments = arguments;
-        }
+    public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node)
+    {
+        var combinedArguments = node.ArgumentList.WithArguments(_arguments)
+            .AddArguments(node.ArgumentList.Arguments.ToArray());
 
-        public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node)
-        {
-            var combinedArguments = node.ArgumentList.WithArguments(_arguments)
-                .AddArguments(node.ArgumentList.Arguments.ToArray());
-
-            return node.WithArgumentList(combinedArguments);
-        }
+        return node.WithArgumentList(combinedArguments);
     }
 }

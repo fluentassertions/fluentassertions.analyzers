@@ -6,43 +6,42 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class CollectionShouldNotBeEmptyAnalyzer : CollectionAnalyzer
 {
+    public const string DiagnosticId = Constants.Tips.Collections.CollectionsShouldNotBeEmpty;
+    public const string Category = Constants.Tips.Category;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldNotBeEmptyAnalyzer : CollectionAnalyzer
+    public const string Message = "Use .Should().NotBeEmpty() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionsShouldNotBeEmpty;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().NotBeEmpty() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new AnyShouldBeTrueSyntaxVisitor();
-            }
-        }
-
-        public class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public AnyShouldBeTrueSyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeTrue"))
-            {
-            }
+            yield return new AnyShouldBeTrueSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldNotBeEmptyCodeFix)), Shared]
-    public class CollectionShouldNotBeEmptyCodeFix : FluentAssertionsCodeFixProvider
+    public class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeEmptyAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        public AnyShouldBeTrueSyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeTrue"))
         {
-            return GetNewExpression(expression, NodeReplacement.Remove("Any"), NodeReplacement.Rename("BeTrue", "NotBeEmpty"));
         }
+    }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldNotBeEmptyCodeFix)), Shared]
+public class CollectionShouldNotBeEmptyCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotBeEmptyAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+    {
+        return GetNewExpression(expression, NodeReplacement.Remove("Any"), NodeReplacement.Rename("BeTrue", "NotBeEmpty"));
     }
 }

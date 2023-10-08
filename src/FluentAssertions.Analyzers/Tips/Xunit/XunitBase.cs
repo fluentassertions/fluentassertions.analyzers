@@ -2,34 +2,33 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace FluentAssertions.Analyzers.Xunit
+namespace FluentAssertions.Analyzers.Xunit;
+
+public abstract class XunitAnalyzer : TestingLibraryAnalyzerBase
 {
-    public abstract class XunitAnalyzer : TestingLibraryAnalyzerBase
+    protected override string TestingLibraryModule => "xunit.assert";
+    protected override string TestingLibraryAssertionType => "Assert";
+
+    protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "Assert";
+}
+
+public abstract class XunitCodeFixProvider : TestingLibraryCodeFixBase
+{
+    protected override string AssertClassName => "Assert";
+    
+    protected ExpressionSyntax GetNewExpressionForEqualityWithComparer(
+        ExpressionSyntax expression,
+        string oldName,
+        string newName)
     {
-        protected override string TestingLibraryModule => "xunit.assert";
-        protected override string TestingLibraryAssertionType => "Assert";
+        var rename = NodeReplacement.RenameAndExtractArguments(oldName, newName);
+        var newExpression = GetNewExpression(expression, rename);
 
-        protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => type.Name == "Assert";
-    }
+        var actual = rename.Arguments[1];
+        var optionsLambda = Expressions.OptionsUsing(rename.Arguments[2]);
 
-    public abstract class XunitCodeFixProvider : TestingLibraryCodeFixBase
-    {
-        protected override string AssertClassName => "Assert";
-        
-        protected ExpressionSyntax GetNewExpressionForEqualityWithComparer(
-            ExpressionSyntax expression,
-            string oldName,
-            string newName)
-        {
-            var rename = NodeReplacement.RenameAndExtractArguments(oldName, newName);
-            var newExpression = GetNewExpression(expression, rename);
+        newExpression = ReplaceIdentifier(newExpression, AssertClassName, Expressions.SubjectShould(actual.Expression));
 
-            var actual = rename.Arguments[1];
-            var optionsLambda = Expressions.OptionsUsing(rename.Arguments[2]);
-
-            newExpression = ReplaceIdentifier(newExpression, AssertClassName, Expressions.SubjectShould(actual.Expression));
-
-            return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, rename.Arguments.RemoveAt(2).Add(optionsLambda).RemoveAt(1)));
-        }
+        return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, rename.Arguments.RemoveAt(2).Add(optionsLambda).RemoveAt(1)));
     }
 }

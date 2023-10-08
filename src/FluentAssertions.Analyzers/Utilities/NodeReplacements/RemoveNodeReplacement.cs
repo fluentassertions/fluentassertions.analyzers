@@ -3,33 +3,32 @@ using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DebuggerDisplay("Remove(name: \"{_name}\")")]
+public class RemoveNodeReplacement : NodeReplacement
 {
-    [DebuggerDisplay("Remove(name: \"{_name}\")")]
-    public class RemoveNodeReplacement : NodeReplacement
+    private readonly string _name;
+
+    public RemoveNodeReplacement(string name)
     {
-        private readonly string _name;
+        _name = name;
+    }
 
-        public RemoveNodeReplacement(string name)
+    public override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode?.Value?.Name?.Identifier.Text == _name;
+    public sealed override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode?.Previous?.Value ?? listNode.Value.Parent;
+    public sealed override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
+    {
+        if (listNode.Previous == null) return listNode.Next.Value.Parent;
+
+        var previous = listNode.Previous.Value;
+        var next = listNode.Next?.Value ?? listNode.Value.Expression;
+
+        if (next.Parent is InvocationExpressionSyntax nextInvocation)
         {
-            _name = name;
+            return previous.WithExpression(nextInvocation);
         }
 
-        public override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode?.Value?.Name?.Identifier.Text == _name;
-        public sealed override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode?.Previous?.Value ?? listNode.Value.Parent;
-        public sealed override SyntaxNode ComputeNew(LinkedListNode<MemberAccessExpressionSyntax> listNode)
-        {
-            if (listNode.Previous == null) return listNode.Next.Value.Parent;
-
-            var previous = listNode.Previous.Value;
-            var next = listNode.Next?.Value ?? listNode.Value.Expression;
-
-            if (next.Parent is InvocationExpressionSyntax nextInvocation)
-            {
-                return previous.WithExpression(nextInvocation);
-            }
-
-            return previous.WithExpression(next);
-        }
+        return previous.WithExpression(next);
     }
 }

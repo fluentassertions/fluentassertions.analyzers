@@ -6,24 +6,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class StringShouldStartWithAnalyzer : StringAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class StringShouldStartWithAnalyzer : StringAnalyzer
+    public const string DiagnosticId = Constants.Tips.Strings.StringShouldStartWith;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().StartWith() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Strings.StringShouldStartWith;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().StartWith() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new StartWithShouldBeTrueSyntaxVisitor();
-            }
+            yield return new StartWithShouldBeTrueSyntaxVisitor();
         }
+    }
 
 		public class StartWithShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
@@ -31,19 +31,18 @@ namespace FluentAssertions.Analyzers
 			{
 			}
 		}
-    }
+}
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringShouldStartWithCodeFix)), Shared]
-    public class StringShouldStartWithCodeFix : FluentAssertionsCodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(StringShouldStartWithCodeFix)), Shared]
+public class StringShouldStartWithCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringShouldStartWithAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(StringShouldStartWithAnalyzer.DiagnosticId);
+        var remove = NodeReplacement.RemoveAndExtractArguments("StartsWith");
+        var newExpression = GetNewExpression(expression, remove);
 
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-        {
-            var remove = NodeReplacement.RemoveAndExtractArguments("StartsWith");
-            var newExpression = GetNewExpression(expression, remove);
-
-            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "StartWith", remove.Arguments));
-        }
+        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "StartWith", remove.Arguments));
     }
 }

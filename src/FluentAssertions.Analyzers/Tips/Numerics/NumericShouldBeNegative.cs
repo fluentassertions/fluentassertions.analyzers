@@ -6,41 +6,40 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class NumericShouldBeNegativeAnalyzer : NumericAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NumericShouldBeNegativeAnalyzer : NumericAnalyzer
+    public const string DiagnosticId = Constants.Tips.Numeric.NumericShouldBeNegative;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should() followed by .BeNegative() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Numeric.NumericShouldBeNegative;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should() followed by .BeNegative() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new NumericShouldBeBeLessThan0SyntaxVisitor();
-            }
-        }
-
-        public class NumericShouldBeBeLessThan0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public NumericShouldBeBeLessThan0SyntaxVisitor() : base(MemberValidator.Should, MemberValidator.ArgumentIsLiteral("BeLessThan", 0))
-            {
-            }
+            yield return new NumericShouldBeBeLessThan0SyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NumericShouldBeNegativeCodeFix)), Shared]
-    public class NumericShouldBeNegativeCodeFix : FluentAssertionsCodeFixProvider
+    public class NumericShouldBeBeLessThan0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(NumericShouldBeNegativeAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        public NumericShouldBeBeLessThan0SyntaxVisitor() : base(MemberValidator.Should, MemberValidator.ArgumentIsLiteral("BeLessThan", 0))
         {
-            return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("BeLessThan", "BeNegative"));
         }
+    }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NumericShouldBeNegativeCodeFix)), Shared]
+public class NumericShouldBeNegativeCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(NumericShouldBeNegativeAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+    {
+        return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("BeLessThan", "BeNegative"));
     }
 }

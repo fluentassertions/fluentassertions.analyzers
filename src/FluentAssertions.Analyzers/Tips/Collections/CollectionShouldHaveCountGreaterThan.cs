@@ -6,41 +6,40 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class CollectionShouldHaveCountGreaterThanAnalyzer : CollectionAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldHaveCountGreaterThanAnalyzer : CollectionAnalyzer
+    public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCountGreaterThan;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().HaveCountGreaterThan() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldHaveCountGreaterThan;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().HaveCountGreaterThan() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new CountShouldBeGreaterThanSyntaxVisitor();
-            }
-        }
-
-        public class CountShouldBeGreaterThanSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public CountShouldBeGreaterThanSyntaxVisitor() : base(new MemberValidator("Count"), MemberValidator.Should, new MemberValidator("BeGreaterThan"))
-            {
-            }
+            yield return new CountShouldBeGreaterThanSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveCountGreaterThanCodeFix)), Shared]
-    public class CollectionShouldHaveCountGreaterThanCodeFix : FluentAssertionsCodeFixProvider
+    public class CountShouldBeGreaterThanSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountGreaterThanAnalyzer.DiagnosticId);
-        
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        public CountShouldBeGreaterThanSyntaxVisitor() : base(new MemberValidator("Count"), MemberValidator.Should, new MemberValidator("BeGreaterThan"))
         {
-            return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeGreaterThan", "HaveCountGreaterThan"));
         }
+    }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveCountGreaterThanCodeFix)), Shared]
+public class CollectionShouldHaveCountGreaterThanCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldHaveCountGreaterThanAnalyzer.DiagnosticId);
+    
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+    {
+        return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeGreaterThan", "HaveCountGreaterThan"));
     }
 }

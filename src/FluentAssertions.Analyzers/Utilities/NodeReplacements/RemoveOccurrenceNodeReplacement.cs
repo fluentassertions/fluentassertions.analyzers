@@ -2,27 +2,26 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DebuggerDisplay("RemoveOccurrence(name: \"{_name}\", occurrence: {_occurrence})")]
+public class RemoveOccurrenceNodeReplacement : RemoveNodeReplacement
 {
-    [DebuggerDisplay("RemoveOccurrence(name: \"{_name}\", occurrence: {_occurrence})")]
-    public class RemoveOccurrenceNodeReplacement : RemoveNodeReplacement
+    private int _occurrence;
+
+    public RemoveOccurrenceNodeReplacement(string name, int occurrence) : base(name)
     {
-        private int _occurrence;
+        _occurrence = occurrence;
+    }
 
-        public RemoveOccurrenceNodeReplacement(string name, int occurrence) : base(name)
+    public sealed override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode)
+    {
+        if (base.IsValidNode(listNode))
         {
-            _occurrence = occurrence;
+            --_occurrence;
+            return _occurrence == 0;
         }
 
-        public sealed override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode)
-        {
-            if (base.IsValidNode(listNode))
-            {
-                --_occurrence;
-                return _occurrence == 0;
-            }
-
-            return false;
-        }
+        return false;
     }
 }

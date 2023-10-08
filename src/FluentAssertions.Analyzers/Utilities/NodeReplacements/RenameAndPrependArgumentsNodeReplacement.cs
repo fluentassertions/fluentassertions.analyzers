@@ -3,24 +3,23 @@ using Microsoft.CodeAnalysis;
 using System.Linq;
 using System.Diagnostics;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DebuggerDisplay("RenameAndPrependArguments(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
+public class RenameAndPrependArgumentsNodeReplacement : RenameNodeReplacement
 {
-    [DebuggerDisplay("RenameAndPrependArguments(oldName: \"{_oldName}\", newName: \"{_newName}\")")]
-    public class RenameAndPrependArgumentsNodeReplacement : RenameNodeReplacement
+    private readonly SeparatedSyntaxList<ArgumentSyntax> _arguments;
+
+    public RenameAndPrependArgumentsNodeReplacement(string oldName, string newName, SeparatedSyntaxList<ArgumentSyntax> arguments) : base(oldName, newName)
     {
-        private readonly SeparatedSyntaxList<ArgumentSyntax> _arguments;
+        _arguments = arguments;
+    }
 
-        public RenameAndPrependArgumentsNodeReplacement(string oldName, string newName, SeparatedSyntaxList<ArgumentSyntax> arguments) : base(oldName, newName)
-        {
-            _arguments = arguments;
-        }
+    public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node)
+    {
+        var combinedArguments = node.ArgumentList.WithArguments(_arguments)
+            .AddArguments(node.ArgumentList.Arguments.ToArray());
 
-        public override InvocationExpressionSyntax ComputeNew(InvocationExpressionSyntax node)
-        {
-            var combinedArguments = node.ArgumentList.WithArguments(_arguments)
-                .AddArguments(node.ArgumentList.Arguments.ToArray());
-
-            return node.WithArgumentList(combinedArguments);
-        }
+        return node.WithArgumentList(combinedArguments);
     }
 }

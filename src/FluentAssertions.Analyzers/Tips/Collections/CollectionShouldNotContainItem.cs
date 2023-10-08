@@ -6,44 +6,43 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class CollectionShouldNotContainItemAnalyzer : CollectionAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldNotContainItemAnalyzer : CollectionAnalyzer
+    public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotContainItem;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().NotContain() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotContainItem;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().NotContain() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-               yield return new ContainsShouldBeFalseSyntaxVisitor();
-            }
-        }
-
-        public class ContainsShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ContainsShouldBeFalseSyntaxVisitor() : base(new MemberValidator("Contains"), MemberValidator.Should, new MemberValidator("BeFalse"))
-            {
-            }
+           yield return new ContainsShouldBeFalseSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldNotContainItemCodeFix)), Shared]
-    public class CollectionShouldNotContainItemCodeFix : FluentAssertionsCodeFixProvider
+    public class ContainsShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainItemAnalyzer.DiagnosticId);
-        
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        public ContainsShouldBeFalseSyntaxVisitor() : base(new MemberValidator("Contains"), MemberValidator.Should, new MemberValidator("BeFalse"))
         {
-            var remove = NodeReplacement.RemoveAndExtractArguments("Contains");
-            var newExpression = GetNewExpression(expression, remove);
-
-            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
         }
+    }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldNotContainItemCodeFix)), Shared]
+public class CollectionShouldNotContainItemCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldNotContainItemAnalyzer.DiagnosticId);
+    
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+    {
+        var remove = NodeReplacement.RemoveAndExtractArguments("Contains");
+        var newExpression = GetNewExpression(expression, remove);
+
+        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
     }
 }
