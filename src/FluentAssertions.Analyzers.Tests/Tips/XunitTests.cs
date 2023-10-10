@@ -576,6 +576,28 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertIsAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertIsAssignableFromCodeFix, AssertIsAssignableFromAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.IsNotAssignableFrom(expected, actual);")]
+        [DataRow("Assert.IsNotAssignableFrom(typeof(string), actual);")]
+        [DataRow("Assert.IsNotAssignableFrom<string>(actual);")]
+        [Implemented]
+        public void AssertIsNotAssignableFrom_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertIsNotAssignableFromAnalyzer>("string actual, Type expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotAssignableFrom(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotBeAssignableTo(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotAssignableFrom(typeof(string), actual);",
+            /* newAssertion: */ "actual.Should().NotBeAssignableTo<string>();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotAssignableFrom<string>(actual);",
+            /* newAssertion: */ "actual.Should().NotBeAssignableTo<string>();")]
+        [Implemented]
+        public void AssertIsNotAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsNotAssignableFromCodeFix, AssertIsNotAssignableFromAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
