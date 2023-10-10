@@ -140,6 +140,7 @@ public static class Constants
             public const string AssertIsAssignableFrom = $"{DiagnosticProperties.IdPrefix}0718";
             public const string AssertIsNotAssignableFrom = $"{DiagnosticProperties.IdPrefix}0719";
             public const string AssertIsType = $"{DiagnosticProperties.IdPrefix}0720";
+            public const string AssertIsNotType = $"{DiagnosticProperties.IdPrefix}0721";
         }
     }
 
