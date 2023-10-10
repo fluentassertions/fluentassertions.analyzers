@@ -554,6 +554,28 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertSubset_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertSubsetCodeFix, AssertSubsetAnalyzer>("ISet<string> actual, ISet<string> expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.IsAssignableFrom(expected, actual);")]
+        [DataRow("Assert.IsAssignableFrom(typeof(string), actual);")]
+        [DataRow("Assert.IsAssignableFrom<string>(actual);")]
+        [Implemented]
+        public void AssertIsAssignableFrom_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertIsAssignableFromAnalyzer>("string actual, Type expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsAssignableFrom(expected, actual);",
+            /* newAssertion: */ "actual.Should().BeAssignableTo(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsAssignableFrom(typeof(string), actual);",
+            /* newAssertion: */ "actual.Should().BeAssignableTo<string>();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsAssignableFrom<string>(actual);",
+            /* newAssertion: */ "actual.Should().BeAssignableTo<string>();")]
+        [Implemented]
+        public void AssertIsAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsAssignableFromCodeFix, AssertIsAssignableFromAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
