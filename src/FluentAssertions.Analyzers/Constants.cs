@@ -137,6 +137,7 @@ public static class Constants
             public const string AssertEndsWith = $"{DiagnosticProperties.IdPrefix}0715";
             public const string AssertStartsWith = $"{DiagnosticProperties.IdPrefix}0716";
             public const string AssertSubset = $"{DiagnosticProperties.IdPrefix}0717";
+            public const string AssertIsAssignableFrom = $"{DiagnosticProperties.IdPrefix}0718";
         }
     }
 
