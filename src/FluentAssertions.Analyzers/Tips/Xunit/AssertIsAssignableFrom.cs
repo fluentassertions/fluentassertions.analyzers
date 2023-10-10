@@ -63,25 +63,7 @@ public class AssertIsAssignableFromCodeFix : XunitCodeFixProvider
                 return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsAssignableFrom", "BeAssignableTo");
             case nameof(AssertIsAssignableFromAnalyzer.AssertIsAssignableFromTypeSyntaxVisitor):
                 var newExpression = RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsAssignableFrom", "BeAssignableTo");
-
-                var beAssignableTo = newExpression.DescendantNodes()
-                    .OfType<MemberAccessExpressionSyntax>()
-                    .First(node => node.Name.Identifier.Text == "BeAssignableTo");
-
-                if (beAssignableTo.Parent is InvocationExpressionSyntax invocation)
-                {
-                    var arguments = invocation.ArgumentList.Arguments;
-                    if (arguments.Any() && arguments[0].Expression is TypeOfExpressionSyntax typeOfExpression)
-                    {
-                        var genericBeOfType = beAssignableTo.WithName(SF.GenericName(beAssignableTo.Name.Identifier.Text)
-                            .AddTypeArgumentListArguments(typeOfExpression.Type)
-                        );
-                        newExpression = newExpression.ReplaceNode(beAssignableTo, genericBeOfType);
-                        return GetNewExpression(newExpression, NodeReplacement.RemoveFirstArgument("BeAssignableTo"));
-                    }
-                }
-
-                return newExpression;
+                return ReplaceTypeOfArgumentWithGenericTypeIfExists(newExpression, "BeAssignableTo");
             default:
                 throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         }

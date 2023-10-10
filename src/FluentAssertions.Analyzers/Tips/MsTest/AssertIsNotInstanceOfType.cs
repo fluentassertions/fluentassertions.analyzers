@@ -43,24 +43,6 @@ public class AssertIsNotInstanceOfTypeCodeFix : MsTestAssertCodeFixProvider
     protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
         var newExpression = RenameMethodAndReplaceWithSubjectShould(expression, "IsNotInstanceOfType", "NotBeOfType");
-
-        var beOfType = newExpression.DescendantNodes()
-            .OfType<MemberAccessExpressionSyntax>()
-            .First(node => node.Name.Identifier.Text == "NotBeOfType");
-
-        if (beOfType.Parent is InvocationExpressionSyntax invocation)
-        {
-            var arguments = invocation.ArgumentList.Arguments;
-            if (arguments.Any() && arguments[0].Expression is TypeOfExpressionSyntax typeOfExpression)
-            {
-                var genericBeOfType = beOfType.WithName(SF.GenericName(beOfType.Name.Identifier.Text)
-                    .AddTypeArgumentListArguments(typeOfExpression.Type)
-                );
-                newExpression = newExpression.ReplaceNode(beOfType, genericBeOfType);
-                return GetNewExpression(newExpression, NodeReplacement.RemoveFirstArgument("NotBeOfType"));
-            }
-        }
-
-        return newExpression;
+        return ReplaceTypeOfArgumentWithGenericTypeIfExists(newExpression, "NotBeOfType");
     }
 }
