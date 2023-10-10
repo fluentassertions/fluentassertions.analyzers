@@ -620,6 +620,28 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertIsType_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertIsTypeCodeFix, AssertIsTypeAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.IsNotType(expected, actual);")]
+        [DataRow("Assert.IsNotType(typeof(string), actual);")]
+        [DataRow("Assert.IsNotType<string>(actual);")]
+        [Implemented]
+        public void AssertIsNotType_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertIsNotTypeAnalyzer>("string actual, Type expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotType(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotBeOfType(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotType(typeof(string), actual);",
+            /* newAssertion: */ "actual.Should().NotBeOfType<string>();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotType<string>(actual);",
+            /* newAssertion: */ "actual.Should().NotBeOfType<string>();")]
+        [Implemented]
+        public void AssertIsNotType_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsNotTypeCodeFix, AssertIsNotTypeAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
