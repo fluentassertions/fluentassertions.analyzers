@@ -139,6 +139,7 @@ public static class Constants
             public const string AssertSubset = $"{DiagnosticProperties.IdPrefix}0717";
             public const string AssertIsAssignableFrom = $"{DiagnosticProperties.IdPrefix}0718";
             public const string AssertIsNotAssignableFrom = $"{DiagnosticProperties.IdPrefix}0719";
+            public const string AssertIsType = $"{DiagnosticProperties.IdPrefix}0720";
         }
     }
 
