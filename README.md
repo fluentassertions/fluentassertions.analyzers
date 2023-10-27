@@ -25,7 +25,7 @@ A collection of Analyzers based on the best practices [tips](https://fluentasser
 using the latest stable version:
 
 ```powershell
-Install-Package FluentAssertions.Analyzers
+dotnet add package FluentAssertions.Analyzers
 ```
 
 ## Getting Started
