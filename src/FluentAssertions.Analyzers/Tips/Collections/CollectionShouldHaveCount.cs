@@ -78,7 +78,7 @@ public class CollectionShouldHaveCountCodeFix : FluentAssertionsCodeFixProvider
         }
         else if (properties.VisitorName == nameof(CollectionShouldHaveCountAnalyzer.LengthShouldBeSyntaxVisitor))
         {
-            return GetNewExpression(expression, NodeReplacement.Remove("Length"), NodeReplacement.Rename("Be", "HaveLength"));
+            return GetNewExpression(expression, NodeReplacement.Remove("Length"), NodeReplacement.Rename("Be", "HaveCount"));
         }
         throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
     }
