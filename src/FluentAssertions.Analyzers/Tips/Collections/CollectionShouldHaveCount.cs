@@ -24,6 +24,7 @@ public class CollectionShouldHaveCountAnalyzer : CollectionAnalyzer
             yield return new CountShouldBe0SyntaxVisitor();
             yield return new CountShouldBe1SyntaxVisitor();
             yield return new CountShouldBeSyntaxVisitor();
+            yield return new LengthShouldBeSyntaxVisitor();
         }
     }
 
@@ -47,6 +48,13 @@ public class CollectionShouldHaveCountAnalyzer : CollectionAnalyzer
         {
         }
     }
+
+    public class LengthShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+    {
+        public LengthShouldBeSyntaxVisitor() : base(new MemberValidator("Length"), MemberValidator.Should, new MemberValidator("Be"))
+        {
+        }
+    }
 }
 
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldHaveCountCodeFix)), Shared]
@@ -67,6 +75,10 @@ public class CollectionShouldHaveCountCodeFix : FluentAssertionsCodeFixProvider
         else if (properties.VisitorName == nameof(CollectionShouldHaveCountAnalyzer.CountShouldBeSyntaxVisitor))
         {
             return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("Be", "HaveCount"));
+        }
+        else if (properties.VisitorName == nameof(CollectionShouldHaveCountAnalyzer.LengthShouldBeSyntaxVisitor))
+        {
+            return GetNewExpression(expression, NodeReplacement.Remove("Length"), NodeReplacement.Rename("Be", "HaveCount"));
         }
         throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
     }
