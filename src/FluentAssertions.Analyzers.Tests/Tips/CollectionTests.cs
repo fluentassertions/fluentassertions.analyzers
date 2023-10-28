@@ -187,8 +187,12 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().Be(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().Be(6{0});")]
+        [AssertionDiagnostic("actual.ToArray().Length.Should().Be(k{0});")]
+        [AssertionDiagnostic("actual.ToArray().Length.Should().Be(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().Be(k{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().Be(6{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToArray().Length.Should().Be(k{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToArray().Length.Should().Be(6{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldHaveCountAnalyzer>(assertion);
 
@@ -206,6 +210,12 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.Count().Should().Be(6{0});",
             newAssertion: "actual.Should().HaveCount(6{0});")]
         [AssertionCodeFix(
+            oldAssertion: "actual.ToArray().Length.Should().Be(6{0});",
+            newAssertion: "actual.ToArray().Should().HaveCount(6{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToArray().Length.Should().Be(k{0}).And.ToString();",
+            newAssertion: "actual.ToArray().Should().HaveCount(k{0}).And.ToString();")]
+        [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().Be(k{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCount(k{0}).And.ToString();")]
         [AssertionCodeFix(
@@ -217,6 +227,9 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().Be(6{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCount(6{0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToArray().Length.Should().Be(6{0}).And.ToString();",
+            newAssertion: "actual.ToArray().Should().HaveCount(6{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveCountCodeFix, CollectionShouldHaveCountAnalyzer>(oldAssertion, newAssertion);
 
