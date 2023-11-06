@@ -8,6 +8,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
 using XunitAssert = Xunit.Assert;
+using System.Net.Http;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 
 namespace FluentAssertions.Analyzers.TestUtils
 {
@@ -19,11 +22,16 @@ namespace FluentAssertions.Analyzers.TestUtils
             {
                 typeof(object), // System.Private.CoreLib
                 typeof(Console), // System
+                typeof(Uri), // System.Private.Uri
                 typeof(Enumerable), // System.Linq
                 typeof(CSharpCompilation), // Microsoft.CodeAnalysis.CSharp
                 typeof(Compilation), // Microsoft.CodeAnalysis
                 typeof(AssertionScope), // FluentAssertions.Core
                 typeof(AssertionExtensions), // FluentAssertions
+                typeof(HttpRequestMessage), // System.Net.Http
+                typeof(ImmutableArray), // System.Collections.Immutable
+                typeof(ConcurrentBag<>), // System.Collections.Concurrent
+                typeof(ReadOnlyDictionary<,>), // System.ObjectModel
                 typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
                 typeof(XunitAssert), // Xunit
             }.Select(type => type.GetTypeInfo().Assembly.Location)

@@ -15,9 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers", "src\FluentAssertions.Analyzers\FluentAssertions.Analyzers.csproj", "{3BA672F7-00D8-4E77-89A0-D46DD99D35AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.TestUtils", "FluentAssertions.Analyzers.TestUtils\FluentAssertions.Analyzers.TestUtils.csproj", "{BD9FC8CC-C23D-4ECC-A926-4BE35C78D338}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.TestUtils", "src\FluentAssertions.Analyzers.TestUtils\FluentAssertions.Analyzers.TestUtils.csproj", "{BD9FC8CC-C23D-4ECC-A926-4BE35C78D338}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.BenchmarkTests", "FluentAssertions.Analyzers.BenchmarkTests\FluentAssertions.Analyzers.BenchmarkTests.csproj", "{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.BenchmarkTests", "src\FluentAssertions.Analyzers.BenchmarkTests\FluentAssertions.Analyzers.BenchmarkTests.csproj", "{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

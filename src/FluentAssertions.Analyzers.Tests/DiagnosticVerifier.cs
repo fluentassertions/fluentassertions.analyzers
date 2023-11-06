@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using FluentAssertions.Execution;
+using FluentAssertions.Analyzers.TestUtils;
 using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -15,9 +16,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Reflection;
 
 using XunitAssert = Xunit.Assert;
-using System.Net.Http;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -26,67 +24,12 @@ namespace FluentAssertions.Analyzers.Tests
     /// </summary>
     public static class DiagnosticVerifier
     {
-        static DiagnosticVerifier()
-        {
-            References = new[]
-            {
-                typeof(object), // System.Private.CoreLib
-                typeof(Console), // System
-                typeof(Uri), // System.Private.Uri
-                typeof(Enumerable), // System.Linq
-                typeof(CSharpCompilation), // Microsoft.CodeAnalysis.CSharp
-                typeof(Compilation), // Microsoft.CodeAnalysis
-                typeof(AssertionScope), // FluentAssertions.Core
-                typeof(AssertionExtensions), // FluentAssertions
-                typeof(HttpRequestMessage), // System.Net.Http
-                typeof(ImmutableArray), // System.Collections.Immutable
-                typeof(ConcurrentBag<>), // System.Collections.Concurrent
-                typeof(ReadOnlyDictionary<,>), // System.ObjectModel
-                typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
-                typeof(XunitAssert), // Xunit
-            }.Select(type => type.GetTypeInfo().Assembly.Location)
-            .Append(GetSystemAssemblyPathByName("System.Globalization.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Text.RegularExpressions.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Runtime.Extensions.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Data.Common.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Threading.Tasks.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Runtime.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Reflection.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Xml.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Xml.XDocument.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Private.Xml.Linq.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Linq.Expressions.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Collections.dll"))
-            .Append(GetSystemAssemblyPathByName("netstandard.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Xml.ReaderWriter.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Private.Xml.dll"))
-            .Select(location => (MetadataReference)MetadataReference.CreateFromFile(location))
-            .ToImmutableArray();
-
-            DefaultFilePathPrefix = "Test";
-            CSharpDefaultFileExt = "cs";
-            VisualBasicDefaultExt = "vb";
-            TestProjectName = "TestProject";
-
-            string GetSystemAssemblyPathByName(string assemblyName)
-            {
-                var root = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
-                return System.IO.Path.Combine(root, assemblyName);
-            }
-        }
         // based on http://code.fitness/post/2017/02/using-csharpscript-with-netstandard.html
         public static string GetSystemAssemblyPathByName(string assemblyName)
         {
             var root = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
             return System.IO.Path.Combine(root, assemblyName);
         }
-
-        private static readonly ImmutableArray<MetadataReference> References;
-
-        private static readonly string DefaultFilePathPrefix;
-        private static readonly string CSharpDefaultFileExt;
-        private static readonly string VisualBasicDefaultExt;
-        private static readonly string TestProjectName;
 
         #region CodeFixVerifier
 
@@ -398,7 +341,7 @@ namespace FluentAssertions.Analyzers.Tests
 
         public static void VerifyCSharpDiagnosticUsingAllAnalyzers(string[] sources, params DiagnosticResult[] expected)
         {
-            var analyzers = CreateAllAnalyzers();
+            var analyzers = CodeAnalyzersUtils.GetAllAnalyzers();
             var diagnostics = GetSortedDiagnostics(sources, LanguageNames.CSharp, analyzers);
             VerifyDiagnosticResults(diagnostics, analyzers, expected);
         }
