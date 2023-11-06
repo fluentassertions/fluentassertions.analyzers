@@ -28,7 +28,7 @@ jobs:
         uses: benchmark-action/github-action-benchmark@v1
         with:
           # What benchmark tool the output.txt came from
-          tool: 'gobenchmarkdotnet'
+          tool: 'benchmarkdotnet'
           # Where the output from the benchmark tool is stored
           output-file-path: output.txt
           # Where the previous data file is stored
