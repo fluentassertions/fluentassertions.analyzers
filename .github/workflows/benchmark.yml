@@ -17,21 +17,15 @@ jobs:
           dotnet-version: '6.x'
       - name: Run benchmark
         run: cd src/FluentAssertions.Analyzers.BenchmarkTests && dotnet run -c Release --exporters json --filter '*'
-      # Download previous benchmark result from cache (if exists)
-      - name: Download previous benchmark data
-        uses: actions/cache@v1
-        with:
-          path: ./cache
-          key: ${{ runner.os }}-benchmark
-      # Run `github-action-benchmark` action
+
       - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: rhysd/github-action-benchmark@v1
         with:
-          # What benchmark tool the output.txt came from
+          name: FluentAssertions.Analyzers Benchmark
           tool: 'benchmarkdotnet'
-          # Where the output from the benchmark tool is stored
-          output-file-path: output.txt
-          # Where the previous data file is stored
-          external-data-json-path: ./cache/benchmark-data.json
-          # Workflow will fail when an alert happens
+          output-file-path: src/FluentAssertions.Analyzers.BenchmarkTests/results/Benchmarks-report-results.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          alert-threshold: '200%'
+          comment-on-alert: true
           fail-on-alert: true
