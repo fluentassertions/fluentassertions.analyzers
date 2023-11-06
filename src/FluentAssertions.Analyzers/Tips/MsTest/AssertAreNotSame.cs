@@ -6,24 +6,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class AssertAreNotSameAnalyzer : MsTestAssertAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertAreNotSameAnalyzer : MsTestAssertAnalyzer
+    public const string DiagnosticId = Constants.Tips.MsTest.AssertAreNotSame;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().NotBeSameAs() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.MsTest.AssertAreNotSame;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().NotBeSameAs() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new AssertAreNotSameSyntaxVisitor();
-            }
+            yield return new AssertAreNotSameSyntaxVisitor();
         }
+    }
 
 		public class AssertAreNotSameSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
@@ -31,14 +31,13 @@ namespace FluentAssertions.Analyzers
 			{
 			}
 		}
-    }
+}
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertAreNotSameCodeFix)), Shared]
-    public class AssertAreNotSameCodeFix : MsTestAssertCodeFixProvider
-    {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreNotSameAnalyzer.DiagnosticId);
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertAreNotSameCodeFix)), Shared]
+public class AssertAreNotSameCodeFix : MsTestAssertCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreNotSameAnalyzer.DiagnosticId);
 
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotSame", "NotBeSameAs");
-    }
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        => RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotSame", "NotBeSameAs");
 }

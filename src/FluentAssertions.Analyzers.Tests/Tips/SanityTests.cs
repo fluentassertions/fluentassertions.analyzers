@@ -1,4 +1,6 @@
-﻿using FluentAssertions.Analyzers.TestUtils;
+using FluentAssertions.Analyzers.TestUtils;
+using FluentAssertions.Analyzers.Xunit;
+using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FluentAssertions.Analyzers.Tests
@@ -236,25 +238,157 @@ namespace TestNamespace
         }
 
         [TestMethod]
-        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/77")]
-        public void DictionaryShouldHaveCount1_ShouldNotReport()
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/172")]
+        public void AssertAreEqualDoesNotCompile()
         {
-            const string source = @"
-using System.Linq;
-using System.Collections.Generic;
+            const string oldSource = @"
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
-namespace TestNamespace
+namespace TestProject
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     public class Program
     {
         public static void Main()
         {
-            var dict = new Dictionary<string, object>();
-            dict.Should().HaveCount(1);
+            double x = 5;
+
+            Assert.AreEqual(1, (int)x);
         }
     }
+}";
+            const string newSource = @"
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
+namespace TestProject
+{
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    public class Program
+    {
+        public static void Main()
+        {
+            double x = 5;
+
+            ((int)x).Should().Be(1);
+        }
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>(oldSource, newSource);
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/163")]
+        public void GlobalUsingsWithAssert()
+        {
+            const string globalUsings = @"
+global using Xunit;
+global using FluentAssertions;
+global using FluentAssertions.Extensions;";
+            const string source = @"
+public class TestClass
+{
+    public static void Main()
+    {
+        var x = false;
+        Assert.True(x);
+        TestClass.True(x);
+    }
+
+    public static void True(bool input)
+    {
+    }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source, globalUsings }, new DiagnosticResult()
+            {
+                Id = AssertTrueAnalyzer.DiagnosticId,
+                Message = AssertTrueAnalyzer.Message,
+                Severity = DiagnosticSeverity.Info,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
+            });
+        }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/207")]
+        public void PropertiesOfTypes()
+        {
+            const string source = @"
+using Xunit;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using System.Collections.Generic;
+using System.Linq;
+public class TestClass
+{
+    public static void Main()
+    {
+        var x = new TestType1();
+        x.Prop1.Prop2.List.Any().Should().BeTrue();
+        x.Prop1.Prop2.Count.Should().BeGreaterThan(10);
+    }
+}
+
+public class TestType1
+{
+    public TestType2 Prop1 { get; set; }
+}
+public class TestType2
+{
+    public TestType3 Prop2 { get; set; }
+}
+public class TestType3
+{
+    public List<int> List { get; set; }
+    public int Count { get; set; }
+}";
+
+            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source }, new DiagnosticResult()
+            {
+                Id = CollectionShouldNotBeEmptyAnalyzer.DiagnosticId,
+                Message = CollectionShouldNotBeEmptyAnalyzer.Message,
+                Severity = DiagnosticSeverity.Info,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 12, 9) }
+            });
+        }
+        
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/215")]
+        public void ShouldNotFailToAnalyze()
+        {
+            const string source = @"
+#nullable enable
+using Xunit;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+public class TestClass
+{
+    public static void Main()
+    {
+        var otherComponent = new OtherComponent();
+        otherComponent.Name.Should().Be(""SomeOtherComponent"");
+        otherComponent.Version.Should().Be(""1.2.3"");
+        otherComponent.DownloadUrl.Should().Be(new Uri(""https://sampleurl.com""));
+        otherComponent.Hash.Should().Be(""SampleHash"");
+    }
+}
+
+public class OtherComponent
+{
+    public string? Name { get; set; }
+
+    public string? Version { get; set; }
+
+    public Uri? DownloadUrl { get; set; }
+
+    public string? Hash { get; set; }
 }";
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);

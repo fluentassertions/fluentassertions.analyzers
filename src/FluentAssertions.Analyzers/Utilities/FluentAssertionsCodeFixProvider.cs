@@ -10,108 +10,107 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+
+public abstract class FluentAssertionsCodeFixProvider : CodeFixProvider
 {
+    public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
-    public abstract class FluentAssertionsCodeFixProvider : CodeFixProvider
+    public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        foreach (var diagnostic in context.Diagnostics)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            foreach (var diagnostic in context.Diagnostics)
+            var expression = (ExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan);
+            if (await CanRewriteAssertion(expression, context).ConfigureAwait(false))
             {
-                var expression = (ExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan);
-                if (await CanRewriteAssertion(expression, context).ConfigureAwait(false))
-                {
-                    context.RegisterCodeFix(CodeAction.Create(
-                        title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
-                        createChangedDocument: c => RewriteAssertion(context.Document, expression, diagnostic.Properties, c)
-                        ), diagnostic);
-                }
+                context.RegisterCodeFix(CodeAction.Create(
+                    title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
+                    createChangedDocument: c => RewriteAssertion(context.Document, expression, diagnostic.Properties, c)
+                    ), diagnostic);
             }
         }
+    }
 
-        protected virtual Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context) => Task.FromResult(true);
+    protected virtual Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context) => Task.FromResult(true);
 
-        protected async Task<Document> RewriteAssertion(Document document, ExpressionSyntax expression, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
+    protected async Task<Document> RewriteAssertion(Document document, ExpressionSyntax expression, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
+    {
+        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+        var newExpression = await GetNewExpressionSafelyAsync(expression, document, new FluentAssertionsDiagnosticProperties(properties), cancellationToken);
+
+        root = root.ReplaceNode(expression, newExpression);
+
+        return document.WithSyntaxRoot(root);
+    }
+
+    protected virtual Task<ExpressionSyntax> GetNewExpressionAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
+        => Task.FromResult(GetNewExpression(expression, properties));
+
+    protected virtual ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties) => expression;
+
+    protected ExpressionSyntax GetNewExpression(ExpressionSyntax expression, params NodeReplacement[] replacements)
+    {
+        var newStatement = expression;
+        foreach (var replacement in replacements)
         {
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
-            var newExpression = await GetNewExpressionSafelyAsync(expression, document, new FluentAssertionsDiagnosticProperties(properties), cancellationToken);
-
-            root = root.ReplaceNode(expression, newExpression);
-
-            return document.WithSyntaxRoot(root);
+            newStatement = GetNewExpression(newStatement, replacement);
         }
+        return newStatement;
+    }
 
-        protected virtual Task<ExpressionSyntax> GetNewExpressionAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
-            => Task.FromResult(GetNewExpression(expression, properties));
+    protected static ExpressionSyntax GetNewExpression(ExpressionSyntax expression, NodeReplacement replacement)
+    {
+        var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
+        expression.Accept(visitor);
+        var members = new LinkedList<MemberAccessExpressionSyntax>(visitor.Members);
 
-        protected virtual ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties) => expression;
-
-        protected ExpressionSyntax GetNewExpression(ExpressionSyntax expression, params NodeReplacement[] replacements)
+        var current = members.Last;
+        while (current != null)
         {
-            var newStatement = expression;
-            foreach (var replacement in replacements)
+            if (replacement.IsValidNode(current))
             {
-                newStatement = GetNewExpression(newStatement, replacement);
+                // extract custom data into the replacement object
+                replacement.ExtractValues(current.Value);
+
+                var oldNode = replacement.ComputeOld(current);
+                var newNode = replacement.ComputeNew(current);
+                return expression.ReplaceNode(oldNode, newNode);
             }
-            return newStatement;
+            current = current.Previous;
         }
 
-        protected static ExpressionSyntax GetNewExpression(ExpressionSyntax expression, NodeReplacement replacement)
+        throw new System.InvalidOperationException("should not get here");
+    }
+
+    protected static ExpressionSyntax RenameIdentifier(ExpressionSyntax expression, string oldName, string newName)
+    {
+        var identifierNode = expression.DescendantNodes()
+            .OfType<IdentifierNameSyntax>()
+            .First(node => node.Identifier.Text == oldName);
+        return expression.ReplaceNode(identifierNode, identifierNode.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(identifierNode.Identifier)));
+    }
+
+    private Task<ExpressionSyntax> GetNewExpressionSafelyAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
+    {
+        try
         {
-            var visitor = new MemberAccessExpressionsCSharpSyntaxVisitor();
-            expression.Accept(visitor);
-            var members = new LinkedList<MemberAccessExpressionSyntax>(visitor.Members);
-
-            var current = members.Last;
-            while (current != null)
-            {
-                if (replacement.IsValidNode(current))
-                {
-                    // extract custom data into the replacement object
-                    replacement.ExtractValues(current.Value);
-
-                    var oldNode = replacement.ComputeOld(current);
-                    var newNode = replacement.ComputeNew(current);
-                    return expression.ReplaceNode(oldNode, newNode);
-                }
-                current = current.Previous;
-            }
-
-            throw new System.InvalidOperationException("should not get here");
+            return GetNewExpressionAsync(expression, document, properties, cancellationToken);
         }
-
-        protected static ExpressionSyntax RenameIdentifier(ExpressionSyntax expression, string oldName, string newName)
+        catch (Exception e)
         {
-            var identifierNode = expression.DescendantNodes()
-                .OfType<IdentifierNameSyntax>()
-                .First(node => node.Identifier.Text == oldName);
-            return expression.ReplaceNode(identifierNode, identifierNode.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(identifierNode.Identifier)));
+            Console.Error.WriteLine($"Failed to get new expression in {GetType().FullName}.\n{e}");
+            return Task.FromResult(expression);
         }
+    }
 
-        private Task<ExpressionSyntax> GetNewExpressionSafelyAsync(ExpressionSyntax expression, Document document, FluentAssertionsDiagnosticProperties properties, CancellationToken cancellationToken)
-        {
-            try
-            {
-                return GetNewExpressionAsync(expression, document, properties, cancellationToken);
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine($"Failed to get new expression in {GetType().FullName}.\n{e}");
-                return Task.FromResult(expression);
-            }
-        }
-
-        protected static ExpressionSyntax ReplaceIdentifier(ExpressionSyntax expression, string name, ExpressionSyntax identifierReplacement)
-        {
-            var identifierNode = expression.DescendantNodes()
-                .OfType<IdentifierNameSyntax>()
-                .First(node => node.Identifier.Text == name);
-            return expression.ReplaceNode(identifierNode, identifierReplacement.WithTriviaFrom(identifierNode));
-        }
+    protected static ExpressionSyntax ReplaceIdentifier(ExpressionSyntax expression, string name, ExpressionSyntax identifierReplacement)
+    {
+        var identifierNode = expression.DescendantNodes()
+            .OfType<IdentifierNameSyntax>()
+            .First(node => node.Identifier.Text == name);
+        return expression.ReplaceNode(identifierNode, identifierReplacement.WithTriviaFrom(identifierNode));
     }
 }

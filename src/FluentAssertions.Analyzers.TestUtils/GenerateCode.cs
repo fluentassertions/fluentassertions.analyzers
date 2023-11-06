@@ -5,6 +5,34 @@ namespace FluentAssertions.Analyzers.TestUtils
 {
     public static class GenerateCode
     {
+        public static string GenericArrayCodeBlockAssertion(string assertion) => GenericArrayAssertion(
+            "        {" + Environment.NewLine +
+            "            " + assertion + Environment.NewLine +
+            "        }");
+        public static string GenericArrayExpressionBodyAssertion(string assertion) => GenericArrayAssertion(
+            "            => " + assertion);
+
+        private static string GenericArrayAssertion(string bodyExpression) => new StringBuilder()
+            .AppendLine("using System.Collections.Generic;")
+            .AppendLine("using System.Linq;")
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;using FluentAssertions.Extensions;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    public class TestClass")
+            .AppendLine("    {")
+            .AppendLine("        public void TestMethod(TestComplexClass[] actual, TestComplexClass[] expected, TestComplexClass[] unexpected, TestComplexClass expectedItem, TestComplexClass unexpectedItem, int k)")
+            .AppendLine(bodyExpression)
+            .AppendLine("    }")
+            .AppendLine("    public class TestComplexClass")
+            .AppendLine("    {")
+            .AppendLine("        public bool BooleanProperty { get; set; }")
+            .AppendLine("        public string Message { get; set; }")
+            .AppendLine("    }")
+            .AppendMainMethod()
+            .AppendLine("}")
+            .ToString();
+
         public static string GenericIListCodeBlockAssertion(string assertion) => GenericIListAssertion(
             "        {" + Environment.NewLine +
             "            " + assertion + Environment.NewLine +
@@ -197,6 +225,8 @@ namespace FluentAssertions.Analyzers.TestUtils
         public static string XunitAssertion(string methodArguments, string assertion) => new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using System.Collections.Generic;")
+            .AppendLine("using System.Collections.Immutable;")
+            .AppendLine("using System.Text.RegularExpressions;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
             .AppendLine("using Xunit;")

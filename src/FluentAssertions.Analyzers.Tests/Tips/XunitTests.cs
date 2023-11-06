@@ -214,6 +214,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             => VerifyCSharpFix<AssertEqualCodeFix, AssertEqualAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
         [DataTestMethod]
+        [DataRow("Assert.Equal(expected, actual);")]
+        [Implemented]
+        public void AssertStringEqual_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertEqualAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Equal(expected, actual);",
+            /* newAssertion: */ "actual.Should().Be(expected);")]
+        [Implemented]
+        public void AssertStringEqual_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertEqualCodeFix, AssertEqualAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
         [DataRow("Assert.StrictEqual(expected, actual);")]
         [Implemented]
         public void AssertStrictEqual_TestAnalyzer(string assertion) =>
@@ -311,6 +325,323 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertObjectNotStrictEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertNotStrictEqualCodeFix, AssertNotStrictEqualAnalyzer>("object actual, object expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.Null(actual);")]
+        [Implemented]
+        public void AssertNull_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertNullAnalyzer>("object actual", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Null(actual);",
+            /* newAssertion: */ "actual.Should().BeNull();")]
+        [Implemented]
+        public void AssertNull_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertNullCodeFix, AssertNullAnalyzer>("object actual", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.NotNull(actual);")]
+        [Implemented]
+        public void AssertNotNull_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertNotNullAnalyzer>("object actual", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.NotNull(actual);",
+            /* newAssertion: */ "actual.Should().NotBeNull();")]
+        [Implemented]
+        public void AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertNotNullCodeFix, AssertNotNullAnalyzer>("object actual", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.Contains(expected, actual);")]
+        [Implemented]
+        public void AssertStringContains_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertContainsAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);")]
+        [Implemented]
+        public void AssertStringContains_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertContainsCodeFix, AssertContainsAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.Contains(expected, actual);", "ISet<string> actual, string expected")]
+        [DataRow("Assert.Contains(expected, actual);", "IReadOnlySet<string> actual, string expected")]
+        [DataRow("Assert.Contains(expected, actual);", "HashSet<string> actual, string expected")]
+        [DataRow("Assert.Contains(expected, actual);", "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetContains_TestAnalyzer(string assertion, string arguments) =>
+            VerifyCSharpDiagnostic<AssertContainsAnalyzer>(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "ISet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "IReadOnlySet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "HashSet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Contains(expected, actual);",
+            /* newAssertion: */ "actual.Should().Contain(expected);",
+            /* arguments: */ "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetContains_TestCodeFix(string oldAssertion, string newAssertion, string arguments)
+            => VerifyCSharpFix<AssertContainsCodeFix, AssertContainsAnalyzer>(arguments, oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotContain(expected, actual);")]
+        [Implemented]
+        public void AssertStringDoesNotContain_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertDoesNotContainAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);")]
+        [Implemented]
+        public void AssertStringDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertDoesNotContainCodeFix, AssertDoesNotContainAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "ISet<string> actual, string expected")]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "IReadOnlySet<string> actual, string expected")]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "HashSet<string> actual, string expected")]
+        [DataRow("Assert.DoesNotContain(expected, actual);", "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetDoesNotContain_TestAnalyzer(string assertion, string arguments) =>
+            VerifyCSharpDiagnostic<AssertDoesNotContainAnalyzer>(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "ISet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "IReadOnlySet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "HashSet<string> actual, string expected")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotContain(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotContain(expected);",
+            /* arguments: */ "ImmutableHashSet<string> actual, string expected")]
+        [Implemented]
+        public void AssertSetDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion, string arguments)
+            => VerifyCSharpFix<AssertDoesNotContainCodeFix, AssertDoesNotContainAnalyzer>(arguments, oldAssertion, newAssertion);
+
+
+        [DataTestMethod]
+        [DataRow("Assert.Matches(expectedRegexPattern, actual);")]
+        [Implemented]
+        public void AssertStringMatches_String_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertMatchesAnalyzer>("string actual, string expectedRegexPattern", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Matches(expectedRegexPattern, actual);",
+            /* newAssertion: */ "actual.Should().MatchRegex(expectedRegexPattern);")]
+        [Implemented]
+        public void AssertStringMatches_String_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertMatchesCodeFix, AssertMatchesAnalyzer>("string actual, string expectedRegexPattern", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.Matches(expectedRegex, actual);")]
+        [Implemented]
+        public void AssertStringMatches_Regex_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertMatchesAnalyzer>("string actual, Regex expectedRegex", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Matches(expectedRegex, actual);",
+            /* newAssertion: */ "actual.Should().MatchRegex(expectedRegex);")]
+        [Implemented]
+        public void AssertStringMatches_Regex_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertMatchesCodeFix, AssertMatchesAnalyzer>("string actual, Regex expectedRegex", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotMatch(expectedRegexPattern, actual);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_String_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertDoesNotMatchAnalyzer>("string actual, string expectedRegexPattern", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotMatch(expectedRegexPattern, actual);",
+            /* newAssertion: */ "actual.Should().NotMatchRegex(expectedRegexPattern);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_String_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertDoesNotMatchCodeFix, AssertDoesNotMatchAnalyzer>("string actual, string expectedRegexPattern", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.DoesNotMatch(expectedRegex, actual);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_Regex_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertDoesNotMatchAnalyzer>("string actual, Regex expectedRegex", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.DoesNotMatch(expectedRegex, actual);",
+            /* newAssertion: */ "actual.Should().NotMatchRegex(expectedRegex);")]
+        [Implemented]
+        public void AssertStringDoesNotMatch_Regex_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertDoesNotMatchCodeFix, AssertDoesNotMatchAnalyzer>("string actual, Regex expectedRegex", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.Empty(actual);")]
+        [Implemented]
+        public void AssertEmpty_String_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertEmptyAnalyzer>("string actual", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Empty(actual);",
+            /* newAssertion: */ "actual.Should().BeEmpty();")]
+        [Implemented]
+        public void AssertEmpty_String_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertEmptyCodeFix, AssertEmptyAnalyzer>("string actual", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.EndsWith(expected, actual);")]
+        [Implemented]
+        public void AssertEndsWith_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertEndsWithAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.EndsWith(expected, actual);",
+            /* newAssertion: */ "actual.Should().EndWith(expected);")]
+        [Implemented]
+        public void AssertEndsWith_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertEndsWithCodeFix, AssertEndsWithAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.StartsWith(expected, actual);")]
+        [Implemented]
+        public void AssertStartsWith_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertStartsWithAnalyzer>("string actual, string expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.StartsWith(expected, actual);",
+            /* newAssertion: */ "actual.Should().StartWith(expected);")]
+        [Implemented]
+        public void AssertStartsWith_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertStartsWithCodeFix, AssertStartsWithAnalyzer>("string actual, string expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.Subset(expected, actual);")]
+        [Implemented]
+        public void AssertSubset_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertSubsetAnalyzer>("ISet<string> actual, ISet<string> expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Subset(expected, actual);",
+            /* newAssertion: */ "actual.Should().BeSubsetOf(expected);")]
+        [Implemented]
+        public void AssertSubset_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertSubsetCodeFix, AssertSubsetAnalyzer>("ISet<string> actual, ISet<string> expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.IsAssignableFrom(expected, actual);")]
+        [DataRow("Assert.IsAssignableFrom(typeof(string), actual);")]
+        [DataRow("Assert.IsAssignableFrom<string>(actual);")]
+        [Implemented]
+        public void AssertIsAssignableFrom_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertIsAssignableFromAnalyzer>("string actual, Type expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsAssignableFrom(expected, actual);",
+            /* newAssertion: */ "actual.Should().BeAssignableTo(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsAssignableFrom(typeof(string), actual);",
+            /* newAssertion: */ "actual.Should().BeAssignableTo<string>();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsAssignableFrom<string>(actual);",
+            /* newAssertion: */ "actual.Should().BeAssignableTo<string>();")]
+        [Implemented]
+        public void AssertIsAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsAssignableFromCodeFix, AssertIsAssignableFromAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.IsNotAssignableFrom(expected, actual);")]
+        [DataRow("Assert.IsNotAssignableFrom(typeof(string), actual);")]
+        [DataRow("Assert.IsNotAssignableFrom<string>(actual);")]
+        [Implemented]
+        public void AssertIsNotAssignableFrom_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertIsNotAssignableFromAnalyzer>("string actual, Type expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotAssignableFrom(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotBeAssignableTo(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotAssignableFrom(typeof(string), actual);",
+            /* newAssertion: */ "actual.Should().NotBeAssignableTo<string>();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotAssignableFrom<string>(actual);",
+            /* newAssertion: */ "actual.Should().NotBeAssignableTo<string>();")]
+        [Implemented]
+        public void AssertIsNotAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsNotAssignableFromCodeFix, AssertIsNotAssignableFromAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.IsType(expected, actual);")]
+        [DataRow("Assert.IsType(typeof(string), actual);")]
+        [DataRow("Assert.IsType<string>(actual);")]
+        [Implemented]
+        public void AssertIsType_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertIsTypeAnalyzer>("string actual, Type expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsType(expected, actual);",
+            /* newAssertion: */ "actual.Should().BeOfType(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsType(typeof(string), actual);",
+            /* newAssertion: */ "actual.Should().BeOfType<string>();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsType<string>(actual);",
+            /* newAssertion: */ "actual.Should().BeOfType<string>();")]
+        [Implemented]
+        public void AssertIsType_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsTypeCodeFix, AssertIsTypeAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Assert.IsNotType(expected, actual);")]
+        [DataRow("Assert.IsNotType(typeof(string), actual);")]
+        [DataRow("Assert.IsNotType<string>(actual);")]
+        [Implemented]
+        public void AssertIsNotType_TestAnalyzer(string assertion) =>
+            VerifyCSharpDiagnostic<AssertIsNotTypeAnalyzer>("string actual, Type expected", assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotType(expected, actual);",
+            /* newAssertion: */ "actual.Should().NotBeOfType(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotType(typeof(string), actual);",
+            /* newAssertion: */ "actual.Should().NotBeOfType<string>();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.IsNotType<string>(actual);",
+            /* newAssertion: */ "actual.Should().NotBeOfType<string>();")]
+        [Implemented]
+        public void AssertIsNotType_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix<AssertIsNotTypeCodeFix, AssertIsNotTypeAnalyzer>("string actual, Type expected", oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
@@ -326,7 +657,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 Message = message,
                 Locations = new DiagnosticResultLocation[]
                 {
-                    new("Test0.cs", 13, 13)
+                    new("Test0.cs", 15, 13)
                 },
                 Severity = DiagnosticSeverity.Info
             });

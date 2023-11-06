@@ -6,24 +6,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class AssertAreSameAnalyzer : MsTestAssertAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertAreSameAnalyzer : MsTestAssertAnalyzer
+    public const string DiagnosticId = Constants.Tips.MsTest.AssertAreSame;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().BeSameAs() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.MsTest.AssertAreSame;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().BeSameAs() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new AssertAreSameSyntaxVisitor();
-            }
+            yield return new AssertAreSameSyntaxVisitor();
         }
+    }
 
 		public class AssertAreSameSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
@@ -31,14 +31,13 @@ namespace FluentAssertions.Analyzers
 			{
 			}
 		}
-    }
+}
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertAreSameCodeFix)), Shared]
-    public class AssertAreSameCodeFix : MsTestAssertCodeFixProvider
-    {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreSameAnalyzer.DiagnosticId);
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertAreSameCodeFix)), Shared]
+public class AssertAreSameCodeFix : MsTestAssertCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAreSameAnalyzer.DiagnosticId);
 
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-            => RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreSame", "BeSameAs");
-    }
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        => RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreSame", "BeSameAs");
 }

@@ -6,24 +6,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class CollectionAssertAreNotEqualAnalyzer : MsTestCollectionAssertAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionAssertAreNotEqualAnalyzer : MsTestCollectionAssertAnalyzer
+    public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAreNotEqual;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().AreNotEqual() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.MsTest.CollectionAssertAreNotEqual;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().AreNotEqual() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new CollectionAssertAreNotEqualSyntaxVisitor();
-            }
+            yield return new CollectionAssertAreNotEqualSyntaxVisitor();
         }
+    }
 
 		public class CollectionAssertAreNotEqualSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
@@ -31,16 +31,15 @@ namespace FluentAssertions.Analyzers
 			{
 			}
 		}
-    }
+}
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAreNotEqualCodeFix)), Shared]
-    public class CollectionAssertAreNotEqualCodeFix : MsTestCollectionAssertCodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionAssertAreNotEqualCodeFix)), Shared]
+public class CollectionAssertAreNotEqualCodeFix : MsTestCollectionAssertCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAreNotEqualAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAssertAreNotEqualAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-        {
-            return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotEqual", "NotEqual");
-        }
+        return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "AreNotEqual", "NotEqual");
     }
 }

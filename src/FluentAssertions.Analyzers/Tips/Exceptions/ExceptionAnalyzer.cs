@@ -1,14 +1,13 @@
 ﻿using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+public abstract class ExceptionAnalyzer : FluentAssertionsAnalyzer
 {
-    public abstract class ExceptionAnalyzer : FluentAssertionsAnalyzer
+    protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
     {
-        protected override bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel)
-        {
-            var actionType = semanticModel.GetActionType();
-            return type.IsTypeOrConstructedFromTypeOrImplementsType(actionType);
-        }
+        var actionType = semanticModel.GetActionType();
+        return type.IsTypeOrConstructedFromTypeOrImplementsType(actionType);
     }
 }

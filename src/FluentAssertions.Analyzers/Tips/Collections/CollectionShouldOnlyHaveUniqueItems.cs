@@ -7,56 +7,55 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class CollectionShouldOnlyHaveUniqueItemsAnalyzer : CollectionAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CollectionShouldOnlyHaveUniqueItemsAnalyzer : CollectionAnalyzer
+    public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldOnlyHaveUniqueItems;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().OnlyHaveUniqueItems() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldOnlyHaveUniqueItems;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().OnlyHaveUniqueItems() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor();
-            }
-        }
-
-        public class ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-        {
-            public ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("HaveSameCount", ArgumentInvokesDistinctMethod))
-            {
-            }
-
-            private static bool ArgumentInvokesDistinctMethod(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
-            {
-                if (!arguments.Any()) return false;
-
-                if (arguments.First().Expression is InvocationExpressionSyntax invocation)
-                {
-                    var visitor = new FluentAssertionsCSharpSyntaxVisitor(new MemberValidator(nameof(Enumerable.Distinct)));
-                    invocation.Accept(visitor);
-
-                    return visitor.IsValid(invocation) && VariableNameExtractor.ExtractVariabeName(arguments.First()) == VariableNameExtractor.ExtractVariabeName(invocation);
-                }
-                return false;
-            }
+            yield return new ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor();
         }
     }
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldOnlyHaveUniqueItemsCodeFix)), Shared]
-    public class CollectionShouldOnlyHaveUniqueItemsCodeFix : FluentAssertionsCodeFixProvider
+    public class ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyHaveUniqueItemsAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+        public ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor() : base(MemberValidator.Should, new MemberValidator("HaveSameCount", ArgumentInvokesDistinctMethod))
         {
-            return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveSameCount", "OnlyHaveUniqueItems"));
         }
+
+        private static bool ArgumentInvokesDistinctMethod(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
+        {
+            if (!arguments.Any()) return false;
+
+            if (arguments.First().Expression is InvocationExpressionSyntax invocation)
+            {
+                var visitor = new FluentAssertionsCSharpSyntaxVisitor(new MemberValidator(nameof(Enumerable.Distinct)));
+                invocation.Accept(visitor);
+
+                return visitor.IsValid(invocation) && VariableNameExtractor.ExtractVariableName(arguments.First()) == VariableNameExtractor.ExtractVariableName(invocation);
+            }
+            return false;
+        }
+    }
+}
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldOnlyHaveUniqueItemsCodeFix)), Shared]
+public class CollectionShouldOnlyHaveUniqueItemsCodeFix : FluentAssertionsCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldOnlyHaveUniqueItemsAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
+    {
+        return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveSameCount", "OnlyHaveUniqueItems"));
     }
 }

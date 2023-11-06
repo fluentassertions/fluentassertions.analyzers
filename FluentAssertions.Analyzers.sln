@@ -2,18 +2,18 @@
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers.Tests", "FluentAssertions.Analyzers.Tests\FluentAssertions.Analyzers.Tests.csproj", "{979824BD-5936-4969-B43B-BF613B3C0C5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers.Tests", "src\FluentAssertions.Analyzers.Tests\FluentAssertions.Analyzers.Tests.csproj", "{979824BD-5936-4969-B43B-BF613B3C0C5F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{1D2F0A0B-7B98-49D6-BD83-E750A2DD7FD0}"
 	ProjectSection(SolutionItems) = preProject
-		..\.gitattributes = ..\.gitattributes
-		..\.gitignore = ..\.gitignore
-		..\.github\workflows\ci.yml = ..\.github\workflows\ci.yml
-		..\LICENSE = ..\LICENSE
-		..\README.md = ..\README.md
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers", "FluentAssertions.Analyzers\FluentAssertions.Analyzers.csproj", "{3BA672F7-00D8-4E77-89A0-D46DD99D35AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers", "src\FluentAssertions.Analyzers\FluentAssertions.Analyzers.csproj", "{3BA672F7-00D8-4E77-89A0-D46DD99D35AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.TestUtils", "FluentAssertions.Analyzers.TestUtils\FluentAssertions.Analyzers.TestUtils.csproj", "{BD9FC8CC-C23D-4ECC-A926-4BE35C78D338}"
 EndProject

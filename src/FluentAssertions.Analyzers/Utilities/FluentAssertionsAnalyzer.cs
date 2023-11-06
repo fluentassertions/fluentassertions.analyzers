@@ -5,144 +5,130 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace FluentAssertions.Analyzers
+namespace FluentAssertions.Analyzers;
+
+public abstract class FluentAssertionsAnalyzer<TCSharpSyntaxVisitor> : DiagnosticAnalyzer where TCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 {
-    public abstract class FluentAssertionsAnalyzer<TCSharpSyntaxVisitor> : DiagnosticAnalyzer where TCSharpSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
+    public const string Title = "Simplify Assertion";
+    protected abstract DiagnosticDescriptor Rule { get; }
+
+    protected abstract IEnumerable<TCSharpSyntaxVisitor> Visitors { get; }
+
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+
+    public sealed override void Initialize(AnalysisContext context)
     {
-        public const string Title = "Simplify Assertion";
-        protected abstract DiagnosticDescriptor Rule { get; }
+        context.EnableConcurrentExecution();
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.RegisterSyntaxNodeAction(AnalyzeExpressionStatementSyntax, SyntaxKind.ExpressionStatement, SyntaxKind.ArrowExpressionClause);
+    }
 
-        protected abstract IEnumerable<TCSharpSyntaxVisitor> Visitors { get; }
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public sealed override void Initialize(AnalysisContext context)
+    private void AnalyzeExpressionStatementSyntax(SyntaxNodeAnalysisContext context)
+    {
+        ExpressionSyntax expression = context.Node.Kind() switch
         {
-            context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterSyntaxNodeAction(AnalyzeExpressionStatementSyntax, SyntaxKind.ExpressionStatement, SyntaxKind.ArrowExpressionClause);
+            SyntaxKind.ExpressionStatement => ((ExpressionStatementSyntax)context.Node).Expression,
+            SyntaxKind.ArrowExpressionClause => ((ArrowExpressionClauseSyntax)context.Node).Expression,
+            _ => null
+        };
+        if (expression == null)
+        {
+            return;
         }
 
-        private void AnalyzeExpressionStatementSyntax(SyntaxNodeAnalysisContext context)
+        var diagnostic = AnalyzeExpressionSafely(expression, context.SemanticModel);
+        if (diagnostic != null)
         {
-            ExpressionSyntax expression = context.Node.Kind() switch
-            {
-                SyntaxKind.ExpressionStatement => ((ExpressionStatementSyntax)context.Node).Expression,
-                SyntaxKind.ArrowExpressionClause => ((ArrowExpressionClauseSyntax)context.Node).Expression,
-                _ => null
-            };
-            if (expression == null)
-            {
-                return;
-            }
+            context.ReportDiagnostic(diagnostic);
+        }
+    }
 
-            var diagnostic = AnalyzeExpressionSafely(expression, context.SemanticModel);
-            if (diagnostic != null)
-            {
-                context.ReportDiagnostic(diagnostic);
-            }
+    protected virtual bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
+    protected virtual bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel) => true;
+
+    private bool ShouldAnalyzeVariableTypeCore(IdentifierNameSyntax identifier, SemanticModel semanticModel)
+    {
+        ISymbol symbol = semanticModel.GetTypeInfo(identifier).Type ?? semanticModel.GetSymbolInfo(identifier).Symbol;  
+        if (symbol is INamedTypeSymbol namedType)
+        {
+            return ShouldAnalyzeVariableNamedType(namedType, semanticModel);
         }
 
-        protected virtual bool ShouldAnalyzeMethod(MethodDeclarationSyntax method) => true;
-
-        protected virtual bool ShouldAnalyzeVariableType(INamedTypeSymbol type, SemanticModel semanticModel) => true;
-
-        protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
+        if (symbol is ITypeSymbol typeSymbol)
         {
-            var variableNameExtractor = new VariableNameExtractor(semanticModel);
-            expression.Accept(variableNameExtractor);
+            return ShouldAnalyzeVariableType(typeSymbol, semanticModel);
+        }
 
-            if (variableNameExtractor.VariableIdentifierName == null) return null;
-            var typeInfo = semanticModel.GetTypeInfo(variableNameExtractor.VariableIdentifierName);
-            if (!(typeInfo.Type is INamedTypeSymbol namedType)) return null;
-            if (!ShouldAnalyzeVariableType(namedType, semanticModel)) return null;
+        return false;
+    }
 
-            foreach (var visitor in Visitors)
-            {
-                visitor.SemanticModel = semanticModel;
-                expression.Accept(visitor);
+    protected virtual Diagnostic AnalyzeExpression(ExpressionSyntax expression, SemanticModel semanticModel)
+    {
+        var variableNameExtractor = new VariableNameExtractor(semanticModel);
+        expression.Accept(variableNameExtractor);
 
-                if (visitor.IsValid(expression))
-                {
-                    return CreateDiagnostic(visitor, expression);
-                }
-            }
+        if (variableNameExtractor.PropertiesAccessed.TrueForAll(identifier => !ShouldAnalyzeVariableTypeCore(identifier, semanticModel))) {
             return null;
         }
 
-        protected virtual Diagnostic CreateDiagnostic(TCSharpSyntaxVisitor visitor, ExpressionSyntax expression)
+        foreach (var visitor in Visitors)
         {
-            var properties = visitor.ToDiagnosticProperties()
-                .Add(Constants.DiagnosticProperties.Title, Title);
-            var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, Rule.MessageFormat, Rule.Category, Rule.DefaultSeverity, true, 
-                helpLinkUri: properties.GetValueOrDefault(Constants.DiagnosticProperties.HelpLink));
-            return Diagnostic.Create(
-                descriptor: newRule,
-                location: expression.GetLocation(),
-                properties: properties);
-        }
+            visitor.SemanticModel = semanticModel;
+            expression.Accept(visitor);
 
-        private Diagnostic AnalyzeExpressionSafely(ExpressionSyntax expression, SemanticModel semanticModel)
-        {
-            try
+            if (visitor.IsValid(expression))
             {
-                return AnalyzeExpression(expression, semanticModel);
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}.\n{e}");
-                return null;
+                return CreateDiagnostic(visitor, expression);
             }
         }
+        return null;
     }
 
-    public abstract class FluentAssertionsAnalyzer : FluentAssertionsAnalyzer<FluentAssertionsCSharpSyntaxVisitor>
+    protected virtual Diagnostic CreateDiagnostic(TCSharpSyntaxVisitor visitor, ExpressionSyntax expression)
     {
+        var properties = visitor.ToDiagnosticProperties()
+            .Add(Constants.DiagnosticProperties.Title, Title);
+        var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, Rule.MessageFormat, Rule.Category, Rule.DefaultSeverity, true,
+            helpLinkUri: properties.GetValueOrDefault(Constants.DiagnosticProperties.HelpLink));
+        return Diagnostic.Create(
+            descriptor: newRule,
+            location: expression.GetLocation(),
+            properties: properties);
     }
 
-    public abstract class TestingLibraryAnalyzerBase : FluentAssertionsAnalyzer
+    private Diagnostic AnalyzeExpressionSafely(ExpressionSyntax expression, SemanticModel semanticModel)
     {
-        protected abstract string TestingLibraryNamespace { get; }
-
-        protected override bool ShouldAnalyzeMethod(MethodDeclarationSyntax method)
+        try
         {
-            var compilation = method.FirstAncestorOrSelf<CompilationUnitSyntax>();
+            return AnalyzeExpression(expression, semanticModel);
+        }
+        catch (Exception e)
+        {
+            var expressionString = "UNKNOWN";
+            try {
+                expressionString = expression.ToString();
+            } catch {}
+            Console.Error.WriteLine($"Failed to analyze expression in {GetType().FullName}. expression: {expressionString}\n{e}");
 
-            if (compilation == null) return false;
-
-            foreach (var @using in compilation.Usings)
-            {
-                if (@using.Name.NormalizeWhitespace().ToString().Equals(TestingLibraryNamespace)) return true;
-            }
-
-            var parentNamespace = method.FirstAncestorOrSelf<NamespaceDeclarationSyntax>();
-            if (parentNamespace != null)
-            {
-                var namespaces = new List<NamespaceDeclarationSyntax>();
-                while(parentNamespace != null)
-                {
-                    namespaces.Add(parentNamespace);
-                    parentNamespace = parentNamespace.Parent as NamespaceDeclarationSyntax;
-                }
-                namespaces.Reverse();
-
-                for (int i = 0; i < namespaces.Count; i++)
-                {
-                    var baseNamespace = string.Join(".", namespaces.Take(i+1).Select(ns => ns.Name));
-                    foreach (var @using in namespaces[i].Usings)
-                    {
-                        if (@using.Name.NormalizeWhitespace().ToString().Equals(TestingLibraryNamespace)) return true;
-
-                        var fullUsing = SF.ParseName($"{baseNamespace}.{@using.Name}").NormalizeWhitespace().ToString();
-                        if (fullUsing.Equals(TestingLibraryNamespace)) return true;
-                    }
-                }
-            }
-
-            return false;
+            #if DEBUG
+            throw e;
+            #else
+            return null;
+            #endif
         }
     }
+}
+
+public abstract class FluentAssertionsAnalyzer : FluentAssertionsAnalyzer<FluentAssertionsCSharpSyntaxVisitor>
+{
+}
+
+public abstract class TestingLibraryAnalyzerBase : FluentAssertionsAnalyzer
+{
+    protected abstract string TestingLibraryModule { get; }
+    protected abstract string TestingLibraryAssertionType { get; }
+
+    protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
+        => type.Name == TestingLibraryAssertionType && type.ContainingModule.Name == TestingLibraryModule + ".dll";
 }

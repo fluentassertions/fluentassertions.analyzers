@@ -6,24 +6,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 
-namespace FluentAssertions.Analyzers.Xunit
+namespace FluentAssertions.Analyzers.Xunit;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class AssertFalseAnalyzer : XunitAnalyzer
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertFalseAnalyzer : XunitAnalyzer
+    public const string DiagnosticId = Constants.Tips.Xunit.AssertFalse;
+    public const string Category = Constants.Tips.Category;
+
+    public const string Message = "Use .Should().BeFalse() instead.";
+
+    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
+    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
-        public const string DiagnosticId = Constants.Tips.Xunit.AssertFalse;
-        public const string Category = Constants.Tips.Category;
-
-        public const string Message = "Use .Should().BeFalse() instead.";
-
-        protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-        protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
+        get
         {
-            get
-            {
-                yield return new AssertFalseSyntaxVisitor();
-            }
+            yield return new AssertFalseSyntaxVisitor();
         }
+    }
 
 		public class AssertFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
 		{
@@ -31,16 +31,15 @@ namespace FluentAssertions.Analyzers.Xunit
 			{
 			}
 		}
-    }
+}
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertFalseCodeFix)), Shared]
-    public class AssertFalseCodeFix : XunitCodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertFalseCodeFix)), Shared]
+public class AssertFalseCodeFix : XunitCodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertFalseAnalyzer.DiagnosticId);
+
+    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertFalseAnalyzer.DiagnosticId);
-
-        protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-        {
-            return RenameMethodAndReplaceWithSubjectShould(expression, "False", "BeFalse");
+        return RenameMethodAndReplaceWithSubjectShould(expression, "False", "BeFalse");
 		}
-    }
 }
