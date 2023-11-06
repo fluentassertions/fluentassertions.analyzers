@@ -10,9 +10,7 @@ using System.Collections.Generic;
 
 namespace FluentAssertions.Analyzers.BenchmarkTests
 {
-    [SimpleJob(RuntimeMoniker.Net472, baseline: true)]
-    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
-    [SimpleJob(RuntimeMoniker.Net60)]
+    [SimpleJob(RuntimeMoniker.Net60, baseline: true)]
     [SimpleJob(RuntimeMoniker.Net70)]
     [RPlotExporter]
     public class FluentAssertionsBenchmarks
