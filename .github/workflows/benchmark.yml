@@ -23,7 +23,7 @@ jobs:
         with:
           name: FluentAssertions.Analyzers Benchmark
           tool: 'benchmarkdotnet'
-          output-file-path: src/FluentAssertions.Analyzers.BenchmarkTests/results/Benchmarks-report-results.json
+          output-file-path: src/FluentAssertions.Analyzers.BenchmarkTests/BenchmarkDotNet.Artifacts/results/FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks-report.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
           alert-threshold: '200%'
