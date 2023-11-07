@@ -12,7 +12,7 @@ namespace FluentAssertions.Analyzers.BenchmarkTests
 {
     [SimpleJob(RuntimeMoniker.Net60, baseline: true)]
     [SimpleJob(RuntimeMoniker.Net70)]
-    [RPlotExporter]
+    [JsonExporter]
     public class FluentAssertionsBenchmarks
     {
         private CompilationWithAnalyzers MinimalCompiliation;
