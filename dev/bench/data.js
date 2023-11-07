@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1699337514086,
+  "lastUpdate": 1699337614752,
   "repoUrl": "https://github.com/fluentassertions/fluentassertions.analyzers",
   "entries": {
     "FluentAssertions.Analyzers Benchmark": [
@@ -96,6 +96,38 @@ window.BENCHMARK_DATA = {
             "value": 3803.389483315604,
             "unit": "ns",
             "range": "± 3.758023108207423"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "committer": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "id": "95bf305d7d4a4f934108322df0037ad1a7f34bc8",
+          "message": "Benchmark tests",
+          "timestamp": "2023-11-05T21:55:49Z",
+          "url": "https://github.com/fluentassertions/fluentassertions.analyzers/pull/180/commits/95bf305d7d4a4f934108322df0037ad1a7f34bc8"
+        },
+        "date": 1699337613459,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation",
+            "value": 4175.9049388340545,
+            "unit": "ns",
+            "range": "± 5.855646088745154"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation",
+            "value": 3781.2385632832843,
+            "unit": "ns",
+            "range": "± 6.143161307417298"
           }
         ]
       }
