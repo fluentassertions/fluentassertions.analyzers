@@ -42,6 +42,10 @@ dotnet build
 dotnet test --configuration Release  --filter 'TestCategory=Completed'
 ```
 
+### Benchmarks
+
+https://fluentassertions.github.io/fluentassertions.analyzers/dev/bench/
+
 ## Example Usages
 - https://github.com/SonarSource/sonar-dotnet/pull/2072
 - https://github.com/microsoft/component-detection/pull/634

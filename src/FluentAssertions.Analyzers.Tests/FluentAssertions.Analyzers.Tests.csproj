@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FluentAssertions.Analyzers\FluentAssertions.Analyzers.csproj" />
+    <ProjectReference Include="..\FluentAssertions.Analyzers.TestUtils\FluentAssertions.Analyzers.TestUtils.csproj" />
   </ItemGroup>
   
 </Project>

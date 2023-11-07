@@ -3,9 +3,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.CodeAnalysis.Text;
+using FluentAssertions.Analyzers.TestUtils;
 using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -17,9 +16,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Reflection;
 
 using XunitAssert = Xunit.Assert;
-using System.Net.Http;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -28,67 +24,12 @@ namespace FluentAssertions.Analyzers.Tests
     /// </summary>
     public static class DiagnosticVerifier
     {
-        static DiagnosticVerifier()
-        {
-            References = new[]
-            {
-                typeof(object), // System.Private.CoreLib
-                typeof(Console), // System
-                typeof(Uri), // System.Private.Uri
-                typeof(Enumerable), // System.Linq
-                typeof(CSharpCompilation), // Microsoft.CodeAnalysis.CSharp
-                typeof(Compilation), // Microsoft.CodeAnalysis
-                typeof(AssertionScope), // FluentAssertions.Core
-                typeof(AssertionExtensions), // FluentAssertions
-                typeof(HttpRequestMessage), // System.Net.Http
-                typeof(ImmutableArray), // System.Collections.Immutable
-                typeof(ConcurrentBag<>), // System.Collections.Concurrent
-                typeof(ReadOnlyDictionary<,>), // System.ObjectModel
-                typeof(Microsoft.VisualStudio.TestTools.UnitTesting.Assert), // MsTest
-                typeof(XunitAssert), // Xunit
-            }.Select(type => type.GetTypeInfo().Assembly.Location)
-            .Append(GetSystemAssemblyPathByName("System.Globalization.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Text.RegularExpressions.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Runtime.Extensions.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Data.Common.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Threading.Tasks.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Runtime.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Reflection.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Xml.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Xml.XDocument.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Private.Xml.Linq.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Linq.Expressions.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Collections.dll"))
-            .Append(GetSystemAssemblyPathByName("netstandard.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Xml.ReaderWriter.dll"))
-            .Append(GetSystemAssemblyPathByName("System.Private.Xml.dll"))
-            .Select(location => (MetadataReference)MetadataReference.CreateFromFile(location))
-            .ToImmutableArray();
-
-            DefaultFilePathPrefix = "Test";
-            CSharpDefaultFileExt = "cs";
-            VisualBasicDefaultExt = "vb";
-            TestProjectName = "TestProject";
-
-            string GetSystemAssemblyPathByName(string assemblyName)
-            {
-                var root = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
-                return System.IO.Path.Combine(root, assemblyName);
-            }
-        }
         // based on http://code.fitness/post/2017/02/using-csharpscript-with-netstandard.html
         public static string GetSystemAssemblyPathByName(string assemblyName)
         {
             var root = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
             return System.IO.Path.Combine(root, assemblyName);
         }
-
-        private static readonly ImmutableArray<MetadataReference> References;
-
-        private static readonly string DefaultFilePathPrefix;
-        private static readonly string CSharpDefaultFileExt;
-        private static readonly string VisualBasicDefaultExt;
-        private static readonly string TestProjectName;
 
         #region CodeFixVerifier
 
@@ -120,7 +61,7 @@ namespace FluentAssertions.Analyzers.Tests
         /// <param name="allowNewCompilerDiagnostics">A bool controlling whether or not the test will fail if the CodeFix introduces other warnings after being applied</param>
         private static void VerifyFix(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics)
         {
-            var document = CreateDocument(oldSource, language);
+            var document = CsProjectGenerator.CreateDocument(oldSource, language);
             var analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(new[] { analyzer }, new[] { document });
             var compilerDiagnostics = GetCompilerDiagnostics(document);
             var attempts = analyzerDiagnostics.Length;
@@ -262,7 +203,7 @@ namespace FluentAssertions.Analyzers.Tests
         /// <returns>An IEnumerable of Diagnostics that surfaced in the source code, sorted by Location</returns>
         private static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, params DiagnosticAnalyzer[] analyzers)
         {
-            return GetSortedDiagnosticsFromDocuments(analyzers, GetDocuments(sources, language));
+            return GetSortedDiagnosticsFromDocuments(analyzers, CsProjectGenerator.GetDocuments(sources, language));
         }
 
         /// <summary>
@@ -342,69 +283,7 @@ namespace FluentAssertions.Analyzers.Tests
         #endregion
 
         #region Set up compilation and documents
-        /// <summary>
-        /// Given an array of strings as sources and a language, turn them into a project and return the documents and spans of it.
-        /// </summary>
-        /// <param name="sources">Classes in the form of strings</param>
-        /// <param name="language">The language the source code is in</param>
-        /// <returns>A Tuple containing the Documents produced from the sources and their TextSpans if relevant</returns>
-        private static Document[] GetDocuments(string[] sources, string language)
-        {
-            if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
-            {
-                throw new ArgumentException("Unsupported Language");
-            }
-
-            var project = CreateProject(sources, language);
-            var documents = project.Documents.ToArray();
-
-            if (sources.Length != documents.Length)
-            {
-                throw new SystemException("Amount of sources did not match amount of Documents created");
-            }
-
-            return documents;
-        }
-
-        /// <summary>
-        /// Create a Document from a string through creating a project that contains it.
-        /// </summary>
-        /// <param name="source">Classes in the form of a string</param>
-        /// <param name="language">The language the source code is in</param>
-        /// <returns>A Document created from the source string</returns>
-        private static Document CreateDocument(string source, string language = LanguageNames.CSharp)
-        {
-            return CreateProject(new[] { source }, language).Documents.First();
-        }
-
-        /// <summary>
-        /// Create a project using the inputted strings as sources.
-        /// </summary>
-        /// <param name="sources">Classes in the form of strings</param>
-        /// <param name="language">The language the source code is in</param>
-        /// <returns>A Project created out of the Documents created from the source strings</returns>
-        private static Project CreateProject(string[] sources, string language = LanguageNames.CSharp)
-        {
-            string fileNamePrefix = DefaultFilePathPrefix;
-            string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
-
-            var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
-
-            var solution = new AdhocWorkspace()
-                .CurrentSolution
-                .AddProject(projectId, TestProjectName, TestProjectName, language)
-                .AddMetadataReferences(projectId, References);
-
-            int count = 0;
-            foreach (var source in sources)
-            {
-                var newFileName = fileNamePrefix + count + "." + fileExt;
-                var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
-                solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
-                count++;
-            }
-            return solution.GetProject(projectId);
-        }
+        
         #endregion
 
         #region Verifier wrappers
@@ -455,14 +334,14 @@ namespace FluentAssertions.Analyzers.Tests
 
         public static void VerifyCSharpDiagnosticUsingAllAnalyzers(string source, params DiagnosticResult[] expected)
         {
-            var analyzers = CreateAllAnalyzers();
+            var analyzers = CodeAnalyzersUtils.GetAllAnalyzers();
             var diagnostics = GetSortedDiagnostics(new[] { source }, LanguageNames.CSharp, analyzers);
             VerifyDiagnosticResults(diagnostics, analyzers, expected);
         }
 
         public static void VerifyCSharpDiagnosticUsingAllAnalyzers(string[] sources, params DiagnosticResult[] expected)
         {
-            var analyzers = CreateAllAnalyzers();
+            var analyzers = CodeAnalyzersUtils.GetAllAnalyzers();
             var diagnostics = GetSortedDiagnostics(sources, LanguageNames.CSharp, analyzers);
             VerifyDiagnosticResults(diagnostics, analyzers, expected);
         }
@@ -661,15 +540,5 @@ namespace FluentAssertions.Analyzers.Tests
             return builder.ToString();
         }
         #endregion
-
-        private static DiagnosticAnalyzer[] CreateAllAnalyzers()
-        {
-            var assembly = typeof(Constants).Assembly;
-            var analyzersTypes = assembly.GetTypes()
-                .Where(type => !type.IsAbstract && typeof(DiagnosticAnalyzer).IsAssignableFrom(type));
-            var analyzers = analyzersTypes.Select(type => (DiagnosticAnalyzer)Activator.CreateInstance(type));
-
-            return analyzers.ToArray();
-        }
     }
 }

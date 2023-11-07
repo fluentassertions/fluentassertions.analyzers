@@ -1,0 +1,31 @@
+name: Benchmark tests
+on: [pull_request]
+
+permissions:
+    contents: write
+    deployments: write
+
+jobs:
+  benchmark:
+    name: Performance regression check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+      - name: Run benchmark
+        run: cd src/FluentAssertions.Analyzers.BenchmarkTests && dotnet run -c Release --exporters json --filter '*'
+
+      - name: Store benchmark result
+        uses: rhysd/github-action-benchmark@v1
+        with:
+          name: FluentAssertions.Analyzers Benchmark
+          tool: 'benchmarkdotnet'
+          output-file-path: src/FluentAssertions.Analyzers.BenchmarkTests/BenchmarkDotNet.Artifacts/results/FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks-report.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          alert-threshold: '200%'
+          comment-on-alert: true
+          fail-on-alert: true
