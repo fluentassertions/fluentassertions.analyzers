@@ -15,18 +15,35 @@ namespace FluentAssertions.Analyzers.BenchmarkTests
     [JsonExporter]
     public class FluentAssertionsBenchmarks
     {
-        private CompilationWithAnalyzers MinimalCompiliation;
+        private CompilationWithAnalyzers MinimalCompilationWithAnalyzers_ObjectStatement;
+        private CompilationWithAnalyzers SmallCompilationWithAnalyzers_StringAssertions;
 
         [GlobalSetup]
         public async Task GlobalSetup()
         {
-            MinimalCompiliation = await CreateCompilationFromAsync(GenerateCode.ObjectStatement("actual.Should().Equals(expected);"));
+            MinimalCompilationWithAnalyzers_ObjectStatement = await CreateCompilationFromAsync(GenerateCode.ObjectStatement("actual.Should().Equals(expected);"));
+            SmallCompilationWithAnalyzers_StringAssertions = await CreateCompilationFromAsync(
+                GenerateCode.StringAssertion("actual.StartsWith(expected).Should().BeTrue();"),
+                GenerateCode.StringAssertion("actual.EndsWith(expected).Should().BeTrue();"),
+                GenerateCode.StringAssertion("actual.Should().NotBeNull().And.NotBeEmpty();"),
+                GenerateCode.StringAssertion("string.IsNullOrEmpty(actual).Should().BeTrue();"),
+                GenerateCode.StringAssertion("string.IsNullOrEmpty(actual).Should().BeFalse();"),
+                GenerateCode.StringAssertion("string.IsNullOrWhiteSpace(actual).Should().BeTrue();"),
+                GenerateCode.StringAssertion("string.IsNullOrWhiteSpace(actual).Should().BeFalse();"),
+                GenerateCode.StringAssertion("actual.Length.Should().Be(k);")
+            );
         }
 
         [Benchmark]
-        public Task MinimalCompilation()
+        public Task MinimalCompilation_SingleSource_ObjectStatement_Analyzing()
         {
-            return MinimalCompiliation.GetAnalyzerDiagnosticsAsync();
+            return MinimalCompilationWithAnalyzers_ObjectStatement.GetAnalyzerDiagnosticsAsync();
+        }
+
+        [Benchmark]
+        public Task SmallCompilation_MultipleSources_StringAssertions_Analyzing()
+        {
+            return SmallCompilationWithAnalyzers_StringAssertions.GetAnalyzerDiagnosticsAsync();
         }
 
         private async Task<CompilationWithAnalyzers> CreateCompilationFromAsync(params string[] sources)
