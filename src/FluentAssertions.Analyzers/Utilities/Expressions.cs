@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Simplification;
 using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FluentAssertions.Analyzers;
@@ -26,16 +27,8 @@ public static class Expressions
     
     public static InvocationExpressionSyntax SubjectShould(ExpressionSyntax subject)
     {
-        if (subject is CastExpressionSyntax or BinaryExpressionSyntax or PrefixUnaryExpressionSyntax or PostfixUnaryExpressionSyntax)
-        {
-            return SF.InvocationExpression(
-                SF.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SF.ParenthesizedExpression(subject), SF.IdentifierName("Should")),
-                SF.ArgumentList()
-            );
-        }
-
         return SF.InvocationExpression(
-            SF.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, subject, SF.IdentifierName("Should")),
+            SF.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SF.ParenthesizedExpression(subject).WithAdditionalAnnotations(Simplifier.Annotation), SF.IdentifierName("Should")),
             SF.ArgumentList()
         );
     }
