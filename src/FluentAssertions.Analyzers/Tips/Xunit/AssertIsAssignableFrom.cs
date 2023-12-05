@@ -60,7 +60,7 @@ public class AssertIsAssignableFromCodeFix : XunitCodeFixProvider
         switch (properties.VisitorName)
         {
             case nameof(AssertIsAssignableFromAnalyzer.AssertIsAssignableFromGenericTypeSyntaxVisitor):
-                return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsAssignableFrom", "BeAssignableTo");
+                return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsAssignableFrom", "BeAssignableTo", argumentIndex: 0);
             case nameof(AssertIsAssignableFromAnalyzer.AssertIsAssignableFromTypeSyntaxVisitor):
                 var newExpression = RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsAssignableFrom", "BeAssignableTo");
                 return ReplaceTypeOfArgumentWithGenericTypeIfExists(newExpression, "BeAssignableTo");

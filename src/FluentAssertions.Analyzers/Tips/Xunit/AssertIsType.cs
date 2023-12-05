@@ -60,7 +60,7 @@ public class AssertIsTypeCodeFix : XunitCodeFixProvider
         switch (properties.VisitorName)
         {
             case nameof(AssertIsTypeAnalyzer.AssertIsTypeGenericTypeSyntaxVisitor):
-                return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsType", "BeOfType");
+                return RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsType", "BeOfType", argumentIndex: 0);
             case nameof(AssertIsTypeAnalyzer.AssertIsTypeTypeSyntaxVisitor):
                 var newExpression = RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(expression, "IsType", "BeOfType");
                 return ReplaceTypeOfArgumentWithGenericTypeIfExists(newExpression, "BeOfType");

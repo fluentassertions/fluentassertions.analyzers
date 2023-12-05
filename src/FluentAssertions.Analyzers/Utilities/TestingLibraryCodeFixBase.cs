@@ -17,16 +17,16 @@ public abstract class TestingLibraryCodeFixBase : FluentAssertionsCodeFixProvide
         return ReplaceIdentifier(newExpression, AssertClassName, Expressions.SubjectShould(rename.Argument.Expression));
     }
 
-    protected ExpressionSyntax RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(ExpressionSyntax expression, string oldName, string newName)
+    protected ExpressionSyntax RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(ExpressionSyntax expression, string oldName, string newName, int argumentIndex = 1)
     {
         var rename = NodeReplacement.RenameAndExtractArguments(oldName, newName);
         var newExpression = GetNewExpression(expression, rename);
 
-        var actual = rename.Arguments[1];
+        var actual = rename.Arguments[argumentIndex];
 
         newExpression = ReplaceIdentifier(newExpression, AssertClassName, Expressions.SubjectShould(actual.Expression));
 
-        return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, rename.Arguments.RemoveAt(1)));
+        return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, rename.Arguments.RemoveAt(argumentIndex)));
     }
 
     protected ExpressionSyntax ReplaceTypeOfArgumentWithGenericTypeIfExists(ExpressionSyntax expression, string method)
