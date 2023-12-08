@@ -9,6 +9,7 @@ jobs:
   benchmark:
     name: Performance regression check
     runs-on: ubuntu-latest
+    if: github.repository == 'fluentassertions/fluentassertions.analyzers'
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
