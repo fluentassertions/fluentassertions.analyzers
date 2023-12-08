@@ -29,6 +29,12 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataRow(
             /* oldAssertion: */ "Assert.True(bool.Parse(\"true\"), \"because it's possible\");",
             /* newAssertion: */ "bool.Parse(\"true\").Should().BeTrue(\"because it's possible\");")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.True(!actual);",
+            /* newAssertion: */ "(!actual).Should().BeTrue();")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.True(actual == false);",
+            /* newAssertion: */ "(actual == false).Should().BeTrue();")]
         [Implemented]
         public void AssertTrue_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix<AssertTrueCodeFix, AssertTrueAnalyzer>("bool actual", oldAssertion, newAssertion);
