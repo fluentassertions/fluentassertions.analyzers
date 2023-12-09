@@ -1,32 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Composition;
 
 namespace FluentAssertions.Analyzers;
 
-[DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class CollectionShouldBeEmptyAnalyzer : CollectionAnalyzer
+public static class CollectionShouldBeEmpty
 {
-    public const string DiagnosticId = Constants.Tips.Collections.CollectionsShouldBeEmpty;
-    public const string Category = Constants.Tips.Category;
-
-    public const string Message = "Use .Should().BeEmpty() instead.";
-
-    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Category, DiagnosticSeverity.Info, true);
-    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
-    {
-        get
-        {
-            yield return new AnyShouldBeFalseSyntaxVisitor();
-            yield return new ShouldHaveCount0SyntaxVisitor();
-        }
-    }
-
     public class AnyShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
     {
         public AnyShouldBeFalseSyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeFalse"))
@@ -49,27 +29,8 @@ public class CollectionShouldBeEmptyAnalyzer : CollectionAnalyzer
                 && argument == 0;
         }
     }
-}
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionShouldBeEmptyCodeFix)), Shared]
-public class CollectionShouldBeEmptyCodeFix : FluentAssertionsCodeFixProvider
-{
-    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionShouldBeEmptyAnalyzer.DiagnosticId);
-
-    protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
-    {
-        switch (properties.VisitorName)
-        {
-            case nameof(CollectionShouldBeEmptyAnalyzer.AnyShouldBeFalseSyntaxVisitor):
-                return GetNewExpression(expression, NodeReplacement.Remove("Any"), NodeReplacement.Rename("BeFalse", "BeEmpty"));
-            case nameof(CollectionShouldBeEmptyAnalyzer.ShouldHaveCount0SyntaxVisitor):
-                return GetNewExpression(expression, new HaveCountNodeReplacement());
-            default:
-                throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
-        }
-    }
-
-    private class HaveCountNodeReplacement : NodeReplacement
+    public class HaveCountNodeReplacement : NodeReplacement
     {
         public override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Name.Identifier.Text == "HaveCount";
         public override SyntaxNode ComputeOld(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Parent;
