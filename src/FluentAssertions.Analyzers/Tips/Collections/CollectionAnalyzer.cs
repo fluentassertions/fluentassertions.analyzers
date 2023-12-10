@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,24 +9,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace FluentAssertions.Analyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class CollectionAnalyzer : FluentAssertionsAnalyzer
+public class CollectionAnalyzer : CollectionBaseAnalyzer
 {
     public const string DiagnosticId = "FAA0001";
     public const string Message = "Clean up FluentAssertion usage.";
 
     protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Constants.Tips.Category, DiagnosticSeverity.Info, true);
-
-    protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
-    {
-        return type.SpecialType != SpecialType.System_String
-            && type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T);
-    }
-
-    protected override bool ShouldAnalyzeVariableType(ITypeSymbol type, SemanticModel semanticModel)
-    {
-        return type.SpecialType != SpecialType.System_String
-            && type.IsTypeOrConstructedFromTypeOrImplementsType(SpecialType.System_Collections_Generic_IEnumerable_T);
-    }
 
     protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
     {
