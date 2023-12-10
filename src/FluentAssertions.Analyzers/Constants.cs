@@ -16,11 +16,8 @@ public static class Constants
         public const string Category = "FluentAssertionTips";
         public static class Collections
         {
-            public const string CollectionShouldNotContainProperty = $"{DiagnosticProperties.IdPrefix}0003";
             public const string CollectionShouldNotBeNullOrEmpty = $"{DiagnosticProperties.IdPrefix}0017";
             public const string CollectionShouldHaveElementAt = $"{DiagnosticProperties.IdPrefix}0018";
-            public const string CollectionShouldIntersectWith = $"{DiagnosticProperties.IdPrefix}0023";
-            public const string CollectionShouldHaveElementAt0Null = $"{DiagnosticProperties.IdPrefix}0027";
         }
 
         public static class Dictionaries

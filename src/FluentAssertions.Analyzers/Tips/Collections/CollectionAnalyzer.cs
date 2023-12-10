@@ -61,9 +61,7 @@ public class CollectionAnalyzer : FluentAssertionsAnalyzer
             yield return new CollectionShouldHaveCountLessOrEqualTo.CountShouldBeLessOrEqualToSyntaxVisitor();
             yield return new CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor();
 
-            yield return new CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor();
-            yield return new CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor();
-            yield return new CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor();
+            // TODO: Add support for CollectionShouldHaveElementAtAnalyzer
 
             yield return new CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor();
 
@@ -175,27 +173,6 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeLessOrEqualTo", "HaveCountLessOrEqualTo"));
             case nameof(CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeLessThan", "HaveCountLessThan"));
-            case nameof(CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
-                }
-            case nameof(CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor):
-                {
-                    var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
-                }
-            case nameof(CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
-                    var newExpression = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
-                }
             case nameof(CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("Intersect");
