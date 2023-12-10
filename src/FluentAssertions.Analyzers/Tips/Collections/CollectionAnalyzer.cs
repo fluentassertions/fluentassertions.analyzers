@@ -71,7 +71,10 @@ public class CollectionAnalyzer : FluentAssertionsAnalyzer
 
             yield return new CollectionShouldNotContainNulls.SelectShouldNotContainNullsSyntaxVisitor();
 
-            // TODO: Add support for CollectionShouldNotContainPropertyAnalyzer
+            yield return new CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor();
+            yield return new CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor();
+            // TODO: enable this:
+            // yield return new CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor();
 
             yield return new CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor();
             yield return new CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor();
@@ -187,6 +190,28 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.PrependArguments("NotContainNulls", remove.Arguments));
                 }
+
+            case nameof(CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("Any");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
+                }
+            case nameof(CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("Where");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
+                }
+            /*
+             case nameof(CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor):
+            {
+                return GetNewExpression(expression, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
+            }
+            */
+
             case nameof(CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("NotBe", "NotHaveCount")); ;
             case nameof(CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor):
