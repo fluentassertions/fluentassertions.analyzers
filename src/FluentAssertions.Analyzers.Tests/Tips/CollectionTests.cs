@@ -643,7 +643,7 @@ namespace FluentAssertions.Analyzers.Tests
         [NotImplemented]
         [AssertionDiagnostic("actual.AsEnumerable().FirstOrDefault().Should().BeNull({0}).And.ToString();")]
         [Ignore("What Should Happen?")]
-        public void CollectionShouldHaveElementAt0Null_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldHaveElementAt0NullAnalyzer>(assertion);
+        public void CollectionShouldHaveElementAt0Null_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
@@ -654,7 +654,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.AsEnumerable().FirstOrDefault().Should().BeNull({0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveElementAt(0, null{0}).And.ToString();")]
         [Ignore("What Should Happen?")]
-        public void CollectionShouldHaveElementAt0Null_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveElementAt0NullCodeFix, CollectionShouldHaveElementAt0NullAnalyzer>(oldAssertion, newAssertion);
+        public void CollectionShouldHaveElementAt0Null_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnosticCodeBlock<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
