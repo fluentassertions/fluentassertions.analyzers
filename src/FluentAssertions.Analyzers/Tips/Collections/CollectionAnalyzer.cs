@@ -61,7 +61,11 @@ public class CollectionAnalyzer : FluentAssertionsAnalyzer
             yield return new CollectionShouldHaveCountLessOrEqualTo.CountShouldBeLessOrEqualToSyntaxVisitor();
             yield return new CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor();
 
-            // TODO: Add support for CollectionShouldHaveElementAt
+            yield return new CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor();
+            yield return new CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor();
+            yield return new CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor();
+
+            yield return new CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor();
 
             yield return new CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor();
 
@@ -153,10 +157,8 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.PrependArguments("ContainSingle", remove.Arguments));
                 }
-
             case nameof(CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor):
                 return GetNewExpressionForSelectShouldEqualOtherCollectionSelectSyntaxVisitor(expression);
-
             case nameof(CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.RenameAndRemoveFirstArgument("Be", "BeEmpty"));
             case nameof(CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor):
@@ -173,9 +175,36 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeLessOrEqualTo", "HaveCountLessOrEqualTo"));
             case nameof(CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeLessThan", "HaveCountLessThan"));
+            case nameof(CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+            case nameof(CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+            case nameof(CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
+                    var newExpression = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+            case nameof(CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("Intersect");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "IntersectWith", remove.Arguments));
+                }
             case nameof(CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgument("HaveCount", "HaveSameCount"));
-
             case nameof(CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("Contains");
@@ -190,7 +219,6 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.PrependArguments("NotContainNulls", remove.Arguments));
                 }
-
             case nameof(CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("Any");
