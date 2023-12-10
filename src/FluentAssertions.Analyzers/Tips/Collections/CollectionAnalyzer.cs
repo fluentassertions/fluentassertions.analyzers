@@ -62,12 +62,11 @@ public class CollectionAnalyzer : FluentAssertionsAnalyzer
             yield return new CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor();
 
             // TODO: Add support for CollectionShouldHaveElementAtAnalyzer
+            // TODO: Add support for CollectionShouldNotBeNullOrEmptyAnalyzer
 
             yield return new CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor();
 
             yield return new CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor();
-
-            // TODO: Add support for CollectionShouldNotBeNullOrEmptyAnalyzer
 
             yield return new CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor();
 
