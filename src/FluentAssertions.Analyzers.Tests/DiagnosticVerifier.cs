@@ -441,6 +441,13 @@ namespace FluentAssertions.Analyzers.Tests
                         string.Format("Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                             expected.Message, actual.GetMessage(), FormatDiagnostics(analyzers, actual)));
                 }
+
+                if (expected.VisitorName != null && actual.Properties[Constants.DiagnosticProperties.VisitorName] != expected.VisitorName)
+                {
+                    throw new AssertionFailedException(
+                        string.Format("Expected diagnostic visitorName property to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                            expected.VisitorName, actual.Properties[Constants.DiagnosticProperties.VisitorName], FormatDiagnostics(analyzers, actual)));
+                }
             }
         }
 
