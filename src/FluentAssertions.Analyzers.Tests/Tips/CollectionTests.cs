@@ -435,7 +435,13 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeNull().And.NotBeEmpty({0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeEmpty().And.NotBeNull({0}).And.ToString();")]
         [Implemented]
-        public void CollectionShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldNotBeNullOrEmptyAnalyzer>(assertion);
+        public void CollectionShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
+
+        [DataTestMethod]
+        [DataRow("actual.Should().NotBeNull().And.NotBeEmpty();")]
+        [DataRow("actual.Should().NotBeEmpty().And.NotBeNull();")]
+        public void CollectionShouldNotBeNullOrEmpty_TestAnalyzerDebug(string assertion) 
+            => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(
@@ -451,7 +457,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.Should().NotBeEmpty({0}).And.NotBeNull();",
             newAssertion: "actual.Should().NotBeNullOrEmpty({0});")]
         [Implemented]
-        public void CollectionShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotBeNullOrEmptyCodeFix, CollectionShouldNotBeNullOrEmptyAnalyzer>(oldAssertion, newAssertion);
+        public void CollectionShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.ElementAt(k).Should().Be(expectedItem{0});")]

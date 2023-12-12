@@ -233,6 +233,15 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.PrependArguments("OnlyHaveUniqueItems", remove.Arguments));
                 }
+            case nameof(CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor):
+                {
+                    return GetCombinedAssertions(expression, "NotBeEmpty", "NotBeNull");
+                }
+            case nameof(CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor):
+                {
+                    return GetCombinedAssertions(expression, "NotBeNull", "NotBeEmpty");
+                }
+
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
     }
