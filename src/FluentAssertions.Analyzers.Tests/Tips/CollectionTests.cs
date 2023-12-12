@@ -11,6 +11,7 @@ namespace FluentAssertions.Analyzers.Tests
         [DataRow("actual.Should().NotBeNull().And.NotBeEmpty();")]
         [DataRow("actual.Should().NotBeEmpty().And.NotBeNull();")]
         [DataRow("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual);")]
+        [DataRow("actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual);")]
         public void FluentAssertionsOperationAnalyzer_TestAnalyzerDebug(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
 
         [AssertionDataTestMethod]

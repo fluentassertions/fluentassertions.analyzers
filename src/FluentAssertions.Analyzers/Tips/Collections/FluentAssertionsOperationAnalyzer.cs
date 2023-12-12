@@ -90,15 +90,20 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 break;
             case "Equal" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3):
                 {
-                    if (invocation.TryGetSingleChildOperationFromInvocation<IInvocationOperation>(out var beforeShouldInvocation))
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var equal))
                     {
-                        switch (beforeShouldInvocation.TargetMethod.Name)
+                        switch (equal.TargetMethod.Name)
                         {
                             case nameof(Enumerable.OrderBy):
-                                // TODO: compare the arguments references
-                                if (beforeShouldInvocation.Arguments.Length == 2 && beforeShouldInvocation.Arguments[0] == assertion.Arguments[0])
+                                if (equal.Arguments.Length == 2 && IsSameArgumentReference(equal.Arguments[0], assertion.Arguments[0]))
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(beforeShouldInvocation));
+                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(equal));
+                                }
+                                break;
+                            case nameof(Enumerable.OrderByDescending):
+                                if (equal.Arguments.Length == 2 && IsSameArgumentReference(equal.Arguments[0], assertion.Arguments[0]))
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor>(equal));
                                 }
                                 break;
                         }
@@ -134,6 +139,13 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
     private static bool IsMethodContainedInType(IInvocationOperation invocation, INamedTypeSymbol type)
         => invocation.TargetMethod.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
 
+    private static bool IsSameArgumentReference(IArgumentOperation argument1, IArgumentOperation argument2)
+    {
+        return argument1.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument1Reference)
+        && argument2.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument2Reference)
+        && argument1Reference.Parameter.Equals(argument2Reference.Parameter, SymbolEqualityComparer.Default);
+    }
+
     private class FluentAssertionsMetadata
     {
         public FluentAssertionsMetadata(Compilation compilation)
@@ -152,9 +164,9 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
 internal static class OperartionExtensions
 {
-    public static bool TryGetSingleChildOperationFromInvocation<TOperation>(this IInvocationOperation invocation, out TOperation operation) where TOperation : IOperation
+    public static bool TryGetFirstDescendent<TOperation>(this IOperation parent, out TOperation operation) where TOperation : IOperation
     {
-        IOperation current = invocation;
+        IOperation current = parent;
         while (current.ChildOperations.Count == 1)
         {
             current = current.ChildOperations.First();
