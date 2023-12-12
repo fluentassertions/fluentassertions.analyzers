@@ -23,20 +23,8 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
             yield return new CollectionShouldBeEmpty.AnyShouldBeFalseSyntaxVisitor();
             yield return new CollectionShouldBeEmpty.ShouldHaveCount0SyntaxVisitor();
 
-            yield return new CollectionShouldNotBeEmpty.AnyShouldBeTrueSyntaxVisitor();
-
-            yield return new CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor();
-            yield return new CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor();
-
-            yield return new CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor();
-
-            yield return new CollectionShouldContainProperty.AnyWithLambdaShouldBeTrueSyntaxVisitor();
-            yield return new CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor();
-
             yield return new CollectionShouldContainSingle.WhereShouldHaveCount1SyntaxVisitor();
             yield return new CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor();
-
-            yield return new CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor();
 
             yield return new CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor();
             yield return new CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor();
@@ -68,8 +56,6 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
             yield return new CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor();
 
             yield return new CollectionShouldNotIntersectWith.IntersectShouldBeEmptySyntaxVisitor();
-
-            yield return new CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor();
 
             yield return new CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor();
             yield return new CollectionShouldOnlyHaveUniqueItemsByComparer.SelectShouldOnlyHaveUniqueItemsSyntaxVisitor();

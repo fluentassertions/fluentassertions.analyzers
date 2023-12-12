@@ -68,47 +68,80 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 {
                     if (TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeNull", out var chainedInvocation))
                     {
-                        if (HasEmptyBecauseAndReasonArgs(assertion) || HasEmptyBecauseAndReasonArgs(chainedInvocation))
+                        if (!HasEmptyBecauseAndReasonArgs(assertion) && !HasEmptyBecauseAndReasonArgs(chainedInvocation)) return;
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(chainedInvocation));
+                    }
+                    else if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    {
+                        switch (invocationBeforeShould.TargetMethod.Name)
                         {
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(chainedInvocation));
-                            return;
+                            case nameof(Enumerable.Where) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor>(invocationBeforeShould));
+                                break;
                         }
                     }
+                    break;
                 }
-                break;
             case "NotBeNull" when IsMethodContainedInType(assertion, metadata.ReferenceTypeAssertionsOfT2):
                 {
-                    if (TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeEmpty", out var chainedInvocation))
-                    {
-                        if (HasEmptyBecauseAndReasonArgs(assertion) || HasEmptyBecauseAndReasonArgs(chainedInvocation))
-                        {
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(chainedInvocation));
-                            return;
-                        }
-                    }
+                    if (!TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeEmpty", out var chainedInvocation)) return;
+                    if (!HasEmptyBecauseAndReasonArgs(assertion) && !HasEmptyBecauseAndReasonArgs(chainedInvocation)) return;
+
+                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(chainedInvocation));
                 }
                 break;
             case "Equal" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var equal))
+                    if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
+                    switch (invocationBeforeShould.TargetMethod.Name)
                     {
-                        switch (equal.TargetMethod.Name)
-                        {
-                            case nameof(Enumerable.OrderBy):
-                                if (equal.Arguments.Length == 2 && IsSameArgumentReference(equal.Arguments[0], assertion.Arguments[0]))
-                                {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(equal));
-                                }
-                                break;
-                            case nameof(Enumerable.OrderByDescending):
-                                if (equal.Arguments.Length == 2 && IsSameArgumentReference(equal.Arguments[0], assertion.Arguments[0]))
-                                {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor>(equal));
-                                }
-                                break;
-                        }
+                        case nameof(Enumerable.OrderBy):
+                            if (invocationBeforeShould.Arguments.Length == 2
+                            && IsLambda(invocationBeforeShould.Arguments[1])
+                            && IsSameArgumentReference(invocationBeforeShould.Arguments[0], assertion.Arguments[0]))
+                            {
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(invocationBeforeShould));
+                            }
+                            break;
+                        case nameof(Enumerable.OrderByDescending):
+                            if (invocationBeforeShould.Arguments.Length == 2
+                            && IsLambda(invocationBeforeShould.Arguments[1])
+                            && IsSameArgumentReference(invocationBeforeShould.Arguments[0], assertion.Arguments[0]))
+                            {
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor>(invocationBeforeShould));
+                            }
+                            break;
+                        case nameof(Enumerable.Select): // TODO:
+                            if (invocationBeforeShould.Arguments.Length == 2
+                            && IsLambda(invocationBeforeShould.Arguments[1]))
+                            {
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor>(invocationBeforeShould));
+                            }
+                            break;
                     }
                 }
+                break;
+            case "BeTrue" when IsMethodContainedInType(assertion, metadata.BooleanAssertionsOfT1):
+                {
+                    if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
+                    switch (invocationBeforeShould.TargetMethod.Name)
+                    {
+                        case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 1:
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeEmpty.AnyShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            break;
+                        case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.AnyWithLambdaShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            break;
+                        case nameof(Enumerable.All) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            break;
+                        case nameof(Enumerable.Contains):
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            break;
+                    }
+                }
+                break;
+            case "BeFalse" when IsMethodContainedInType(assertion, metadata.BooleanAssertionsOfT1):
                 break;
         }
     }
@@ -146,18 +179,23 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         && argument1Reference.Parameter.Equals(argument2Reference.Parameter, SymbolEqualityComparer.Default);
     }
 
+    private static bool IsLambda(IArgumentOperation argument)
+        => argument.Value is IDelegateCreationOperation delegateCreation && delegateCreation.Target.Kind == OperationKind.AnonymousFunction;
+
     private class FluentAssertionsMetadata
     {
         public FluentAssertionsMetadata(Compilation compilation)
         {
             AssertionExtensions = compilation.GetTypeByMetadataName("FluentAssertions.AssertionExtensions");
             GenericCollectionAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`1");
+            BooleanAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.BooleanAssertions`1");
             GenericCollectionAssertionsOfT3 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`3");
             ReferenceTypeAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.ReferenceTypeAssertions`2");
         }
         public INamedTypeSymbol AssertionExtensions { get; }
         public INamedTypeSymbol GenericCollectionAssertionsOfT1 { get; }
         public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
+        public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
     }
 }

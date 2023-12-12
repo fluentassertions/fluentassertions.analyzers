@@ -6,21 +6,7 @@ namespace FluentAssertions.Analyzers;
 
 public static class CollectionShouldEqualOtherCollectionByComparer
 {
-    public class SelectShouldEqualOtherCollectionSelectSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public SelectShouldEqualOtherCollectionSelectSyntaxVisitor()
-            : base(MemberValidator.MethodContainingLambda("Select"), MemberValidator.Should, new MemberValidator("Equal", MathodContainingArgumentInvokingLambda))
-        {
-        }
-
-        private static bool MathodContainingArgumentInvokingLambda(SeparatedSyntaxList<ArgumentSyntax> arguments, SemanticModel semanticModel)
-        {
-            if (!arguments.Any()) return false;
-
-            return arguments[0].Expression is InvocationExpressionSyntax invocation
-                && MemberValidator.MethodContainingLambdaPredicate(invocation.ArgumentList.Arguments, semanticModel);
-        }
-    }
+    public sealed class SelectShouldEqualOtherCollectionSelectSyntaxVisitor {}
 }
 
 public partial class CollectionCodeFix
