@@ -7,6 +7,12 @@ namespace FluentAssertions.Analyzers.Tests
     [TestClass]
     public class CollectionTests
     {
+        [DataTestMethod]
+        [DataRow("actual.Should().NotBeNull().And.NotBeEmpty();")]
+        [DataRow("actual.Should().NotBeEmpty().And.NotBeNull();")]
+        [DataRow("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual);")]
+        public void FluentAssertionsOperationAnalyzer_TestAnalyzerDebug(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
+
         [AssertionDataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeTrue({0}).And.ToString();")]
@@ -437,12 +443,6 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
 
-        [DataTestMethod]
-        [DataRow("actual.Should().NotBeNull().And.NotBeEmpty();")]
-        [DataRow("actual.Should().NotBeEmpty().And.NotBeNull();")]
-        public void CollectionShouldNotBeNullOrEmpty_TestAnalyzerDebug(string assertion) 
-            => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
-
         [AssertionDataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().NotBeNull().And.NotBeEmpty({0});",
@@ -519,7 +519,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().OrderBy(x => x.BooleanProperty).Should().Equal(actual{0}).And.ToString();")]
         [Implemented]
-        public void CollectionShouldBeInAscendingOrder_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
+        public void CollectionShouldBeInAscendingOrder_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
 
         [AssertionDataTestMethod]
         [AssertionCodeFix(

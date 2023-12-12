@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Immutable;
+using System.ComponentModel;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -60,10 +62,9 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 properties: properties);
         }
 
-        // CollectionShouldNotBeNullOrEmptyAnalyzer
         switch (assertion.TargetMethod.Name)
         {
-            case "NotBeEmpty" when assertion.TargetMethod.ContainingType.ConstructedFrom.Equals(metadata.GenericCollectionAssertionsOfT3, SymbolEqualityComparer.Default):
+            case "NotBeEmpty" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeNull", out var chainedInvocation))
                     {
@@ -75,27 +76,39 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     }
                 }
                 break;
-            case "NotBeNull" when assertion.TargetMethod.ContainingType.ConstructedFrom.Equals(metadata.ReferenceTypeAssertionsOfT2, SymbolEqualityComparer.Default):
+            case "NotBeNull" when IsMethodContainedInType(assertion, metadata.ReferenceTypeAssertionsOfT2):
                 {
                     if (TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeEmpty", out var chainedInvocation))
                     {
                         if (HasEmptyBecauseAndReasonArgs(assertion) || HasEmptyBecauseAndReasonArgs(chainedInvocation))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Rule, chainedInvocation.Syntax.GetLocation()));
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(chainedInvocation));
                             return;
                         }
                     }
                 }
                 break;
+            case "Equal" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3):
+                {
+                    if (invocation.TryGetSingleChildOperationFromInvocation<IInvocationOperation>(out var beforeShouldInvocation))
+                    {
+                        switch (beforeShouldInvocation.TargetMethod.Name)
+                        {
+                            case nameof(Enumerable.OrderBy):
+                                // TODO: compare the arguments references
+                                if (beforeShouldInvocation.Arguments.Length == 2 && beforeShouldInvocation.Arguments[0] == assertion.Arguments[0])
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(beforeShouldInvocation));
+                                }
+                                break;
+                        }
+                    }
+                }
+                break;
         }
-
-        var fluentAssertionsOperationVisitor = new FluentAssertionsOperationVisitor();
-        fluentAssertionsOperationVisitor.Visit(invocation);
-
-        var subject = fluentAssertionsOperationVisitor.Subject;
     }
 
-    static bool HasEmptyBecauseAndReasonArgs(IInvocationOperation invocation, int startingIndex = 0)
+    private static bool HasEmptyBecauseAndReasonArgs(IInvocationOperation invocation, int startingIndex = 0)
     {
         if (invocation.Arguments.Length != startingIndex + 2)
         {
@@ -106,7 +119,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         && invocation.Arguments[startingIndex + 1].Value is IArrayCreationOperation arrayCreation && arrayCreation.Initializer.ElementValues.IsEmpty;
     }
 
-    static bool TryGetChainedInvocationAfterAndConstraint(IInvocationOperation invocation, string chainedMethod, out IInvocationOperation chainedInvocation)
+    private static bool TryGetChainedInvocationAfterAndConstraint(IInvocationOperation invocation, string chainedMethod, out IInvocationOperation chainedInvocation)
     {
         if (invocation.Parent is IPropertyReferenceOperation { Property.Name: "And" } andConstraint)
         {
@@ -117,6 +130,9 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         chainedInvocation = null;
         return false;
     }
+
+    private static bool IsMethodContainedInType(IInvocationOperation invocation, INamedTypeSymbol type)
+        => invocation.TargetMethod.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
 
     private class FluentAssertionsMetadata
     {
@@ -132,15 +148,24 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
     }
+}
 
-
-    private class FluentAssertionsOperationVisitor : OperationVisitor
+internal static class OperartionExtensions
+{
+    public static bool TryGetSingleChildOperationFromInvocation<TOperation>(this IInvocationOperation invocation, out TOperation operation) where TOperation : IOperation
     {
-        public IOperation Subject { get; private set; }
-
-        public override void VisitInvocation(IInvocationOperation operation)
+        IOperation current = invocation;
+        while (current.ChildOperations.Count == 1)
         {
-            base.VisitInvocation(operation);
+            current = current.ChildOperations.First();
+            if (current is TOperation op)
+            {
+                operation = op;
+                return true;
+            }
         }
+
+        operation = default;
+        return false;
     }
 }
