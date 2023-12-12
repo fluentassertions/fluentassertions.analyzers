@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace FluentAssertions.Analyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class CollectionShouldNotBeNullOrEmptyAnalyzer : CollectionAnalyzer
+public class CollectionShouldNotBeNullOrEmptyAnalyzer : CollectionBaseAnalyzer
 {
     public const string DiagnosticId = Constants.Tips.Collections.CollectionShouldNotBeNullOrEmpty;
     public const string Category = Constants.Tips.Category;

@@ -4,6 +4,7 @@ public static class Constants
 {
     public static class DiagnosticProperties
     {
+        public const string RuleId = nameof(RuleId);
         public const string Title = nameof(Title);
         public const string VisitorName = nameof(VisitorName);
         public const string HelpLink = nameof(HelpLink);
@@ -15,34 +16,8 @@ public static class Constants
         public const string Category = "FluentAssertionTips";
         public static class Collections
         {
-            public const string CollectionsShouldBeEmpty = $"{DiagnosticProperties.IdPrefix}0000";
-            public const string CollectionsShouldNotBeEmpty = $"{DiagnosticProperties.IdPrefix}0001";
-            public const string CollectionShouldContainProperty = $"{DiagnosticProperties.IdPrefix}0002";
-            public const string CollectionShouldNotContainProperty = $"{DiagnosticProperties.IdPrefix}0003";
-            public const string CollectionShouldContainItem = $"{DiagnosticProperties.IdPrefix}0004";
-            public const string CollectionShouldNotContainItem = $"{DiagnosticProperties.IdPrefix}0005";
-            public const string CollectionShouldHaveCount = $"{DiagnosticProperties.IdPrefix}0006";
-            public const string CollectionShouldHaveCountGreaterThan = $"{DiagnosticProperties.IdPrefix}0007";
-            public const string CollectionShouldHaveCountGreaterOrEqualTo = $"{DiagnosticProperties.IdPrefix}0008";
-            public const string CollectionShouldHaveCountLessThan = $"{DiagnosticProperties.IdPrefix}0009";
-            public const string CollectionShouldHaveCountLessOrEqualTo = $"{DiagnosticProperties.IdPrefix}0010";
-            public const string CollectionShouldNotHaveCount = $"{DiagnosticProperties.IdPrefix}0011";
-            public const string CollectionShouldContainSingle = $"{DiagnosticProperties.IdPrefix}0012";
-            public const string CollectionShouldOnlyContainProperty = $"{DiagnosticProperties.IdPrefix}0013";
-            public const string CollectionShouldHaveSameCount = $"{DiagnosticProperties.IdPrefix}0014";
-            public const string CollectionShouldNotHaveSameCount = $"{DiagnosticProperties.IdPrefix}0015";
-            public const string CollectionShouldContainSingleProperty = $"{DiagnosticProperties.IdPrefix}0016";
             public const string CollectionShouldNotBeNullOrEmpty = $"{DiagnosticProperties.IdPrefix}0017";
             public const string CollectionShouldHaveElementAt = $"{DiagnosticProperties.IdPrefix}0018";
-            public const string CollectionShouldBeInAscendingOrder = $"{DiagnosticProperties.IdPrefix}0019";
-            public const string CollectionShouldBeInDescendingOrder = $"{DiagnosticProperties.IdPrefix}0020";
-            public const string CollectionShouldEqualOtherCollectionByComparer = $"{DiagnosticProperties.IdPrefix}0021";
-            public const string CollectionShouldNotIntersectWith = $"{DiagnosticProperties.IdPrefix}0022";
-            public const string CollectionShouldIntersectWith = $"{DiagnosticProperties.IdPrefix}0023";
-            public const string CollectionShouldNotContainNulls = $"{DiagnosticProperties.IdPrefix}0024";
-            public const string CollectionShouldOnlyHaveUniqueItems = $"{DiagnosticProperties.IdPrefix}0025";
-            public const string CollectionShouldOnlyHaveUniqueItemsByComparer = $"{DiagnosticProperties.IdPrefix}0026";
-            public const string CollectionShouldHaveElementAt0Null = $"{DiagnosticProperties.IdPrefix}0027";
         }
 
         public static class Dictionaries
