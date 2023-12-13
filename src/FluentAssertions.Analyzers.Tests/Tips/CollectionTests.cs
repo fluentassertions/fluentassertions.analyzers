@@ -465,16 +465,24 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ElementAt(6).Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual[k].Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual[6].Should().Be(expectedItem{0});")]
+        [AssertionDiagnostic("actual.ToArray()[k].Should().Be(expectedItem{0});")]
+        [AssertionDiagnostic("actual.ToArray()[6].Should().Be(expectedItem{0});")]
+        [AssertionDiagnostic("actual.ToList()[k].Should().Be(expectedItem{0});")]
+        [AssertionDiagnostic("actual.ToList()[6].Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual.Skip(k).First().Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual.Skip(6).First().Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().ElementAt(k).Should().Be(expectedItem{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().ElementAt(6).Should().Be(expectedItem{0}).And.ToString();")]
         [AssertionDiagnostic("actual[k].Should().Be(expectedItem{0}).And.ToString();")]
         [AssertionDiagnostic("actual[6].Should().Be(expectedItem{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToArray()[k].Should().Be(expectedItem{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToArray()[6].Should().Be(expectedItem{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToList()[k].Should().Be(expectedItem{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToList()[6].Should().Be(expectedItem{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Skip(k).First().Should().Be(expectedItem{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Skip(6).First().Should().Be(expectedItem{0}).And.ToString();")]
         [Implemented]
-        public void CollectionShouldHaveElementAt_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldHaveElementAtAnalyzer>(assertion);
+        public void CollectionShouldHaveElementAt_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -508,13 +516,19 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.ToArray()[6].Should().Be(expectedItem{0}).And.ToString();",
             newAssertion: "actual.ToArray().Should().HaveElementAt(6, expectedItem{0}).And.ToString();")]
         [AssertionCodeFix(
+            oldAssertion: "actual.ToList()[k].Should().Be(expectedItem{0}).And.ToString();",
+            newAssertion: "actual.ToList().Should().HaveElementAt(k, expectedItem{0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToList()[6].Should().Be(expectedItem{0}).And.ToString();",
+            newAssertion: "actual.ToList().Should().HaveElementAt(6, expectedItem{0}).And.ToString();")]
+        [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Skip(k).First().Should().Be(expectedItem{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveElementAt(k, expectedItem{0}).And.ToString();")]
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Skip(6).First().Should().Be(expectedItem{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveElementAt(6, expectedItem{0}).And.ToString();")]
         [Implemented]
-        public void CollectionShouldHaveElementAt_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveElementAtCodeFix, CollectionShouldHaveElementAtAnalyzer>(oldAssertion, newAssertion);
+        public void CollectionShouldHaveElementAt_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});")]

@@ -168,6 +168,28 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
                     return GetCombinedAssertions(expression, "NotBeNull", "NotBeEmpty");
                 }
 
+            case nameof(CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+            case nameof(CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+            case nameof(CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
+                    var newExpression = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
     }

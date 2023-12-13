@@ -38,7 +38,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
     private static void AnalyzeInvocation(OperationAnalysisContext context, FluentAssertionsMetadata metadata)
     {
         var invocation = (IInvocationOperation)context.Operation;
-        if (invocation.TargetMethod.Name is not "Should")
+        if (invocation.TargetMethod.Name is not "Should" || invocation.Arguments.Length is not 1)
         {
             return;
         }
@@ -47,6 +47,8 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         {
             return;
         }
+
+        var subject = invocation.Arguments[0].Value;
 
         static Diagnostic CreateDiagnostic<TVistor>(IOperation operation)
         {
@@ -173,7 +175,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                         case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
-                        case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(metadata.ICollectionOfT1) && invocationBeforeShould.Arguments.Length == 1:
+                        case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                     }
@@ -192,7 +194,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor>(assertion));
                                 break;
                             case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
-                            case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(metadata.ICollectionOfT1) && invocationBeforeShould.Arguments.Length == 1:
+                            case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor>(assertion));
                                 break;
                         }
@@ -219,14 +221,18 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 break;
             case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
-                    if (!assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Count)) return;
-                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor>(assertion));
+                    if (assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Count))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor>(assertion));
+                    }
                 }
                 break;
             case "HaveSameCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
-                    if (!assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Distinct)) return;
-                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor>(assertion));
+                    if (assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Distinct))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor>(assertion));
+                    }
                 }
                 break;
             case "OnlyHaveUniqueItems" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
@@ -261,6 +267,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBeSyntaxVisitor>(assertion));
                                 }
                                 break;
+
                         }
                     }
                     if (invocation.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyBeforeShould))
@@ -272,8 +279,47 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                                 break;
                         }
                     }
+                    if (subject is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == WellKnownMemberNames.Indexer
+                    && !(subject.Type.AllInterfaces.Contains(metadata.IDictionaryOfT2) || subject.Type.AllInterfaces.Contains(metadata.IReadonlyDictionaryOfT2)))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor>(assertion));
+                    }
                     break;
                 }
+            case "Be" when assertion.IsContainedInType(metadata.ObjectAssertionsOfT2):
+                {
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    {
+                        switch (invocationBeforeShould.TargetMethod.Name)
+                        {
+                            // TODO: add support when element type is Numeric
+                            case nameof(Enumerable.ElementAt) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor>(assertion));
+                                break;
+                            case nameof(Enumerable.First) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
+                                {
+                                    if (invocationBeforeShould.TryGetFirstDescendent<IInvocationOperation>(out var skipInvocation) && skipInvocation.TargetMethod.Name is nameof(Enumerable.Skip))
+                                    {
+                                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor>(assertion));
+                                    }
+                                }
+                                break;
+                        }
+                    }
+
+                    if (subject.TryGetFirstDescendent<IArrayElementReferenceOperation>(out var arrayElementReference))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor>(assertion));
+                    }
+
+                    if (subject.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyReference) && propertyReference.Property.IsIndexer)
+                    {
+                        if (propertyReference.Instance.Type.ImplementsInterface(metadata.IDictionaryOfT2) || propertyReference.Instance.Type.ImplementsInterface(metadata.IReadonlyDictionaryOfT2)) break;
+
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor>(assertion));
+                    }
+                }
+                break;
             case "NotBe" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -359,22 +405,39 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         public FluentAssertionsMetadata(Compilation compilation)
         {
             AssertionExtensions = compilation.GetTypeByMetadataName("FluentAssertions.AssertionExtensions");
-            GenericCollectionAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`1");
+            ReferenceTypeAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.ReferenceTypeAssertions`2");
+            ObjectAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.ObjectAssertions`2");
+            NumericAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Numeric.NumericAssertions`2");
             BooleanAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.BooleanAssertions`1");
             GenericCollectionAssertionsOfT3 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`3");
-            ReferenceTypeAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.ReferenceTypeAssertions`2");
-            NumericAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Numeric.NumericAssertions`2");
-            ICollectionOfT1 = compilation.GetTypeByMetadataName("System.Collections.Generic.ICollection`1");
-            Enumerable = compilation.GetTypeByMetadataName("System.Linq.Enumerable");
+            IDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IDictionary<,>).FullName);
+            IReadonlyDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IReadOnlyDictionary<,>).FullName);
+
+            Enumerable = compilation.GetTypeByMetadataName(typeof(Enumerable).FullName);
 
         }
         public INamedTypeSymbol AssertionExtensions { get; }
-        public INamedTypeSymbol GenericCollectionAssertionsOfT1 { get; }
-        public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
-        public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
+        public INamedTypeSymbol ObjectAssertionsOfT2 { get; }
+        public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
+        public INamedTypeSymbol IDictionaryOfT2 { get; }
+        public INamedTypeSymbol IReadonlyDictionaryOfT2 { get; }
+        public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
-        public INamedTypeSymbol ICollectionOfT1 { get; }
         public INamedTypeSymbol Enumerable { get; }
+    }
+}
+
+internal static class TypeExtensions
+{
+    public static bool ImplementsInterface(this ITypeSymbol type, INamedTypeSymbol interfaceType)
+    {
+        var originalDefinition = type;
+        while (originalDefinition.Equals(type, SymbolEqualityComparer.Default))
+        {
+            originalDefinition = type.OriginalDefinition;
+        }
+
+        return originalDefinition.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(interfaceType, SymbolEqualityComparer.Default));
     }
 }

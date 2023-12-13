@@ -6,6 +6,9 @@ namespace FluentAssertions.Analyzers;
 
 internal static class OperartionExtensions
 {
+    /// <summary>
+    /// Tries to get the first descendent of the parent operation. where each operation has only one child.
+    /// </summary>
     public static bool TryGetFirstDescendent<TOperation>(this IOperation parent, out TOperation operation) where TOperation : IOperation
     {
         IOperation current = parent;
