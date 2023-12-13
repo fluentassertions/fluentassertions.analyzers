@@ -1,4 +1,5 @@
 using System.Linq;
+using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -27,13 +28,13 @@ internal static class OperartionExtensions
     }
 
     public static bool IsContainedInType(this IPropertyReferenceOperation property, SpecialType type)
-        => property.Property.ContainingType.SpecialType == type;
+        => property.Property.ContainingType.ConstructedFromType(type);
     public static bool IsContainedInType(this IPropertyReferenceOperation property, INamedTypeSymbol type)
-        => property.Property.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
+        => property.Property.ContainingType.ConstructedFromType(type);
     public static bool IsContainedInType(this IInvocationOperation invocation, SpecialType type)
-        => invocation.TargetMethod.ContainingType.SpecialType == type;
+        => invocation.TargetMethod.ContainingType.ConstructedFromType(type);
     public static bool IsContainedInType(this IInvocationOperation invocation, INamedTypeSymbol type)
-        => invocation.TargetMethod.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
+        => invocation.TargetMethod.ContainingType.ConstructedFromType(type);
 
     public static bool IsSameArgumentReference(this IArgumentOperation argument1, IArgumentOperation argument2)
     {

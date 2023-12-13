@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -314,7 +315,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                     if (subject.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyReference) && propertyReference.Property.IsIndexer)
                     {
-                        if (propertyReference.Instance.Type.ImplementsInterface(metadata.IDictionaryOfT2) || propertyReference.Instance.Type.ImplementsInterface(metadata.IReadonlyDictionaryOfT2)) break;
+                        if (propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2)) break;
 
                         context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor>(assertion));
                     }
@@ -425,19 +426,5 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
         public INamedTypeSymbol Enumerable { get; }
-    }
-}
-
-internal static class TypeExtensions
-{
-    public static bool ImplementsInterface(this ITypeSymbol type, INamedTypeSymbol interfaceType)
-    {
-        var originalDefinition = type;
-        while (originalDefinition.Equals(type, SymbolEqualityComparer.Default))
-        {
-            originalDefinition = type.OriginalDefinition;
-        }
-
-        return originalDefinition.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(interfaceType, SymbolEqualityComparer.Default));
     }
 }
