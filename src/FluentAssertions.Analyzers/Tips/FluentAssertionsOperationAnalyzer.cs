@@ -64,56 +64,56 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
         switch (assertion.TargetMethod.Name)
         {
-            case "NotBeEmpty" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3):
+            case "NotBeEmpty" when assertion.IsMethodContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
-                    if (TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeNull", out var chainedInvocation))
+                    if (assertion.TryGetChainedInvocationAfterAndConstraint("NotBeNull", out var chainedInvocation))
                     {
-                        if (!HasEmptyBecauseAndReasonArgs(assertion) && !HasEmptyBecauseAndReasonArgs(chainedInvocation)) return;
+                        if (!assertion.HasEmptyBecauseAndReasonArgs() && !chainedInvocation.HasEmptyBecauseAndReasonArgs()) return;
                         context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(assertion));
                     }
                     else if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
-                            case nameof(Enumerable.Where) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
+                            case nameof(Enumerable.Where) when invocationBeforeShould.Arguments.Length == 2 && invocationBeforeShould.Arguments[1].IsLambda():
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor>(assertion));
                                 break;
                         }
                     }
                     break;
                 }
-            case "NotBeNull" when IsMethodContainedInType(assertion, metadata.ReferenceTypeAssertionsOfT2):
+            case "NotBeNull" when assertion.IsMethodContainedInType(metadata.ReferenceTypeAssertionsOfT2):
                 {
-                    if (!TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeEmpty", out var chainedInvocation)) return;
-                    if (!HasEmptyBecauseAndReasonArgs(assertion) && !HasEmptyBecauseAndReasonArgs(chainedInvocation)) return;
+                    if (!assertion.TryGetChainedInvocationAfterAndConstraint("NotBeEmpty", out var chainedInvocation)) return;
+                    if (!assertion.HasEmptyBecauseAndReasonArgs() && !chainedInvocation.HasEmptyBecauseAndReasonArgs()) return;
 
                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(assertion));
                 }
                 break;
-            case "Equal" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3):
+            case "Equal" when assertion.IsMethodContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
                     switch (invocationBeforeShould.TargetMethod.Name)
                     {
                         case nameof(Enumerable.OrderBy):
                             if (invocationBeforeShould.Arguments.Length == 2
-                            && IsLambda(invocationBeforeShould.Arguments[1])
-                            && IsSameArgumentReference(invocationBeforeShould.Arguments[0], assertion.Arguments[0]))
+                            && invocationBeforeShould.Arguments[1].IsLambda()
+                            && invocationBeforeShould.Arguments[0].IsSameArgumentReference(assertion.Arguments[0]))
                             {
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(assertion));
                             }
                             break;
                         case nameof(Enumerable.OrderByDescending):
                             if (invocationBeforeShould.Arguments.Length == 2
-                            && IsLambda(invocationBeforeShould.Arguments[1])
-                            && IsSameArgumentReference(invocationBeforeShould.Arguments[0], assertion.Arguments[0]))
+                            && invocationBeforeShould.Arguments[1].IsLambda()
+                            && invocationBeforeShould.Arguments[0].IsSameArgumentReference(assertion.Arguments[0]))
                             {
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor>(assertion));
                             }
                             break;
                         case nameof(Enumerable.Select): // TODO:
                             if (invocationBeforeShould.Arguments.Length == 2
-                            && IsLambda(invocationBeforeShould.Arguments[1]))
+                            && invocationBeforeShould.Arguments[1].IsLambda())
                             {
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor>(assertion));
                             }
@@ -121,7 +121,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     }
                 }
                 break;
-            case "BeTrue" when IsMethodContainedInType(assertion, metadata.BooleanAssertionsOfT1):
+            case "BeTrue" when assertion.IsMethodContainedInType(metadata.BooleanAssertionsOfT1):
                 {
                     if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
                     switch (invocationBeforeShould.TargetMethod.Name)
@@ -129,10 +129,10 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 1:
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeEmpty.AnyShouldBeTrueSyntaxVisitor>(assertion));
                             break;
-                        case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
+                        case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 2 && invocationBeforeShould.Arguments[1].IsLambda():
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.AnyWithLambdaShouldBeTrueSyntaxVisitor>(assertion));
                             break;
-                        case nameof(Enumerable.All) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
+                        case nameof(Enumerable.All) when invocationBeforeShould.Arguments.Length == 2 && invocationBeforeShould.Arguments[1].IsLambda():
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                         case nameof(Enumerable.Contains):
@@ -141,7 +141,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     }
                 }
                 break;
-            case "BeFalse" when IsMethodContainedInType(assertion, metadata.BooleanAssertionsOfT1):
+            case "BeFalse" when assertion.IsMethodContainedInType(metadata.BooleanAssertionsOfT1):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
                     {
@@ -154,7 +154,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     }
                 }
                 break;
-            case "HaveCount" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3) && IsArgumentLiteral(assertion.Arguments[0], 1):
+            case "HaveCount" when assertion.IsMethodContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsArgumentLiteral(1):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
@@ -169,23 +169,24 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor>(assertion));
                 }
                 break;
-            case "HaveCount" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3) && IsArgumentLiteral(assertion.Arguments[0], 0):
+            case "HaveCount" when assertion.IsMethodContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsArgumentLiteral(0):
                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeEmpty.HaveCountNodeReplacement>(assertion));
                 break;
-            case "Be" when IsMethodContainedInType(assertion, metadata.NumericAssertionsOfT2):
+            case "Be" when assertion.IsMethodContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
-                            case nameof(Enumerable.Count) when IsMethodContainedInType(invocationBeforeShould, metadata.Enumerable):
+                            // TODO: validate that count is not used with a lambda
+                            case nameof(Enumerable.Count) when invocationBeforeShould.IsMethodContainedInType(metadata.Enumerable):
                                 // TODO: add support for Enumerable.LongCount
                                 // case nameof(Enumerable.LongCount) when IsMethodContainedInType(invocationBeforeShould, metadata.Enumerable):
-                                if (IsArgumentLiteral(assertion.Arguments[0], 1))
+                                if (assertion.Arguments[0].IsArgumentLiteral(1))
                                 {
                                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor>(assertion));
                                 }
-                                else if (IsArgumentLiteral(assertion.Arguments[0], 0))
+                                else if (assertion.Arguments[0].IsArgumentLiteral(0))
                                 {
                                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor>(assertion));
                                 }
@@ -200,61 +201,29 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         switch (propertyBeforeShould.Property.Name)
                         {
-                            case nameof(Array.Length) when IsPropertyContainedInType(propertyBeforeShould, SpecialType.System_Array):
+                            case nameof(Array.Length) when propertyBeforeShould.IsPropertyContainedInType(SpecialType.System_Array):
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.LengthShouldBeSyntaxVisitor>(assertion));
                                 break;
                         }
                     }
                     break;
                 }
+            case "BeGreaterOrEqualTo" when assertion.IsMethodContainedInType(metadata.NumericAssertionsOfT2):
+                {
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    {
+                        switch (invocationBeforeShould.TargetMethod.Name)
+                        {
+                            // TODO: validate that count is not used with a lambda
+                            case nameof(Enumerable.Count) when invocationBeforeShould.IsMethodContainedInType(metadata.Enumerable):
+
+                                break;
+                        }
+                    }
+                }
+                break;
         }
     }
-
-    private static bool HasEmptyBecauseAndReasonArgs(IInvocationOperation invocation, int startingIndex = 0)
-    {
-        if (invocation.Arguments.Length != startingIndex + 2)
-        {
-            return false;
-        }
-
-        return invocation.Arguments[startingIndex].Value is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value is ""
-        && invocation.Arguments[startingIndex + 1].Value is IArrayCreationOperation arrayCreation && arrayCreation.Initializer.ElementValues.IsEmpty;
-    }
-
-    private static bool TryGetChainedInvocationAfterAndConstraint(IInvocationOperation invocation, string chainedMethod, out IInvocationOperation chainedInvocation)
-    {
-        if (invocation.Parent is IPropertyReferenceOperation { Property.Name: "And" } andConstraint)
-        {
-            chainedInvocation = andConstraint.Parent as IInvocationOperation;
-            return chainedInvocation.TargetMethod.Name == chainedMethod;
-        }
-
-        chainedInvocation = null;
-        return false;
-    }
-
-    private static bool IsPropertyContainedInType(IPropertyReferenceOperation property, SpecialType type)
-        => property.Property.ContainingType.SpecialType == type;
-    private static bool IsPropertyContainedInType(IPropertyReferenceOperation property, INamedTypeSymbol type)
-        => property.Property.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
-    private static bool IsMethodContainedInType(IInvocationOperation invocation, SpecialType type)
-        => invocation.TargetMethod.ContainingType.SpecialType == type;
-    private static bool IsMethodContainedInType(IInvocationOperation invocation, INamedTypeSymbol type)
-        => invocation.TargetMethod.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
-
-    private static bool IsSameArgumentReference(IArgumentOperation argument1, IArgumentOperation argument2)
-    {
-        return argument1.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument1Reference)
-        && argument2.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument2Reference)
-        && argument1Reference.Parameter.Equals(argument2Reference.Parameter, SymbolEqualityComparer.Default);
-    }
-
-    private static bool IsArgumentLiteral<T>(IArgumentOperation argument, T value)
-        => argument.Value is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);
-
-    private static bool IsLambda(IArgumentOperation argument)
-        => argument.Value is IDelegateCreationOperation delegateCreation && delegateCreation.Target.Kind == OperationKind.AnonymousFunction;
-
     private class FluentAssertionsMetadata
     {
         public FluentAssertionsMetadata(Compilation compilation)
@@ -275,25 +244,5 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
         public INamedTypeSymbol Enumerable { get; }
-    }
-}
-
-internal static class OperartionExtensions
-{
-    public static bool TryGetFirstDescendent<TOperation>(this IOperation parent, out TOperation operation) where TOperation : IOperation
-    {
-        IOperation current = parent;
-        while (current.ChildOperations.Count == 1)
-        {
-            current = current.ChildOperations.First();
-            if (current is TOperation op)
-            {
-                operation = op;
-                return true;
-            }
-        }
-
-        operation = default;
-        return false;
     }
 }
