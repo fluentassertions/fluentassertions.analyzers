@@ -8,38 +8,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace FluentAssertions.Analyzers;
 
-[DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class CollectionAnalyzer : CollectionBaseAnalyzer
-{
-    public const string DiagnosticId = "FAA0001";
-    public const string Message = "Clean up FluentAssertion usage.";
-
-    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Constants.Tips.Category, DiagnosticSeverity.Info, true);
-
-    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
-    {
-        get
-        {
-            // TODO: Add support for CollectionShouldHaveElementAtAnalyzer
-            // TODO: Add support for CollectionShouldNotBeNullOrEmptyAnalyzer
-
-            yield return new CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor();
-
-            yield return new CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor();
-            yield return new CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor();
-            // TODO: enable this:
-            // yield return new CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor();
-
-            yield return new CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor();
-            yield return new CollectionShouldOnlyHaveUniqueItemsByComparer.SelectShouldOnlyHaveUniqueItemsSyntaxVisitor();
-        }
-    }
-}
-
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionCodeFix)), Shared]
 public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 {
-    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAnalyzer.DiagnosticId);
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(FluentAssertionsOperationAnalyzer.DiagnosticId);
 
     protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
@@ -155,13 +127,8 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
                 }
-            /*
-             case nameof(CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor):
-            {
+            case nameof(CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
-            }
-            */
-
             case nameof(CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("NotBe", "NotHaveCount")); ;
             case nameof(CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor):

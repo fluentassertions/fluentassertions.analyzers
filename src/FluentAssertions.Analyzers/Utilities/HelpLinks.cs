@@ -35,7 +35,7 @@ public static class HelpLinks
             [typeof(CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor)] = GetHelpLink("Collections-19"),
             [typeof(CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor)] = GetHelpLink("Collections-20"),
             [typeof(CollectionShouldContainSingle.WhereShouldHaveCount1SyntaxVisitor)] = GetHelpLink("Collections-21"),
-            [typeof(CollectionShouldNotContainProperty.ShouldOnlyContainSyntaxVisitor)] = GetHelpLink("Collections-22"),
+            [typeof(CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor)] = GetHelpLink("Collections-22"),
             [typeof(CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor)] = GetHelpLink("Collections-23"),
             [typeof(CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor)] = GetHelpLink("Collections-23"),
             [typeof(CollectionShouldHaveElementAtAnalyzer.ElementAtIndexShouldBeSyntaxVisitor)] = GetHelpLink("Collections-24"),
