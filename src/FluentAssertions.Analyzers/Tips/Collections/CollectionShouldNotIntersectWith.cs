@@ -2,10 +2,5 @@
 
 public static class CollectionShouldNotIntersectWith
 {
-    public class IntersectShouldBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public IntersectShouldBeEmptySyntaxVisitor() : base(MemberValidator.HasArguments("Intersect"), MemberValidator.Should, new MemberValidator("BeEmpty"))
-        {
-        }
-    }
+    public sealed class IntersectShouldBeEmptySyntaxVisitor {}
 }

@@ -20,15 +20,8 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
     {
         get
         {
-            yield return new CollectionShouldHaveCountGreaterOrEqualTo.CountShouldBeGreaterOrEqualToSyntaxVisitor();
-            yield return new CollectionShouldHaveCountGreaterThan.CountShouldBeGreaterThanSyntaxVisitor();
-            yield return new CollectionShouldHaveCountLessOrEqualTo.CountShouldBeLessOrEqualToSyntaxVisitor();
-            yield return new CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor();
-
             // TODO: Add support for CollectionShouldHaveElementAtAnalyzer
             // TODO: Add support for CollectionShouldNotBeNullOrEmptyAnalyzer
-
-            yield return new CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor();
 
             yield return new CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor();
 
@@ -41,10 +34,7 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
             // TODO: enable this:
             // yield return new CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor();
 
-            yield return new CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor();
             yield return new CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor();
-
-            yield return new CollectionShouldNotIntersectWith.IntersectShouldBeEmptySyntaxVisitor();
 
             yield return new CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor();
             yield return new CollectionShouldOnlyHaveUniqueItemsByComparer.SelectShouldOnlyHaveUniqueItemsSyntaxVisitor();

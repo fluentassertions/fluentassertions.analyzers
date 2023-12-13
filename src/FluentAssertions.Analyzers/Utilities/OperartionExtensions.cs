@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -5,6 +6,8 @@ namespace FluentAssertions.Analyzers;
 
 internal static class OperartionExtensions
 {
+    public static bool HasDescendent<TOperation>(this IOperation parent) where TOperation : IOperation
+        => parent.Descendants().OfType<TOperation>().Any();
     public static bool TryGetFirstDescendent<TOperation>(this IOperation parent, out TOperation operation) where TOperation : IOperation
     {
         IOperation current = parent;
@@ -22,13 +25,13 @@ internal static class OperartionExtensions
         return false;
     }
 
-    public static bool IsPropertyContainedInType(this IPropertyReferenceOperation property, SpecialType type)
+    public static bool IsContainedInType(this IPropertyReferenceOperation property, SpecialType type)
         => property.Property.ContainingType.SpecialType == type;
-    public static bool IsPropertyContainedInType(this IPropertyReferenceOperation property, INamedTypeSymbol type)
+    public static bool IsContainedInType(this IPropertyReferenceOperation property, INamedTypeSymbol type)
         => property.Property.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
-    public static bool IsMethodContainedInType(this IInvocationOperation invocation, SpecialType type)
+    public static bool IsContainedInType(this IInvocationOperation invocation, SpecialType type)
         => invocation.TargetMethod.ContainingType.SpecialType == type;
-    public static bool IsMethodContainedInType(this IInvocationOperation invocation, INamedTypeSymbol type)
+    public static bool IsContainedInType(this IInvocationOperation invocation, INamedTypeSymbol type)
         => invocation.TargetMethod.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
 
     public static bool IsSameArgumentReference(this IArgumentOperation argument1, IArgumentOperation argument2)
