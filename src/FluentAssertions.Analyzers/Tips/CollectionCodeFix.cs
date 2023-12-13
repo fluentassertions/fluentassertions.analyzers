@@ -8,79 +8,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace FluentAssertions.Analyzers;
 
-[DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class CollectionAnalyzer : CollectionBaseAnalyzer
-{
-    public const string DiagnosticId = "FAA0001";
-    public const string Message = "Clean up FluentAssertion usage.";
-
-    protected override DiagnosticDescriptor Rule => new DiagnosticDescriptor(DiagnosticId, Title, Message, Constants.Tips.Category, DiagnosticSeverity.Info, true);
-
-    protected override IEnumerable<FluentAssertionsCSharpSyntaxVisitor> Visitors
-    {
-        get
-        {
-            yield return new CollectionShouldBeEmpty.AnyShouldBeFalseSyntaxVisitor();
-            yield return new CollectionShouldBeEmpty.ShouldHaveCount0SyntaxVisitor();
-
-            yield return new CollectionShouldNotBeEmpty.AnyShouldBeTrueSyntaxVisitor();
-
-            yield return new CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor();
-            yield return new CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor();
-
-            yield return new CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor();
-
-            yield return new CollectionShouldContainProperty.AnyWithLambdaShouldBeTrueSyntaxVisitor();
-            yield return new CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor();
-
-            yield return new CollectionShouldContainSingle.WhereShouldHaveCount1SyntaxVisitor();
-            yield return new CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor();
-
-            yield return new CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor();
-
-            yield return new CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor();
-            yield return new CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor();
-            yield return new CollectionShouldHaveCount.CountShouldBeSyntaxVisitor();
-            yield return new CollectionShouldHaveCount.LengthShouldBeSyntaxVisitor();
-
-            yield return new CollectionShouldHaveCountGreaterOrEqualTo.CountShouldBeGreaterOrEqualToSyntaxVisitor();
-            yield return new CollectionShouldHaveCountGreaterThan.CountShouldBeGreaterThanSyntaxVisitor();
-            yield return new CollectionShouldHaveCountLessOrEqualTo.CountShouldBeLessOrEqualToSyntaxVisitor();
-            yield return new CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor();
-
-            // TODO: Add support for CollectionShouldHaveElementAtAnalyzer
-            // TODO: Add support for CollectionShouldNotBeNullOrEmptyAnalyzer
-
-            yield return new CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor();
-
-            yield return new CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor();
-
-            yield return new CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor();
-
-            yield return new CollectionShouldNotContainNulls.SelectShouldNotContainNullsSyntaxVisitor();
-
-            yield return new CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor();
-            yield return new CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor();
-            // TODO: enable this:
-            // yield return new CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor();
-
-            yield return new CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor();
-            yield return new CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor();
-
-            yield return new CollectionShouldNotIntersectWith.IntersectShouldBeEmptySyntaxVisitor();
-
-            yield return new CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor();
-
-            yield return new CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor();
-            yield return new CollectionShouldOnlyHaveUniqueItemsByComparer.SelectShouldOnlyHaveUniqueItemsSyntaxVisitor();
-        }
-    }
-}
-
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionCodeFix)), Shared]
 public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 {
-    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CollectionAnalyzer.DiagnosticId);
+    public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(FluentAssertionsOperationAnalyzer.DiagnosticId);
 
     protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
@@ -196,13 +127,8 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
                 }
-            /*
-             case nameof(CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor):
-            {
+            case nameof(CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
-            }
-            */
-
             case nameof(CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("NotBe", "NotHaveCount")); ;
             case nameof(CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor):
@@ -233,6 +159,37 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.PrependArguments("OnlyHaveUniqueItems", remove.Arguments));
                 }
+            case nameof(CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor):
+                {
+                    return GetCombinedAssertions(expression, "NotBeEmpty", "NotBeNull");
+                }
+            case nameof(CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor):
+                {
+                    return GetCombinedAssertions(expression, "NotBeNull", "NotBeEmpty");
+                }
+
+            case nameof(CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+            case nameof(CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+            case nameof(CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
+                    var newExpression = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
     }

@@ -2,24 +2,9 @@
 
 public static class CollectionShouldNotContainProperty
 {
-    public class AnyLambdaShouldBeFalseSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public AnyLambdaShouldBeFalseSyntaxVisitor() : base(MemberValidator.MethodContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeFalse"))
-        {
-        }
-    }
+    public sealed class AnyLambdaShouldBeFalseSyntaxVisitor {}
 
-    public class WhereShouldBeEmptySyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public WhereShouldBeEmptySyntaxVisitor() : base(MemberValidator.MethodContainingLambda("Where"), MemberValidator.Should, new MemberValidator("BeEmpty"))
-        {
-        }
-    }
+    public sealed class WhereShouldBeEmptySyntaxVisitor {}
 
-    public class ShouldOnlyContainSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public ShouldOnlyContainSyntaxVisitor() : base(MemberValidator.Should, MemberValidator.MethodContainingLambda("OnlyContain"))
-        {
-        }
-    }
+    public sealed class ShouldOnlyContainNotSyntaxVisitor {}
 }

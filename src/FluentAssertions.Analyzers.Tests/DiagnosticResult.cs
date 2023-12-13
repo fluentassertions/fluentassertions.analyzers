@@ -58,5 +58,7 @@ namespace FluentAssertions.Analyzers.Tests
         public int Line => Locations.Length > 0 ? Locations[0].Line : -1;
 
         public int Column => Locations.Length > 0 ? Locations[0].Column : -1;
+
+        public string VisitorName { get; set; }
     }
 }

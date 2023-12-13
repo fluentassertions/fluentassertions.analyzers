@@ -2,10 +2,5 @@
 
 public static class CollectionShouldNotBeEmpty
 {
-    public class AnyShouldBeTrueSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public AnyShouldBeTrueSyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Any"), MemberValidator.Should, new MemberValidator("BeTrue"))
-        {
-        }
-    }
+    public sealed class AnyShouldBeTrueSyntaxVisitor {}
 }

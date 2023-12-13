@@ -349,8 +349,8 @@ public class TestType3
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source }, new DiagnosticResult()
             {
-                Id = CollectionAnalyzer.DiagnosticId,
-                Message = CollectionAnalyzer.Message,
+                Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                Message = FluentAssertionsOperationAnalyzer.Message,
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 12, 9) }
             });
