@@ -7,7 +7,7 @@ namespace FluentAssertions.Analyzers.Tests
     [TestClass]
     public class ExceptionsTests
     {
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Contain(expectedMessage{0});")]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().Contain(expectedMessage{0});")]
         [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Contain(\"a constant string\"{0});")]
@@ -27,7 +27,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExceptionShouldThrowWithMessage_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithMessageAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "action.Should().Throw<Exception>().Which.Message.Should().Contain(expectedMessage{0});",
             newAssertion: "action.Should().Throw<Exception>().WithMessage($\"*{{expectedMessage}}*\"{0});")]
@@ -79,7 +79,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExceptionShouldThrowWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithMessageCodeFix, ExceptionShouldThrowWithMessageAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Contain(expectedMessage{0});")]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(expectedMessage{0});")]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(\"a constant string\"{0});")]
@@ -99,7 +99,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExceptionShouldThrowExactlyWithMessage_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithMessageAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(expectedMessage{0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithMessage($\"*{{expectedMessage}}*\"{0});")]
@@ -151,7 +151,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExceptionShouldThrowExactlyWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithMessageCodeFix, ExceptionShouldThrowWithMessageAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.InnerException.Should().BeOfType<ArgumentException>({0});")]
         [AssertionDiagnostic("action.Should().Throw<Exception>().Which.InnerException.Should().BeOfType<ArgumentException>({0});")]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.InnerException.Should().BeOfType<ArgumentException>({0});")]
@@ -159,7 +159,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExceptionShouldThrowWithInnerExceptionExactly_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithInnerExceptionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "action.Should().Throw<Exception>().And.InnerException.Should().BeOfType<ArgumentException>({0});",
             newAssertion: "action.Should().Throw<Exception>().WithInnerExceptionExactly<ArgumentException>({0});")]
@@ -175,7 +175,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExceptionShouldThrowWithInnerExceptionExactly_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithInnerExceptionCodeFix, ExceptionShouldThrowWithInnerExceptionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
@@ -183,7 +183,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExceptionShouldThrowWithInnerException_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithInnerExceptionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "action.Should().Throw<Exception>().And.InnerException.Should().BeAssignableTo<ArgumentException>({0});",
             newAssertion: "action.Should().Throw<Exception>().WithInnerException<ArgumentException>({0});")]

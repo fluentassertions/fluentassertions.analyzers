@@ -55,7 +55,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "Action action1 = async () => { await Task.CompletedTask; }, action2 = async () => { await Task.CompletedTask; };",
             newAssertion: "Func<Task> action1 = async () => { await Task.CompletedTask; }, action2 = async () => { await Task.CompletedTask; };")]
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [NotImplemented]
         public void AssignAsyncVoidLambdaToAction_TestCodeFix(string oldAssertion, string newAssertion)
         {

@@ -6,7 +6,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
     [TestClass]
     public class NullConditionalAssertionTests
     {
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual?.Should().Be(expected{0});")]
         [AssertionDiagnostic("actual?.MyProperty.Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("actual.MyProperty?.Should().Be(\"test\"{0});")]
@@ -17,7 +17,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void NullConditionalMayNotExecuteTest(string assertion) => VerifyCSharpDiagnostic(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("(actual?.MyProperty).Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("actual.MyProperty.Should().Be(actual?.MyProperty{0});")]
         [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() == null).Count().Should().Be(0{0});")]
