@@ -69,14 +69,14 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     if (TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeNull", out var chainedInvocation))
                     {
                         if (!HasEmptyBecauseAndReasonArgs(assertion) && !HasEmptyBecauseAndReasonArgs(chainedInvocation)) return;
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(chainedInvocation));
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(assertion));
                     }
                     else if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
                             case nameof(Enumerable.Where) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor>(invocationBeforeShould));
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor>(assertion));
                                 break;
                         }
                     }
@@ -87,7 +87,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     if (!TryGetChainedInvocationAfterAndConstraint(assertion, "NotBeEmpty", out var chainedInvocation)) return;
                     if (!HasEmptyBecauseAndReasonArgs(assertion) && !HasEmptyBecauseAndReasonArgs(chainedInvocation)) return;
 
-                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(chainedInvocation));
+                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(assertion));
                 }
                 break;
             case "Equal" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3):
@@ -100,7 +100,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             && IsLambda(invocationBeforeShould.Arguments[1])
                             && IsSameArgumentReference(invocationBeforeShould.Arguments[0], assertion.Arguments[0]))
                             {
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(invocationBeforeShould));
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(assertion));
                             }
                             break;
                         case nameof(Enumerable.OrderByDescending):
@@ -108,14 +108,14 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             && IsLambda(invocationBeforeShould.Arguments[1])
                             && IsSameArgumentReference(invocationBeforeShould.Arguments[0], assertion.Arguments[0]))
                             {
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor>(invocationBeforeShould));
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor>(assertion));
                             }
                             break;
                         case nameof(Enumerable.Select): // TODO:
                             if (invocationBeforeShould.Arguments.Length == 2
                             && IsLambda(invocationBeforeShould.Arguments[1]))
                             {
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor>(invocationBeforeShould));
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor>(assertion));
                             }
                             break;
                     }
