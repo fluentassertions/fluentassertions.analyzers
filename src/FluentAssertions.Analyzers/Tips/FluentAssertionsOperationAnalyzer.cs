@@ -69,7 +69,11 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     if (assertion.TryGetChainedInvocationAfterAndConstraint("NotBeNull", out var chainedInvocation))
                     {
                         if (!assertion.HasEmptyBecauseAndReasonArgs() && !chainedInvocation.HasEmptyBecauseAndReasonArgs()) return;
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(assertion));
+
+                        if (chainedInvocation.IsContainedInType(metadata.GenericCollectionAssertionsOfT3))
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(assertion));
+                        }
                     }
                     else if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
@@ -103,7 +107,10 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     if (!assertion.TryGetChainedInvocationAfterAndConstraint("NotBeEmpty", out var chainedInvocation)) return;
                     if (!assertion.HasEmptyBecauseAndReasonArgs() && !chainedInvocation.HasEmptyBecauseAndReasonArgs()) return;
 
-                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(assertion));
+                    if (chainedInvocation.IsContainedInType(metadata.GenericCollectionAssertionsOfT3))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(assertion));
+                    }
                 }
                 break;
             case "NotContainNulls" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
