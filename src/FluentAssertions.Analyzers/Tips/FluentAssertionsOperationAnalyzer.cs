@@ -72,7 +72,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                         if (chainedInvocation.IsContainedInType(metadata.ReferenceTypeAssertionsOfT2))
                         {
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(assertion));
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(chainedInvocation));
                         }
                     }
                     else if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -112,7 +112,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                     if (chainedInvocation.IsContainedInType(metadata.GenericCollectionAssertionsOfT3))
                     {
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(assertion));
+                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(chainedInvocation));
                     }
                 }
                 break;
