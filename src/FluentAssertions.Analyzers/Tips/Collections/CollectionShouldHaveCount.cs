@@ -2,31 +2,11 @@
 
 public static class CollectionShouldHaveCount
 {
-    public class CountShouldBe0SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CountShouldBe0SyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 0))
-        {
-        }
-    }
+    public sealed class CountShouldBe0SyntaxVisitor {}
 
-    public class CountShouldBe1SyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CountShouldBe1SyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Count"), MemberValidator.Should, MemberValidator.ArgumentIsLiteral("Be", 1))
-        {
-        }
-    }
+    public sealed class CountShouldBe1SyntaxVisitor {}
 
-    public class CountShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public CountShouldBeSyntaxVisitor() : base(MemberValidator.MethodNotContainingLambda("Count"), MemberValidator.Should, new MemberValidator("Be"))
-        {
-        }
-    }
+    public sealed class CountShouldBeSyntaxVisitor {}
 
-    public class LengthShouldBeSyntaxVisitor : FluentAssertionsCSharpSyntaxVisitor
-    {
-        public LengthShouldBeSyntaxVisitor() : base(new MemberValidator("Length"), MemberValidator.Should, new MemberValidator("Be"))
-        {
-        }
-    }
+    public sealed class LengthShouldBeSyntaxVisitor {}
 }

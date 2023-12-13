@@ -143,6 +143,56 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 break;
             case "BeFalse" when IsMethodContainedInType(assertion, metadata.BooleanAssertionsOfT1):
                 break;
+            case "HaveCount" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3) && IsArgumentLiteral(assertion.Arguments[0], 1):
+                {
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    {
+                        switch (invocationBeforeShould.TargetMethod.Name)
+                        {
+                            case nameof(Enumerable.Where):
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainSingle.WhereShouldHaveCount1SyntaxVisitor>(assertion));
+                                return;
+                        }
+                    }
+
+                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor>(assertion));
+                }
+                break;
+            case "Be" when IsMethodContainedInType(assertion, metadata.NumericAssertionsOfT2):
+                {
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    {
+                        switch (invocationBeforeShould.TargetMethod.Name)
+                        {
+                            case nameof(Enumerable.Count) when IsMethodContainedInType(invocationBeforeShould, metadata.Enumerable):
+                                // TODO: add support for Enumerable.LongCount
+                                // case nameof(Enumerable.LongCount) when IsMethodContainedInType(invocationBeforeShould, metadata.Enumerable):
+                                if (IsArgumentLiteral(assertion.Arguments[0], 1))
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor>(assertion));
+                                }
+                                else if (IsArgumentLiteral(assertion.Arguments[0], 0))
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor>(assertion));
+                                }
+                                else
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBeSyntaxVisitor>(assertion));
+                                }
+                                break;
+                        }
+                    }
+                    if (invocation.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyBeforeShould))
+                    {
+                        switch (propertyBeforeShould.Property.Name)
+                        {
+                            case nameof(Array.Length) when IsPropertyContainedInType(propertyBeforeShould, SpecialType.System_Array):
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.LengthShouldBeSyntaxVisitor>(assertion));
+                                break;
+                        }
+                    }
+                    break;
+                }
         }
     }
 
@@ -169,6 +219,12 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         return false;
     }
 
+    private static bool IsPropertyContainedInType(IPropertyReferenceOperation property, SpecialType type)
+        => property.Property.ContainingType.SpecialType == type;
+    private static bool IsPropertyContainedInType(IPropertyReferenceOperation property, INamedTypeSymbol type)
+        => property.Property.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
+    private static bool IsMethodContainedInType(IInvocationOperation invocation, SpecialType type)
+        => invocation.TargetMethod.ContainingType.SpecialType == type;
     private static bool IsMethodContainedInType(IInvocationOperation invocation, INamedTypeSymbol type)
         => invocation.TargetMethod.ContainingType.ConstructedFrom.Equals(type, SymbolEqualityComparer.Default);
 
@@ -178,6 +234,9 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         && argument2.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument2Reference)
         && argument1Reference.Parameter.Equals(argument2Reference.Parameter, SymbolEqualityComparer.Default);
     }
+
+    private static bool IsArgumentLiteral<T>(IArgumentOperation argument, T value)
+        => argument.Value is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);
 
     private static bool IsLambda(IArgumentOperation argument)
         => argument.Value is IDelegateCreationOperation delegateCreation && delegateCreation.Target.Kind == OperationKind.AnonymousFunction;
@@ -191,12 +250,17 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
             BooleanAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.BooleanAssertions`1");
             GenericCollectionAssertionsOfT3 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`3");
             ReferenceTypeAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.ReferenceTypeAssertions`2");
+            NumericAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Numeric.NumericAssertions`2");
+            Enumerable = compilation.GetTypeByMetadataName("System.Linq.Enumerable");
+
         }
         public INamedTypeSymbol AssertionExtensions { get; }
         public INamedTypeSymbol GenericCollectionAssertionsOfT1 { get; }
         public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
         public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
+        public INamedTypeSymbol NumericAssertionsOfT2 { get; }
+        public INamedTypeSymbol Enumerable { get; }
     }
 }
 

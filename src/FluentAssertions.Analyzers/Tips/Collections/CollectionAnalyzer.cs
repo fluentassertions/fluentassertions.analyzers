@@ -26,11 +26,6 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
             yield return new CollectionShouldContainSingle.WhereShouldHaveCount1SyntaxVisitor();
             yield return new CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor();
 
-            yield return new CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor();
-            yield return new CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor();
-            yield return new CollectionShouldHaveCount.CountShouldBeSyntaxVisitor();
-            yield return new CollectionShouldHaveCount.LengthShouldBeSyntaxVisitor();
-
             yield return new CollectionShouldHaveCountGreaterOrEqualTo.CountShouldBeGreaterOrEqualToSyntaxVisitor();
             yield return new CollectionShouldHaveCountGreaterThan.CountShouldBeGreaterThanSyntaxVisitor();
             yield return new CollectionShouldHaveCountLessOrEqualTo.CountShouldBeLessOrEqualToSyntaxVisitor();
