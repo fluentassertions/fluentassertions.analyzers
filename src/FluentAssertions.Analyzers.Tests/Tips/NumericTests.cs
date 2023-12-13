@@ -7,13 +7,13 @@ namespace FluentAssertions.Analyzers.Tests
     [TestClass]
     public class NumericTests
     {
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().BeGreaterThan(0{0});")]
         [AssertionDiagnostic("actual.Should().BeGreaterThan(0{0}).ToString();")]
         [Implemented]
         public void NumericShouldBePositive_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBePositiveAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().BeGreaterThan(0{0});",
             newAssertion: "actual.Should().BePositive({0});")]
@@ -23,13 +23,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void NumericShouldBePositive_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBePositiveCodeFix, NumericShouldBePositiveAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().BeLessThan(0{0});")]
         [AssertionDiagnostic("actual.Should().BeLessThan(0{0}).ToString();")]
         [Implemented]
         public void NumericShouldBeNegative_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeNegativeAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().BeLessThan(0{0});",
             newAssertion: "actual.Should().BeNegative({0});")]
@@ -39,7 +39,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void NumericShouldBeNegative_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeNegativeCodeFix, NumericShouldBeNegativeAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper);")]
         [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower).And.BeLessOrEqualTo(upper{0});")]
         [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper{0});")]
@@ -49,7 +49,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void NumericShouldBeInRange_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeInRangeAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper);",
             newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
@@ -65,12 +65,12 @@ namespace FluentAssertions.Analyzers.Tests
         [NotImplemented]
         public void NumericShouldBeInRange_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeApproximatelyCodeFix, NumericShouldBeInRangeAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta{0});")]
         [Implemented]
         public void NumericShouldBeApproximately_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeApproximatelyAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta{0});",
             newAssertion: "actual.Should().BeApproximately(expected, delta{0});")]
