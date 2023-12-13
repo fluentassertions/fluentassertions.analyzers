@@ -7,13 +7,13 @@ namespace FluentAssertions.Analyzers.Tests
     [TestClass]
     public class CollectionTests
     {
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeTrue({0}).And.ToString();")]
         [Implemented]
         public void ExpressionBodyAssertion_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticExpressionBody<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Any().Should().BeTrue({0});",
             newAssertion: "actual.Should().NotBeEmpty({0});")]
@@ -23,13 +23,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void ExpressionBodyAssertion_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixExpressionBody<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeTrue({0}).And.ToString();")]
         [Implemented]
         public void CollectionsShouldNotBeEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Any().Should().BeTrue({0});",
             newAssertion: "actual.Should().NotBeEmpty({0});")]
@@ -39,13 +39,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionsShouldNotBeEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeTrue({0}).And.ToString();")]
         [Implemented]
         public void CollectionsShouldNotBeEmpty_Array_TestAnalyzer(string assertion) => VerifyArrayCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Any().Should().BeTrue({0});",
             newAssertion: "actual.Should().NotBeEmpty({0});")]
@@ -55,7 +55,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionsShouldNotBeEmpty_Array_TestCodeFix(string oldAssertion, string newAssertion) => VerifyArrayCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Any().Should().BeFalse({0});")]
         [AssertionDiagnostic("actual.Should().HaveCount(0{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeFalse({0}).And.ToString();")]
@@ -63,7 +63,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionsShouldBeEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Any().Should().BeFalse({0});",
             newAssertion: "actual.Should().BeEmpty({0});")]
@@ -79,7 +79,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionsShouldBeEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Any(x => x.BooleanProperty).Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().NotBeEmpty({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Any(x => x.BooleanProperty).Should().BeTrue({0}).And.ToString();")]
@@ -87,7 +87,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldContainProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Any(x => x.BooleanProperty).Should().BeTrue({0});",
             newAssertion: "actual.Should().Contain(x => x.BooleanProperty{0});")]
@@ -103,7 +103,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldContainProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Any(x => x.BooleanProperty).Should().BeFalse({0});")]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().BeEmpty({0});")]
         [AssertionDiagnostic("actual.Should().OnlyContain(x => !x.BooleanProperty{0});", ignore: true)]
@@ -113,7 +113,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotContainProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Any(x => x.BooleanProperty).Should().BeFalse({0});",
             newAssertion: "actual.Should().NotContain(x => x.BooleanProperty{0});")]
@@ -137,13 +137,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotContainProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.All(x => x.BooleanProperty).Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().All(x => x.BooleanProperty).Should().BeTrue({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldOnlyContainProperty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.All(x => x.BooleanProperty).Should().BeTrue({0});",
             newAssertion: "actual.Should().OnlyContain(x => x.BooleanProperty{0});")]
@@ -153,13 +153,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldOnlyContainProperty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Contains(expectedItem).Should().BeTrue({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Contains(expectedItem).Should().BeTrue({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldContainItem_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Contains(expectedItem).Should().BeTrue({0});",
             newAssertion: "actual.Should().Contain(expectedItem{0});")]
@@ -169,13 +169,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldContainItem_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Contains(unexpectedItem).Should().BeFalse({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Contains(unexpectedItem).Should().BeFalse({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotContainItem_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Contains(unexpectedItem).Should().BeFalse({0});",
             newAssertion: "actual.Should().NotContain(unexpectedItem{0});")]
@@ -185,7 +185,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotContainItem_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().Be(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().Be(6{0});")]
         [AssertionDiagnostic("actual.ToArray().Length.Should().Be(k{0});")]
@@ -197,7 +197,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().Be(k{0});",
             newAssertion: "actual.Should().HaveCount(k{0});")]
@@ -234,7 +234,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterThan(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterThan(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().BeGreaterThan(k{0}).And.ToString();")]
@@ -242,7 +242,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountGreaterThan_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeGreaterThan(k{0});",
             newAssertion: "actual.Should().HaveCountGreaterThan(k{0});")]
@@ -258,7 +258,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountGreaterThan_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterOrEqualTo(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterOrEqualTo(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().BeGreaterOrEqualTo(k{0}).And.ToString();")]
@@ -266,7 +266,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountGreaterOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeGreaterOrEqualTo(k{0});",
             newAssertion: "actual.Should().HaveCountGreaterOrEqualTo(k{0});")]
@@ -282,7 +282,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountGreaterOrEqualTo_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeLessThan(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().BeLessThan(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().BeLessThan(k{0}).And.ToString();")]
@@ -290,7 +290,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountLessThan_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeLessThan(k{0});",
             newAssertion: "actual.Should().HaveCountLessThan(k{0});")]
@@ -306,7 +306,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountLessThan_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeLessOrEqualTo(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().BeLessOrEqualTo(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().BeLessOrEqualTo(k{0}).And.ToString();")]
@@ -314,7 +314,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountLessOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeLessOrEqualTo(k{0});",
             newAssertion: "actual.Should().HaveCountLessOrEqualTo(k{0});")]
@@ -330,7 +330,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveCountLessOrEqualTo_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().NotBe(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().NotBe(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().NotBe(k{0}).And.ToString();")]
@@ -338,7 +338,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotHaveCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().NotBe(k{0});",
             newAssertion: "actual.Should().NotHaveCount(k{0});")]
@@ -354,13 +354,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotHaveCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveCount(expected.Count(){0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().HaveCount(expected.Count(){0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveSameCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().HaveCount(expected.Count(){0});",
             newAssertion: "actual.Should().HaveSameCount(expected{0});")]
@@ -370,13 +370,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveSameCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().NotBe(unexpected.Count(){0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().NotBe(unexpected.Count(){0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotHaveSameCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().NotBe(unexpected.Count(){0});",
             newAssertion: "actual.Should().NotHaveSameCount(unexpected{0});")]
@@ -386,7 +386,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotHaveSameCount_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
         [Implemented]
         public void CollectionShouldContainSingle_TestAnalyzer_GenericIEnumerableShouldReport(string assertion)
@@ -405,7 +405,7 @@ namespace FluentAssertions.Analyzers.Tests
             });
         }
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveCount(1{0});")]
         [AssertionDiagnostic("actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().HaveCount(1{0}).And.ToString();")]
@@ -413,7 +413,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldContainSingle_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Where(x => x.BooleanProperty).Should().HaveCount(1{0});",
             newAssertion: "actual.Should().ContainSingle(x => x.BooleanProperty{0});")]
@@ -429,7 +429,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldContainSingle_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().NotBeNull().And.NotBeEmpty({0});")]
         [AssertionDiagnostic("actual.Should().NotBeEmpty().And.NotBeNull({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().NotBeNull().And.NotBeEmpty({0}).And.ToString();")]
@@ -437,7 +437,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldNotBeNullOrEmptyAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().NotBeNull().And.NotBeEmpty({0});",
             newAssertion: "actual.Should().NotBeNullOrEmpty({0});")]
@@ -453,7 +453,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldNotBeNullOrEmptyCodeFix, CollectionShouldNotBeNullOrEmptyAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.ElementAt(k).Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual.ElementAt(6).Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual[k].Should().Be(expectedItem{0});")]
@@ -469,7 +469,7 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveElementAt_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionShouldHaveElementAtAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.ElementAt(k).Should().Be(expectedItem{0});",
             newAssertion: "actual.Should().HaveElementAt(k, expectedItem{0});")]
@@ -509,13 +509,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldHaveElementAt_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionShouldHaveElementAtCodeFix, CollectionShouldHaveElementAtAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().OrderBy(x => x.BooleanProperty).Should().Equal(actual{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldBeInAscendingOrder_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.OrderBy(x => x.BooleanProperty).Should().Equal(actual{0});",
             newAssertion: "actual.Should().BeInAscendingOrder(x => x.BooleanProperty{0});")]
@@ -525,13 +525,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldBeInAscendingOrder_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().OrderByDescending(x => x.BooleanProperty).Should().Equal(actual{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldBeInDescendingOrder_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.OrderByDescending(x => x.BooleanProperty).Should().Equal(actual{0});",
             newAssertion: "actual.Should().BeInDescendingOrder(x => x.BooleanProperty{0});")]
@@ -541,13 +541,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldBeInDescendingOrder_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Select(e1 => e1.BooleanProperty).Should().Equal(expected.Select(e2 => e2.BooleanProperty){0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Select(e1 => e1.BooleanProperty).Should().Equal(expected.Select(e2 => e2.BooleanProperty){0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldEqualOtherCollectionByComparer_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Select(e1 => e1.BooleanProperty).Should().Equal(expected.Select(e2 => e2.BooleanProperty){0});",
             newAssertion: "actual.Should().Equal(expected, (e1, e2) => e1.BooleanProperty == e2.BooleanProperty{0});")]
@@ -557,13 +557,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldEqualOtherCollectionByComparer_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Intersect(expected).Should().BeEmpty({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Intersect(expected).Should().BeEmpty({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotIntersectWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Intersect(expected).Should().BeEmpty({0});",
             newAssertion: "actual.Should().NotIntersectWith(expected{0});")]
@@ -573,13 +573,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotIntersectWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Intersect(expected).Should().NotBeEmpty({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Intersect(expected).Should().NotBeEmpty({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldIntersectWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Intersect(expected).Should().NotBeEmpty({0});",
             newAssertion: "actual.Should().IntersectWith(expected{0});")]
@@ -589,13 +589,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldIntersectWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Select(x => x.BooleanProperty).Should().NotContainNulls({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Select(x => x.BooleanProperty).Should().NotContainNulls({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldNotContainNulls_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Select(x => x.BooleanProperty).Should().NotContainNulls({0});",
             newAssertion: "actual.Should().NotContainNulls(x => x.BooleanProperty{0});")]
@@ -606,13 +606,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Ignore("What Should Happen?")]
         public void CollectionShouldNotContainNulls_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveSameCount(actual.Distinct(){0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().HaveSameCount(actual.AsEnumerable().Distinct(){0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldOnlyHaveUniqueItems_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().HaveSameCount(actual.Distinct(){0});",
             newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
@@ -622,13 +622,13 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldOnlyHaveUniqueItems_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems({0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems({0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldOnlyHaveUniqueItemsByComparer_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Select(x => x.BooleanProperty).Should().OnlyHaveUniqueItems({0});",
             newAssertion: "actual.Should().OnlyHaveUniqueItems(x => x.BooleanProperty{0});")]
@@ -638,14 +638,14 @@ namespace FluentAssertions.Analyzers.Tests
             newAssertion: "actual.AsEnumerable().Should().OnlyHaveUniqueItems(x => x.BooleanProperty{0}).And.ToString();")]
         public void CollectionShouldOnlyHaveUniqueItemsByComparer_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, CollectionAnalyzer>(oldAssertion, newAssertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionDiagnostic("actual.FirstOrDefault().Should().BeNull({0});")]
         [NotImplemented]
         [AssertionDiagnostic("actual.AsEnumerable().FirstOrDefault().Should().BeNull({0}).And.ToString();")]
         [Ignore("What Should Happen?")]
         public void CollectionShouldHaveElementAt0Null_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<CollectionAnalyzer>(assertion);
 
-        [AssertionDataTestMethod]
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.FirstOrDefault().Should().BeNull({0});",
             newAssertion: "actual.Should().HaveElementAt(0, null{0});")]
