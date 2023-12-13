@@ -14,41 +14,38 @@ internal static class TypesExtensions
 
     public static bool IsTypeOrConstructedFromTypeOrImplementsType(this ITypeSymbol type, SpecialType specialType)
     {
-        return type.SpecialType == specialType 
+        return type.SpecialType == specialType
             || type.AllInterfaces.Any(@interface => @interface.OriginalDefinition.SpecialType == specialType);
     }
 
 
     public static bool ConstructedFromType(this INamedTypeSymbol type, INamedTypeSymbol interfaceType)
     {
-        var constructedFrom = type;
-        while (!constructedFrom.Equals(type, SymbolEqualityComparer.Default))
+        var current = type;
+        while (!current.Equals(current.ConstructedFrom, SymbolEqualityComparer.Default))
         {
-            constructedFrom = type.ConstructedFrom;
+            current = current.ConstructedFrom;
         }
-
-        return constructedFrom.Equals(interfaceType, SymbolEqualityComparer.Default);
+        return current.Equals(interfaceType, SymbolEqualityComparer.Default);
     }
 
     public static bool ConstructedFromType(this INamedTypeSymbol type, SpecialType specialType)
     {
-        var constructedFrom = type;
-        while (!constructedFrom.Equals(type, SymbolEqualityComparer.Default))
+        var current = type;
+        while (!current.Equals(current.ConstructedFrom, SymbolEqualityComparer.Default))
         {
-            constructedFrom = type.ConstructedFrom;
+            current = current.ConstructedFrom;
         }
-
-        return constructedFrom.SpecialType == specialType;
+        return current.SpecialType == specialType;
     }
 
     public static bool ImplementsOrIsInterface(this ITypeSymbol type, INamedTypeSymbol interfaceType)
     {
-        var originalDefinition = type;
-        while (!originalDefinition.Equals(type, SymbolEqualityComparer.Default))
+        var current = type;
+        while (!current.Equals(current.OriginalDefinition, SymbolEqualityComparer.Default))
         {
-            originalDefinition = type.OriginalDefinition;
+            current = current.OriginalDefinition;
         }
-
-        return originalDefinition.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(interfaceType, SymbolEqualityComparer.Default));
+        return current.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(interfaceType, SymbolEqualityComparer.Default));
     }
 }
