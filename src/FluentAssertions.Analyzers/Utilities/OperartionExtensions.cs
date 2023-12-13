@@ -6,8 +6,6 @@ namespace FluentAssertions.Analyzers;
 
 internal static class OperartionExtensions
 {
-    public static bool HasDescendent<TOperation>(this IOperation parent) where TOperation : IOperation
-        => parent.Descendants().OfType<TOperation>().Any();
     public static bool TryGetFirstDescendent<TOperation>(this IOperation parent, out TOperation operation) where TOperation : IOperation
     {
         IOperation current = parent;
@@ -41,13 +39,22 @@ internal static class OperartionExtensions
         && argument1Reference.Parameter.Equals(argument2Reference.Parameter, SymbolEqualityComparer.Default);
     }
 
-    public static bool IsArgumentLiteral<T>(this IArgumentOperation argument, T value)
+    public static bool IsLiteralValue<T>(this IArgumentOperation argument, T value)
         => argument.Value is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);
+    public static bool IsLiteralValue<T>(this IArgumentOperation argument)
+        => argument.Value is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value is T;
+    public static bool IsReference(this IArgumentOperation argument)
+    {
+        if (argument.Value is IConversionOperation conversion)
+        {
+            return conversion.Operand.Kind == OperationKind.LocalReference || conversion.Operand.Kind == OperationKind.ParameterReference;
+        }
+
+        return argument.Value.Kind == OperationKind.LocalReference || argument.Value.Kind == OperationKind.ParameterReference;
+    }
 
     public static bool IsLambda(this IArgumentOperation argument)
         => argument.Value is IDelegateCreationOperation delegateCreation && delegateCreation.Target.Kind == OperationKind.AnonymousFunction;
-
-
 
     public static bool HasEmptyBecauseAndReasonArgs(this IInvocationOperation invocation, int startingIndex = 0)
     {

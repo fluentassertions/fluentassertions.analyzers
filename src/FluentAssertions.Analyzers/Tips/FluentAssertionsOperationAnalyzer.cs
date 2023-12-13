@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -105,6 +106,17 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(assertion));
                 }
                 break;
+            case "NotContainNulls" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
+                {
+                    if (!assertion.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
+                    switch (invocationBeforeShould.TargetMethod.Name)
+                    {
+                        case nameof(Enumerable.Select) when invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainNulls.SelectShouldNotContainNullsSyntaxVisitor>(assertion));
+                            break;
+                    }
+                }
+                break;
             case "Equal" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
@@ -150,7 +162,8 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         case nameof(Enumerable.All) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(assertion));
                             break;
-                        case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable):
+                        case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
+                        case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(metadata.ICollectionOfT1) && invocationBeforeShould.Arguments.Length == 1:
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                     }
@@ -158,18 +171,22 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 break;
             case "BeFalse" when assertion.IsContainedInType(metadata.BooleanAssertionsOfT1):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
                             case nameof(Enumerable.Any) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 1:
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeEmpty.AnyShouldBeFalseSyntaxVisitor>(assertion));
                                 break;
+                            case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
+                            case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(metadata.ICollectionOfT1) && invocationBeforeShould.Arguments.Length == 1:
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor>(assertion));
+                                break;
                         }
                     }
                 }
                 break;
-            case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsArgumentLiteral(1):
+            case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsLiteralValue(1):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
@@ -184,7 +201,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor>(assertion));
                 }
                 break;
-            case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsArgumentLiteral(0):
+            case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsLiteralValue(0):
                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeEmpty.HaveCountNodeReplacement>(assertion));
                 break;
             case "Be" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
@@ -195,11 +212,11 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
-                                if (assertion.Arguments[0].IsArgumentLiteral(1))
+                                if (assertion.Arguments[0].IsLiteralValue(1))
                                 {
                                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor>(assertion));
                                 }
-                                else if (assertion.Arguments[0].IsArgumentLiteral(0))
+                                else if (assertion.Arguments[0].IsLiteralValue(0))
                                 {
                                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor>(assertion));
                                 }
@@ -230,8 +247,11 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             // TODO: add support for Enumerable.LongCount
                             // TODO: is identifier or literal
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
-                                if (invocationBeforeShould.Arguments[0].HasDescendent<ILiteralOperation>() 
-                                || invocationBeforeShould.Arguments[0].HasDescendent<IParameterReferenceOperation>())
+                                if (assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Count))
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor>(assertion));
+                                }
+                                else if (assertion.Arguments[0].IsReference() || assertion.Arguments[0].IsLiteralValue<int>())
                                 {
                                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor>(assertion));
                                 }
@@ -308,6 +328,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
             GenericCollectionAssertionsOfT3 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`3");
             ReferenceTypeAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.ReferenceTypeAssertions`2");
             NumericAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Numeric.NumericAssertions`2");
+            ICollectionOfT1 = compilation.GetTypeByMetadataName("System.Collections.Generic.ICollection`1");
             Enumerable = compilation.GetTypeByMetadataName("System.Linq.Enumerable");
 
         }
@@ -317,6 +338,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
+        public INamedTypeSymbol ICollectionOfT1 { get; }
         public INamedTypeSymbol Enumerable { get; }
     }
 }

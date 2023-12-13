@@ -25,16 +25,12 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
 
             yield return new CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor();
 
-            yield return new CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor();
-
             yield return new CollectionShouldNotContainNulls.SelectShouldNotContainNullsSyntaxVisitor();
 
             yield return new CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor();
             yield return new CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor();
             // TODO: enable this:
             // yield return new CollectionShouldNotContainProperty.ShouldOnlyContainNotSyntaxVisitor();
-
-            yield return new CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor();
 
             yield return new CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor();
             yield return new CollectionShouldOnlyHaveUniqueItemsByComparer.SelectShouldOnlyHaveUniqueItemsSyntaxVisitor();
