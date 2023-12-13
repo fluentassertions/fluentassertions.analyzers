@@ -22,7 +22,7 @@ internal static class TypesExtensions
     public static bool ConstructedFromType(this INamedTypeSymbol type, INamedTypeSymbol interfaceType)
     {
         var constructedFrom = type;
-        while (constructedFrom.Equals(type, SymbolEqualityComparer.Default))
+        while (!constructedFrom.Equals(type, SymbolEqualityComparer.Default))
         {
             constructedFrom = type.ConstructedFrom;
         }
@@ -33,7 +33,7 @@ internal static class TypesExtensions
     public static bool ConstructedFromType(this INamedTypeSymbol type, SpecialType specialType)
     {
         var constructedFrom = type;
-        while (constructedFrom.Equals(type, SymbolEqualityComparer.Default))
+        while (!constructedFrom.Equals(type, SymbolEqualityComparer.Default))
         {
             constructedFrom = type.ConstructedFrom;
         }
@@ -44,7 +44,7 @@ internal static class TypesExtensions
     public static bool ImplementsOrIsInterface(this ITypeSymbol type, INamedTypeSymbol interfaceType)
     {
         var originalDefinition = type;
-        while (originalDefinition.Equals(type, SymbolEqualityComparer.Default))
+        while (!originalDefinition.Equals(type, SymbolEqualityComparer.Default))
         {
             originalDefinition = type.OriginalDefinition;
         }
