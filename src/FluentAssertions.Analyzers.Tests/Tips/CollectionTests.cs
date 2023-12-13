@@ -68,7 +68,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.AsEnumerable().Any().Should().BeFalse({0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Should().HaveCount(0{0}).And.ToString();")]
         [Implemented]
-        public void CollectionsShouldBeEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
+        public void CollectionShouldBeEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock<FluentAssertionsOperationAnalyzer>(assertion);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -84,7 +84,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.AsEnumerable().Should().HaveCount(0{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().BeEmpty({0}).And.ToString();")]
         [Implemented]
-        public void CollectionsShouldBeEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void CollectionShouldBeEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock<CollectionCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.Any(x => x.BooleanProperty).Should().BeTrue({0});")]
