@@ -127,16 +127,16 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     switch (invocationBeforeShould.TargetMethod.Name)
                     {
                         case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 1:
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeEmpty.AnyShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeEmpty.AnyShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                         case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.AnyWithLambdaShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.AnyWithLambdaShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                         case nameof(Enumerable.All) when invocationBeforeShould.Arguments.Length == 2 && IsLambda(invocationBeforeShould.Arguments[1]):
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                         case nameof(Enumerable.Contains):
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor>(invocationBeforeShould));
+                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                     }
                 }
