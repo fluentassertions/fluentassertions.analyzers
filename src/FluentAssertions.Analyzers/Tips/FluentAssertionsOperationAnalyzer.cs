@@ -115,7 +115,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 break;
             case "NotContainNulls" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
-                    if (!assertion.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
+                    if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
                     switch (invocationBeforeShould.TargetMethod.Name)
                     {
                         case nameof(Enumerable.Select) when invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():

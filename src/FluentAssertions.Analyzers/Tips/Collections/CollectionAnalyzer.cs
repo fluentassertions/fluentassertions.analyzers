@@ -25,8 +25,6 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
 
             yield return new CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor();
 
-            yield return new CollectionShouldNotContainNulls.SelectShouldNotContainNullsSyntaxVisitor();
-
             yield return new CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor();
             yield return new CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor();
             // TODO: enable this:
