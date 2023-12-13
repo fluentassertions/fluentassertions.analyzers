@@ -20,9 +20,6 @@ public class CollectionAnalyzer : CollectionBaseAnalyzer
     {
         get
         {
-            yield return new CollectionShouldBeEmpty.AnyShouldBeFalseSyntaxVisitor();
-            yield return new CollectionShouldBeEmpty.ShouldHaveCount0SyntaxVisitor();
-
             yield return new CollectionShouldContainSingle.WhereShouldHaveCount1SyntaxVisitor();
             yield return new CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor();
 

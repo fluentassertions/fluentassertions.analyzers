@@ -142,6 +142,17 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 }
                 break;
             case "BeFalse" when IsMethodContainedInType(assertion, metadata.BooleanAssertionsOfT1):
+                {
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
+                    {
+                        switch (invocationBeforeShould.TargetMethod.Name)
+                        {
+                            case nameof(Enumerable.Any) when invocationBeforeShould.Arguments.Length == 1:
+                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeEmpty.AnyShouldBeFalseSyntaxVisitor>(assertion));
+                                break;
+                        }
+                    }
+                }
                 break;
             case "HaveCount" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3) && IsArgumentLiteral(assertion.Arguments[0], 1):
                 {
@@ -157,6 +168,9 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                     context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor>(assertion));
                 }
+                break;
+            case "HaveCount" when IsMethodContainedInType(assertion, metadata.GenericCollectionAssertionsOfT3) && IsArgumentLiteral(assertion.Arguments[0], 0):
+                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeEmpty.HaveCountNodeReplacement>(assertion));
                 break;
             case "Be" when IsMethodContainedInType(assertion, metadata.NumericAssertionsOfT2):
                 {
