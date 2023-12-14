@@ -2,12 +2,6 @@
 
 namespace FluentAssertions.Analyzers;
 
-public static class CollectionShouldNotBeNullOrEmpty
-{
-    public sealed class ShouldNotBeNullAndNotBeEmptySyntaxVisitor {}
-    public sealed class ShouldNotBeEmptyAndNotBeNullSyntaxVisitor {}
-}
-
 public partial class CollectionCodeFix
 {
     private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod)

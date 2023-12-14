@@ -7,10 +7,6 @@ namespace FluentAssertions.Analyzers;
 
 public static class CollectionShouldBeEmpty
 {
-    public sealed class AnyShouldBeFalseSyntaxVisitor {}
-
-    public sealed class ShouldHaveCount0SyntaxVisitor {}
-
     public class HaveCountNodeReplacement : NodeReplacement
     {
         public override bool IsValidNode(LinkedListNode<MemberAccessExpressionSyntax> listNode) => listNode.Value.Name.Identifier.Text == "HaveCount";
