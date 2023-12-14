@@ -46,6 +46,16 @@ internal static class TypesExtensions
         {
             current = current.OriginalDefinition;
         }
-        return current.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(interfaceType, SymbolEqualityComparer.Default));
+        return current.Equals(interfaceType, SymbolEqualityComparer.Default) 
+            || current.AllInterfaces.Any(@interface => @interface.OriginalDefinition.Equals(interfaceType, SymbolEqualityComparer.Default));
+    }
+    public static bool ImplementsOrIsInterface(this ITypeSymbol type, SpecialType specialType)
+    {
+        var current = type;
+        while (!current.Equals(current.OriginalDefinition, SymbolEqualityComparer.Default))
+        {
+            current = current.OriginalDefinition;
+        }
+        return current.SpecialType == specialType || current.AllInterfaces.Any(@interface => @interface.OriginalDefinition.SpecialType.Equals(specialType));
     }
 }
