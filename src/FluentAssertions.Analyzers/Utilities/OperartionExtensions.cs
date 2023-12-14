@@ -35,6 +35,10 @@ internal static class OperartionExtensions
         => invocation.TargetMethod.ContainingType.ConstructedFromType(type);
     public static bool IsContainedInType(this IInvocationOperation invocation, INamedTypeSymbol type)
         => invocation.TargetMethod.ContainingType.ConstructedFromType(type);
+    public static bool ImplementsOrIsInterface(this IInvocationOperation invocation, SpecialType type)
+        => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
+    public static bool ImplementsOrIsInterface(this IInvocationOperation invocation, INamedTypeSymbol type)
+        => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
 
     public static bool IsSameArgumentReference(this IArgumentOperation argument1, IArgumentOperation argument2)
     {
