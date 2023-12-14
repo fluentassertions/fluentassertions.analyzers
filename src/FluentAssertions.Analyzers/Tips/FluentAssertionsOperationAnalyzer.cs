@@ -176,7 +176,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                         case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
-                        case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
+                        case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
                             context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor>(assertion));
                             break;
                     }
@@ -195,7 +195,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor>(assertion));
                                 break;
                             case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
-                            case nameof(ICollection<object>.Contains) when invocationBeforeShould.IsContainedInType(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
+                            case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
                                 context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor>(assertion));
                                 break;
                         }
