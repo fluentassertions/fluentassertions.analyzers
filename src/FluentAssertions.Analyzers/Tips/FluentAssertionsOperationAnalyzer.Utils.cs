@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ public partial class FluentAssertionsOperationAnalyzer
             IReadonlyDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IReadOnlyDictionary<,>).FullName);
 
             Enumerable = compilation.GetTypeByMetadataName(typeof(Enumerable).FullName);
-
+            Math = compilation.GetTypeByMetadataName(typeof(Math).FullName);
         }
         public INamedTypeSymbol AssertionExtensions { get; }
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
@@ -39,5 +40,6 @@ public partial class FluentAssertionsOperationAnalyzer
         public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
         public INamedTypeSymbol Enumerable { get; }
+        public INamedTypeSymbol Math { get; }
     }
 }

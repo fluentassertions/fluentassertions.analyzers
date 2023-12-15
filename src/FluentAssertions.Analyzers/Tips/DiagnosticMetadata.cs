@@ -54,5 +54,11 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata CollectionShouldOnlyHaveUniqueItems_ShouldHaveSameCountThisCollectionDistinct { get; } = new("Use .Should().OnlyHaveUniqueItems()", GetHelpLink("Collections-33"));
     public static DiagnosticMetadata CollectionShouldOnlyHaveUniqueItemsByComparer_SelectShouldOnlyHaveUniqueItems { get; } = new("Use .Should().OnlyHaveUniqueItems()", GetHelpLink("Collections-34"));
 
+    public static DiagnosticMetadata NumericShouldBePositive_ShouldBeGreaterThan { get; } = new("Use .Should().BePositive()", GetHelpLink("Numeric-1"));
+    public static DiagnosticMetadata NumericShouldBeNegative_ShouldBeLessThan { get; } = new("Use .Should().BeNegative()", GetHelpLink("Numeric-2"));
+    public static DiagnosticMetadata NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo { get; } = new("Use .Should().BeInRange()", string.Empty);
+    public static DiagnosticMetadata NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo { get; } = new("Use .Should().BeInRange()", string.Empty);
+    public static DiagnosticMetadata NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo { get; } = new("Use .Should().BeApproximately()", string.Empty);
+
     private static string GetHelpLink(string id) => $"https://fluentassertions.com/tips/#{id}";
 }

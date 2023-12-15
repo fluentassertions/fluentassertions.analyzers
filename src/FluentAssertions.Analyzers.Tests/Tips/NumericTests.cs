@@ -11,7 +11,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.Should().BeGreaterThan(0{0});")]
         [AssertionDiagnostic("actual.Should().BeGreaterThan(0{0}).ToString();")]
         [Implemented]
-        public void NumericShouldBePositive_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBePositiveAnalyzer>(assertion);
+        public void NumericShouldBePositive_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.NumericShouldBePositive_ShouldBeGreaterThan);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -21,13 +21,13 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.Should().BeGreaterThan(0{0}).ToString();",
             newAssertion: "actual.Should().BePositive({0}).ToString();")]
         [Implemented]
-        public void NumericShouldBePositive_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBePositiveCodeFix, NumericShouldBePositiveAnalyzer>(oldAssertion, newAssertion);
+        public void NumericShouldBePositive_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.Should().BeLessThan(0{0});")]
         [AssertionDiagnostic("actual.Should().BeLessThan(0{0}).ToString();")]
         [Implemented]
-        public void NumericShouldBeNegative_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeNegativeAnalyzer>(assertion);
+        public void NumericShouldBeNegative_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -37,17 +37,19 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.Should().BeLessThan(0{0}).ToString();",
             newAssertion: "actual.Should().BeNegative({0}).ToString();")]
         [Implemented]
-        public void NumericShouldBeNegative_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeNegativeCodeFix, NumericShouldBeNegativeAnalyzer>(oldAssertion, newAssertion);
+        public void NumericShouldBeNegative_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper);")]
         [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower).And.BeLessOrEqualTo(upper{0});")]
-        [AssertionDiagnostic("actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper{0});")]
+        [Implemented]
+        public void NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo);
+
+        [DataTestMethod]
         [AssertionDiagnostic("actual.Should().BeLessOrEqualTo(upper{0}).And.BeGreaterOrEqualTo(lower);")]
         [AssertionDiagnostic("actual.Should().BeLessOrEqualTo(upper).And.BeGreaterOrEqualTo(lower{0});")]
-        [AssertionDiagnostic("actual.Should().BeLessOrEqualTo(upper{0}).And.BeGreaterOrEqualTo(lower{0});")]
         [Implemented]
-        public void NumericShouldBeInRange_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeInRangeAnalyzer>(assertion);
+        public void NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -63,32 +65,29 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.Should().BeLessOrEqualTo(upper).And.BeGreaterOrEqualTo(lower{0});",
             newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
         [NotImplemented]
-        public void NumericShouldBeInRange_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeApproximatelyCodeFix, NumericShouldBeInRangeAnalyzer>(oldAssertion, newAssertion);
+        public void NumericShouldBeInRange_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta{0});")]
         [Implemented]
-        public void NumericShouldBeApproximately_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<NumericShouldBeApproximatelyAnalyzer>(assertion);
+        public void NumericShouldBeApproximately_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo);
 
         [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta{0});",
             newAssertion: "actual.Should().BeApproximately(expected, delta{0});")]
         [Implemented]
-        public void NumericShouldBeApproximately_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<NumericShouldBeApproximatelyCodeFix, NumericShouldBeApproximatelyAnalyzer>(oldAssertion, newAssertion);
+        public void NumericShouldBeApproximately_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
-        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
+        private void VerifyCSharpDiagnostic(string sourceAssertion, DiagnosticMetadata metadata)
         {
             var source = GenerateCode.DoubleAssertion(sourceAssertion);
 
-            var type = typeof(TDiagnosticAnalyzer);
-            var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
-            var message = (string)type.GetField("Message").GetValue(null);
-
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
             {
-                Id = diagnosticId,
-                Message = message,
+                Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                Message = metadata.Message,
+                VisitorName = metadata.Name,
                 Locations = new DiagnosticResultLocation[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 10, 13)

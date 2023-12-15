@@ -2,12 +2,13 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FluentAssertions.Analyzers;
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CollectionCodeFix)), Shared]
-public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FluentAssertionsCodeFix)), Shared]
+public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 {
     public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(FluentAssertionsOperationAnalyzer.DiagnosticId);
 
@@ -186,6 +187,54 @@ public partial class CollectionCodeFix : FluentAssertionsCodeFixProvider
                     var newExpression = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
 
                     return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
+                }
+
+            case nameof(DiagnosticMetadata.NumericShouldBePositive_ShouldBeGreaterThan):
+                return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("BeGreaterThan", "BePositive"));
+            case nameof(DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan):
+                return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("BeLessThan", "BeNegative"));
+
+            case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo):
+                {
+                    var removeLess = NodeReplacement.RemoveAndExtractArguments("BeLessOrEqualTo");
+                    var newExpression = GetNewExpression(expression, removeLess);
+
+                    var renameGreater = NodeReplacement.RenameAndExtractArguments("BeGreaterOrEqualTo", "BeInRange");
+                    newExpression = GetNewExpression(newExpression, renameGreater);
+
+                    var arguments = renameGreater.Arguments.InsertRange(1, removeLess.Arguments);
+
+                    var result = GetNewExpression(newExpression, NodeReplacement.WithArguments("BeInRange", arguments));
+
+                    return result;
+                }
+            case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo):
+                {
+                    var removeGreater = NodeReplacement.RemoveAndExtractArguments("BeGreaterOrEqualTo");
+                    var newExpression = GetNewExpression(expression, removeGreater);
+
+                    var renameLess = NodeReplacement.RenameAndExtractArguments("BeLessOrEqualTo", "BeInRange");
+                    newExpression = GetNewExpression(newExpression, renameLess);
+
+                    var arguments = removeGreater.Arguments.InsertRange(1, renameLess.Arguments);
+
+                    return GetNewExpression(newExpression, NodeReplacement.WithArguments("BeInRange", arguments));
+                }
+            case nameof(DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("Abs");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    var subtractExpression = (BinaryExpressionSyntax)remove.Arguments[0].Expression;
+
+                    var actual = subtractExpression.Right as IdentifierNameSyntax;
+                    var expected = subtractExpression.Left;
+
+                    newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeLessOrEqualTo", "BeApproximately", new SeparatedSyntaxList<ArgumentSyntax>().Add(SyntaxFactory.Argument(expected))));
+
+                    newExpression = RenameIdentifier(newExpression, "Math", actual.Identifier.Text);
+
+                    return newExpression;
                 }
 
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
