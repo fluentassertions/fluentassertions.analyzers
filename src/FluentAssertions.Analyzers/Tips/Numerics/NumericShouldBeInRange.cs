@@ -66,8 +66,8 @@ public class NumericShouldBeInRangeCodeFix : FluentAssertionsCodeFixProvider
         if (properties.VisitorName == nameof(NumericShouldBeInRangeAnalyzer.BeGreaterOrEqualToAndBeLessOrEqualToSyntaxVisitor))
         {
             var removeLess = NodeReplacement.RemoveAndExtractArguments("BeLessOrEqualTo");
-            var newExpression = GetNewExpression(expression, removeLess);
-
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("BeLessOrEqualTo"), removeLess);
+            
             var renameGreater = NodeReplacement.RenameAndExtractArguments("BeGreaterOrEqualTo", "BeInRange");
             newExpression = GetNewExpression(newExpression, renameGreater);
 
@@ -78,7 +78,7 @@ public class NumericShouldBeInRangeCodeFix : FluentAssertionsCodeFixProvider
         else if (properties.VisitorName == nameof(NumericShouldBeInRangeAnalyzer.BeLessOrEqualToAndBeGreaterOrEqualToSyntaxVisitor))
         {
             var removeGreater = NodeReplacement.RemoveAndExtractArguments("BeGreaterOrEqualTo");
-            var newExpression = GetNewExpression(expression, removeGreater);
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("BeGreaterOrEqualTo"), removeGreater);
 
             var renameLess = NodeReplacement.RenameAndExtractArguments("BeLessOrEqualTo", "BeInRange");
             newExpression = GetNewExpression(newExpression, renameLess);
