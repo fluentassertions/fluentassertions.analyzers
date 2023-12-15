@@ -51,20 +51,6 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
         var subject = invocation.Arguments[0].Value;
 
-        static Diagnostic CreateDiagnostic<TVistor>(IOperation operation)
-        {
-            var properties = ImmutableDictionary<string, string>.Empty
-                .Add(Constants.DiagnosticProperties.Title, Title)
-                .Add(Constants.DiagnosticProperties.VisitorName, typeof(TVistor).Name)
-                .Add(Constants.DiagnosticProperties.HelpLink, HelpLinks.Get(typeof(TVistor)));
-            var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, Rule.MessageFormat, Rule.Category, Rule.DefaultSeverity, true,
-                helpLinkUri: properties.GetValueOrDefault(Constants.DiagnosticProperties.HelpLink));
-            return Diagnostic.Create(
-                descriptor: newRule,
-                location: operation.Syntax.GetLocation(),
-                properties: properties);
-        }
-
         switch (assertion.TargetMethod.Name)
         {
             case "NotBeEmpty" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
@@ -75,7 +61,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                         if (chainedInvocation.IsContainedInType(metadata.ReferenceTypeAssertionsOfT2))
                         {
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeEmptyAndNotBeNullSyntaxVisitor>(chainedInvocation));
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeEmptyAndNotBeNull));
                         }
                     }
                     else if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -83,10 +69,10 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
                             case nameof(Enumerable.Where) when invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.WhereShouldNotBeEmptySyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainProperty_WhereShouldNotBeEmpty));
                                 break;
                             case nameof(Enumerable.Intersect) when invocationBeforeShould.Arguments.Length is 2:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldIntersectWith.IntersectShouldNotBeEmptySyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldIntersectWith_IntersectShouldNotBeEmpty));
                                 break;
                         }
                     }
@@ -99,10 +85,10 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
                             case nameof(Enumerable.Intersect) when invocationBeforeShould.Arguments.Length is 2:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotIntersectWith.IntersectShouldBeEmptySyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotIntersectWith_IntersectShouldBeEmpty));
                                 break;
                             case nameof(Enumerable.Where) when invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainProperty.WhereShouldBeEmptySyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainProperty_WhereShouldBeEmpty));
                                 break;
                         }
                     }
@@ -115,7 +101,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                     if (chainedInvocation.IsContainedInType(metadata.GenericCollectionAssertionsOfT3))
                     {
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeNullOrEmpty.ShouldNotBeNullAndNotBeEmptySyntaxVisitor>(chainedInvocation));
+                        context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeNullAndNotBeEmpty));
                     }
                 }
                 break;
@@ -125,7 +111,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     switch (invocationBeforeShould.TargetMethod.Name)
                     {
                         case nameof(Enumerable.Select) when invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainNulls.SelectShouldNotContainNullsSyntaxVisitor>(assertion));
+                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainNulls_SelectShouldNotContainNulls));
                             break;
                     }
                 }
@@ -140,7 +126,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             && invocationBeforeShould.Arguments[1].IsLambda()
                             && invocationBeforeShould.Arguments[0].IsSameArgumentReference(assertion.Arguments[0]))
                             {
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInAscendingOrder.OrderByShouldEqualSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeInAscendingOrder_OrderByShouldEqual));
                             }
                             break;
                         case nameof(Enumerable.OrderByDescending):
@@ -148,14 +134,14 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             && invocationBeforeShould.Arguments[1].IsLambda()
                             && invocationBeforeShould.Arguments[0].IsSameArgumentReference(assertion.Arguments[0]))
                             {
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeInDescendingOrder.OrderByDescendingShouldEqualSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeInDescendingOrder_OrderByDescendingShouldEqual));
                             }
                             break;
                         case nameof(Enumerable.Select): // TODO:
                             if (invocationBeforeShould.Arguments.Length is 2
                             && invocationBeforeShould.Arguments[1].IsLambda())
                             {
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldEqualOtherCollectionByComparer.SelectShouldEqualOtherCollectionSelectSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect));
                             }
                             break;
                     }
@@ -167,17 +153,17 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     switch (invocationBeforeShould.TargetMethod.Name)
                     {
                         case nameof(Enumerable.Any) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotBeEmpty.AnyShouldBeTrueSyntaxVisitor>(assertion));
+                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue));
                             break;
                         case nameof(Enumerable.Any) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainProperty.AnyWithLambdaShouldBeTrueSyntaxVisitor>(assertion));
+                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainProperty_AnyWithLambdaShouldBeTrue));
                             break;
                         case nameof(Enumerable.All) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyContainProperty.AllShouldBeTrueSyntaxVisitor>(assertion));
+                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyContainProperty_AllShouldBeTrue));
                             break;
                         case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
                         case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainItem.ContainsShouldBeTrueSyntaxVisitor>(assertion));
+                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainItem_ContainsShouldBeTrue));
                             break;
                     }
                 }
@@ -189,14 +175,14 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
                             case nameof(Enumerable.Any) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 1:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeEmpty.AnyShouldBeFalseSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_AnyShouldBeFalse));
                                 break;
                             case nameof(Enumerable.Any) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2 && invocationBeforeShould.Arguments[1].IsLambda():
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainProperty.AnyLambdaShouldBeFalseSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainProperty_AnyLambdaShouldBeFalse));
                                 break;
                             case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length == 2:
                             case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotContainItem.ContainsShouldBeFalseSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainItem_ContainsShouldBeFalse));
                                 break;
                         }
                     }
@@ -209,22 +195,22 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
                             case nameof(Enumerable.Where):
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainSingle.WhereShouldHaveCount1SyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainSingle_WhereShouldHaveCount1));
                                 return;
                         }
                     }
 
-                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldContainSingle.ShouldHaveCount1SyntaxVisitor>(assertion));
+                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainSingle_ShouldHaveCount1));
                 }
                 break;
             case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsLiteralValue(0):
-                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldBeEmpty.ShouldHaveCount0SyntaxVisitor>(assertion));
+                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_ShouldHaveCount0));
                 break;
             case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Count))
                     {
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveSameCount.ShouldHaveCountOtherCollectionCountSyntaxVisitor>(assertion));
+                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount));
                     }
                 }
                 break;
@@ -232,7 +218,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 {
                     if (assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Distinct))
                     {
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyHaveUniqueItems.ShouldHaveSameCountThisCollectionDistinctSyntaxVisitor>(assertion));
+                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItems_ShouldHaveSameCountThisCollectionDistinct));
                     }
                 }
                 break;
@@ -242,7 +228,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     switch (invocationBeforeShould.TargetMethod.Name)
                     {
                         case nameof(Enumerable.Select) when invocationBeforeShould.Arguments.Length is 2 && invocationBeforeShould.Arguments[1].IsLambda():
-                            context.ReportDiagnostic(CreateDiagnostic<CollectionShouldOnlyHaveUniqueItemsByComparer.SelectShouldOnlyHaveUniqueItemsSyntaxVisitor>(assertion));
+                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItemsByComparer_SelectShouldOnlyHaveUniqueItems));
                             break;
                     }
                 }
@@ -257,15 +243,15 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
                                 if (assertion.Arguments[0].IsLiteralValue(1))
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe1SyntaxVisitor>(assertion));
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe1));
                                 }
                                 else if (assertion.Arguments[0].IsLiteralValue(0))
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBe0SyntaxVisitor>(assertion));
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe0));
                                 }
                                 else
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.CountShouldBeSyntaxVisitor>(assertion));
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe));
                                 }
                                 break;
 
@@ -276,14 +262,14 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         switch (propertyBeforeShould.Property.Name)
                         {
                             case nameof(Array.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_Array):
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCount.LengthShouldBeSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_LengthShouldBe));
                                 break;
                         }
                     }
                     if (subject is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == WellKnownMemberNames.Indexer
                     && !(subject.Type.AllInterfaces.Contains(metadata.IDictionaryOfT2) || subject.Type.AllInterfaces.Contains(metadata.IReadonlyDictionaryOfT2)))
                     {
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor>(assertion));
+                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe));
                     }
                     break;
                 }
@@ -295,13 +281,13 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             // TODO: add support when element type is Numeric
                             case nameof(Enumerable.ElementAt) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.ElementAtIndexShouldBeSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_ElementAtIndexShouldBe));
                                 break;
                             case nameof(Enumerable.First) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
                                 {
                                     if (invocationBeforeShould.TryGetFirstDescendent<IInvocationOperation>(out var skipInvocation) && skipInvocation.TargetMethod.Name is nameof(Enumerable.Skip))
                                     {
-                                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.SkipFirstShouldBeSyntaxVisitor>(assertion));
+                                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_SkipFirstShouldBe));
                                     }
                                 }
                                 break;
@@ -310,14 +296,14 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                     if (subject.TryGetFirstDescendent<IArrayElementReferenceOperation>(out var arrayElementReference))
                     {
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor>(assertion));
+                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe));
                     }
 
                     if (subject.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyReference) && propertyReference.Property.IsIndexer)
                     {
                         if (propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2)) break;
 
-                        context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveElementAt.IndexerShouldBeSyntaxVisitor>(assertion));
+                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe));
                     }
                 }
                 break;
@@ -332,11 +318,11 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
                                 if (assertion.Arguments[0].TryGetFirstDescendent<IInvocationOperation>(out var expectationInvocation) && expectationInvocation.TargetMethod.Name is nameof(Enumerable.Count))
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotHaveSameCount.CountShouldNotBeOtherCollectionCountSyntaxVisitor>(assertion));
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount));
                                 }
                                 else if (assertion.Arguments[0].IsReference() || assertion.Arguments[0].IsLiteralValue<int>())
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic<CollectionShouldNotHaveCount.CountShouldNotBeSyntaxVisitor>(assertion));
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotHaveCount_CountShouldNotBe));
                                 }
                                 break;
                         }
@@ -351,7 +337,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCountGreaterOrEqualTo.CountShouldBeGreaterOrEqualToSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo));
                                 break;
                         }
                     }
@@ -365,7 +351,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCountGreaterThan.CountShouldBeGreaterThanSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountGreaterThan_CountShouldBeGreaterThan));
                                 break;
                         }
                     }
@@ -379,7 +365,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCountLessOrEqualTo.CountShouldBeLessOrEqualToSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo));
                                 break;
                         }
                     }
@@ -393,7 +379,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 1:
-                                context.ReportDiagnostic(CreateDiagnostic<CollectionShouldHaveCountLessThan.CountShouldBeLessThanSyntaxVisitor>(assertion));
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountLessThan_CountShouldBeLessThan));
                                 break;
                         }
                     }
@@ -401,6 +387,23 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 break;
         }
     }
+
+
+
+    static Diagnostic CreateDiagnostic(IOperation operation, DiagnosticMetadata metadata)
+    {
+        var properties = ImmutableDictionary<string, string>.Empty
+            .Add(Constants.DiagnosticProperties.Title, Title)
+            .Add(Constants.DiagnosticProperties.VisitorName, metadata.Name)
+            .Add(Constants.DiagnosticProperties.HelpLink, metadata.HelpLink);
+        var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, metadata.Message, Rule.Category, Rule.DefaultSeverity, true,
+            helpLinkUri: metadata.HelpLink);
+        return Diagnostic.Create(
+            descriptor: newRule,
+            location: operation.Syntax.GetLocation(),
+            properties: properties);
+    }
+
     private class FluentAssertionsMetadata
     {
         public FluentAssertionsMetadata(Compilation compilation)

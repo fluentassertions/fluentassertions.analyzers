@@ -4,11 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FluentAssertions.Analyzers;
 
-public static class CollectionShouldEqualOtherCollectionByComparer
-{
-    public sealed class SelectShouldEqualOtherCollectionSelectSyntaxVisitor {}
-}
-
 public partial class CollectionCodeFix
 {
     private ExpressionSyntax GetNewExpressionForSelectShouldEqualOtherCollectionSelectSyntaxVisitor(ExpressionSyntax expression)
