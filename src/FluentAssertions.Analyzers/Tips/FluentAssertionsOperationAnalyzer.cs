@@ -396,8 +396,7 @@ public class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
             .Add(Constants.DiagnosticProperties.Title, Title)
             .Add(Constants.DiagnosticProperties.VisitorName, metadata.Name)
             .Add(Constants.DiagnosticProperties.HelpLink, metadata.HelpLink);
-        // TODO: use metadata.Message
-        var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, Rule.MessageFormat, Rule.Category, Rule.DefaultSeverity, true,
+        var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, metadata.Message, Rule.Category, Rule.DefaultSeverity, true,
             helpLinkUri: metadata.HelpLink);
         return Diagnostic.Create(
             descriptor: newRule,

@@ -22,7 +22,6 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata CollectionShouldOnlyContainProperty_AllShouldBeTrue { get; } = new("Use .Should().OnlyContain()", GetHelpLink("Collections-5"));
     public static DiagnosticMetadata CollectionShouldContainItem_ContainsShouldBeTrue { get; } = new("Use .Should().Contain()", GetHelpLink("Collections-6"));
     public static DiagnosticMetadata CollectionShouldNotContainItem_ContainsShouldBeFalse { get; } = new("Use .Should().NotContain()", GetHelpLink("Collections-7"));
-    public static DiagnosticMetadata CollectionShouldNotContainItem_AnyShouldBeFalse { get; } = new("Use .Should().NotContain()", GetHelpLink("Collections-7"));
     // missing Collections-8
     public static DiagnosticMetadata CollectionShouldHaveCount_CountShouldBe { get; } = new("Use .Should().HaveCount()", GetHelpLink("Collections-9"));
     public static DiagnosticMetadata CollectionShouldHaveCount_LengthShouldBe { get; } = new("Use .Should().HaveCount()", GetHelpLink("Collections-9"));
