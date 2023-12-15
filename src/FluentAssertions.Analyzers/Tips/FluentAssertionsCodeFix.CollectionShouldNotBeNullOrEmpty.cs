@@ -2,13 +2,16 @@
 
 namespace FluentAssertions.Analyzers;
 
-public partial class CollectionCodeFix
+public partial class FluentAssertionsCodeFix
 {
     private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod)
+        => GetCombinedAssertions(expression, removeMethod, renameMethod, "NotBeNullOrEmpty");
+
+    private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod, string newMethod)
     {
         var remove = NodeReplacement.RemoveAndExtractArguments(removeMethod);
         var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(removeMethod), remove);
 
-        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(renameMethod, "NotBeNullOrEmpty", remove.Arguments));
+        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(renameMethod, newMethod, remove.Arguments));
     }
 }

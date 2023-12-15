@@ -53,17 +53,24 @@ internal static class OperartionExtensions
     }
 
     public static bool IsLiteralValue<T>(this IArgumentOperation argument, T value)
-        => argument.Value is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);
+        => UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);
     public static bool IsLiteralValue<T>(this IArgumentOperation argument)
-        => argument.Value is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value is T;
+        => UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value is T;
     public static bool IsReference(this IArgumentOperation argument)
     {
-        if (argument.Value is IConversionOperation conversion)
-        {
-            return conversion.Operand.Kind == OperationKind.LocalReference || conversion.Operand.Kind == OperationKind.ParameterReference;
-        }
+        var operation = UnwrapConversion(argument.Value);
+        return operation.Kind is OperationKind.LocalReference || operation.Kind is OperationKind.ParameterReference;
+    }
 
-        return argument.Value.Kind == OperationKind.LocalReference || argument.Value.Kind == OperationKind.ParameterReference;
+    public static bool IsReferenceOfType<T>(this IArgumentOperation argument)
+    {
+        var current = UnwrapConversion(argument.Value);
+        return current switch
+        {
+            ILocalReferenceOperation local => local.Local.Type.SpecialType == SpecialType.System_Double,
+            IParameterReferenceOperation parameter => parameter.Parameter.Type.SpecialType == SpecialType.System_Double,
+            _ => false,
+        };
     }
 
     public static bool IsLambda(this IArgumentOperation argument)
@@ -90,5 +97,14 @@ internal static class OperartionExtensions
 
         chainedInvocation = null;
         return false;
+    }
+
+    private static IOperation UnwrapConversion(this IOperation operation)
+    {
+        return operation switch
+        {
+            IConversionOperation conversion => conversion.Operand,
+            _ => operation,
+        };
     }
 }

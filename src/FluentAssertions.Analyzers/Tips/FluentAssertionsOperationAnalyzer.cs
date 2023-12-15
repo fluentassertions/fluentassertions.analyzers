@@ -70,13 +70,13 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             case nameof(Enumerable.Where) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainProperty_WhereShouldNotBeEmpty));
-                                break;
+                                return;
                             case nameof(Enumerable.Intersect) when invocationBeforeShould.Arguments.Length is 2:
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldIntersectWith_IntersectShouldNotBeEmpty));
-                                break;
+                                return;
                         }
                     }
-                    break;
+                    return;
                 }
             case "BeEmpty" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
@@ -86,13 +86,13 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             case nameof(Enumerable.Intersect) when invocationBeforeShould.Arguments.Length is 2:
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotIntersectWith_IntersectShouldBeEmpty));
-                                break;
+                                return;
                             case nameof(Enumerable.Where) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainProperty_WhereShouldBeEmpty));
-                                break;
+                                return;
                         }
                     }
-                    break;
+                    return;
                 }
             case "NotBeNull" when assertion.IsContainedInType(metadata.ReferenceTypeAssertionsOfT2):
                 {
@@ -104,7 +104,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeNullAndNotBeEmpty));
                     }
                 }
-                break;
+                return;
             case "NotContainNulls" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
@@ -112,10 +112,10 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         case nameof(Enumerable.Select) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainNulls_SelectShouldNotContainNulls));
-                            break;
+                            return;
                     }
                 }
-                break;
+                return;
             case "Equal" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
@@ -123,16 +123,16 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         case nameof(Enumerable.OrderBy) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata) && invocationBeforeShould.Arguments[0].IsSameArgumentReference(assertion.Arguments[0]):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeInAscendingOrder_OrderByShouldEqual));
-                            break;
+                            return;
                         case nameof(Enumerable.OrderByDescending) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata) && invocationBeforeShould.Arguments[0].IsSameArgumentReference(assertion.Arguments[0]):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeInDescendingOrder_OrderByDescendingShouldEqual));
-                            break;
+                            return;
                         case nameof(Enumerable.Select) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect));
-                            break;
+                            return;
                     }
                 }
-                break;
+                return;
             case "BeTrue" when assertion.IsContainedInType(metadata.BooleanAssertionsOfT1):
                 {
                     if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
@@ -140,20 +140,20 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         case nameof(Enumerable.Any) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue));
-                            break;
+                            return;
                         case nameof(Enumerable.Any) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainProperty_AnyWithLambdaShouldBeTrue));
-                            break;
+                            return;
                         case nameof(Enumerable.All) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyContainProperty_AllShouldBeTrue));
-                            break;
+                            return;
                         case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
                         case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length is 1:
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainItem_ContainsShouldBeTrue));
-                            break;
+                            return;
                     }
                 }
-                break;
+                return;
             case "BeFalse" when assertion.IsContainedInType(metadata.BooleanAssertionsOfT1):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -162,18 +162,18 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             case nameof(Enumerable.Any) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_AnyShouldBeFalse));
-                                break;
+                                return;
                             case nameof(Enumerable.Any) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainProperty_AnyLambdaShouldBeFalse));
-                                break;
+                                return;
                             case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
                             case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainItem_ContainsShouldBeFalse));
-                                break;
+                                return;
                         }
                     }
                 }
-                break;
+                return;
             case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsLiteralValue(1):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -188,16 +188,16 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                     context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainSingle_ShouldHaveCount1));
                 }
-                break;
+                return;
             case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsLiteralValue(0):
                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_ShouldHaveCount0));
-                break;
+                return;
             case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].HasFirstDescendentInvocation(nameof(Enumerable.Count)):
                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount));
-                break;
+                return;
             case "HaveSameCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].HasFirstDescendentInvocation(nameof(Enumerable.Distinct)):
                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItems_ShouldHaveSameCountThisCollectionDistinct));
-                break;
+                return;
             case "OnlyHaveUniqueItems" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
@@ -205,10 +205,10 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         case nameof(Enumerable.Select) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItemsByComparer_SelectShouldOnlyHaveUniqueItems));
-                            break;
+                            return;
                     }
                 }
-                break;
+                return;
             case "Be" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -229,7 +229,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                                 {
                                     context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe));
                                 }
-                                break;
+                                return;
 
                         }
                     }
@@ -239,7 +239,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             case nameof(Array.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_Array):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_LengthShouldBe));
-                                break;
+                                return;
                         }
                     }
                     if (subject is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == WellKnownMemberNames.Indexer
@@ -247,7 +247,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe));
                     }
-                    break;
+                    return;
                 }
             case "Be" when assertion.IsContainedInType(metadata.ObjectAssertionsOfT2):
                 {
@@ -258,7 +258,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             // TODO: add support when element type is Numeric
                             case nameof(Enumerable.ElementAt) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_ElementAtIndexShouldBe));
-                                break;
+                                return;
                             case nameof(Enumerable.First) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                                 {
                                     if (invocationBeforeShould.TryGetFirstDescendent<IInvocationOperation>(out var skipInvocation) && skipInvocation.TargetMethod.Name is nameof(Enumerable.Skip))
@@ -266,7 +266,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                                         context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_SkipFirstShouldBe));
                                     }
                                 }
-                                break;
+                                return;
                         }
                     }
                     if (subject.TryGetFirstDescendent<IArrayElementReferenceOperation>(out var arrayElementReference))
@@ -275,12 +275,12 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     }
                     else if (subject.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyReference) && propertyReference.Property.IsIndexer)
                     {
-                        if (propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2)) break;
+                        if (propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2)) return;
 
                         context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe));
                     }
                 }
-                break;
+                return;
             case "NotBe" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -299,11 +299,11 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
                                     context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotHaveCount_CountShouldNotBe));
                                 }
-                                break;
+                                return;
                         }
                     }
                 }
-                break;
+                return;
             case "BeGreaterOrEqualTo" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -313,11 +313,19 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo));
-                                break;
+                                return;
                         }
                     }
+
+                    if (assertion.TryGetChainedInvocationAfterAndConstraint("BeLessOrEqualTo", out var chainedInvocation))
+                    {
+                        if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
+
+                        context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo));
+                        return;
+                    }
                 }
-                break;
+                return;
             case "BeGreaterThan" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -327,11 +335,16 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountGreaterThan_CountShouldBeGreaterThan));
-                                break;
+                                return;
                         }
                     }
+                    if (assertion.Arguments[0].IsLiteralValue(0))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.NumericShouldBePositive_ShouldBeGreaterThan));
+                        return;
+                    }
                 }
-                break;
+                return;
             case "BeLessOrEqualTo" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -341,11 +354,22 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo));
-                                break;
+                                return;
+                            case nameof(Math.Abs) when invocationBeforeShould.IsContainedInType(metadata.Math) && assertion.Arguments[0].IsReferenceOfType<double>():
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo));
+                                return;
                         }
                     }
+
+                    if (assertion.TryGetChainedInvocationAfterAndConstraint("BeGreaterOrEqualTo", out var chainedInvocation))
+                    {
+                        if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
+
+                        context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo));
+                        return;
+                    }
                 }
-                break;
+                return;
             case "BeLessThan" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -355,11 +379,17 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountLessThan_CountShouldBeLessThan));
-                                break;
+                                return;
                         }
                     }
+
+                    if (assertion.Arguments[0].IsLiteralValue(0))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan));
+                        return;
+                    }
                 }
-                break;
+                return;
         }
     }
 

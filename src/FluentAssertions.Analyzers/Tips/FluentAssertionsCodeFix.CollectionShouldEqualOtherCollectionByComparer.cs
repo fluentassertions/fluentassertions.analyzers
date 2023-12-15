@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FluentAssertions.Analyzers;
 
-public partial class CollectionCodeFix
+public partial class FluentAssertionsCodeFix
 {
     private ExpressionSyntax GetNewExpressionForSelectShouldEqualOtherCollectionSelectSyntaxVisitor(ExpressionSyntax expression)
     {
