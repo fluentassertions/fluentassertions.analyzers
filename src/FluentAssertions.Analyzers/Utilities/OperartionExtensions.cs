@@ -27,6 +27,11 @@ internal static class OperartionExtensions
         return false;
     }
 
+    public static bool HasFirstDescendentInvocation(this IOperation parent, string invocationMethod)
+    {
+        return parent.TryGetFirstDescendent<IInvocationOperation>(out var invocation) && invocation.TargetMethod.Name == invocationMethod;
+    }
+
     public static bool IsContainedInType(this IPropertyReferenceOperation property, SpecialType type)
         => property.Property.ContainingType.ConstructedFromType(type);
     public static bool IsContainedInType(this IPropertyReferenceOperation property, INamedTypeSymbol type)
