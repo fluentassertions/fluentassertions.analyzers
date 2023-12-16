@@ -92,7 +92,7 @@ internal static class OperartionExtensions
         if (invocation.Parent is IPropertyReferenceOperation { Property.Name: "And" } andConstraint)
         {
             chainedInvocation = andConstraint.Parent as IInvocationOperation;
-            return chainedInvocation.TargetMethod.Name == chainedMethod;
+            return chainedInvocation?.TargetMethod?.Name == chainedMethod;
         }
 
         chainedInvocation = null;
