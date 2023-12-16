@@ -60,5 +60,15 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo { get; } = new("Use .Should().BeInRange()", string.Empty);
     public static DiagnosticMetadata NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo { get; } = new("Use .Should().BeApproximately()", string.Empty);
 
+    public static DiagnosticMetadata StringShouldStartWith_StartsWithShouldBeTrue { get; } = new("Use .Should().StartWith()", GetHelpLink("Strings-1"));
+    public static DiagnosticMetadata StringShouldEndWith_EndsWithShouldBeTrue { get; } = new("Use .Should().EndWith()", GetHelpLink("Strings-2"));
+    public static DiagnosticMetadata StringShouldNotBeNullOrEmpty_StringShouldNotBeNullAndNotBeEmpty { get; } = new("Use .Should().NotBeNullOrEmpty()", GetHelpLink("Strings-3"));
+    public static DiagnosticMetadata StringShouldNotBeNullOrEmpty_StringShouldNotBeEmptyAndNotBeNull { get; } = new("Use .Should().NotBeNullOrEmpty()", GetHelpLink("Strings-3"));
+    public static DiagnosticMetadata StringShouldBeNullOrEmpty_StringIsNullOrEmptyShouldBeTrue { get; } = new("Use .Should().BeNullOrEmpty()", GetHelpLink("Strings-4"));
+    public static DiagnosticMetadata StringShouldNotBeNullOrEmpty_StringIsNullOrEmptyShouldBeFalse { get; } = new("Use .Should().NotBeNullOrEmpty()", GetHelpLink("Strings-5"));
+    public static DiagnosticMetadata StringShouldBeNullOrWhiteSpace_StringIsNullOrWhiteSpaceShouldBeTrue { get; } = new("Use .Should().BeNullOrWhiteSpace()", GetHelpLink("Strings-6"));
+    public static DiagnosticMetadata StringShouldNotBeNullOrWhiteSpace_StringShouldNotBeNullOrWhiteSpace { get; } = new("Use .Should().NotBeNullOrWhiteSpace()", GetHelpLink("Strings-7"));
+    public static DiagnosticMetadata StringShouldHaveLength_LengthShouldBe { get; } = new("Use .Should().HaveLength()", GetHelpLink("Strings-8"));
+
     private static string GetHelpLink(string id) => $"https://fluentassertions.com/tips/#{id}";
 }

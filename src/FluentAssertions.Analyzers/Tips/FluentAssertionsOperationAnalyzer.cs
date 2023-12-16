@@ -62,6 +62,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         if (chainedInvocation.IsContainedInType(metadata.ReferenceTypeAssertionsOfT2))
                         {
                             context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeEmptyAndNotBeNull));
+                            return;
                         }
                     }
                     else if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -78,6 +79,20 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     }
                     return;
                 }
+            case "NotBeEmpty" when assertion.IsContainedInType(metadata.StringAssertionsOfT1):
+                {
+                    if (assertion.TryGetChainedInvocationAfterAndConstraint("NotBeNull", out var chainedInvocation))
+                    {
+                        if (!assertion.HasEmptyBecauseAndReasonArgs() && !chainedInvocation.HasEmptyBecauseAndReasonArgs()) return;
+
+                        if (chainedInvocation.IsContainedInType(metadata.ReferenceTypeAssertionsOfT2))
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeEmptyAndNotBeNull));
+                            return;
+                        }
+                    }
+                }
+                return;
             case "BeEmpty" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
@@ -102,6 +117,12 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     if (chainedInvocation.IsContainedInType(metadata.GenericCollectionAssertionsOfT3))
                     {
                         context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeNullAndNotBeEmpty));
+                        return;
+                    }
+                    if (chainedInvocation.IsContainedInType(metadata.StringAssertionsOfT1))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeNullAndNotBeEmpty));
+                        return;
                     }
                 }
                 return;
@@ -135,22 +156,42 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                 return;
             case "BeTrue" when assertion.IsContainedInType(metadata.BooleanAssertionsOfT1):
                 {
-                    if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
-                    switch (invocationBeforeShould.TargetMethod.Name)
+                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
                     {
-                        case nameof(Enumerable.Any) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
-                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue));
-                            return;
-                        case nameof(Enumerable.Any) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
-                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainProperty_AnyWithLambdaShouldBeTrue));
-                            return;
-                        case nameof(Enumerable.All) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
-                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyContainProperty_AllShouldBeTrue));
-                            return;
-                        case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
-                        case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length is 1:
-                            context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainItem_ContainsShouldBeTrue));
-                            return;
+                        switch (invocationBeforeShould.TargetMethod.Name)
+                        {
+                            case nameof(Enumerable.Any) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue));
+                                return;
+                            case nameof(Enumerable.Any) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainProperty_AnyWithLambdaShouldBeTrue));
+                                return;
+                            case nameof(Enumerable.All) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyContainProperty_AllShouldBeTrue));
+                                return;
+                            case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
+                            case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length is 1:
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainItem_ContainsShouldBeTrue));
+                                return;
+                            case nameof(string.EndsWith) when invocationBeforeShould.IsContainedInType(SpecialType.System_String):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldEndWith_EndsWithShouldBeTrue));
+                                return;
+                            case nameof(string.StartsWith) when invocationBeforeShould.IsContainedInType(SpecialType.System_String):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldStartWith_StartsWithShouldBeTrue));
+                                return;
+                        }
+                    }
+                    if (subject is IInvocationOperation shouldArgumentInvocation)
+                    {
+                        switch (shouldArgumentInvocation.TargetMethod.Name)
+                        {
+                            case nameof(string.IsNullOrEmpty) when shouldArgumentInvocation.IsContainedInType(SpecialType.System_String):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldBeNullOrEmpty_StringIsNullOrEmptyShouldBeTrue));
+                                return;
+                            case nameof(string.IsNullOrWhiteSpace) when shouldArgumentInvocation.IsContainedInType(SpecialType.System_String):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldBeNullOrWhiteSpace_StringIsNullOrWhiteSpaceShouldBeTrue));
+                                return;
+                        }
                     }
                 }
                 return;
@@ -169,6 +210,18 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
                             case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainItem_ContainsShouldBeFalse));
+                                return;
+                        }
+                    }
+                    if (subject is IInvocationOperation shouldArgumentInvocation)
+                    {
+                        switch (shouldArgumentInvocation.TargetMethod.Name)
+                        {
+                            case nameof(string.IsNullOrEmpty) when shouldArgumentInvocation.IsContainedInType(SpecialType.System_String):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringIsNullOrEmptyShouldBeFalse));
+                                return;
+                            case nameof(string.IsNullOrWhiteSpace) when shouldArgumentInvocation.IsContainedInType(SpecialType.System_String):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldNotBeNullOrWhiteSpace_StringShouldNotBeNullOrWhiteSpace));
                                 return;
                         }
                     }
@@ -239,6 +292,9 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         {
                             case nameof(Array.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_Array):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_LengthShouldBe));
+                                return;
+                            case nameof(string.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_String):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldHaveLength_LengthShouldBe));
                                 return;
                         }
                     }
