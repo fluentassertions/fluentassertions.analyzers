@@ -14,7 +14,7 @@ jobs:
         config: [Debug, Release]
     runs-on: ${{ matrix.os }}
     env:
-      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      NUGET_CERT_REVOCATION_MODE: offline
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,7 +23,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.x
-          cache: true
       - run: dotnet build
       - run: dotnet test --configuration Release --filter 'TestCategory=Completed' /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
       - run: dotnet pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.csproj
