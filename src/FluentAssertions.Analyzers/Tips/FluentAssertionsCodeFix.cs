@@ -15,6 +15,40 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 
     protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
+        // oldAssertion: subject.<remove>(arg1).Should().<rename>(arg2, {reasonArgs});
+        // newAssertion: subject.Should().<rename>(arg1, {reasonArgs});
+        ExpressionSyntax RemoveAndRenameWithoutFirstArgumentWithArgumentsFromRemoved(string remove, string rename, string newName)
+        {
+            var removeNode = NodeReplacement.RemoveAndExtractArguments(remove);
+            var newExpression = GetNewExpression(expression, removeNode);
+
+            newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndRemoveFirstArgument(rename, newName));
+
+            return GetNewExpression(newExpression, NodeReplacement.PrependArguments(newName, removeNode.Arguments));
+        }
+
+        // oldAssertion: subject.<remove>(arg1).Should().<rename>({reasonArgs});
+        // newAssertion: subject.Should().<newName>(arg1, {reasonArgs});
+        ExpressionSyntax RemoveAndRenameWithArgumentsFromRemoved(string remove, string rename, string newName)
+        {
+            var removeNode = NodeReplacement.RemoveAndExtractArguments(remove);
+            var newExpression = GetNewExpression(expression, removeNode);
+
+            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(rename, newName, removeNode.Arguments));
+        }
+
+
+        // oldAssertion1: subject.Should().<rename>({reasonArgs1}).And.<remove>();
+        // oldAssertion2: subject.Should().<rename>().And.<remove>({reasonArgs});
+        // newAssertion : subject.Should().<newName>({reasonArgs});
+        ExpressionSyntax GetCombinedAssertions(string remove, string rename, string newName)
+        {
+            var removeNode = NodeReplacement.RemoveAndExtractArguments(remove);
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(remove), removeNode);
+
+            return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(rename, newName, removeNode.Arguments));
+        }
+
         switch (properties.VisitorName)
         {
             case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_AnyShouldBeFalse):
@@ -24,54 +58,19 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
             case nameof(DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue):
                 return GetNewExpression(expression, NodeReplacement.Remove("Any"), NodeReplacement.Rename("BeTrue", "NotBeEmpty"));
             case nameof(DiagnosticMetadata.CollectionShouldBeInAscendingOrder_OrderByShouldEqual):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("OrderBy");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndRemoveFirstArgument("Equal", "BeInAscendingOrder"));
-
-                    return GetNewExpression(newExpression, NodeReplacement.PrependArguments("BeInAscendingOrder", remove.Arguments));
-                }
+                return RemoveAndRenameWithoutFirstArgumentWithArgumentsFromRemoved(remove: "OrderBy", rename: "Equal", newName: "BeInAscendingOrder");
             case nameof(DiagnosticMetadata.CollectionShouldBeInDescendingOrder_OrderByDescendingShouldEqual):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("OrderByDescending");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndRemoveFirstArgument("Equal", "BeInDescendingOrder"));
-
-                    return GetNewExpression(newExpression, NodeReplacement.PrependArguments("BeInDescendingOrder", remove.Arguments));
-                }
+                return RemoveAndRenameWithoutFirstArgumentWithArgumentsFromRemoved(remove: "OrderByDescending", rename: "Equal", newName: "BeInDescendingOrder");
             case nameof(DiagnosticMetadata.CollectionShouldContainItem_ContainsShouldBeTrue):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Contains");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "Contain", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Contains", rename: "BeTrue", newName: "Contain");
             case nameof(DiagnosticMetadata.CollectionShouldContainProperty_AnyWithLambdaShouldBeTrue):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Any");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "Contain", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Any", rename: "BeTrue", newName: "Contain");
             case nameof(DiagnosticMetadata.CollectionShouldContainProperty_WhereShouldNotBeEmpty):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Where");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "Contain", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Where", rename: "NotBeEmpty", newName: "Contain");
             case nameof(DiagnosticMetadata.CollectionShouldContainSingle_ShouldHaveCount1):
                 return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveCount", "ContainSingle"));
             case nameof(DiagnosticMetadata.CollectionShouldContainSingle_WhereShouldHaveCount1):
-                {
-                    var newExpression = GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveCount", "ContainSingle"));
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Where");
-                    newExpression = GetNewExpression(newExpression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.PrependArguments("ContainSingle", remove.Arguments));
-                }
+                return RemoveAndRenameWithoutFirstArgumentWithArgumentsFromRemoved(remove: "Where", rename: "HaveCount", newName: "ContainSingle");
             case nameof(DiagnosticMetadata.CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect):
                 return GetNewExpressionForSelectShouldEqualOtherCollectionSelectSyntaxVisitor(expression);
             case nameof(DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe0):
@@ -91,21 +90,11 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
             case nameof(DiagnosticMetadata.CollectionShouldHaveCountLessThan_CountShouldBeLessThan):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("BeLessThan", "HaveCountLessThan"));
             case nameof(DiagnosticMetadata.CollectionShouldIntersectWith_IntersectShouldNotBeEmpty):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Intersect");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("NotBeEmpty", "IntersectWith", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Intersect", rename: "NotBeEmpty", newName: "IntersectWith");
             case nameof(DiagnosticMetadata.CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount):
                 return GetNewExpression(expression, NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgument("HaveCount", "HaveSameCount"));
             case nameof(DiagnosticMetadata.CollectionShouldNotContainItem_ContainsShouldBeFalse):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Contains");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Contains", rename: "BeFalse", newName: "NotContain");
             case nameof(DiagnosticMetadata.CollectionShouldNotContainNulls_SelectShouldNotContainNulls):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("Select");
@@ -114,19 +103,9 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     return GetNewExpression(newExpression, NodeReplacement.PrependArguments("NotContainNulls", remove.Arguments));
                 }
             case nameof(DiagnosticMetadata.CollectionShouldNotContainProperty_AnyLambdaShouldBeFalse):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Any");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeFalse", "NotContain", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Any", rename: "BeFalse", newName: "NotContain");
             case nameof(DiagnosticMetadata.CollectionShouldNotContainProperty_WhereShouldBeEmpty):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Where");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotContain", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Where", rename: "BeEmpty", newName: "NotContain");
             case nameof(DiagnosticMetadata.CollectionShouldNotContainProperty_ShouldOnlyContainNot):
                 return GetNewExpression(expression, NodeReplacement.RenameAndNegateLambda("OnlyContain", "NotContain"));
             case nameof(DiagnosticMetadata.CollectionShouldNotHaveCount_CountShouldNotBe):
@@ -137,19 +116,9 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     NodeReplacement.RenameAndRemoveInvocationOfMethodOnFirstArgument("NotBe", "NotHaveSameCount")
                 );
             case nameof(DiagnosticMetadata.CollectionShouldNotIntersectWith_IntersectShouldBeEmpty):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Intersect");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeEmpty", "NotIntersectWith", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "Intersect", rename: "BeEmpty", newName: "NotIntersectWith");
             case nameof(DiagnosticMetadata.CollectionShouldOnlyContainProperty_AllShouldBeTrue):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("All");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "OnlyContain", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "All", rename: "BeTrue", newName: "OnlyContain");
             case nameof(DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItems_ShouldHaveSameCountThisCollectionDistinct):
                 return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("HaveSameCount", "OnlyHaveUniqueItems"));
             case nameof(DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItemsByComparer_SelectShouldOnlyHaveUniqueItems):
@@ -161,21 +130,12 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                 }
             case nameof(DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeNullAndNotBeEmpty):
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeNullAndNotBeEmpty):
-                {
-                    return GetCombinedAssertions(expression, "NotBeEmpty", "NotBeNull", "NotBeNullOrEmpty");
-                }
+                return GetCombinedAssertions("NotBeEmpty", "NotBeNull", "NotBeNullOrEmpty");
             case nameof(DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeEmptyAndNotBeNull):
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeEmptyAndNotBeNull):
-                {
-                    return GetCombinedAssertions(expression, "NotBeNull", "NotBeEmpty", "NotBeNullOrEmpty");
-                }
+                return GetCombinedAssertions("NotBeNull", "NotBeEmpty", "NotBeNullOrEmpty");
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_ElementAtIndexShouldBe):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "ElementAt", rename: "Be", newName: "HaveElementAt");
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe):
                 {
                     var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
@@ -190,12 +150,10 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 
                     return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
                 }
-
             case nameof(DiagnosticMetadata.NumericShouldBePositive_ShouldBeGreaterThan):
                 return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("BeGreaterThan", "BePositive"));
             case nameof(DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan):
                 return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("BeLessThan", "BeNegative"));
-
             case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo):
                 {
                     var removeLess = NodeReplacement.RemoveAndExtractArguments("BeLessOrEqualTo");
@@ -206,9 +164,7 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 
                     var arguments = renameGreater.Arguments.InsertRange(1, removeLess.Arguments);
 
-                    var result = GetNewExpression(newExpression, NodeReplacement.WithArguments("BeInRange", arguments));
-
-                    return result;
+                    return GetNewExpression(newExpression, NodeReplacement.WithArguments("BeInRange", arguments));
                 }
             case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo):
                 {
@@ -234,11 +190,8 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 
                     newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeLessOrEqualTo", "BeApproximately", new SeparatedSyntaxList<ArgumentSyntax>().Add(SyntaxFactory.Argument(expected))));
 
-                    newExpression = RenameIdentifier(newExpression, "Math", actual.Identifier.Text);
-
-                    return newExpression;
+                    return RenameIdentifier(newExpression, "Math", actual.Identifier.Text);
                 }
-
             case nameof(DiagnosticMetadata.StringShouldBeNullOrEmpty_StringIsNullOrEmptyShouldBeTrue):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
@@ -248,7 +201,7 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     newExpression = GetNewExpression(newExpression, rename);
 
                     var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
-                    var subject = remove.Arguments.First().Expression;
+                    var subject = remove.Arguments[0].Expression;
 
                     return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
                 }
@@ -261,25 +214,14 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     newExpression = GetNewExpression(newExpression, rename);
 
                     var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
-                    var subject = remove.Arguments.First().Expression;
+                    var subject = remove.Arguments[0].Expression;
 
                     return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
                 }
-
             case nameof(DiagnosticMetadata.StringShouldEndWith_EndsWithShouldBeTrue):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("EndsWith");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "EndWith", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "EndsWith", rename: "BeTrue", newName: "EndWith");
             case nameof(DiagnosticMetadata.StringShouldStartWith_StartsWithShouldBeTrue):
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("StartsWith");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "StartWith", remove.Arguments));
-                }
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "StartsWith", rename: "BeTrue", newName: "StartWith");
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrWhiteSpace_StringShouldNotBeNullOrWhiteSpace):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrWhiteSpace");
@@ -289,12 +231,10 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     newExpression = GetNewExpression(newExpression, rename);
 
                     var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
-                    var subject = remove.Arguments.First().Expression;
+                    var subject = remove.Arguments[0].Expression;
 
                     return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
                 }
-
-
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringIsNullOrEmptyShouldBeFalse):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
@@ -304,29 +244,17 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     newExpression = GetNewExpression(newExpression, rename);
 
                     var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
-                    var subject = remove.Arguments.First().Expression;
+                    var subject = remove.Arguments[0].Expression;
 
                     return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
                 }
-                throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
-
             case nameof(DiagnosticMetadata.StringShouldHaveLength_LengthShouldBe):
-                {
-                    var remove = NodeReplacement.Remove("Length");
-                    var newExpression = GetNewExpression(expression, remove);
-
-                    return GetNewExpression(newExpression, NodeReplacement.Rename("Be", "HaveLength"));
-                }
+                return GetNewExpression(expression, 
+                    NodeReplacement.Remove("Length"), 
+                    NodeReplacement.Rename("Be", "HaveLength")
+                );
 
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
-    }
-
-    private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod, string newMethod)
-    {
-        var remove = NodeReplacement.RemoveAndExtractArguments(removeMethod);
-        var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(removeMethod), remove);
-
-        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(renameMethod, newMethod, remove.Arguments));
     }
 }
