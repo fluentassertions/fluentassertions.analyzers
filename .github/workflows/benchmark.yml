@@ -16,7 +16,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.x'
-          cache: true
       - name: Run benchmark
         run: cd src/FluentAssertions.Analyzers.BenchmarkTests && dotnet run -c Release --exporters json --filter '*'
 
