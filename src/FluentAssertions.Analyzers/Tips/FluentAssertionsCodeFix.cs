@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -159,14 +160,15 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     return GetNewExpression(newExpression, NodeReplacement.PrependArguments("OnlyHaveUniqueItems", remove.Arguments));
                 }
             case nameof(DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeNullAndNotBeEmpty):
+            case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeNullAndNotBeEmpty):
                 {
-                    return GetCombinedAssertions(expression, "NotBeEmpty", "NotBeNull");
+                    return GetCombinedAssertions(expression, "NotBeEmpty", "NotBeNull", "NotBeNullOrEmpty");
                 }
             case nameof(DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeEmptyAndNotBeNull):
+            case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeEmptyAndNotBeNull):
                 {
-                    return GetCombinedAssertions(expression, "NotBeNull", "NotBeEmpty");
+                    return GetCombinedAssertions(expression, "NotBeNull", "NotBeEmpty", "NotBeNullOrEmpty");
                 }
-
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_ElementAtIndexShouldBe):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("ElementAt");
@@ -237,7 +239,94 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     return newExpression;
                 }
 
+            case nameof(DiagnosticMetadata.StringShouldBeNullOrEmpty_StringIsNullOrEmptyShouldBeTrue):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    var rename = NodeReplacement.Rename("BeTrue", "BeNullOrEmpty");
+                    newExpression = GetNewExpression(newExpression, rename);
+
+                    var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+                    var subject = remove.Arguments.First().Expression;
+
+                    return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+                }
+            case nameof(DiagnosticMetadata.StringShouldBeNullOrWhiteSpace_StringIsNullOrWhiteSpaceShouldBeTrue):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrWhiteSpace");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    var rename = NodeReplacement.Rename("BeTrue", "BeNullOrWhiteSpace");
+                    newExpression = GetNewExpression(newExpression, rename);
+
+                    var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+                    var subject = remove.Arguments.First().Expression;
+
+                    return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+                }
+
+            case nameof(DiagnosticMetadata.StringShouldEndWith_EndsWithShouldBeTrue):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("EndsWith");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "EndWith", remove.Arguments));
+                }
+            case nameof(DiagnosticMetadata.StringShouldStartWith_StartsWithShouldBeTrue):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("StartsWith");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeTrue", "StartWith", remove.Arguments));
+                }
+            case nameof(DiagnosticMetadata.StringShouldNotBeNullOrWhiteSpace_StringShouldNotBeNullOrWhiteSpace):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrWhiteSpace");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    var rename = NodeReplacement.Rename("BeFalse", "NotBeNullOrWhiteSpace");
+                    newExpression = GetNewExpression(newExpression, rename);
+
+                    var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+                    var subject = remove.Arguments.First().Expression;
+
+                    return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+                }
+
+
+            case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringIsNullOrEmptyShouldBeFalse):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("IsNullOrEmpty");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    var rename = NodeReplacement.Rename("BeFalse", "NotBeNullOrEmpty");
+                    newExpression = GetNewExpression(newExpression, rename);
+
+                    var stringKeyword = newExpression.DescendantNodes().OfType<PredefinedTypeSyntax>().Single();
+                    var subject = remove.Arguments.First().Expression;
+
+                    return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
+                }
+                throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
+
+            case nameof(DiagnosticMetadata.StringShouldHaveLength_LengthShouldBe):
+                {
+                    var remove = NodeReplacement.Remove("Length");
+                    var newExpression = GetNewExpression(expression, remove);
+
+                    return GetNewExpression(newExpression, NodeReplacement.Rename("Be", "HaveLength"));
+                }
+
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
+    }
+
+    private ExpressionSyntax GetCombinedAssertions(ExpressionSyntax expression, string removeMethod, string renameMethod, string newMethod)
+    {
+        var remove = NodeReplacement.RemoveAndExtractArguments(removeMethod);
+        var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(removeMethod), remove);
+
+        return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(renameMethod, newMethod, remove.Arguments));
     }
 }
