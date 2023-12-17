@@ -59,7 +59,7 @@ internal static class OperartionExtensions
         ||
         (property1.Parent is IParameterReferenceOperation parameter1
         && property2.Parent is IParameterReferenceOperation parameter2
-        && parameter1.Parameter.Equals(parameter2.Parameter, SymbolEqualityComparer.Default))
+        && parameter1.Parameter.Equals(parameter2.Parameter, SymbolEqualityComparer.Default));
     }
 
     public static bool IsLiteralValue<T>(this IArgumentOperation argument, T value)
