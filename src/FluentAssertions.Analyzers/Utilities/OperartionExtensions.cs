@@ -53,12 +53,12 @@ internal static class OperartionExtensions
     }
     public static bool IsSamePropertyReference(this IPropertyReferenceOperation property1, IPropertyReferenceOperation property2)
     {
-        return (property1.Parent is ILocalReferenceOperation local1
-        && property2.Parent is ILocalReferenceOperation local2
+        return (property1.Instance is ILocalReferenceOperation local1
+        && property2.Instance is ILocalReferenceOperation local2
         && local1.Local.Equals(local2.Local, SymbolEqualityComparer.Default))
         ||
-        (property1.Parent is IParameterReferenceOperation parameter1
-        && property2.Parent is IParameterReferenceOperation parameter2
+        (property1.Instance is IParameterReferenceOperation parameter1
+        && property2.Instance is IParameterReferenceOperation parameter2
         && parameter1.Parameter.Equals(parameter2.Parameter, SymbolEqualityComparer.Default));
     }
 
