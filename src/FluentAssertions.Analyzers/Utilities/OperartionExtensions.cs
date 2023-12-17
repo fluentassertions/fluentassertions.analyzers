@@ -51,6 +51,16 @@ internal static class OperartionExtensions
         && argument2.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument2Reference)
         && argument1Reference.Parameter.Equals(argument2Reference.Parameter, SymbolEqualityComparer.Default);
     }
+    public static bool IsSamePropertyReference(this IPropertyReferenceOperation property1, IPropertyReferenceOperation property2)
+    {
+        return (property1.Instance is ILocalReferenceOperation local1
+        && property2.Instance is ILocalReferenceOperation local2
+        && local1.Local.Equals(local2.Local, SymbolEqualityComparer.Default))
+        ||
+        (property1.Instance is IParameterReferenceOperation parameter1
+        && property2.Instance is IParameterReferenceOperation parameter2
+        && parameter1.Parameter.Equals(parameter2.Parameter, SymbolEqualityComparer.Default));
+    }
 
     public static bool IsLiteralValue<T>(this IArgumentOperation argument, T value)
         => UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);

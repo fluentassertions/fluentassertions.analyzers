@@ -179,6 +179,12 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             case nameof(string.StartsWith) when invocationBeforeShould.IsContainedInType(SpecialType.System_String):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldStartWith_StartsWithShouldBeTrue));
                                 return;
+                            case nameof(IDictionary<string, object>.ContainsKey) when invocationBeforeShould.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || invocationBeforeShould.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldContainKey_ContainsKeyShouldBeTrue));
+                                return;
+                            case nameof(Dictionary<string, object>.ContainsValue) when invocationBeforeShould.IsContainedInType(metadata.DictionaryOfT2):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldContainValue_ContainsValueShouldBeTrue));
+                                return;
                         }
                     }
                     if (subject is IInvocationOperation shouldArgumentInvocation)
@@ -210,6 +216,12 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             case nameof(Enumerable.Contains) when invocationBeforeShould.IsContainedInType(metadata.Enumerable) && invocationBeforeShould.Arguments.Length is 2:
                             case nameof(ICollection<object>.Contains) when invocationBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T) && invocationBeforeShould.Arguments.Length == 1:
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotContainItem_ContainsShouldBeFalse));
+                                return;
+                            case nameof(IDictionary<string, object>.ContainsKey) when invocationBeforeShould.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || invocationBeforeShould.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldNotContainKey_ContainsKeyShouldBeFalse));
+                                return;
+                            case nameof(Dictionary<string, object>.ContainsValue) when invocationBeforeShould.IsContainedInType(metadata.DictionaryOfT2):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldNotContainValue_ContainsValueShouldBeFalse));
                                 return;
                         }
                     }
@@ -442,6 +454,56 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     if (assertion.Arguments[0].IsLiteralValue(0))
                     {
                         context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan));
+                        return;
+                    }
+                }
+                return;
+            case "ContainKey" when assertion.IsContainedInType(metadata.GenericDictionaryAssertionsOfT4):
+                {
+                    if (assertion.TryGetChainedInvocationAfterAndConstraint("ContainValue", out var chainedInvocation))
+                    {
+                        if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
+
+                        if (assertion.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Key) } firstPropertyReference
+                        && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Value) } secondPropertyReference)
+                        {
+                            if (firstPropertyReference.IsSamePropertyReference(secondPropertyReference))
+                            {
+                                context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainKeyAndContainValue));
+                                return;
+                            }
+                            // TODO: report here
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue));
+                            return;
+                        }
+                        return;
+                    }
+                }
+                return;
+            case "ContainValue" when assertion.IsContainedInType(metadata.GenericDictionaryAssertionsOfT4):
+                {
+                    if (assertion.TryGetChainedInvocationAfterAndConstraint("ContainKey", out var chainedInvocation))
+                    {
+                        if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
+
+                        if (assertion.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Value) } firstPropertyReference
+                        && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Key) } secondPropertyReference)
+                        {
+                            if (firstPropertyReference.IsSamePropertyReference(secondPropertyReference))
+                            {
+                                context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey));
+                                return;
+                            }
+                            // TODO: report here
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey));
+                            return;
+                        }
                         return;
                     }
                 }

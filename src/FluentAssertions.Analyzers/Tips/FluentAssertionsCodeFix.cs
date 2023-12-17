@@ -49,6 +49,38 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
             return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments(rename, newName, removeNode.Arguments));
         }
 
+        // oldAssertion1: subject.Should().<rename>(arg1, {reasonArgs1}).And.<remove>(arg2);
+        // oldAssertion2: subject.Should().<rename>(arg1).And.<remove>(arg2, {reasonArgs});
+        // newAssertion : subject.Should().<newName>(arg1, arg2, {reasonArgs});
+        ExpressionSyntax GetCombinedAssertionsWithArguments(string remove, string rename, string newName)
+        {
+            var removeNode = NodeReplacement.RemoveAndExtractArguments(remove);
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(remove), removeNode);
+
+            var renameNode = NodeReplacement.RenameAndExtractArguments(rename, newName);
+            newExpression = GetNewExpression(newExpression, renameNode);
+
+            var arguments = renameNode.Arguments.InsertRange(1, removeNode.Arguments);
+
+            return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, arguments));
+        }
+
+        // oldAssertion1: subject.Should().<rename>(arg1, {reasonArgs1}).And.<remove>(arg2);
+        // oldAssertion2: subject.Should().<rename>(arg1).And.<remove>(arg2, {reasonArgs});
+        // newAssertion : subject.Should().<newName>(arg2, arg1, {reasonArgs});
+        ExpressionSyntax GetCombinedAssertionsWithArgumentsReversedOrder(string remove, string rename, string newName)
+        {
+            var removeNode = NodeReplacement.RemoveAndExtractArguments(remove);
+            var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore(remove), removeNode);
+
+            var renameNode = NodeReplacement.RenameAndExtractArguments(rename, newName);
+            newExpression = GetNewExpression(newExpression, renameNode);
+
+            var arguments = removeNode.Arguments.InsertRange(1, renameNode.Arguments);
+
+            return GetNewExpression(newExpression, NodeReplacement.WithArguments(newName, arguments));
+        }
+
         switch (properties.VisitorName)
         {
             case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_AnyShouldBeFalse):
@@ -155,29 +187,9 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
             case nameof(DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan):
                 return GetNewExpression(expression, NodeReplacement.RenameAndRemoveFirstArgument("BeLessThan", "BeNegative"));
             case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo):
-                {
-                    var removeLess = NodeReplacement.RemoveAndExtractArguments("BeLessOrEqualTo");
-                    var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("BeLessOrEqualTo"), removeLess);
-
-                    var renameGreater = NodeReplacement.RenameAndExtractArguments("BeGreaterOrEqualTo", "BeInRange");
-                    newExpression = GetNewExpression(newExpression, renameGreater);
-
-                    var arguments = renameGreater.Arguments.InsertRange(1, removeLess.Arguments);
-
-                    return GetNewExpression(newExpression, NodeReplacement.WithArguments("BeInRange", arguments));
-                }
+                return GetCombinedAssertionsWithArguments(remove: "BeLessOrEqualTo", rename: "BeGreaterOrEqualTo", newName: "BeInRange");
             case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo):
-                {
-                    var removeGreater = NodeReplacement.RemoveAndExtractArguments("BeGreaterOrEqualTo");
-                    var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("BeGreaterOrEqualTo"), removeGreater);
-
-                    var renameLess = NodeReplacement.RenameAndExtractArguments("BeLessOrEqualTo", "BeInRange");
-                    newExpression = GetNewExpression(newExpression, renameLess);
-
-                    var arguments = removeGreater.Arguments.InsertRange(1, renameLess.Arguments);
-
-                    return GetNewExpression(newExpression, NodeReplacement.WithArguments("BeInRange", arguments));
-                }
+                return GetCombinedAssertionsWithArguments(remove: "BeGreaterOrEqualTo", rename: "BeLessOrEqualTo", newName: "BeInRange");
             case nameof(DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo):
                 {
                     var remove = NodeReplacement.RemoveAndExtractArguments("Abs");
@@ -249,11 +261,46 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                     return newExpression.ReplaceNode(stringKeyword, subject.WithTriviaFrom(stringKeyword));
                 }
             case nameof(DiagnosticMetadata.StringShouldHaveLength_LengthShouldBe):
-                return GetNewExpression(expression, 
-                    NodeReplacement.Remove("Length"), 
+                return GetNewExpression(expression,
+                    NodeReplacement.Remove("Length"),
                     NodeReplacement.Rename("Be", "HaveLength")
                 );
+            case nameof(DiagnosticMetadata.DictionaryShouldContainKey_ContainsKeyShouldBeTrue):
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "ContainsKey", rename: "BeTrue", newName: "ContainKey");
+            case nameof(DiagnosticMetadata.DictionaryShouldNotContainKey_ContainsKeyShouldBeFalse):
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "ContainsKey", rename: "BeFalse", newName: "NotContainKey");
+            case nameof(DiagnosticMetadata.DictionaryShouldContainValue_ContainsValueShouldBeTrue):
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "ContainsValue", rename: "BeTrue", newName: "ContainValue");
+            case nameof(DiagnosticMetadata.DictionaryShouldNotContainValue_ContainsValueShouldBeFalse):
+                return RemoveAndRenameWithArgumentsFromRemoved(remove: "ContainsValue", rename: "BeFalse", newName: "NotContainValue");
+            case nameof(DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue):
+                return GetCombinedAssertionsWithArguments(remove: "ContainValue", rename: "ContainKey", newName: "Contain");
+            case nameof(DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey):
+                return GetCombinedAssertionsWithArgumentsReversedOrder(remove: "ContainKey", rename: "ContainValue", newName: "Contain");
+            case nameof(DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainKeyAndContainValue):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("ContainValue");
+                    var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainValue"), remove);
 
+                    var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
+
+                    return GetNewExpression(newExpression, 
+                        NodeReplacement.RenameAndRemoveFirstArgument("ContainKey", "Contain"),
+                        NodeReplacement.PrependArguments("Contain", newArguments)
+                    );
+                }
+            case nameof(DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("ContainKey");
+                    var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainKey"), remove);
+
+                    var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
+
+                    return GetNewExpression(newExpression, 
+                        NodeReplacement.RenameAndRemoveFirstArgument("ContainValue", "Contain"),
+                        NodeReplacement.PrependArguments("Contain", newArguments)
+                    );
+                }
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
     }
