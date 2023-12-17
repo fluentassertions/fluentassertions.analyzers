@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -508,7 +509,107 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     }
                 }
                 return;
+            case "Throw" when assertion.IsContainedInType(metadata.ExceptionAssertionsOfT1):
+                {
+                    if (TryGetExceptionPropertyAssertion(assertion, "And", nameof(Exception.Message), out var nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe));
+                                break;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith));
+                                break;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith));
+                                break;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "Which", nameof(Exception.Message), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe));
+                                break;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith));
+                                break;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith));
+                                break;
+                        }
+                    }
+
+                    if (TryGetExceptionPropertyAssertion(assertion, "Which", nameof(Exception.InnerException), out nextAssertion) && nextAssertion.TargetMethod.Name.Equals("OfType"))
+                    {
+                        context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.exception))
+                    }
+                }
+                return;
+            case "ThrowExactly" when assertion.IsContainedInType(metadata.ExceptionAssertionsOfT1):
+                {
+                    if (TryGetExceptionPropertyAssertion(assertion, "And", nameof(Exception.Message), out var nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe));
+                                break;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith));
+                                break;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith));
+                                break;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "Which", nameof(Exception.Message), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe));
+                                break;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith));
+                                break;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith));
+                                break;
+                        }
+                    }
+                }
+                return;
         }
+    }
+
+    private static bool TryGetExceptionPropertyAssertion(IInvocationOperation assertion, string fluentAssertionProperty, string exceptionProperty, out IInvocationOperation nextAssertion)
+    {
+        if (assertion.Parent is IPropertyReferenceOperation chainProperty && chainProperty.Property.Name.Equals(fluentAssertionProperty)
+        && chainProperty.Parent is IPropertyReferenceOperation exception && exception.Property.Name.Equals(exceptionProperty)
+        && exception.Parent is IArgumentOperation argument
+        && argument.Parent is IInvocationOperation { TargetMethod.Name: "Should" } should)
+        {
+            nextAssertion = should.Parent as IInvocationOperation;
+            return nextAssertion is not null;
+        }
+
+        nextAssertion = default;
+        return false;
     }
 
     static Diagnostic CreateDiagnostic(IOperation operation, DiagnosticMetadata metadata)

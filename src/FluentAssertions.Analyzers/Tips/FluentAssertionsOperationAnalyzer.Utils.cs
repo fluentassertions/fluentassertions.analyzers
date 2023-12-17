@@ -27,6 +27,7 @@ public partial class FluentAssertionsOperationAnalyzer
             GenericCollectionAssertionsOfT3 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`3");
             GenericDictionaryAssertionsOfT4 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericDictionaryAssertions`4");
             StringAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.StringAssertions`1");
+            ExceptionAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Specialized.ExceptionAssertions`1");
             IDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IDictionary<,>).FullName);
             DictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(Dictionary<,>).FullName);
             IReadonlyDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IReadOnlyDictionary<,>).FullName);
@@ -39,6 +40,7 @@ public partial class FluentAssertionsOperationAnalyzer
         public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
         public INamedTypeSymbol GenericDictionaryAssertionsOfT4 { get; }
         public INamedTypeSymbol StringAssertionsOfT1 { get; }
+        public INamedTypeSymbol ExceptionAssertionsOfT1 { get; }
         public INamedTypeSymbol IDictionaryOfT2 { get; }
         public INamedTypeSymbol DictionaryOfT2 { get; }
         public INamedTypeSymbol IReadonlyDictionaryOfT2 { get; }
