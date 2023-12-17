@@ -25,10 +25,11 @@ public partial class FluentAssertionsOperationAnalyzer
             NumericAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Numeric.NumericAssertions`2");
             BooleanAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.BooleanAssertions`1");
             GenericCollectionAssertionsOfT3 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`3");
+            GenericDictionaryAssertionsOfT4 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericDictionaryAssertions`4");
             StringAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.StringAssertions`1");
             IDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IDictionary<,>).FullName);
+            DictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(Dictionary<,>).FullName);
             IReadonlyDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IReadOnlyDictionary<,>).FullName);
-
             Enumerable = compilation.GetTypeByMetadataName(typeof(Enumerable).FullName);
             Math = compilation.GetTypeByMetadataName(typeof(Math).FullName);
         }
@@ -36,8 +37,10 @@ public partial class FluentAssertionsOperationAnalyzer
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
         public INamedTypeSymbol ObjectAssertionsOfT2 { get; }
         public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
+        public INamedTypeSymbol GenericDictionaryAssertionsOfT4 { get; }
         public INamedTypeSymbol StringAssertionsOfT1 { get; }
         public INamedTypeSymbol IDictionaryOfT2 { get; }
+        public INamedTypeSymbol DictionaryOfT2 { get; }
         public INamedTypeSymbol IReadonlyDictionaryOfT2 { get; }
         public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
