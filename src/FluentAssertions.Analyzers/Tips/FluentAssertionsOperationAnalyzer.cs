@@ -465,14 +465,19 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
 
                         if (assertion.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Key) } firstPropertyReference
-                        && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Value) } secondPropertyReference
-                        && firstPropertyReference.Instance.Type.Equals(secondPropertyReference.Instance.Type, SymbolEqualityComparer.Default))
+                        && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Value) } secondPropertyReference)
                         {
-                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainKeyAndContainValue));
+                            if (firstPropertyReference.IsSamePropertyReference(secondPropertyReference))
+                            {
+                                context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainKeyAndContainValue));
+                                return;
+                            }
+                            // TODO: report here
                         }
                         else
                         {
                             context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue));
+                            return;
                         }
                         return;
                     }
@@ -485,14 +490,19 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
 
                         if (assertion.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Value) } firstPropertyReference
-                                                && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Key) } secondPropertyReference
-                                                && firstPropertyReference.Instance.Type.Equals(secondPropertyReference.Instance.Type, SymbolEqualityComparer.Default))
+                        && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Key) } secondPropertyReference)
                         {
-                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey));
+                            if (firstPropertyReference.IsSamePropertyReference(secondPropertyReference))
+                            {
+                                context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey));
+                                return;
+                            }
+                            // TODO: report here
                         }
                         else
                         {
                             context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey));
+                            return;
                         }
                         return;
                     }
