@@ -278,10 +278,29 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
             case nameof(DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey):
                 return GetCombinedAssertionsWithArgumentsReversedOrder(remove: "ContainKey", rename: "ContainValue", newName: "Contain");
             case nameof(DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainKeyAndContainValue):
-                return expression;
-            case nameof(DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey):
-                return expression;
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("ContainValue");
+                    var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainValue"), remove);
 
+                    var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
+
+                    return GetNewExpression(newExpression, 
+                        NodeReplacement.RenameAndRemoveFirstArgument("ContainKey", "Contain"),
+                        NodeReplacement.PrependArguments("Contain", newArguments)
+                    );
+                }
+            case nameof(DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey):
+                {
+                    var remove = NodeReplacement.RemoveAndExtractArguments("ContainKey");
+                    var newExpression = GetNewExpression(expression, NodeReplacement.RemoveMethodBefore("ContainKey"), remove);
+
+                    var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
+
+                    return GetNewExpression(newExpression, 
+                        NodeReplacement.RenameAndRemoveFirstArgument("ContainValue", "Contain"),
+                        NodeReplacement.PrependArguments("Contain", newArguments)
+                    );
+                }
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
     }

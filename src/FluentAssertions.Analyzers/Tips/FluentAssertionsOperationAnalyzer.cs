@@ -31,7 +31,7 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
             {
                 return;
             }
- 
+
             compilationStartContext.RegisterOperationAction(operationContext => AnalyzeInvocation(operationContext, metadata), OperationKind.Invocation);
         });
     }
@@ -464,7 +464,16 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
 
-                        context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue));
+                        if (assertion.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Key) } firstPropertyReference
+                        && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Value) } secondPropertyReference
+                        && firstPropertyReference.Instance.Type.Equals(secondPropertyReference.Instance.Type, SymbolEqualityComparer.Default))
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainKeyAndContainValue));
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue));
+                        }
                         return;
                     }
                 }
@@ -475,7 +484,16 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                     {
                         if (!assertion.HasEmptyBecauseAndReasonArgs(startingIndex: 1) && !chainedInvocation.HasEmptyBecauseAndReasonArgs(startingIndex: 1)) return;
 
-                        context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey));
+                        if (assertion.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Value) } firstPropertyReference
+                                                && chainedInvocation.Arguments[0].Value is IPropertyReferenceOperation { Property.Name: nameof(KeyValuePair<string, object>.Key) } secondPropertyReference
+                                                && firstPropertyReference.Instance.Type.Equals(secondPropertyReference.Instance.Type, SymbolEqualityComparer.Default))
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey));
+                        }
+                        else
+                        {
+                            context.ReportDiagnostic(CreateDiagnostic(chainedInvocation, DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey));
+                        }
                         return;
                     }
                 }
