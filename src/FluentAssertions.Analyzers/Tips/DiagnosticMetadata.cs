@@ -70,14 +70,14 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata StringShouldNotBeNullOrWhiteSpace_StringShouldNotBeNullOrWhiteSpace { get; } = new("Use .Should().NotBeNullOrWhiteSpace()", GetHelpLink("Strings-7"));
     public static DiagnosticMetadata StringShouldHaveLength_LengthShouldBe { get; } = new("Use .Should().HaveLength()", GetHelpLink("Strings-8"));
 
-    public static DiagnosticMetadata DictionaryShouldContainKey_ContainsKeyShouldBeTrue = new("Use ", GetHelpLink("Dictionaries-1"));
-    public static DiagnosticMetadata DictionaryShouldNotContainKey_ContainsKeyShouldBeFalse = new("", GetHelpLink("Dictionaries-2"));
-    public static DiagnosticMetadata DictionaryShouldContainValue_ContainsValueShouldBeTrue = new("", GetHelpLink("Dictionaries-3"));
-    public static DiagnosticMetadata DictionaryShouldNotContainValue_ContainsValueShouldBeFalse = new("", GetHelpLink("Dictionaries-4"));
-    public static DiagnosticMetadata DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue = new("", GetHelpLink("Dictionaries-5"));
-    public static DiagnosticMetadata DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey = new("", GetHelpLink("Dictionaries-5"));
-    public static DiagnosticMetadata DictionaryShouldContainPair_ShouldContainKeyAndContainValue = new("", GetHelpLink("Dictionaries-6"));
-    public static DiagnosticMetadata DictionaryShouldContainPair_ShouldContainValueAndContainKey = new("", GetHelpLink("Dictionaries-6"));
+    public static DiagnosticMetadata DictionaryShouldContainKey_ContainsKeyShouldBeTrue = new("Use .Should().ContainKey()", GetHelpLink("Dictionaries-1"));
+    public static DiagnosticMetadata DictionaryShouldNotContainKey_ContainsKeyShouldBeFalse = new("Use .Should().NotContainKey() ", GetHelpLink("Dictionaries-2"));
+    public static DiagnosticMetadata DictionaryShouldContainValue_ContainsValueShouldBeTrue = new("Use .Should().ContainValue() ", GetHelpLink("Dictionaries-3"));
+    public static DiagnosticMetadata DictionaryShouldNotContainValue_ContainsValueShouldBeFalse = new("Use .Should().NotContainValue() ", GetHelpLink("Dictionaries-4"));
+    public static DiagnosticMetadata DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue = new("Use .Should().Contain() ", GetHelpLink("Dictionaries-5"));
+    public static DiagnosticMetadata DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey = new("Use .Should().Contain() ", GetHelpLink("Dictionaries-5"));
+    public static DiagnosticMetadata DictionaryShouldContainPair_ShouldContainKeyAndContainValue = new("Use .Should().Contain() ", GetHelpLink("Dictionaries-6"));
+    public static DiagnosticMetadata DictionaryShouldContainPair_ShouldContainValueAndContainKey = new("Use .Should().Contain() ", GetHelpLink("Dictionaries-6"));
 
     private static string GetHelpLink(string id) => $"https://fluentassertions.com/tips/#{id}";
 }
