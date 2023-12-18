@@ -105,9 +105,9 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
                 return RemoveAndRenameWithoutFirstArgumentWithArgumentsFromRemoved(remove: "Where", rename: "HaveCount", newName: "ContainSingle");
             case nameof(DiagnosticMetadata.CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect):
                 return GetNewExpressionForSelectShouldEqualOtherCollectionSelectSyntaxVisitor(expression);
-            case nameof(DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe0):
+            case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_CountShouldBe0):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.RenameAndRemoveFirstArgument("Be", "BeEmpty"));
-            case nameof(DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe1):
+            case nameof(DiagnosticMetadata.CollectionShouldContainSingle_CountShouldBe1):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.RenameAndRemoveFirstArgument("Be", "ContainSingle"));
             case nameof(DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe):
                 return GetNewExpression(expression, NodeReplacement.Remove("Count"), NodeReplacement.Rename("Be", "HaveCount"));

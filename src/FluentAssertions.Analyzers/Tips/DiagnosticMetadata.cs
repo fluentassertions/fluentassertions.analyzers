@@ -30,10 +30,10 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata CollectionShouldHaveCountLessThan_CountShouldBeLessThan { get; } = new("Use .Should().HaveCountLessThan()", GetHelpLink("Collections-12"));
     public static DiagnosticMetadata CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo { get; } = new("Use .Should().HaveCountLessOrEqualTo()", GetHelpLink("Collections-13"));
     public static DiagnosticMetadata CollectionShouldNotHaveCount_CountShouldNotBe { get; } = new("Use .Should().NotHaveCount()", GetHelpLink("Collections-14"));
-    public static DiagnosticMetadata CollectionShouldContainSingle_ShouldHaveCount1 { get; } = new("Use .Should().HaveCount()", GetHelpLink("Collections-15"));
-    public static DiagnosticMetadata CollectionShouldHaveCount_CountShouldBe1 { get; } = new("Use .Should().HaveCount()", GetHelpLink("Collections-15"));
+    public static DiagnosticMetadata CollectionShouldContainSingle_ShouldHaveCount1 { get; } = new("Use .Should().ContainSingle()", GetHelpLink("Collections-15"));
+    public static DiagnosticMetadata CollectionShouldContainSingle_CountShouldBe1 { get; } = new("Use .Should().ContainSingle()", GetHelpLink("Collections-15"));
     public static DiagnosticMetadata CollectionShouldBeEmpty_ShouldHaveCount0 { get; } = new("Use .Should().BeEmpty()", GetHelpLink("Collections-16"));
-    public static DiagnosticMetadata CollectionShouldHaveCount_CountShouldBe0 { get; } = new("Use .Should().HaveCount()", GetHelpLink("Collections-16"));
+    public static DiagnosticMetadata CollectionShouldBeEmpty_CountShouldBe0 { get; } = new("Use .Should().BeEmpty()", GetHelpLink("Collections-16"));
     public static DiagnosticMetadata CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount { get; } = new("Use .Should().HaveSameCount()", GetHelpLink("Collections-17"));
     public static DiagnosticMetadata CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount { get; } = new("Use .Should().NotHaveSameCount()", GetHelpLink("Collections-18"));
     public static DiagnosticMetadata CollectionShouldContainProperty_WhereShouldNotBeEmpty { get; } = new("Use .Should().NotBeEmpty()", GetHelpLink("Collections-19"));
@@ -95,7 +95,6 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
     public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
     public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
-
     public static DiagnosticMetadata ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeOfType = new("Use .Should().Throw<TException>().WithInnerException<TInnerException>()", string.Empty);
     public static DiagnosticMetadata ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeOfType = new("Use .Should().Throw<TException>().WithInnerException<TInnerException>()", string.Empty);
     public static DiagnosticMetadata ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeOfType = new("Use .Should().ThrowExactly<TException>().WithInnerException<TInnerException>()", string.Empty);
