@@ -8,24 +8,52 @@ namespace FluentAssertions.Analyzers.Tests
     public class ExceptionsTests
     {
         [DataTestMethod]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Contain(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().Contain(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Contain(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().Contain(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Be(expectedMessage{0});")]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().Be(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Be(\"a constant string\"{0});")]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().Be(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().StartWith(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().StartWith(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().StartWith(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().StartWith(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().EndWith(expectedMessage{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().Contain(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().Contain(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain);
+
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().EndWith(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().EndWith(\"a constant string\"{0});")]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().EndWith(\"a constant string\"{0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithMessage_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithMessageAnalyzer>(assertion);
+        public void ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().StartWith(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().And.Message.Should().StartWith(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Be(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Be(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Contain(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().Contain(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().EndWith(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().EndWith(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().StartWith(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.Message.Should().StartWith(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -77,27 +105,55 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().Throw<Exception>().And.Message.Should().EndWith(\"a constant string\"{0});",
             newAssertion: "action.Should().Throw<Exception>().WithMessage(\"*a constant string\"{0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithMessageCodeFix, ExceptionShouldThrowWithMessageAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Be(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Be(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldBe);
 
         [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Contain(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(\"a constant string\"{0});")]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Contain(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Be(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Be(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Be(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Be(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().StartWith(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().StartWith(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().StartWith(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().StartWith(\"a constant string\"{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().EndWith(expectedMessage{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldContain_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldContain);
+
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().EndWith(expectedMessage{0});")]
-        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().EndWith(\"a constant string\"{0});")]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().EndWith(\"a constant string\"{0});")]
         [Implemented]
-        public void ExceptionShouldThrowExactlyWithMessage_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithMessageAnalyzer>(assertion);
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().StartWith(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().StartWith(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldStartWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldStartWith);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Be(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Be(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldBe);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().Contain(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldContain_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldContain);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().EndWith(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().EndWith(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldEndWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldEndWith);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().StartWith(expectedMessage{0});")]
+        [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.Message.Should().StartWith(\"a constant string\"{0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldStartWith_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldStartWith);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -149,15 +205,27 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().ThrowExactly<Exception>().And.Message.Should().EndWith(\"a constant string\"{0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithMessage(\"*a constant string\"{0});")]
         [Implemented]
-        public void ExceptionShouldThrowExactlyWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithMessageCodeFix, ExceptionShouldThrowWithMessageAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowExactlyWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [DataTestMethod]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().And.InnerException.Should().BeOfType<ArgumentException>({0});")]
-        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.InnerException.Should().BeOfType<ArgumentException>({0});")]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.InnerException.Should().BeOfType<ArgumentException>({0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeOfType_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeOfType);
+        
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.InnerException.Should().BeOfType<ArgumentException>({0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithInnerExceptionExactly_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithInnerExceptionAnalyzer>(assertion);
+        public void ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeOfType_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeOfType);
+        
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().And.InnerException.Should().BeOfType<ArgumentException>({0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeOfType_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeOfType);
+        
+        [DataTestMethod]
+        [AssertionDiagnostic("action.Should().Throw<Exception>().Which.InnerException.Should().BeOfType<ArgumentException>({0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeOfType_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeOfType);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -173,15 +241,27 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().ThrowExactly<Exception>().Which.InnerException.Should().BeOfType<ArgumentException>({0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithInnerExceptionExactly<ArgumentException>({0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithInnerExceptionExactly_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithInnerExceptionCodeFix, ExceptionShouldThrowWithInnerExceptionAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowWithInnerExceptionExactly_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo);
+        
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().Which.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
+        [Implemented]
+        public void ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo);
+        
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().Throw<Exception>().And.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
+        [Implemented]
+        public void ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeAssignableTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeAssignableTo);
+        
+        [DataTestMethod]
         [AssertionDiagnostic("action.Should().Throw<Exception>().Which.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithInnerException_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<ExceptionShouldThrowWithInnerExceptionAnalyzer>(assertion);
+        public void ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeAssignableTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeAssignableTo);
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -197,21 +277,17 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().ThrowExactly<Exception>().Which.InnerException.Should().BeAssignableTo<ArgumentException>({0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithInnerException<ArgumentException>({0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithInnerException_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<ExceptionShouldThrowWithInnerExceptionCodeFix, ExceptionShouldThrowWithInnerExceptionAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowWithInnerException_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
 
-        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string sourceAssertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
+        private void VerifyCSharpDiagnostic(string sourceAssertion, DiagnosticMetadata metadata)
         {
-            System.Console.WriteLine(sourceAssertion);
             var source = GenerateCode.ExceptionAssertion(sourceAssertion);
-
-            var type = typeof(TDiagnosticAnalyzer);
-            var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
-            var message = (string)type.GetField("Message").GetValue(null);
 
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
             {
-                Id = diagnosticId,
-                Message = message,
+                Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                Message = metadata.Message,
+                VisitorName = metadata.Name,
                 Locations = new DiagnosticResultLocation[]
                 {
                     new DiagnosticResultLocation("Test0.cs", 9,13)

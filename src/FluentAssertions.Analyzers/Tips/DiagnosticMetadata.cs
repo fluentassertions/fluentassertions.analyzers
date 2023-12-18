@@ -79,5 +79,32 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata DictionaryShouldContainPair_ShouldContainKeyAndContainValue = new("Use .Should().Contain() ", GetHelpLink("Dictionaries-6"));
     public static DiagnosticMetadata DictionaryShouldContainPair_ShouldContainValueAndContainKey = new("Use .Should().Contain() ", GetHelpLink("Dictionaries-6"));
 
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldBe = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldBe = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldContain = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldContain = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldEndWith = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldStartWith = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldStartWith = new("Use .Should().ThrowExactly<TException>().WithMessage()", GetHelpLink("Exceptions-1"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+    public static DiagnosticMetadata ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith = new("Use .Should().Throw<TException>().WithMessage()", GetHelpLink("Exceptions-2"));
+
+    public static DiagnosticMetadata ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeOfType = new("Use .Should().Throw<TException>().WithInnerException<TInnerException>()", string.Empty);
+    public static DiagnosticMetadata ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeOfType = new("Use .Should().Throw<TException>().WithInnerException<TInnerException>()", string.Empty);
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeOfType = new("Use .Should().ThrowExactly<TException>().WithInnerException<TInnerException>()", string.Empty);
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeOfType = new("Use .Should().ThrowExactly<TException>().WithInnerException<TInnerException>()", string.Empty);
+    public static DiagnosticMetadata ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeAssignableTo = new("Use .Should().Throw<TException>().WithInnerException<TInnerException>()", string.Empty);
+    public static DiagnosticMetadata ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeAssignableTo = new("Use .Should().Throw<TException>().WithInnerException<TInnerException>()", string.Empty);
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo = new("Use .Should().ThrowExactly<TException>().WithInnerException<TInnerException>()", string.Empty);
+    public static DiagnosticMetadata ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo = new("Use .Should().ThrowExactly<TException>().WithInnerException<TInnerException>()", string.Empty);
+
+
     private static string GetHelpLink(string id) => $"https://fluentassertions.com/tips/#{id}";
 }

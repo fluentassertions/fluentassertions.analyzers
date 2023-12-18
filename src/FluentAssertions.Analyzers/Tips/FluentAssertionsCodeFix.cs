@@ -284,7 +284,7 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 
                     var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 
-                    return GetNewExpression(newExpression, 
+                    return GetNewExpression(newExpression,
                         NodeReplacement.RenameAndRemoveFirstArgument("ContainKey", "Contain"),
                         NodeReplacement.PrependArguments("Contain", newArguments)
                     );
@@ -296,11 +296,48 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 
                     var newArguments = GetArgumentsWithFirstAsPairIdentifierArgument(remove.Arguments);
 
-                    return GetNewExpression(newExpression, 
+                    return GetNewExpression(newExpression,
                         NodeReplacement.RenameAndRemoveFirstArgument("ContainValue", "Contain"),
                         NodeReplacement.PrependArguments("Contain", newArguments)
                     );
                 }
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeOfType):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeOfType):
+                return ReplaceBeOfTypeInnerException(expression, "Which");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeOfType):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeOfType):
+                return ReplaceBeOfTypeInnerException(expression, "And");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeAssignableTo):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo):
+                return ReplaceBeAssignableToInnerException(expression, "Which");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeAssignableTo):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo):
+                return ReplaceBeAssignableToInnerException(expression, "And");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldContain):
+                return ReplaceContainMessage(expression, "Which");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldContain):
+                return ReplaceContainMessage(expression, "And");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldBe):
+                return ReplaceBeMessage(expression, "Which");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldBe):
+                return ReplaceBeMessage(expression, "And");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldStartWith):
+                return ReplaceStartWithMessage(expression, "Which");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldStartWith):
+                return ReplaceStartWithMessage(expression, "And");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldEndWith):
+                return ReplaceEndWithMessage(expression, "Which");
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith):
+            case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith):
+                return ReplaceEndWithMessage(expression, "And");
+
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
     }

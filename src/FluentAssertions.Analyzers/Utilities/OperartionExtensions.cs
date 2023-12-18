@@ -117,4 +117,12 @@ internal static class OperartionExtensions
             _ => operation,
         };
     }
+    public static IOperation UnwrapParentConversion(this IOperation operation)
+    {
+        return operation switch
+        {
+            IConversionOperation conversion => conversion.Parent,
+            _ => operation,
+        };
+    }
 }

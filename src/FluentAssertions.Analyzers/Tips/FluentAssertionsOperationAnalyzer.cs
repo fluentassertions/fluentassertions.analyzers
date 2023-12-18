@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -505,6 +506,134 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             return;
                         }
                         return;
+                    }
+                }
+                return;
+            case "Throw" when assertion.IsContainedInType(metadata.DelegateAssertionsOfT2):
+                {
+                    if (TryGetExceptionPropertyAssertion(assertion, "And", nameof(Exception.Message), out var nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe));
+                                return;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith));
+                                return;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith));
+                                return;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "Which", nameof(Exception.Message), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe));
+                                return;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith));
+                                return;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith));
+                                return;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "And", nameof(Exception.InnerException), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "BeOfType":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeOfType));
+                                return;
+                            case "BeAssignableTo":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeAssignableTo));
+                                return;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "Which", nameof(Exception.InnerException), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "BeOfType":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeOfType));
+                                return;
+                            case "BeAssignableTo":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeAssignableTo));
+                                return;
+                        }
+                    }
+                }
+                return;
+            case "ThrowExactly" when assertion.IsContainedInType(metadata.DelegateAssertionsOfT2):
+                {
+                    if (TryGetExceptionPropertyAssertion(assertion, "And", nameof(Exception.Message), out var nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldBe));
+                                return;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldStartWith));
+                                return;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith));
+                                return;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "Which", nameof(Exception.Message), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "Contain":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldContain));
+                                return;
+                            case "Be":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldBe));
+                                return;
+                            case "StartWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldStartWith));
+                                return;
+                            case "EndWith":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldEndWith));
+                                return;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "And", nameof(Exception.InnerException), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "BeOfType":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeOfType));
+                                return;
+                            case "BeAssignableTo":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo));
+                                return;
+                        }
+                    }
+                    if (TryGetExceptionPropertyAssertion(assertion, "Which", nameof(Exception.InnerException), out nextAssertion))
+                    {
+                        switch (nextAssertion.TargetMethod.Name)
+                        {
+                            case "BeOfType":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeOfType));
+                                return;
+                            case "BeAssignableTo":
+                                context.ReportDiagnostic(CreateDiagnostic(nextAssertion, DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo));
+                                return;
+                        }
                     }
                 }
                 return;

@@ -15,6 +15,21 @@ public partial class FluentAssertionsOperationAnalyzer
     private static bool IsEnumerableMethodWithPredicate(IInvocationOperation invocation, FluentAssertionsMetadata metadata)
         => invocation.IsContainedInType(metadata.Enumerable) && invocation.Arguments.Length == 2 && invocation.Arguments[1].IsLambda(); // invocation.Arguments[0] is `this` argument
 
+    private static bool TryGetExceptionPropertyAssertion(IInvocationOperation assertion, string fluentAssertionProperty, string exceptionProperty, out IInvocationOperation nextAssertion)
+    {
+        if (assertion.Parent is IPropertyReferenceOperation chainProperty && chainProperty.Property.Name.Equals(fluentAssertionProperty)
+        && chainProperty.Parent is IPropertyReferenceOperation exception && exception.Property.Name.Equals(exceptionProperty)
+        && exception.Parent.UnwrapParentConversion() is IArgumentOperation argument
+        && argument.Parent is IInvocationOperation { TargetMethod.Name: "Should" } should)
+        {
+            nextAssertion = should.Parent as IInvocationOperation;
+            return nextAssertion is not null;
+        }
+
+        nextAssertion = default;
+        return false;
+    }
+
     private class FluentAssertionsMetadata
     {
         public FluentAssertionsMetadata(Compilation compilation)
@@ -27,6 +42,8 @@ public partial class FluentAssertionsOperationAnalyzer
             GenericCollectionAssertionsOfT3 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericCollectionAssertions`3");
             GenericDictionaryAssertionsOfT4 = compilation.GetTypeByMetadataName("FluentAssertions.Collections.GenericDictionaryAssertions`4");
             StringAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Primitives.StringAssertions`1");
+            ExceptionAssertionsOfT1 = compilation.GetTypeByMetadataName("FluentAssertions.Specialized.ExceptionAssertions`1");
+            DelegateAssertionsOfT2 = compilation.GetTypeByMetadataName("FluentAssertions.Specialized.DelegateAssertions`2");
             IDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IDictionary<,>).FullName);
             DictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(Dictionary<,>).FullName);
             IReadonlyDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IReadOnlyDictionary<,>).FullName);
@@ -39,6 +56,8 @@ public partial class FluentAssertionsOperationAnalyzer
         public INamedTypeSymbol GenericCollectionAssertionsOfT3 { get; }
         public INamedTypeSymbol GenericDictionaryAssertionsOfT4 { get; }
         public INamedTypeSymbol StringAssertionsOfT1 { get; }
+        public INamedTypeSymbol ExceptionAssertionsOfT1 { get; }
+        public INamedTypeSymbol DelegateAssertionsOfT2 { get; }
         public INamedTypeSymbol IDictionaryOfT2 { get; }
         public INamedTypeSymbol DictionaryOfT2 { get; }
         public INamedTypeSymbol IReadonlyDictionaryOfT2 { get; }
