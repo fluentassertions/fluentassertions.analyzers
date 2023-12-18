@@ -305,7 +305,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ToList().Count().Should().Be(0{0}).And.ToString();")]
         [AssertionDiagnostic("actual.ToArray().Count().Should().Be(0{0}).And.ToString();")]
         [Implemented]
-        public void CollectionShouldHaveCount_CountShouldBe0_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe0);
+        public void CollectionShouldHaveCount_CountShouldBe0_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_CountShouldBe0);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().Be(1{0});")]
@@ -313,7 +313,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ToList().Count().Should().Be(1{0}).And.ToString();")]
         [AssertionDiagnostic("actual.ToArray().Count().Should().Be(1{0}).And.ToString();")]
         [Implemented]
-        public void CollectionShouldHaveCount_CountShouldBe1_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe1);
+        public void CollectionShouldHaveCount_CountShouldBe1_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldContainSingle_CountShouldBe1);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.ToArray().Length.Should().Be(1{0}).And.ToString();")]

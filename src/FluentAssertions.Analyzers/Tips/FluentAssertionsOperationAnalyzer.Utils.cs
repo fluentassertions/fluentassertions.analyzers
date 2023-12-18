@@ -15,18 +15,22 @@ public partial class FluentAssertionsOperationAnalyzer
     private static bool IsEnumerableMethodWithPredicate(IInvocationOperation invocation, FluentAssertionsMetadata metadata)
         => invocation.IsContainedInType(metadata.Enumerable) && invocation.Arguments.Length == 2 && invocation.Arguments[1].IsLambda(); // invocation.Arguments[0] is `this` argument
 
-    private static bool TryGetExceptionPropertyAssertion(IInvocationOperation assertion, string fluentAssertionProperty, string exceptionProperty, out IInvocationOperation nextAssertion)
+    private static bool TryGetExceptionPropertyAssertion(IInvocationOperation assertion, out string fluentAssertionProperty, out string exceptionProperty, out IInvocationOperation nextAssertion)
     {
-        if (assertion.Parent is IPropertyReferenceOperation chainProperty && chainProperty.Property.Name.Equals(fluentAssertionProperty)
-        && chainProperty.Parent is IPropertyReferenceOperation exception && exception.Property.Name.Equals(exceptionProperty)
+        if (assertion.Parent is IPropertyReferenceOperation chainProperty
+        && chainProperty.Parent is IPropertyReferenceOperation exception
         && exception.Parent.UnwrapParentConversion() is IArgumentOperation argument
         && argument.Parent is IInvocationOperation { TargetMethod.Name: "Should" } should)
         {
             nextAssertion = should.Parent as IInvocationOperation;
+            fluentAssertionProperty = chainProperty.Property.Name;
+            exceptionProperty = exception.Property.Name;
             return nextAssertion is not null;
         }
 
         nextAssertion = default;
+        fluentAssertionProperty = default;
+        exceptionProperty = default;
         return false;
     }
 
