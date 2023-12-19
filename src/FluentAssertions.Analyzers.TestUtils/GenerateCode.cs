@@ -29,7 +29,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("        public string Message { get; set; }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -57,7 +56,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("        public string Message { get; set; }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -75,7 +73,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -98,7 +95,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("    {")
             .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -115,7 +111,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -132,7 +127,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -148,7 +142,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -164,7 +157,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -182,7 +174,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("        }")
             .AppendLine("        async void AsyncVoidMethod() { await Task.CompletedTask; }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -199,7 +190,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {statement}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -218,7 +208,6 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
 
@@ -240,16 +229,7 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString();
-
-        public static StringBuilder AppendMainMethod(this StringBuilder builder) => builder
-            .AppendLine("    class Program")
-            .AppendLine("    {")
-            .AppendLine("        public static void Main()")
-            .AppendLine("        {")
-            .AppendLine("        }")
-            .AppendLine("    }");
     }
 }

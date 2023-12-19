@@ -38,7 +38,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 
@@ -62,7 +61,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 
@@ -86,7 +84,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }}")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 
@@ -110,7 +107,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }}")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 
@@ -134,7 +130,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 
@@ -158,7 +153,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 
@@ -182,7 +176,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 
@@ -206,7 +199,6 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
             .AppendLine("    }")
-            .AppendMainMethod()
             .AppendLine("}")
             .ToString());
 

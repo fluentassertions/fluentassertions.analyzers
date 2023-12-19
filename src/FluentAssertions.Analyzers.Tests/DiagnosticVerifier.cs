@@ -227,6 +227,7 @@ namespace FluentAssertions.Analyzers.Tests
                 var compilation = project.GetCompilationAsync().Result;
                 var compilationWithAnalyzers = compilation
                     .WithOptions(compilation.Options
+                        .WithOutputKind(OutputKind.DynamicallyLinkedLibrary)
                         .WithSpecificDiagnosticOptions(new Dictionary<string, ReportDiagnostic>
                         {
                             ["CS1701"] = ReportDiagnostic.Suppress, // Binding redirects
