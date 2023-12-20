@@ -14,51 +14,6 @@ public static class Constants
     public static class Tips
     {
         public const string Category = "FluentAssertionTips";
-        public static class Collections
-        {
-            public const string CollectionShouldNotBeNullOrEmpty = $"{DiagnosticProperties.IdPrefix}0017";
-            public const string CollectionShouldHaveElementAt = $"{DiagnosticProperties.IdPrefix}0018";
-        }
-
-        public static class Dictionaries
-        {
-            public const string DictionaryShouldContainKey = $"{DiagnosticProperties.IdPrefix}0100";
-            public const string DictionaryShouldContainValue = $"{DiagnosticProperties.IdPrefix}0101";
-            public const string DictionaryShouldContainKeyAndValue = $"{DiagnosticProperties.IdPrefix}0102";
-            public const string DictionaryShouldContainPair = $"{DiagnosticProperties.IdPrefix}0103";
-            public const string DictionaryShouldNotContainKey = $"{DiagnosticProperties.IdPrefix}0104";
-            public const string DictionaryShouldNotContainValue = $"{DiagnosticProperties.IdPrefix}0105";
-        }
-
-        public static class Strings
-        {
-            public const string StringShouldStartWith = $"{DiagnosticProperties.IdPrefix}0200";
-            public const string StringShouldEndWith = $"{DiagnosticProperties.IdPrefix}0201";
-            public const string StringShouldNotBeNullOrEmpty = $"{DiagnosticProperties.IdPrefix}0202";
-            public const string StringShouldBeNullOrEmpty = $"{DiagnosticProperties.IdPrefix}0203";
-            public const string StringShouldBeNullOrWhiteSpace = $"{DiagnosticProperties.IdPrefix}0204";
-            public const string StringShouldNotBeNullOrWhiteSpace = $"{DiagnosticProperties.IdPrefix}0205";
-            public const string StringShouldHaveLength = $"{DiagnosticProperties.IdPrefix}0206";
-        }
-
-        public static class Comparable
-        {
-            public const string ComparableShouldBePositive = $"{DiagnosticProperties.IdPrefix}0300";
-        }
-
-        public static class Numeric
-        {
-            public const string NumericShouldBePositive = $"{DiagnosticProperties.IdPrefix}0400";
-            public const string NumericShouldBeNegative = $"{DiagnosticProperties.IdPrefix}0401";
-            public const string NumericShouldBeInRange = $"{DiagnosticProperties.IdPrefix}0402";
-            public const string NumericShouldBeApproximately = $"{DiagnosticProperties.IdPrefix}0403";
-        }
-
-        public static class Exceptions
-        {
-            public const string ExceptionShouldThrowWithMessage = $"{DiagnosticProperties.IdPrefix}0500";
-            public const string ExceptionShouldThrowWithInnerException = $"{DiagnosticProperties.IdPrefix}0501";
-        }
 
         public static class MsTest
         {
