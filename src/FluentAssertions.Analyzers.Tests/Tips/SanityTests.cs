@@ -278,7 +278,13 @@ namespace TestProject
     }
 }";
 
-            DiagnosticVerifier.VerifyCSharpFix<AssertAreEqualCodeFix, AssertAreEqualAnalyzer>(oldSource, newSource);
+            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+                .WithCodeFixProvider<AssertAreEqualCodeFix>()
+                .WithDiagnosticAnalyzer<AssertAreEqualAnalyzer>()
+                .WithSources(oldSource)
+                .WithFixedSources(newSource)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.MSTestTestFramework_3_1_1)
+            );
         }
 
         [TestMethod]
@@ -304,13 +310,18 @@ public class TestClass
     }
 }";
 
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source, globalUsings }, new DiagnosticResult()
-            {
-                Id = AssertTrueAnalyzer.DiagnosticId,
-                Message = AssertTrueAnalyzer.Message,
-                Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
-            });
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithSources(source, globalUsings)
+                .WithAllAnalyzers()
+                .WithPackageReferences(PackageReference.XunitAssert_2_5_1, PackageReference.FluentAssertions_6_12_0)
+                .WithExpectedDiagnostics(new DiagnosticResult()
+                {
+                    Id = AssertTrueAnalyzer.DiagnosticId,
+                    Message = AssertTrueAnalyzer.Message,
+                    Severity = DiagnosticSeverity.Info,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
+                })
+            );
         }
 
         [TestMethod]
@@ -318,7 +329,6 @@ public class TestClass
         public void PropertiesOfTypes()
         {
             const string source = @"
-using Xunit;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using System.Collections.Generic;
@@ -347,26 +357,28 @@ public class TestType3
     public int Count { get; set; }
 }";
 
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new[] { source }, new DiagnosticResult()
-            {
-                Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
-                Message = DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue.Message,
-                Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 12, 9) }
-            });
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithSources(source)
+                .WithAllAnalyzers()
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+                .WithExpectedDiagnostics(new DiagnosticResult()
+                {
+                    Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                    Message = DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue.Message,
+                    Severity = DiagnosticSeverity.Info,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 11, 9) }
+                })
+            );
         }
-        
+
         [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/215")]
         public void ShouldNotFailToAnalyze()
         {
             const string source = @"
 #nullable enable
-using Xunit;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 using System;
 public class TestClass
 {
@@ -391,7 +403,11 @@ public class OtherComponent
     public string? Hash { get; set; }
 }";
 
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source);
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithSources(source)
+                .WithAllAnalyzers()
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
         }
     }
 }

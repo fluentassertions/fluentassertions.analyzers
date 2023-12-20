@@ -12,10 +12,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using System.Threading;
 using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.CSharp;
-using System.Reflection;
-
-using XunitAssert = Xunit.Assert;
 
 namespace FluentAssertions.Analyzers.Tests
 {
@@ -24,27 +20,24 @@ namespace FluentAssertions.Analyzers.Tests
     /// </summary>
     public static class DiagnosticVerifier
     {
-        // based on http://code.fitness/post/2017/02/using-csharpscript-with-netstandard.html
-        public static string GetSystemAssemblyPathByName(string assemblyName)
-        {
-            var root = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
-            return System.IO.Path.Combine(root, assemblyName);
-        }
-
         #region CodeFixVerifier
 
-        public static void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        public static void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(string oldSource, string newSource)
             where TCodeFixProvider : CodeFixProvider, new()
             where TDiagnosticAnalyzer : DiagnosticAnalyzer, new()
         {
-            VerifyFix(LanguageNames.CSharp, new TDiagnosticAnalyzer(), new TCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyFix(new CodeFixVerifierArguments()
+                .WithDiagnosticAnalyzer<TDiagnosticAnalyzer>()
+                .WithCodeFixProvider<TCodeFixProvider>()
+                .WithSources(oldSource)
+                .WithFixedSources(newSource)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
         }
-        public static void VerifyBasicFix<TCodeFixProvider, TDiagnosticAnalyzer>(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
-            where TCodeFixProvider : CodeFixProvider, new()
-            where TDiagnosticAnalyzer : DiagnosticAnalyzer, new()
-        {
-            VerifyFix(LanguageNames.VisualBasic, new TDiagnosticAnalyzer(), new TCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
-        }
+
+        public static void VerifyFix(CodeFixVerifierArguments arguments)
+            => VerifyFix(arguments, arguments.DiagnosticAnalyzers.Single(), arguments.CodeFixProviders.Single(), arguments.FixedSources.Single());
+
 
         /// <summary>
         /// General verifier for codefixes.
@@ -59,9 +52,9 @@ namespace FluentAssertions.Analyzers.Tests
         /// <param name="newSource">A class in the form of a string after the CodeFix was applied to it</param>
         /// <param name="codeFixIndex">Index determining which codefix to apply if there are multiple</param>
         /// <param name="allowNewCompilerDiagnostics">A bool controlling whether or not the test will fail if the CodeFix introduces other warnings after being applied</param>
-        private static void VerifyFix(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics)
+        private static void VerifyFix(CsProjectArguments arguments, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string newSource)
         {
-            var document = CsProjectGenerator.CreateDocument(oldSource, language);
+            var document = CsProjectGenerator.CreateDocument(arguments);
             var analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(new[] { analyzer }, new[] { document });
             var compilerDiagnostics = GetCompilerDiagnostics(document);
             var attempts = analyzerDiagnostics.Length;
@@ -77,19 +70,13 @@ namespace FluentAssertions.Analyzers.Tests
                     break;
                 }
 
-                if (codeFixIndex != null)
-                {
-                    document = ApplyFix(document, actions[(int)codeFixIndex]);
-                    break;
-                }
-
                 document = ApplyFix(document, actions[0]);
                 analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(new[] { analyzer }, new[] { document });
 
                 var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document));
 
                 //check if applying the code fix introduced any new compiler diagnostics
-                if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
+                if (newCompilerDiagnostics.Any())
                 {
                     // Format and get the compiler diagnostics again so that the locations make sense in the output
                     document = document.WithSyntaxRoot(Formatter.Format(document.GetSyntaxRootAsync().Result, Formatter.Annotation, document.Project.Solution.Workspace));
@@ -195,18 +182,6 @@ namespace FluentAssertions.Analyzers.Tests
         #region  Get Diagnostics
 
         /// <summary>
-        /// Given classes in the form of strings, their language, and an IDiagnosticAnlayzer to apply to it, return the diagnostics found in the string after converting it to a document.
-        /// </summary>
-        /// <param name="sources">Classes in the form of strings</param>
-        /// <param name="language">The language the source classes are in</param>
-        /// <param name="analyzer">The analyzer to be run on the sources</param>
-        /// <returns>An IEnumerable of Diagnostics that surfaced in the source code, sorted by Location</returns>
-        private static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, params DiagnosticAnalyzer[] analyzers)
-        {
-            return GetSortedDiagnosticsFromDocuments(analyzers, CsProjectGenerator.GetDocuments(sources, language));
-        }
-
-        /// <summary>
         /// Given an analyzer and a document to apply it to, run the analyzer and gather an array of diagnostics found in it.
         /// The returned diagnostics are then ordered by location in the source document.
         /// </summary>
@@ -266,25 +241,15 @@ namespace FluentAssertions.Analyzers.Tests
                 }
             }
 
-            var results = SortDiagnostics(diagnostics);
+            var results = diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
             diagnostics.Clear();
             return results;
-        }
-
-        /// <summary>
-        /// Sort diagnostics by location in source document
-        /// </summary>
-        /// <param name="diagnostics">The list of Diagnostics to be sorted</param>
-        /// <returns>An IEnumerable containing the Diagnostics in order of Location</returns>
-        private static Diagnostic[] SortDiagnostics(IEnumerable<Diagnostic> diagnostics)
-        {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
         }
 
         #endregion
 
         #region Set up compilation and documents
-        
+
         #endregion
 
         #region Verifier wrappers
@@ -297,84 +262,33 @@ namespace FluentAssertions.Analyzers.Tests
         /// <param name="expected"> DiagnosticResults that should appear after the analyzer is run on the source</param>
         public static void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string source, params DiagnosticResult[] expected) where TDiagnosticAnalyzer : DiagnosticAnalyzer, new()
         {
-            VerifyDiagnostics(new[] { source }, LanguageNames.CSharp, new TDiagnosticAnalyzer(), expected);
+            VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithDiagnosticAnalyzer<TDiagnosticAnalyzer>()
+                .WithSources(source)
+                .WithExpectedDiagnostics(expected));
         }
 
-        /// <summary>
-        /// Called to test a VB DiagnosticAnalyzer when applied on the single inputted string as a source
-        /// Note: input a DiagnosticResult for each Diagnostic expected
-        /// </summary>
-        /// <param name="source">A class in the form of a string to run the analyzer on</param>
-        /// <param name="expected">DiagnosticResults that should appear after the analyzer is run on the source</param>
-        public static void VerifyBasicDiagnostic<TDiagnosticAnalyzer>(string source, params DiagnosticResult[] expected) where TDiagnosticAnalyzer : DiagnosticAnalyzer, new()
+        public static void VerifyDiagnostic(DiagnosticVerifierArguments arguments)
         {
-            VerifyDiagnostics(new[] { source }, LanguageNames.VisualBasic, new TDiagnosticAnalyzer(), expected);
-        }
+            var project = CsProjectGenerator.CreateProject(arguments);
+            var documents = project.Documents.ToArray();
 
-        /// <summary>
-        /// Called to test a C# DiagnosticAnalyzer when applied on the inputted strings as a source
-        /// Note: input a DiagnosticResult for each Diagnostic expected
-        /// </summary>
-        /// <param name="sources">An array of strings to create source documents from to run the analyzers on</param>
-        /// <param name="expected">DiagnosticResults that should appear after the analyzer is run on the sources</param>
-        public static void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string[] sources, params DiagnosticResult[] expected) where TDiagnosticAnalyzer : DiagnosticAnalyzer, new()
-        {
-            VerifyDiagnostics(sources, LanguageNames.CSharp, new TDiagnosticAnalyzer(), expected);
-        }
-
-        /// <summary>
-        /// Called to test a VB DiagnosticAnalyzer when applied on the inputted strings as a source
-        /// Note: input a DiagnosticResult for each Diagnostic expected
-        /// </summary>
-        /// <param name="sources">An array of strings to create source documents from to run the analyzers on</param>
-        /// <param name="expected">DiagnosticResults that should appear after the analyzer is run on the sources</param>
-        public static void VerifyBasicDiagnostic<TDiagnosticAnalyzer>(string[] sources, params DiagnosticResult[] expected) where TDiagnosticAnalyzer : DiagnosticAnalyzer, new()
-        {
-            VerifyDiagnostics(sources, LanguageNames.VisualBasic, new TDiagnosticAnalyzer(), expected);
+            var diagnostics = GetSortedDiagnosticsFromDocuments(arguments.DiagnosticAnalyzers.ToArray(), documents);
+            VerifyDiagnosticResults(diagnostics, arguments.DiagnosticAnalyzers.ToArray(), arguments.ExpectedDiagnostics.ToArray());
         }
 
         public static void VerifyCSharpDiagnosticUsingAllAnalyzers(string source, params DiagnosticResult[] expected)
         {
-            var analyzers = CodeAnalyzersUtils.GetAllAnalyzers();
-            var diagnostics = GetSortedDiagnostics(new[] { source }, LanguageNames.CSharp, analyzers);
-            VerifyDiagnosticResults(diagnostics, analyzers, expected);
-        }
-
-        public static void VerifyCSharpDiagnosticUsingAllAnalyzers(string[] sources, params DiagnosticResult[] expected)
-        {
-            var analyzers = CodeAnalyzersUtils.GetAllAnalyzers();
-            var diagnostics = GetSortedDiagnostics(sources, LanguageNames.CSharp, analyzers);
-            VerifyDiagnosticResults(diagnostics, analyzers, expected);
-        }
-
-        /// <summary>
-        /// General method that gets a collection of actual diagnostics found in the source after the analyzer is run,
-        /// then verifies each of them.
-        /// </summary>
-        /// <param name="sources">An array of strings to create source documents from to run the analyzers on</param>
-        /// <param name="language">The language of the classes represented by the source strings</param>
-        /// <param name="analyzer">The analyzer to be run on the source code</param>
-        /// <param name="expected">DiagnosticResults that should appear after the analyzer is run on the sources</param>
-        private static void VerifyDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
-        {
-            var diagnostics = GetSortedDiagnostics(sources, language, analyzer);
-            VerifyDiagnosticResults(diagnostics, analyzer, expected);
+            VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithAllAnalyzers()
+                .WithSources(source)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+                .WithExpectedDiagnostics(expected));
         }
 
         #endregion
 
         #region Actual comparisons and verifications
-        /// <summary>
-        /// Checks each of the actual Diagnostics found and compares them with the corresponding DiagnosticResult in the array of expected results.
-        /// Diagnostics are considered equal only if the DiagnosticResultLocation, Id, Severity, and Message of the DiagnosticResult match the actual diagnostic.
-        /// </summary>
-        /// <param name="actualResults">The Diagnostics found by the compiler after running the analyzer on the source code</param>
-        /// <param name="analyzer">The analyzer that was being run on the sources</param>
-        /// <param name="expectedResults">Diagnostic Results that should have appeared in the code</param>
-        private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expectedResults)
-        {
-            VerifyDiagnosticResults(actualResults, new[] { analyzer }, expectedResults);
-        }
 
         private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer[] analyzers, params DiagnosticResult[] expectedResults)
         {

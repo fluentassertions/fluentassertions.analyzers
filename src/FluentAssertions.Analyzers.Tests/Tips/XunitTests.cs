@@ -657,16 +657,21 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
             var message = (string)type.GetField("Message").GetValue(null);
 
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
-            {
-                Id = diagnosticId,
-                Message = message,
-                Locations = new DiagnosticResultLocation[]
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithAllAnalyzers()
+                .WithSources(source)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.XunitAssert_2_5_1)
+                .WithExpectedDiagnostics(new DiagnosticResult
                 {
-                    new("Test0.cs", 15, 13)
-                },
-                Severity = DiagnosticSeverity.Info
-            });
+                    Id = diagnosticId,
+                    Message = message,
+                    Locations = new DiagnosticResultLocation[]
+                    {
+                        new("Test0.cs", 15, 13)
+                    },
+                    Severity = DiagnosticSeverity.Info
+                })
+            );
         }
 
         private void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(string methodArguments, string oldAssertion, string newAssertion)
@@ -676,7 +681,13 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.XunitAssertion(methodArguments, oldAssertion);
             var newSource = GenerateCode.XunitAssertion(methodArguments, newAssertion);
 
-            DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
+            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+                .WithDiagnosticAnalyzer<TDiagnosticAnalyzer>()
+                .WithCodeFixProvider<TCodeFixProvider>()
+                .WithSources(oldSource)
+                .WithFixedSources(newSource)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.XunitAssert_2_5_1)
+            );
         }
     }
 }

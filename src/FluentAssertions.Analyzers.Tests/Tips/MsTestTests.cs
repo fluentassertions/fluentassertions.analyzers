@@ -23,7 +23,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace1_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -46,7 +46,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace2_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -69,7 +69,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace3_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -92,7 +92,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace4_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -115,7 +115,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace5_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -138,7 +138,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace6_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -161,7 +161,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace7_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -184,7 +184,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
         public void AssertIsTrue_NestedUsingInNamespace8_TestAnalyzer(string assertion)
-            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>("bool actual", assertion, new StringBuilder()
+            => VerifyCSharpDiagnostic<AssertIsTrueAnalyzer>(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -590,7 +590,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [DataTestMethod]
         [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual{0});")]
-        [Implemented] 
+        [Implemented]
         public void CollectionAssertAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertAreEqualAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", assertion);
 
         [DataTestMethod]
@@ -686,7 +686,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [DataTestMethod]
         [AssertionDiagnostic("CollectionAssert.IsSubsetOf(expected, actual{0});")]
-        [Implemented] 
+        [Implemented]
         public void CollectionAssertIsSubsetOf_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic<CollectionAssertIsSubsetOfAnalyzer>("System.Collections.Generic.List<int> actual, System.Collections.Generic.List<int> expected", assertion);
 
         [DataTestMethod]
@@ -768,25 +768,30 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void StringAssertDoesNotMatch_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<StringAssertDoesNotMatchCodeFix, StringAssertDoesNotMatchAnalyzer>("string actual, System.Text.RegularExpressions.Regex pattern", oldAssertion, newAssertion);
 
-        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion, string source) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
+        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string source) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
         {
             var type = typeof(TDiagnosticAnalyzer);
             var diagnosticId = (string)type.GetField("DiagnosticId").GetValue(null);
             var message = (string)type.GetField("Message").GetValue(null);
 
-            DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
-            {
-                Id = diagnosticId,
-                Message = message,
-                Locations = new DiagnosticResultLocation[]
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithAllAnalyzers()
+                .WithSources(source)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.MSTestTestFramework_3_1_1)
+                .WithExpectedDiagnostics(new DiagnosticResult
                 {
-                    new DiagnosticResultLocation("Test0.cs", 12, 13)
-                },
-                Severity = DiagnosticSeverity.Info
-            });
+                    Id = diagnosticId,
+                    Message = message,
+                    Locations = new DiagnosticResultLocation[]
+                    {
+                        new DiagnosticResultLocation("Test0.cs", 12, 13)
+                    },
+                    Severity = DiagnosticSeverity.Info
+                })
+            );
         }
-        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new() 
-            => VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(methodArguments, assertion, GenerateCode.MsTestAssertion(methodArguments, assertion));
+        private void VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(string methodArguments, string assertion) where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
+            => VerifyCSharpDiagnostic<TDiagnosticAnalyzer>(GenerateCode.MsTestAssertion(methodArguments, assertion));
 
         private void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(string methodArguments, string oldAssertion, string newAssertion)
             where TCodeFixProvider : Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider, new()
@@ -795,7 +800,13 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.MsTestAssertion(methodArguments, oldAssertion);
             var newSource = GenerateCode.MsTestAssertion(methodArguments, newAssertion);
 
-            DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
+            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+                .WithCodeFixProvider<TCodeFixProvider>()
+                .WithDiagnosticAnalyzer<TDiagnosticAnalyzer>()
+                .WithSources(oldSource)
+                .WithFixedSources(newSource)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.MSTestTestFramework_3_1_1)
+            );
         }
     }
 }

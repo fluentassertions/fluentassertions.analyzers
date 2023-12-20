@@ -15,14 +15,38 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionDiagnostic("actual?.MyProperty.Should().Be(actual?.MyProperty{0});")]
         [AssertionDiagnostic("actual.MyList?.Where(obj => obj?.ToString() == null).Count().Should().Be(0{0});")]
         [Implemented]
-        public void NullConditionalMayNotExecuteTest(string assertion) => VerifyCSharpDiagnostic(assertion);
+        public void NullConditionalMayNotExecuteTest(string assertion)
+        {
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithDiagnosticAnalyzer<NullConditionalAssertionAnalyzer>()
+                .WithSources(Code(assertion))
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+                .WithExpectedDiagnostics(new DiagnosticResult
+                {
+                    Id = NullConditionalAssertionAnalyzer.DiagnosticId,
+                    Message = NullConditionalAssertionAnalyzer.Message,
+                    Severity = Microsoft.CodeAnalysis.DiagnosticSeverity.Warning,
+                    Locations = new DiagnosticResultLocation[]
+                    {
+                        new DiagnosticResultLocation("Test0.cs", 11, 13)
+                    }
+                })
+            );
+        }
 
         [DataTestMethod]
         [AssertionDiagnostic("(actual?.MyProperty).Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("actual.MyProperty.Should().Be(actual?.MyProperty{0});")]
         [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() == null).Count().Should().Be(0{0});")]
         [Implemented]
-        public void NullConditionalWillStillExecuteTest(string assertion) => VerifyCSharpDiagnosticPass(assertion);
+        public void NullConditionalWillStillExecuteTest(string assertion)
+        {
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithDiagnosticAnalyzer<NullConditionalAssertionAnalyzer>()
+                .WithSources(Code(assertion))
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
+        }
 
         private static string Code(string assertion) =>
             new StringBuilder()
@@ -44,28 +68,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 .AppendLine("        public string MyProperty { get; set; }")
                 .AppendLine("        public List<object> MyList { get; set; }")
                 .AppendLine("    }")
-                .AppendLine("    class Program")
-                .AppendLine("    {")
-                .AppendLine("        public static void Main()")
-                .AppendLine("        {")
-                .AppendLine("        }")
-                .AppendLine("    }")
                 .AppendLine("}")
                 .ToString();
-
-        private static void VerifyCSharpDiagnosticPass(string assertion)
-            => DiagnosticVerifier.VerifyCSharpDiagnostic<NullConditionalAssertionAnalyzer>(Code(assertion));
-
-        private static void VerifyCSharpDiagnostic(string assertion)
-            => DiagnosticVerifier.VerifyCSharpDiagnostic<NullConditionalAssertionAnalyzer>(Code(assertion), new DiagnosticResult
-            {
-                Id = NullConditionalAssertionAnalyzer.DiagnosticId,
-                Message = NullConditionalAssertionAnalyzer.Message,
-                Severity = Microsoft.CodeAnalysis.DiagnosticSeverity.Warning,
-                Locations = new DiagnosticResultLocation[]
-                {
-                    new DiagnosticResultLocation("Test0.cs", 11, 13)
-                }
-            });
     }
 }
