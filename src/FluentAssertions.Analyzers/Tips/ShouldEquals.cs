@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using FluentAssertions.Analyzers.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -53,7 +54,7 @@ public class ShouldEqualsCodeFix : FluentAssertionsCodeFixProvider
         var info = model.GetTypeInfo(member.Expression);
 
         var taskCompletionSourceInfo = model.Compilation.GetTypeByMetadataName(typeof(TaskCompletionSource<>).FullName);
-        if (info.Type.Equals(taskCompletionSourceInfo, SymbolEqualityComparer.Default)) return false;
+        if (info.Type.EqualsSymbol(taskCompletionSourceInfo)) return false;
 
         var streamInfo = model.Compilation.GetTypeByMetadataName(typeof(Stream).FullName);
         if (info.Type.AllInterfaces.Contains(streamInfo)) return false;
@@ -73,7 +74,7 @@ public class ShouldEqualsCodeFix : FluentAssertionsCodeFixProvider
 
         var stringInfo = model.Compilation.GetTypeByMetadataName(typeof(string).FullName);
 
-        if (info.Type.Equals(stringInfo, SymbolEqualityComparer.Default))
+        if (info.Type.EqualsSymbol(stringInfo))
         {
             return GetNewExpression(expression, NodeReplacement.Rename("Equals", "Be"));
         }

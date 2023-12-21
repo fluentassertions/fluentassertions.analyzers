@@ -279,8 +279,8 @@ namespace TestProject
 }";
 
             DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
-                .WithCodeFixProvider<AssertAreEqualCodeFix>()
-                .WithDiagnosticAnalyzer<AssertAreEqualAnalyzer>()
+                .WithCodeFixProvider<MsTestCodeFixProvider>()
+                .WithDiagnosticAnalyzer<AssertAnalyzer>()
                 .WithSources(oldSource)
                 .WithFixedSources(newSource)
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.MSTestTestFramework_3_1_1)

@@ -47,7 +47,7 @@ public abstract class MsTestAssertCodeFixProvider : TestingLibraryCodeFixBase
             ignoreCase = possibleIgnoreCaseArg.Token.IsKind(SyntaxKind.TrueKeyword);
         }
 
-        if (newArguments.Count >= 2 && semanticModel.GetCultureInfoType().Equals(semanticModel.GetTypeInfo(rename.Arguments[3].Expression).Type, SymbolEqualityComparer.Default))
+        if (newArguments.Count >= 2 && semanticModel.GetCultureInfoType().EqualsSymbol(semanticModel.GetTypeInfo(rename.Arguments[3].Expression).Type))
         {
             newArguments = newArguments.Remove(newArguments[1]);
         }
