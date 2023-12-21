@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Gérald Barré (https://github.com/meziantou)
+ * Copyright (c) 2023 Gérald Barré (https://www.meziantou.net)
  * Modifications copyright (c) Meir Blachman.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
