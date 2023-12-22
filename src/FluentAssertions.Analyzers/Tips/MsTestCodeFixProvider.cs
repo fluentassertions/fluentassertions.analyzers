@@ -74,7 +74,7 @@ public class MsTestCodeFixProvider : CodeFixProvider
                 {
                     var ignoreCase = invocation.Arguments.Length >= 3 && invocation.Arguments[2].IsLiteralValue(true);
                     var newMethod = ignoreCase ? "BeEquivalentTo" : "Be";
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2]);
                 }
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemBoolean, t.SystemGlobalizationCultureInfo): // AreEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemBoolean, t.SystemGlobalizationCultureInfo, t.SystemString): // AreEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture, string? message)
@@ -88,7 +88,7 @@ public class MsTestCodeFixProvider : CodeFixProvider
                         break; // TODO: Handle other cultures
                     }
 
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2, 3]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2, 3]);
                 }
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemFloat, t.SystemFloat, t.SystemFloat): // AreEqual(float expected, float actual, float delta)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemFloat, t.SystemFloat, t.SystemFloat, t.SystemString): // AreEqual(float expected, float actual, float delta, string? message)
@@ -99,26 +99,26 @@ public class MsTestCodeFixProvider : CodeFixProvider
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemDecimal, t.SystemDecimal, t.SystemDecimal): // AreEqual(decimal expected, decimal actual, decimal delta)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemDecimal, t.SystemDecimal, t.SystemDecimal, t.SystemString): // AreEqual(decimal expected, decimal actual, decimal delta, string? message)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemDecimal, t.SystemDecimal, t.SystemDecimal, t.SystemString, t.ObjectArray): // AreEqual(decimal expected, decimal actual, decimal delta, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeApproximately", argumentIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeApproximately", argumentIndex: 1, argumentsToRemove: []);
             case "AreEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreEqual<T>(T? expected, T? actual)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString): // AreEqual<T>(T? expected, T? actual, string? message)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString, t.ObjectArray): // AreEqual<T>(T? expected, T? actual, string? message, params object?[]? parameters)
                 if (invocation.Arguments[0].IsLiteralNull())
                 {
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeNull", argumentIndex: 1, argumentsToRemove: [0]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeNull", argumentIndex: 1, argumentsToRemove: [0]);
                 }
                 else if (invocation.Arguments[1].IsLiteralNull())
                 {
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeNull", argumentIndex: 0, argumentsToRemove: [1]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeNull", argumentIndex: 0, argumentsToRemove: [1]);
                 }
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "Be", argumentIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Be", argumentIndex: 1, argumentsToRemove: []);
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemBoolean): // AreNotEqual(string? expected, string? actual, bool ignoreCase)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemBoolean, t.SystemString): // AreNotEqual(string? expected, string? actual, bool ignoreCase, string? message)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemBoolean, t.SystemString, t.ObjectArray): // AreNotEqual(string? expected, string? actual, bool ignoreCase, string? message, params object?[]? parameters)
                 {
                     var ignoreCase = invocation.Arguments.Length >= 3 && invocation.Arguments[2].IsLiteralValue(true);
                     var newMethod = ignoreCase ? "NotBeEquivalentTo" : "NotBe";
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2]);
                 }
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemBoolean, t.SystemGlobalizationCultureInfo): // AreNotEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemBoolean, t.SystemGlobalizationCultureInfo, t.SystemString): // AreNotEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture, string? message)
@@ -132,7 +132,7 @@ public class MsTestCodeFixProvider : CodeFixProvider
                         break; // TODO: Handle other cultures
                     }
 
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2, 3]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, argumentIndex: 1, argumentsToRemove: [2, 3]);
                 }
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemFloat, t.SystemFloat, t.SystemFloat): // AreNotEqual(float expected, float actual, float delta)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemFloat, t.SystemFloat, t.SystemFloat, t.SystemString): // AreNotEqual(float expected, float actual, float delta, string? message)
@@ -143,84 +143,83 @@ public class MsTestCodeFixProvider : CodeFixProvider
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemDecimal, t.SystemDecimal, t.SystemDecimal): // AreNotEqual(decimal expected, decimal actual, decimal delta)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemDecimal, t.SystemDecimal, t.SystemDecimal, t.SystemString): // AreNotEqual(decimal expected, decimal actual, decimal delta, string? message)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemDecimal, t.SystemDecimal, t.SystemDecimal, t.SystemString, t.ObjectArray): // AreNotEqual(decimal expected, decimal actual, decimal delta, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBeApproximately", argumentIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeApproximately", argumentIndex: 1, argumentsToRemove: []);
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreNotEqual<T>(T? expected, T? actual)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString): // AreNotEqual<T>(T? expected, T? actual, string? message)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString, t.ObjectArray): // AreNotEqual<T>(T? expected, T? actual, string? message, params object?[]? parameters)
                 if (invocation.Arguments[0].IsLiteralNull())
                 {
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBeNull", argumentIndex: 1, argumentsToRemove: [0]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", argumentIndex: 1, argumentsToRemove: [0]);
                 }
                 else if (invocation.Arguments[1].IsLiteralNull())
                 {
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBeNull", argumentIndex: 0, argumentsToRemove: [1]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", argumentIndex: 0, argumentsToRemove: [1]);
                 }
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBe", argumentIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBe", argumentIndex: 1, argumentsToRemove: []);
             case "AreSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreSame(string? expected, string? actual)
             case "AreSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString): // AreSame(string? expected, string? actual, string? message)
             case "AreSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString, t.ObjectArray): // AreSame(string? expected, string? actual, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeSameAs", argumentIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeSameAs", argumentIndex: 1, argumentsToRemove: []);
             case "AreNotSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreNotSame(string? expected, string? actual)
             case "AreNotSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString): // AreNotSame(string? expected, string? actual, string? message)
             case "AreNotSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.SystemString, t.ObjectArray): // AreNotSame(string? expected, string? actual, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBeSameAs", argumentIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeSameAs", argumentIndex: 1, argumentsToRemove: []);
             case "IsTrue" when ArgumentsAreTypeOf(invocation, t.SystemBoolean): // IsTrue(bool condition)
             case "IsTrue" when ArgumentsAreTypeOf(invocation, t.SystemBoolean, t.SystemString): // IsTrue(bool condition, string? message)
             case "IsTrue" when ArgumentsAreTypeOf(invocation, t.SystemBoolean, t.SystemString, t.ObjectArray): // IsTrue(bool condition, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeTrue", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", argumentIndex: 0, argumentsToRemove: []);
             case "IsFalse" when ArgumentsAreTypeOf(invocation, t.SystemBoolean): // IsFalse(bool condition)
             case "IsFalse" when ArgumentsAreTypeOf(invocation, t.SystemBoolean, t.SystemString): // IsFalse(bool condition, string? message)
             case "IsFalse" when ArgumentsAreTypeOf(invocation, t.SystemBoolean, t.SystemString, t.ObjectArray): // IsFalse(bool condition, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeFalse", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeFalse", argumentIndex: 0, argumentsToRemove: []);
             case "IsNull" when ArgumentsAreTypeOf(invocation, t.SystemObject): // IsNull(object? value)
             case "IsNull" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString): // IsNull(object? value, string? message)
             case "IsNull" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString, t.ObjectArray): // IsNull(object? value, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeNull", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeNull", argumentIndex: 0, argumentsToRemove: []);
             case "IsNotNull" when ArgumentsAreTypeOf(invocation, t.SystemObject): // IsNotNull(object? value)
             case "IsNotNull" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString): // IsNotNull(object? value, string? message)
             case "IsNotNull" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString, t.ObjectArray): // IsNotNull(object? value, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBeNull", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", argumentIndex: 0, argumentsToRemove: []);
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemAction): // ThrowsException<T>(Action action)
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemAction, t.SystemString): // ThrowsException<T>(Action action, string? message)
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemAction, t.SystemString, t.ObjectArray): // ThrowsException<T>(Action action, string? message, params object?[]? parameters)
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfObject): // ThrowsException<T>(Func<object?> action)
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfObject, t.SystemString): // ThrowsException<T>(Func<object?> action, string? message)
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfObject, t.SystemString, t.ObjectArray): // ThrowsException<T>(Func<object?> action, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "ThrowExactly", argumentIndex: 0, argumentsToRemove: []);
+                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactly", argumentIndex: 0, argumentsToRemove: []);
             case "ThrowsExceptionAsync" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfTask): // ThrowsExceptionAsync<T>(Func<Task> action)
             case "ThrowsExceptionAsync" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfTask, t.SystemString): // ThrowsExceptionAsync<T>(Func<Task> action, string? message)
             case "ThrowsExceptionAsync" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfTask, t.SystemString, t.ObjectArray): // ThrowsExceptionAsync<T>(Func<Task> action, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "ThrowExactlyAsync", argumentIndex: 0, argumentsToRemove: []);
-
+                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactlyAsync", argumentIndex: 0, argumentsToRemove: []);
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject): // IsInstanceOfType<T>(object? value)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString): // IsInstanceOfType<T>(object? value, string? message)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString, t.ObjectArray): // IsInstanceOfType<T>(object? value, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeOfType", argumentIndex: 0, argumentsToRemove: []);
+                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "BeOfType", argumentIndex: 0, argumentsToRemove: []);
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType): // IsInstanceOfType(object? value, Type expectedType)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString): // IsInstanceOfType(object? value, Type expectedType, string? message)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString, t.ObjectArray): // IsInstanceOfType(object? value, Type expectedType, string? message, params object?[]? parameters)
                 {
                     if (invocation.Arguments[1].Value is not ITypeOfOperation typeOf)
                     {
-                        return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "BeOfType", argumentIndex: 0, argumentsToRemove: []);
+                        return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeOfType", argumentIndex: 0, argumentsToRemove: []);
                     }
 
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould_AndAddGenericType(invocation, typeOf, context, "BeOfType", argumentIndex: 0, argumentsToRemove: []);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "BeOfType", argumentIndex: 0, argumentsToRemove: [1]);
                 }
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject): // IsNotInstanceOfType<T>(object? value)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString): // IsNotInstanceOfType<T>(object? value, string? message)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString, t.ObjectArray): // IsNotInstanceOfType<T>(object? value, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: []);
+                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: []);
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType): // IsNotInstanceOfType(object? value, Type expectedType)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString): // IsNotInstanceOfType(object? value, Type expectedType, string? message)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString, t.ObjectArray): // IsNotInstanceOfType(object? value, Type expectedType, string? message, params object?[]? parameters)
                 {
                     if (invocation.Arguments[1].Value is not ITypeOfOperation typeOf)
                     {
-                        return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould(invocation, context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: []);
+                        return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: []);
                     }
 
-                    return DocumentEditorUtils.RenameMethodAndReorderActualExpectedAndReplaceWithSubjectShould_AndAddGenericType(invocation, typeOf, context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: []);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: [1]);
                 }
         }
 
