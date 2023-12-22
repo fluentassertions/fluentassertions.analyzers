@@ -44,28 +44,51 @@ internal static class OperartionExtensions
         => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
     public static bool ImplementsOrIsInterface(this IInvocationOperation invocation, INamedTypeSymbol type)
         => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
+    public static bool ImplementsOrIsInterface(this IArgumentOperation argument, SpecialType type)
+        => argument.Value.UnwrapConversion().Type.ImplementsOrIsInterface(type);
 
     public static bool IsSameArgumentReference(this IArgumentOperation argument1, IArgumentOperation argument2)
     {
         return argument1.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument1Reference)
         && argument2.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument2Reference)
-        && argument1Reference.Parameter.Equals(argument2Reference.Parameter, SymbolEqualityComparer.Default);
+        && argument1Reference.Parameter.EqualsSymbol(argument2Reference.Parameter);
     }
     public static bool IsSamePropertyReference(this IPropertyReferenceOperation property1, IPropertyReferenceOperation property2)
     {
         return (property1.Instance is ILocalReferenceOperation local1
         && property2.Instance is ILocalReferenceOperation local2
-        && local1.Local.Equals(local2.Local, SymbolEqualityComparer.Default))
+        && local1.Local.EqualsSymbol(local2.Local))
         ||
         (property1.Instance is IParameterReferenceOperation parameter1
         && property2.Instance is IParameterReferenceOperation parameter2
-        && parameter1.Parameter.Equals(parameter2.Parameter, SymbolEqualityComparer.Default));
+        && parameter1.Parameter.EqualsSymbol(parameter2.Parameter));
+    }
+
+    public static bool IsStaticPropertyReference(this IArgumentOperation argument, INamedTypeSymbol type, string property)
+    {
+        return argument.Value is IPropertyReferenceOperation propertyReference && propertyReference.Instance is null
+            && propertyReference.Property.Type.EqualsSymbol(type)
+            && propertyReference.Property.Name == property;
     }
 
     public static bool IsLiteralValue<T>(this IArgumentOperation argument, T value)
         => UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);
+    public static bool IsLiteralNull(this IArgumentOperation argument)
+        => UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value is null;
     public static bool IsLiteralValue<T>(this IArgumentOperation argument)
         => UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value is T;
+    public static bool TryGetLiteralValue<T>(this IArgumentOperation argument, out T value)
+    {
+        if (UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value is T tValue)
+        {
+            value = tValue;
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
+
     public static bool IsReference(this IArgumentOperation argument)
     {
         var operation = UnwrapConversion(argument.Value);
@@ -109,7 +132,7 @@ internal static class OperartionExtensions
         return false;
     }
 
-    private static IOperation UnwrapConversion(this IOperation operation)
+    public static IOperation UnwrapConversion(this IOperation operation)
     {
         return operation switch
         {
