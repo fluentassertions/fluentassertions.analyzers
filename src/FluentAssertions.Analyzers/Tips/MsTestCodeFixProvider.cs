@@ -37,18 +37,18 @@ public class MsTestCodeFixProvider : CodeFixProvider
             {
                 continue;
             }
-            TryComputeFix(invocation, semanticModel, context, testContext, diagnostic);
+            TryComputeFix(invocation, context, testContext, diagnostic);
         }
     }
 
-    private void TryComputeFix(IInvocationOperation invocation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext testContext, Diagnostic diagnostic)
+    private void TryComputeFix(IInvocationOperation invocation, CodeFixContext context, MsTestCodeFixContext testContext, Diagnostic diagnostic)
     {
         var assertType = invocation.TargetMethod.ContainingType;
         var createChangedDocument = assertType.Name switch
         {
             "Assert" => TryComputeFixForAssert(invocation, context, testContext),
-            "StringAssert" => TryComputeFixForStringAssert(invocation, semanticModel, context, testContext, diagnostic),
-            "CollectionAssert" => TryComputeFixForCollectionAssert(invocation, semanticModel, context, testContext, diagnostic),
+            "StringAssert" => TryComputeFixForStringAssert(invocation, context, testContext),
+            "CollectionAssert" => TryComputeFixForCollectionAssert(invocation, context, testContext),
             _ => null
         };
 
@@ -222,7 +222,7 @@ public class MsTestCodeFixProvider : CodeFixProvider
         return null;
     }
 
-    private CreateChangedDocument TryComputeFixForStringAssert(IInvocationOperation invocation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext t, Diagnostic diagnostic)
+    private CreateChangedDocument TryComputeFixForStringAssert(IInvocationOperation invocation, CodeFixContext context, MsTestCodeFixContext t)
     {
         switch (invocation.TargetMethod.Name)
         {
@@ -256,17 +256,84 @@ public class MsTestCodeFixProvider : CodeFixProvider
             case "Matches" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex): // Matches(string? value, Regex? pattern)
             case "Matches" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString): // Matches(string? value, Regex? pattern, string? message)
             case "Matches" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString, t.ObjectArray): // Matches(string? value, Regex? pattern, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Match", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "MatchRegex", argumentIndex: 0, argumentsToRemove: []);
             case "DoesNotMatch" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex): // DoesNotMatch(string? value, Regex? pattern)
             case "DoesNotMatch" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString): // DoesNotMatch(string? value, Regex? pattern, string? message)
             case "DoesNotMatch" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString, t.ObjectArray): // DoesNotMatch(string? value, Regex? pattern, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotMatch", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotMatchRegex", argumentIndex: 0, argumentsToRemove: []);
         }
         return null;
     }
 
-    private CreateChangedDocument TryComputeFixForCollectionAssert(IInvocationOperation invocation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext testContext, Diagnostic diagnostic)
+    private CreateChangedDocument TryComputeFixForCollectionAssert(IInvocationOperation invocation, CodeFixContext context, MsTestCodeFixContext t)
     {
+        if (!invocation.Arguments[0].ImplementsOrIsInterface(SpecialType.System_Collections_Generic_IEnumerable_T))
+        {
+            return null;
+        }
+
+        switch (invocation.TargetMethod.Name)
+        {
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemObject): // Contains(ICollection collection, object? element)
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemObject, t.SystemString): // Contains(ICollection collection, object? element, string? message)
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemObject, t.SystemString, t.ObjectArray): // Contains(ICollection collection, object? element, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Contain", argumentIndex: 0, argumentsToRemove: []);
+            case "DoesNotContain" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemObject): // DoesNotContain(ICollection collection, object? element)
+            case "DoesNotContain" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemObject, t.SystemString): // DoesNotContain(ICollection collection, object? element, string? message)
+            case "DoesNotContain" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemObject, t.SystemString, t.ObjectArray): // DoesNotContain(ICollection collection, object? element, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotContain", argumentIndex: 0, argumentsToRemove: []);
+            case "AllItemsAreNotNull" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection): // AllItemsAreInstancesOfType(ICollection collection)
+            case "AllItemsAreNotNull" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemString): // AllItemsAreInstancesOfType(ICollection collection, string? message)
+            case "AllItemsAreNotNull" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // AllItemsAreInstancesOfType(ICollection collection, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotContainNulls", argumentIndex: 0, argumentsToRemove: []);
+            case "AllItemsAreUnique" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection): // AllItemsAreUnique(ICollection collection)
+            case "AllItemsAreUnique" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemString): // AllItemsAreUnique(ICollection collection, string? message)
+            case "AllItemsAreUnique" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // AllItemsAreUnique(ICollection collection, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "OnlyHaveUniqueItems", argumentIndex: 0, argumentsToRemove: []);
+            case "IsSubsetOf" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection): // IsSubsetOf(ICollection subset, ICollection superset)
+            case "IsSubsetOf" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString): // IsSubsetOf(ICollection subset, ICollection superset, string? message)
+            case "IsSubsetOf" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // IsSubsetOf(ICollection subset, ICollection superset, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeSubsetOf", argumentIndex: 0, argumentsToRemove: []);
+            case "IsNotSubsetOf" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection): // IsNotSubsetOf(ICollection subset, ICollection superset)
+            case "IsNotSubsetOf" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString): // IsNotSubsetOf(ICollection subset, ICollection superset, string? message)
+            case "IsNotSubsetOf" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // IsNotSubsetOf(ICollection subset, ICollection superset, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeSubsetOf", argumentIndex: 0, argumentsToRemove: []);
+            case "AreEquivalent" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection): // AreEquivalent(ICollection expected, ICollection actual)
+            case "AreEquivalent" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString): // AreEquivalent(ICollection expected, ICollection actual, string? message)
+            case "AreEquivalent" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // AreEquivalent(ICollection expected, ICollection actual, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEquivalentTo", argumentIndex: 1, argumentsToRemove: []);
+            case "AreNotEquivalent" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection): // AreNotEquivalent(ICollection expected, ICollection actual)
+            case "AreNotEquivalent" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString): // AreNotEquivalent(ICollection expected, ICollection actual, string? message)
+            case "AreNotEquivalent" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // AreNotEquivalent(ICollection expected, ICollection actual, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeEquivalentTo", argumentIndex: 1, argumentsToRemove: []);
+            case "AllItemsAreInstancesOfType" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemType): // AllItemsAreInstancesOfType(ICollection collection, Type expectedType)
+            case "AllItemsAreInstancesOfType" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemType, t.SystemString): // AllItemsAreInstancesOfType(ICollection collection, Type expectedType, string? message)
+            case "AllItemsAreInstancesOfType" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemType, t.SystemString, t.ObjectArray): // AllItemsAreInstancesOfType(ICollection collection, Type expectedType, string? message, params object?[]? parameters)
+                {
+                    if (invocation.Arguments[1].Value is not ITypeOfOperation typeOf)
+                    {
+                        return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "AllBeOfType", argumentIndex: 0, argumentsToRemove: []);
+                    }
+
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "AllBeOfType", argumentIndex: 0, argumentsToRemove: [1]);
+                }
+            case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection): // AreEqual(ICollection expected, ICollection actual)
+            case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString): // AreEqual(ICollection expected, ICollection actual, string? message)
+            case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // AreEqual(ICollection expected, ICollection actual, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Equal", argumentIndex: 1, argumentsToRemove: []);
+            case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemCollectionsIComparer): // AreEqual(ICollection expected, ICollection actual, IComparer? comparer)
+            case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemCollectionsIComparer, t.SystemString): // AreEqual(ICollection expected, ICollection actual, IComparer? comparer, string? message)
+            case "AreEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemCollectionsIComparer, t.SystemString, t.ObjectArray): // AreEqual(ICollection expected, ICollection actual, IComparer? comparer, string? message, params object?[]? parameters)
+                break; // TODO: support IComparer
+            case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection): // AreNotEqual(ICollection notExpected, ICollection actual)
+            case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString): // AreNotEqual(ICollection notExpected, ICollection actual, string? message)
+            case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemString, t.ObjectArray): // AreNotEqual(ICollection notExpected, ICollection actual, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotEqual", argumentIndex: 1, argumentsToRemove: []);
+            case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemCollectionsIComparer): // AreNotEqual(ICollection notExpected, ICollection actual, IComparer? comparer)
+            case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemCollectionsIComparer, t.SystemString): // AreNotEqual(ICollection notExpected, ICollection actual, IComparer? comparer, string? message)
+            case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.SystemCollectionsICollection, t.SystemCollectionsICollection, t.SystemCollectionsIComparer, t.SystemString, t.ObjectArray): // AreNotEqual(ICollection notExpected, ICollection actual, IComparer? comparer, string? message, params object?[]? parameters)
+                break; // TODO: support IComparer
+        }
         return null;
     }
 
@@ -305,5 +372,8 @@ public class MsTestCodeFixProvider : CodeFixProvider
         public INamedTypeSymbol SystemGlobalizationCultureInfo { get; } = compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
         public INamedTypeSymbol SystemStringComparison { get; } = compilation.GetTypeByMetadataName("System.StringComparison");
         public INamedTypeSymbol SystemTextRegularExpressionsRegex { get; } = compilation.GetTypeByMetadataName("System.Text.RegularExpressions.Regex");
+        public INamedTypeSymbol SystemCollectionsICollection { get; } = compilation.GetTypeByMetadataName("System.Collections.ICollection");
+        public INamedTypeSymbol SystemCollectionsIComparer { get; } = compilation.GetTypeByMetadataName("System.Collections.IComparer");
+
     }
 }

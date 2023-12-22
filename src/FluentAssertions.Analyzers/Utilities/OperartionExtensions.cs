@@ -44,6 +44,8 @@ internal static class OperartionExtensions
         => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
     public static bool ImplementsOrIsInterface(this IInvocationOperation invocation, INamedTypeSymbol type)
         => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
+    public static bool ImplementsOrIsInterface(this IArgumentOperation argument, SpecialType type)
+        => argument.Value.UnwrapConversion().Type.ImplementsOrIsInterface(type);
 
     public static bool IsSameArgumentReference(this IArgumentOperation argument1, IArgumentOperation argument2)
     {
@@ -64,9 +66,9 @@ internal static class OperartionExtensions
 
     public static bool IsStaticPropertyReference(this IArgumentOperation argument, INamedTypeSymbol type, string property)
     {
-        return argument.Value is IPropertyReferenceOperation propertyReference && propertyReference.Instance is null 
+        return argument.Value is IPropertyReferenceOperation propertyReference && propertyReference.Instance is null
             && propertyReference.Property.Type.EqualsSymbol(type)
-            && propertyReference.Property.Name == property; 
+            && propertyReference.Property.Name == property;
     }
 
     public static bool IsLiteralValue<T>(this IArgumentOperation argument, T value)
