@@ -220,9 +220,9 @@ public class AssertAnalyzer : DiagnosticAnalyzer
             if (typeSymbol is null)
                 return false;
 
-            return typeSymbol.EqualsSymbol(_msTestsAssertSymbol); // TODO: support all MsTest assert classes
-                // || typeSymbol.EqualsSymbol(_msTestsStringAssertSymbol)
-                // || typeSymbol.EqualsSymbol(_msTestsCollectionAssertSymbol);
+            return typeSymbol.EqualsSymbol(_msTestsAssertSymbol)
+                || typeSymbol.EqualsSymbol(_msTestsStringAssertSymbol);
+                // || typeSymbol.EqualsSymbol(_msTestsCollectionAssertSymbol); // TODO: support all MsTest assert classes
         }
 
         private bool IsNunitAssertClass(ITypeSymbol typeSymbol)

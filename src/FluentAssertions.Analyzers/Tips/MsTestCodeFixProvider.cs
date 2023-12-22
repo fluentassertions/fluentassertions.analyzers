@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Globalization;
 using System.Threading.Tasks;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using CreateChangedDocument = System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Document>>;
 
@@ -35,22 +32,21 @@ public class MsTestCodeFixProvider : CodeFixProvider
                 continue;
             }
 
-            var invocation = semanticModel.GetOperation(invocationExpression, context.CancellationToken);
+            var operation = semanticModel.GetOperation(invocationExpression, context.CancellationToken);
+            if (operation is not IInvocationOperation invocation)
+            {
+                continue;
+            }
             TryComputeFix(invocation, semanticModel, context, testContext, diagnostic);
         }
     }
 
-    private void TryComputeFix(IOperation operation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext testContext, Diagnostic diagnostic)
+    private void TryComputeFix(IInvocationOperation invocation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext testContext, Diagnostic diagnostic)
     {
-        if (operation is not IInvocationOperation invocation)
-        {
-            return;
-        }
-
         var assertType = invocation.TargetMethod.ContainingType;
         var createChangedDocument = assertType.Name switch
         {
-            "Assert" => TryComputeFixForAssert(invocation, semanticModel, context, testContext, diagnostic),
+            "Assert" => TryComputeFixForAssert(invocation, context, testContext),
             "StringAssert" => TryComputeFixForStringAssert(invocation, semanticModel, context, testContext, diagnostic),
             "CollectionAssert" => TryComputeFixForCollectionAssert(invocation, semanticModel, context, testContext, diagnostic),
             _ => null
@@ -64,7 +60,7 @@ public class MsTestCodeFixProvider : CodeFixProvider
         context.RegisterCodeFix(CodeAction.Create(Title, createChangedDocument, equivalenceKey: Title), diagnostic);
     }
 
-    private CreateChangedDocument TryComputeFixForAssert(IInvocationOperation invocation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext t, Diagnostic diagnostic)
+    private CreateChangedDocument TryComputeFixForAssert(IInvocationOperation invocation, CodeFixContext context, MsTestCodeFixContext t)
     {
         switch (invocation.TargetMethod.Name)
         {
@@ -186,15 +182,15 @@ public class MsTestCodeFixProvider : CodeFixProvider
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfObject): // ThrowsException<T>(Func<object?> action)
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfObject, t.SystemString): // ThrowsException<T>(Func<object?> action, string? message)
             case "ThrowsException" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfObject, t.SystemString, t.ObjectArray): // ThrowsException<T>(Func<object?> action, string? message, params object?[]? parameters)
-                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactly", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactly", argumentIndex: 0, argumentsToRemove: []);
             case "ThrowsExceptionAsync" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfTask): // ThrowsExceptionAsync<T>(Func<Task> action)
             case "ThrowsExceptionAsync" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfTask, t.SystemString): // ThrowsExceptionAsync<T>(Func<Task> action, string? message)
             case "ThrowsExceptionAsync" when ArgumentsAreTypeOf(invocation, t.SystemFuncOfTask, t.SystemString, t.ObjectArray): // ThrowsExceptionAsync<T>(Func<Task> action, string? message, params object?[]? parameters)
-                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactlyAsync", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactlyAsync", argumentIndex: 0, argumentsToRemove: []);
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject): // IsInstanceOfType<T>(object? value)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString): // IsInstanceOfType<T>(object? value, string? message)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString, t.ObjectArray): // IsInstanceOfType<T>(object? value, string? message, params object?[]? parameters)
-                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "BeOfType", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "BeOfType", argumentIndex: 0, argumentsToRemove: []);
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType): // IsInstanceOfType(object? value, Type expectedType)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString): // IsInstanceOfType(object? value, Type expectedType, string? message)
             case "IsInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString, t.ObjectArray): // IsInstanceOfType(object? value, Type expectedType, string? message, params object?[]? parameters)
@@ -209,7 +205,7 @@ public class MsTestCodeFixProvider : CodeFixProvider
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject): // IsNotInstanceOfType<T>(object? value)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString): // IsNotInstanceOfType<T>(object? value, string? message)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemString, t.ObjectArray): // IsNotInstanceOfType<T>(object? value, string? message, params object?[]? parameters)
-                    return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "NotBeOfType", argumentIndex: 0, argumentsToRemove: []);
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType): // IsNotInstanceOfType(object? value, Type expectedType)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString): // IsNotInstanceOfType(object? value, Type expectedType, string? message)
             case "IsNotInstanceOfType" when ArgumentsAreTypeOf(invocation, t.SystemObject, t.SystemType, t.SystemString, t.ObjectArray): // IsNotInstanceOfType(object? value, Type expectedType, string? message, params object?[]? parameters)
@@ -226,8 +222,46 @@ public class MsTestCodeFixProvider : CodeFixProvider
         return null;
     }
 
-    private CreateChangedDocument TryComputeFixForStringAssert(IInvocationOperation invocation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext testContext, Diagnostic diagnostic)
+    private CreateChangedDocument TryComputeFixForStringAssert(IInvocationOperation invocation, SemanticModel semanticModel, CodeFixContext context, MsTestCodeFixContext t, Diagnostic diagnostic)
     {
+        switch (invocation.TargetMethod.Name)
+        {
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString): // Contains(string? value, string? substring)
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString): // Contains(string? value, string? substring, string? message)
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.ObjectArray): // Contains(string? value, string? substring, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Contain", argumentIndex: 0, argumentsToRemove: []);
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemStringComparison): // Contains(string? value, string? substring, StringComparison comparisonType)
+                break; // TODO: support StringComparison constant values
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.SystemStringComparison): // Contains(string? value, string? substring, string? message, StringComparison comparisonType)
+            case "Contains" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.SystemStringComparison, t.ObjectArray): // Contains(string? value, string? substring, string? message, StringComparison comparisonType, params object?[]? parameters)
+                break; // TODO: support StringComparison constant values
+            case "StartsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString): // StartsWith(string? value, string? substring)
+            case "StartsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString): // StartsWith(string? value, string? substring, string? message)
+            case "StartsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.ObjectArray): // StartsWith(string? value, string? substring, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "StartWith", argumentIndex: 0, argumentsToRemove: []);
+            case "StartsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemStringComparison): // StartsWith(string? value, string? substring, StringComparison comparisonType)
+                break; // TODO: support StringComparison constant values
+            case "StartsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.SystemStringComparison): // StartsWith(string? value, string? substring, string? message, StringComparison comparisonType)
+            case "StartsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.SystemStringComparison, t.ObjectArray): // StartsWith(string? value, string? substring, string? message, StringComparison comparisonType, params object?[]? parameters)
+                break; // TODO: support StringComparison constant values
+            case "EndsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString): // EndsWith(string? value, string? substring)
+            case "EndsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString): // EndsWith(string? value, string? substring, string? message)
+            case "EndsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.ObjectArray): // EndsWith(string? value, string? substring, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "EndWith", argumentIndex: 0, argumentsToRemove: []);
+            case "EndsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemStringComparison): // EndsWith(string? value, string? substring, StringComparison comparisonType)
+                break; // TODO: support StringComparison constant values
+            case "EndsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.SystemStringComparison): // EndsWith(string? value, string? substring, string? message, StringComparison comparisonType)
+            case "EndsWith" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemString, t.SystemString, t.SystemStringComparison, t.ObjectArray): // EndsWith(string? value, string? substring, string? message, StringComparison comparisonType, params object?[]? parameters)
+                break; // TODO: support StringComparison constant values
+            case "Matches" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex): // Matches(string? value, Regex? pattern)
+            case "Matches" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString): // Matches(string? value, Regex? pattern, string? message)
+            case "Matches" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString, t.ObjectArray): // Matches(string? value, Regex? pattern, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Match", argumentIndex: 0, argumentsToRemove: []);
+            case "DoesNotMatch" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex): // DoesNotMatch(string? value, Regex? pattern)
+            case "DoesNotMatch" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString): // DoesNotMatch(string? value, Regex? pattern, string? message)
+            case "DoesNotMatch" when ArgumentsAreTypeOf(invocation, t.SystemString, t.SystemTextRegularExpressionsRegex, t.SystemString, t.ObjectArray): // DoesNotMatch(string? value, Regex? pattern, string? message, params object?[]? parameters)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotMatch", argumentIndex: 0, argumentsToRemove: []);
+        }
         return null;
     }
 
@@ -269,5 +303,7 @@ public class MsTestCodeFixProvider : CodeFixProvider
         public INamedTypeSymbol SystemFuncOfTask { get; } = compilation.GetTypeByMetadataName("System.Func`1").Construct(compilation.GetTypeByMetadataName("System.Threading.Tasks.Task"));
         public IArrayTypeSymbol ObjectArray { get; } = compilation.CreateArrayTypeSymbol(compilation.ObjectType);
         public INamedTypeSymbol SystemGlobalizationCultureInfo { get; } = compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+        public INamedTypeSymbol SystemStringComparison { get; } = compilation.GetTypeByMetadataName("System.StringComparison");
+        public INamedTypeSymbol SystemTextRegularExpressionsRegex { get; } = compilation.GetTypeByMetadataName("System.Text.RegularExpressions.Regex");
     }
 }
