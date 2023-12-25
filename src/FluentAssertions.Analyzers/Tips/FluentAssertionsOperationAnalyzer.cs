@@ -54,6 +54,29 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
 
         switch (assertion.TargetMethod.Name)
         {
+            case nameof(object.Equals):
+
+                if (subject.Type.SpecialType is SpecialType.System_String)
+                {
+                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldBe_StringShouldEquals));
+                    return;
+                }
+
+                if (subject.Type.EqualsSymbol(metadata.TaskCompletionSourceOfT1)
+                || subject.Type.AllInterfaces.Contains(metadata.Stream))
+                {
+                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.ShouldEquals));
+                    return;
+                }
+
+                if (subject.Type.ImplementsOrIsInterface(metadata.IEnumerable))
+                {
+                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldEqual_CollectionShouldEquals));
+                    return;
+                }
+
+                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.ShouldBe_ShouldEquals));
+                return;
             case "NotBeEmpty" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
                     if (assertion.TryGetChainedInvocationAfterAndConstraint("NotBeNull", out var chainedInvocation))
