@@ -1,5 +1,4 @@
 using FluentAssertions.Analyzers.TestUtils;
-using FluentAssertions.Analyzers.Xunit;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -316,8 +315,8 @@ public class TestClass
                 .WithPackageReferences(PackageReference.XunitAssert_2_5_1, PackageReference.FluentAssertions_6_12_0)
                 .WithExpectedDiagnostics(new DiagnosticResult()
                 {
-                    Id = AssertTrueAnalyzer.DiagnosticId,
-                    Message = AssertTrueAnalyzer.Message,
+                    Id = AssertAnalyzer.XunitRule.Id,
+                    Message = AssertAnalyzer.Message,
                     Severity = DiagnosticSeverity.Info,
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 9) }
                 })

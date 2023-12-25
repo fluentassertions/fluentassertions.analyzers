@@ -77,11 +77,10 @@ public class AssertAnalyzer : DiagnosticAnalyzer
 
             var analyzerContext = new AnalyzerContext(context.Compilation);
 
-            // TODO: enable xunit
-            // if (analyzerContext.IsXUnitAvailable)
-            // {
-            //     context.RegisterOperationAction(analyzerContext.AnalyzeXunitInvocation, OperationKind.Invocation);
-            // }
+            if (analyzerContext.IsXUnitAvailable)
+            {
+                context.RegisterOperationAction(analyzerContext.AnalyzeXunitInvocation, OperationKind.Invocation);
+            }
 
             if (analyzerContext.IsMSTestsAvailable)
             {

@@ -20,7 +20,7 @@ public class DocumentEditorUtils
 
             return await RewriteExpression(invocationExpression, [
                 ..Array.ConvertAll(argumentsToRemove, arg => new RemoveNodeAction(invocationExpression.ArgumentList.Arguments[arg])),
-            new SubjectShouldAssertionAction(argumentIndex, newName)
+                new SubjectShouldAssertionAction(argumentIndex, newName)
             ], context, ctx);
         };
 
@@ -33,7 +33,18 @@ public class DocumentEditorUtils
 
             return await RewriteExpression(invocationExpression, [
                 ..Array.ConvertAll(argumentsToRemove, arg => new RemoveNodeAction(invocationExpression.ArgumentList.Arguments[arg])),
-            new SubjectShouldGenericAssertionAction(argumentIndex, newName, genericTypes)
+                new SubjectShouldGenericAssertionAction(argumentIndex, newName, genericTypes)
+            ], context, ctx);
+        };
+
+    public static CreateChangedDocument RenameMethodToSubjectShouldAssertionWithOptionsLambda(IInvocationOperation invocation, CodeFixContext context, string newName, int argumentIndex, int optionsIndex)
+        => async ctx =>
+        {
+            var invocationExpression = (InvocationExpressionSyntax)invocation.Syntax;
+
+            return await RewriteExpression(invocationExpression, [
+                new SubjectShouldAssertionAction(argumentIndex, newName),
+                new CreateEquivalencyAssertionOptionsLambda(optionsIndex)
             ], context, ctx);
         };
 
