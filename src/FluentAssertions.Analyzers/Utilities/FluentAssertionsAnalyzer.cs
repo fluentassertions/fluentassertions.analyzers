@@ -123,12 +123,3 @@ public abstract class FluentAssertionsAnalyzer<TCSharpSyntaxVisitor> : Diagnosti
 public abstract class FluentAssertionsAnalyzer : FluentAssertionsAnalyzer<FluentAssertionsCSharpSyntaxVisitor>
 {
 }
-
-public abstract class TestingLibraryAnalyzerBase : FluentAssertionsAnalyzer
-{
-    protected abstract string TestingLibraryModule { get; }
-    protected abstract string TestingLibraryAssertionType { get; }
-
-    protected override bool ShouldAnalyzeVariableNamedType(INamedTypeSymbol type, SemanticModel semanticModel)
-        => type.Name == TestingLibraryAssertionType && type.ContainingModule.Name == TestingLibraryModule + ".dll";
-}
