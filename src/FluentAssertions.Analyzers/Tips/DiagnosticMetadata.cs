@@ -104,6 +104,10 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo = new("Use .Should().ThrowExactly<TException>().WithInnerException<TInnerException>()", string.Empty);
     public static DiagnosticMetadata ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo = new("Use .Should().ThrowExactly<TException>().WithInnerException<TInnerException>()", string.Empty);
 
+    public static DiagnosticMetadata StringShouldBe_StringShouldEquals = new("Use .Should().Be()", string.Empty);
+    public static DiagnosticMetadata CollectionShouldEqual_CollectionShouldEquals = new("Use .Should().Equal()", string.Empty);
+    public static DiagnosticMetadata ShouldEquals = new("Use .Should().Be() or .Should().BeEquivalentTo or .Should().Equal() or other equivalency assertion", string.Empty);
+    public static DiagnosticMetadata ShouldBe_ShouldEquals = new("Use .Should().Be()", string.Empty);
 
     private static string GetHelpLink(string id) => $"https://fluentassertions.com/tips/#{id}";
 }

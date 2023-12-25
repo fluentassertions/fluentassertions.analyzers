@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,6 +13,20 @@ namespace FluentAssertions.Analyzers;
 public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
 {
     public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(FluentAssertionsOperationAnalyzer.DiagnosticId);
+
+    protected override Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context, Diagnostic diagnostic)
+    {
+        if (diagnostic.Properties.TryGetValue(Constants.DiagnosticProperties.VisitorName, out var visitorName))
+        {
+            return visitorName switch
+            {
+                nameof(DiagnosticMetadata.ShouldEquals) => Task.FromResult(false),
+                _ => Task.FromResult(true),
+            };
+        }
+
+        return base.CanRewriteAssertion(expression, context, diagnostic);
+    }
 
     protected override ExpressionSyntax GetNewExpression(ExpressionSyntax expression, FluentAssertionsDiagnosticProperties properties)
     {
@@ -337,7 +352,11 @@ public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith):
                 return ReplaceEndWithMessage(expression, "And");
-
+            case nameof(DiagnosticMetadata.CollectionShouldEqual_CollectionShouldEquals):
+                return GetNewExpression(expression, NodeReplacement.Rename("Equals", "Equal"));
+            case nameof(DiagnosticMetadata.StringShouldBe_StringShouldEquals):
+            case nameof(DiagnosticMetadata.ShouldBe_ShouldEquals):
+                return GetNewExpression(expression, NodeReplacement.Rename("Equals", "Be"));
             default: throw new System.InvalidOperationException($"Invalid visitor name - {properties.VisitorName}");
         };
     }

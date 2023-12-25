@@ -23,7 +23,7 @@ public abstract class FluentAssertionsCodeFixProvider : CodeFixProvider
         foreach (var diagnostic in context.Diagnostics)
         {
             var expression = (ExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan);
-            if (await CanRewriteAssertion(expression, context).ConfigureAwait(false))
+            if (await CanRewriteAssertion(expression, context, diagnostic).ConfigureAwait(false))
             {
                 context.RegisterCodeFix(CodeAction.Create(
                     title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
@@ -33,7 +33,7 @@ public abstract class FluentAssertionsCodeFixProvider : CodeFixProvider
         }
     }
 
-    protected virtual Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context) => Task.FromResult(true);
+    protected virtual Task<bool> CanRewriteAssertion(ExpressionSyntax expression, CodeFixContext context, Diagnostic diagnostic) => Task.FromResult(true);
 
     protected async Task<Document> RewriteAssertion(Document document, ExpressionSyntax expression, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
     {

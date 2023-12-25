@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -52,7 +54,10 @@ public partial class FluentAssertionsOperationAnalyzer
             DictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(Dictionary<,>).FullName);
             IReadonlyDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IReadOnlyDictionary<,>).FullName);
             Enumerable = compilation.GetTypeByMetadataName(typeof(Enumerable).FullName);
+            IEnumerable = compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
             Math = compilation.GetTypeByMetadataName(typeof(Math).FullName);
+            TaskCompletionSourceOfT1 = compilation.GetTypeByMetadataName(typeof(TaskCompletionSource<>).FullName);
+            Stream = compilation.GetTypeByMetadataName(typeof(Stream).FullName);
         }
         public INamedTypeSymbol AssertionExtensions { get; }
         public INamedTypeSymbol ReferenceTypeAssertionsOfT2 { get; }
@@ -68,6 +73,9 @@ public partial class FluentAssertionsOperationAnalyzer
         public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
         public INamedTypeSymbol Enumerable { get; }
+        public INamedTypeSymbol IEnumerable { get; }
         public INamedTypeSymbol Math { get; }
+        public INamedTypeSymbol TaskCompletionSourceOfT1 { get; }
+        public INamedTypeSymbol Stream { get; }
     }
 }
