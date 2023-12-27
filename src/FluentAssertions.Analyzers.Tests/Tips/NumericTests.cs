@@ -52,6 +52,27 @@ namespace FluentAssertions.Analyzers.Tests
         public void NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo);
 
         [DataTestMethod]
+        [DataRow("actual.Should().BeLessOrEqualTo(upper, \"because reason 1\").And.BeGreaterOrEqualTo(lower, \"because reason 2\");")]
+        [DataRow("actual.Should().BeLessOrEqualTo(upper, \"because reason 1\").And.BeGreaterOrEqualTo(lower, \"because reason 2\");")]
+        [Implemented]
+        public void NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo_WithMessagesInBothAssertions_TestAnalyzer(string assertion)
+        {
+            verifyNoDiagnostic("double");
+            verifyNoDiagnostic("float");
+            verifyNoDiagnostic("decimal");
+
+            void verifyNoDiagnostic(string type)
+            {
+                var source = GenerateCode.NumericAssertion(assertion, type);
+                DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                    .WithSources(source)
+                    .WithAllAnalyzers()
+                    .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+                );
+            }
+        }
+
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().BeGreaterOrEqualTo(lower{0}).And.BeLessOrEqualTo(upper);",
             newAssertion: "actual.Should().BeInRange(lower, upper{0});")]
