@@ -95,13 +95,13 @@ internal static class OperartionExtensions
         return operation.Kind is OperationKind.LocalReference || operation.Kind is OperationKind.ParameterReference;
     }
 
-    public static bool IsReferenceOfType<T>(this IArgumentOperation argument)
+    public static bool IsReferenceOfType(this IArgumentOperation argument, SpecialType type)
     {
         var current = UnwrapConversion(argument.Value);
         return current switch
         {
-            ILocalReferenceOperation local => local.Local.Type.SpecialType == SpecialType.System_Double,
-            IParameterReferenceOperation parameter => parameter.Parameter.Type.SpecialType == SpecialType.System_Double,
+            ILocalReferenceOperation local => local.Local.Type.SpecialType == type,
+            IParameterReferenceOperation parameter => parameter.Parameter.Type.SpecialType == type,
             _ => false,
         };
     }
