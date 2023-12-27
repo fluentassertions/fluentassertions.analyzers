@@ -445,7 +445,11 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                             case nameof(Enumerable.Count) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo));
                                 return;
-                            case nameof(Math.Abs) when invocationBeforeShould.IsContainedInType(metadata.Math) && assertion.Arguments[0].IsReferenceOfType<double>():
+                            case nameof(Math.Abs) when invocationBeforeShould.IsContainedInType(metadata.Math) && (
+                                    assertion.Arguments[0].IsReferenceOfType(SpecialType.System_Double) 
+                                    || assertion.Arguments[0].IsReferenceOfType(SpecialType.System_Single)
+                                    || assertion.Arguments[0].IsReferenceOfType(SpecialType.System_Decimal)
+                                ):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo));
                                 return;
                         }

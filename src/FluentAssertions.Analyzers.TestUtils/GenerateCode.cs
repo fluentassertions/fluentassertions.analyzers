@@ -98,7 +98,9 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("}")
             .ToString();
 
-        public static string DoubleAssertion(string assertion) => new StringBuilder()
+        public static string DoubleAssertion(string assertion) => NumericAssertion(assertion, "double");
+
+        public static string NumericAssertion(string assertion, string type) => new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
             .AppendLine("using FluentAssertions.Extensions;")
@@ -106,7 +108,7 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("{")
             .AppendLine("    class TestClass")
             .AppendLine("    {")
-            .AppendLine("        void TestMethod(double actual, double expected, double lower, double upper, double delta)")
+            .AppendLine($"        void TestMethod({type} actual, {type} expected, {type} lower, {type} upper, {type} delta)")
             .AppendLine("        {")
             .AppendLine($"            {assertion}")
             .AppendLine("        }")
