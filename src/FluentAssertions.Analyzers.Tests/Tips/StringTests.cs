@@ -21,7 +21,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.ToString().StartsWith(expected).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().StartWith(expected{0}).And.ToString();")]
         [Implemented]
-        public void StringShouldStartWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void StringShouldStartWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.EndsWith(expected).Should().BeTrue({0});")]
@@ -37,7 +37,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.ToString().EndsWith(expected).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().EndWith(expected{0}).And.ToString();")]
         [Implemented]
-        public void StringShouldEndWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void StringShouldEndWith_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("string.IsNullOrEmpty(actual).Should().BeFalse({0});")]
@@ -93,7 +93,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "string.IsNullOrEmpty(actual.ToString()).Should().BeFalse({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().NotBeNullOrEmpty({0}).And.ToString();")]
         [Implemented]
-        public void StringShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void StringShouldNotBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("string.IsNullOrEmpty(actual).Should().BeTrue({0});")]
@@ -109,7 +109,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "string.IsNullOrEmpty(actual.ToString()).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().BeNullOrEmpty({0}).And.ToString();")]
         [Implemented]
-        public void StringShouldBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void StringShouldBeNullOrEmpty_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("string.IsNullOrWhiteSpace(actual).Should().BeTrue({0});")]
@@ -133,7 +133,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "string.IsNullOrWhiteSpace(actual.ToString()).Should().BeTrue({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().BeNullOrWhiteSpace({0}).And.ToString();")]
         [Implemented]
-        public void StringShouldBeNullOrWhiteSpace_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void StringShouldBeNullOrWhiteSpace_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("string.IsNullOrWhiteSpace(actual).Should().BeFalse({0});")]
@@ -157,7 +157,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "string.IsNullOrWhiteSpace(actual.ToString()).Should().BeFalse({0}).And.ToString();",
             newAssertion: "actual.ToString().Should().NotBeNullOrWhiteSpace({0}).And.ToString();")]
         [Implemented]
-        public void StringShouldNotBeNullOrWhiteSpace_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void StringShouldNotBeNullOrWhiteSpace_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.Length.Should().Be(k{0});")]
@@ -173,7 +173,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "actual.ToString().Length.Should().Be(k{0}).And.ToString();",
             newAssertion: "actual.ToString().Should().HaveLength(k{0}).And.ToString();")]
         [Implemented]
-        public void StringShouldHaveLength_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void StringShouldHaveLength_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic(string sourceAssertion, DiagnosticMetadata metadata)
         {
@@ -192,14 +192,18 @@ namespace FluentAssertions.Analyzers.Tests
             });
         }
 
-        private void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(string oldSourceAssertion, string newSourceAssertion)
-            where TCodeFixProvider : Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider, new()
-            where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
+        private void VerifyCSharpFix(string oldSourceAssertion, string newSourceAssertion)
         {
             var oldSource = GenerateCode.StringAssertion(oldSourceAssertion);
             var newSource = GenerateCode.StringAssertion(newSourceAssertion);
 
-            DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
+            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+                .WithSources(oldSource)
+                .WithFixedSources(newSource)
+                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
         }
     }
 }
