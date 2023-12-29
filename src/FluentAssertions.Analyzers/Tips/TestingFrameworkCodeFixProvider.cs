@@ -1,50 +1,14 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
-using CreateChangedDocument = System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Document>>;
 
 namespace FluentAssertions.Analyzers;
 
-public abstract class TestingFrameworkCodeFixProvider : CodeFixProvider
+public abstract class TestingFrameworkCodeFixProvider : CodeFixProviderBase<TestingFrameworkCodeFixProvider.TestingFrameworkCodeFixContext>
 {
-    protected const string Title = "Replace with FluentAssertions";
+    protected override string Title => "Replace with FluentAssertions";
 
-    public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-    public override async Task RegisterCodeFixesAsync(CodeFixContext context)
-    {
-        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
-
-        var testContext = new TestingFrameworkCodeFixContext(semanticModel.Compilation);
-        foreach (var diagnostic in context.Diagnostics)
-        {
-            var node = root.FindNode(diagnostic.Location.SourceSpan);
-            if (node is not InvocationExpressionSyntax invocationExpression)
-            {
-                continue;
-            }
-
-            var operation = semanticModel.GetOperation(invocationExpression, context.CancellationToken);
-            if (operation is not IInvocationOperation invocation)
-            {
-                continue;
-            }
-
-            var fix = TryComputeFix(invocation, context, testContext, diagnostic);
-            if (fix is not null)
-            {
-                context.RegisterCodeFix(CodeAction.Create(Title, fix, equivalenceKey: Title), diagnostic);
-            }
-        }
-    }
-
-    protected abstract CreateChangedDocument TryComputeFix(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t, Diagnostic diagnostic);
+    protected override TestingFrameworkCodeFixContext CreateTestContext(SemanticModel semanticModel) => new TestingFrameworkCodeFixContext(semanticModel.Compilation);
 
     protected static bool ArgumentsAreTypeOf(IInvocationOperation invocation, params ITypeSymbol[] types) => ArgumentsAreTypeOf(invocation, 0, types);
     protected static bool ArgumentsAreTypeOf(IInvocationOperation invocation, int startFromIndex, params ITypeSymbol[] types)
@@ -107,7 +71,7 @@ public abstract class TestingFrameworkCodeFixProvider : CodeFixProvider
         return invocation.TargetMethod.Parameters.Length == arguments;
     }
 
-    protected sealed class TestingFrameworkCodeFixContext(Compilation compilation)
+    public sealed class TestingFrameworkCodeFixContext(Compilation compilation)
     {
         public INamedTypeSymbol Object { get; } = compilation.ObjectType;
         public INamedTypeSymbol String { get; } = compilation.GetTypeByMetadataName("System.String");

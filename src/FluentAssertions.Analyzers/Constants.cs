@@ -4,8 +4,6 @@ public static class Constants
 {
     public static class DiagnosticProperties
     {
-        public const string RuleId = nameof(RuleId);
-        public const string Title = nameof(Title);
         public const string VisitorName = nameof(VisitorName);
         public const string HelpLink = nameof(HelpLink);
         public const string IdPrefix = "FluentAssertions";

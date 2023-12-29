@@ -13,7 +13,7 @@ internal static class OperartionExtensions
     public static bool TryGetFirstDescendent<TOperation>(this IOperation parent, out TOperation operation) where TOperation : IOperation
     {
         IOperation current = parent;
-        while (current.ChildOperations.Count == 1)
+        while (current.ChildOperations.Count >= 1)
         {
             current = current.ChildOperations.First();
             if (current is TOperation op)

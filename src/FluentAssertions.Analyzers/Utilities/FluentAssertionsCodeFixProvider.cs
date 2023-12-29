@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FluentAssertions.Analyzers;
 
 
-public abstract class FluentAssertionsCodeFixProvider : CodeFixProvider
+public abstract class LegacyFluentAssertionsCodeFixProvider : CodeFixProvider
 {
     public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -26,7 +26,7 @@ public abstract class FluentAssertionsCodeFixProvider : CodeFixProvider
             if (await CanRewriteAssertion(expression, context, diagnostic).ConfigureAwait(false))
             {
                 context.RegisterCodeFix(CodeAction.Create(
-                    title: diagnostic.Properties[Constants.DiagnosticProperties.Title],
+                    title: FluentAssertionsOperationAnalyzer.Title,
                     createChangedDocument: c => RewriteAssertion(context.Document, expression, diagnostic.Properties, c)
                     ), diagnostic);
             }

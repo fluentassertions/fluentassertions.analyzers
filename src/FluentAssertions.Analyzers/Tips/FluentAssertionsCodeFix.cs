@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace FluentAssertions.Analyzers;
 
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FluentAssertionsCodeFix)), Shared]
-public partial class FluentAssertionsCodeFix : FluentAssertionsCodeFixProvider
+public partial class FluentAssertionsCodeFix : LegacyFluentAssertionsCodeFixProvider
 {
     public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(FluentAssertionsOperationAnalyzer.DiagnosticId);
 

@@ -628,7 +628,6 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
     static Diagnostic CreateDiagnostic(IOperation operation, DiagnosticMetadata metadata)
     {
         var properties = ImmutableDictionary<string, string>.Empty
-            .Add(Constants.DiagnosticProperties.Title, Title)
             .Add(Constants.DiagnosticProperties.VisitorName, metadata.Name)
             .Add(Constants.DiagnosticProperties.HelpLink, metadata.HelpLink);
         var newRule = new DiagnosticDescriptor(Rule.Id, Rule.Title, metadata.Message, Rule.Category, Rule.DefaultSeverity, true,
