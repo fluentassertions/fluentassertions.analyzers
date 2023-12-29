@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1703845182286,
+  "lastUpdate": 1703850919164,
   "repoUrl": "https://github.com/fluentassertions/fluentassertions.analyzers",
   "entries": {
     "FluentAssertions.Analyzers Benchmark": [
@@ -3124,6 +3124,50 @@ window.BENCHMARK_DATA = {
             "value": 268.38781048456826,
             "unit": "ns",
             "range": "± 2.512812616575223"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "committer": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "id": "9b5c6e56481f12299da7098c67afcef9ea4e6fe2",
+          "message": "feat: Migrate fluent assertions code-fixers to levarage IOperation",
+          "timestamp": "2023-12-19T22:08:23Z",
+          "url": "https://github.com/fluentassertions/fluentassertions.analyzers/pull/278/commits/9b5c6e56481f12299da7098c67afcef9ea4e6fe2"
+        },
+        "date": 1703850918621,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation_SingleSource_ObjectStatement_Analyzing",
+            "value": 413.7195130586624,
+            "unit": "ns",
+            "range": "± 1.4673219685795371"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation_SingleSource_ObjectStatement_Analyzing",
+            "value": 271.72791655858356,
+            "unit": "ns",
+            "range": "± 1.6364075182414035"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.SmallCompilation_MultipleSources_StringAssertions_Analyzing",
+            "value": 897.1605747858683,
+            "unit": "ns",
+            "range": "± 5.876305796791541"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.SmallCompilation_MultipleSources_StringAssertions_Analyzing",
+            "value": 298.4271592458089,
+            "unit": "ns",
+            "range": "± 2.2161168479629874"
           }
         ]
       }
