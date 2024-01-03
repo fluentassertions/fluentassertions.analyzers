@@ -186,18 +186,24 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
                         editor.ReplaceNode(context.AssertionExpression.ArgumentList, arguments);
                     }
                 ]);
-            // {
-            //     var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
-            //     var newExpression = GetNewExpression(expression, remove);
-            //     return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
-            // }
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_SkipFirstShouldBe):
-                break;
-            // {
-            //     var remove = NodeReplacement.RemoveAndExtractArguments("Skip");
-            //     var newExpression = GetNewExpression(expression, remove, NodeReplacement.Remove("First"));
-            //     return GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("Be", "HaveElementAt", remove.Arguments));
-            // }
+                return RewriteFluentAssertion(assertion, context, [
+                    FluentAssertionsEditAction.RenameAssertion("HaveElementAt"),
+                    (editor, context) => {
+                        var firstInvocation = context.InvocationBeforeShould;
+                        var skipInvocation = firstInvocation.GetFirstDescendent<IInvocationOperation>();
+
+                        var skipValue = skipInvocation.Arguments[1].Value;
+                        var subject = skipInvocation.ChildOperations.First().UnwrapConversion();
+
+                        editor.ReplaceNode(firstInvocation.Syntax, subject.Syntax.WithTriviaFrom(firstInvocation.Syntax));
+                        
+                        var arguments = SyntaxFactory.ArgumentList()
+                            .AddArguments((ArgumentSyntax)editor.Generator.Argument(skipValue.Syntax))
+                            .AddArguments([..context.AssertionExpression.ArgumentList.Arguments]);
+                        editor.ReplaceNode(context.AssertionExpression.ArgumentList, arguments);
+                    }
+                ]);
             case nameof(DiagnosticMetadata.NumericShouldBePositive_ShouldBeGreaterThan):
                 return RenameAssertionAndRemoveFirstAssertionArgument("BePositive");
             case nameof(DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan):

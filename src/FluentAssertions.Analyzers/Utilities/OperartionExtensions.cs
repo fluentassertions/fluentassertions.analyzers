@@ -27,6 +27,24 @@ internal static class OperartionExtensions
         return false;
     }
 
+    /// <summary>
+    /// Tries to get the first descendent of the parent operation. where each operation has only one child.
+    /// </summary>
+    public static TOperation GetFirstDescendent<TOperation>(this IOperation parent) where TOperation : IOperation
+    {
+        IOperation current = parent;
+        while (current.ChildOperations.Count >= 1)
+        {
+            current = current.ChildOperations.First();
+            if (current is TOperation op)
+            {
+                return op;
+            }
+        }
+
+        return default;
+    }
+
     public static bool HasFirstDescendentInvocation(this IOperation parent, string invocationMethod)
     {
         return parent.TryGetFirstDescendent<IInvocationOperation>(out var invocation) && invocation.TargetMethod.Name == invocationMethod;
