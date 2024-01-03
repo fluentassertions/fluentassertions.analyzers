@@ -2,12 +2,14 @@ using System;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Composition;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using CreateChangedDocument = System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Document>>;
+using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FluentAssertions.Analyzers;
 
@@ -44,57 +46,57 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
         // newAssertion: subject.Should().<newName>([arg2, arg3...]);
         CreateChangedDocument RemoveExpressionBeforeShouldAndRenameAssertion(string newName)
         {
-            return RewriteFluentAssertion(assertion, context,
+            return RewriteFluentAssertion(assertion, context, [
                 FluentAssertionsEditAction.RenameAssertion(newName),
                 FluentAssertionsEditAction.SkipExpressionBeforeShould()
-            );
+            ]);
         }
 
         // oldAssertion: subject.Should().<assertion>([arg1, arg2, arg3...]);
         // newAssertion: subject.Should().<newName>([arg2, arg3...]);
         CreateChangedDocument RenameAssertionAndRemoveFirstAssertionArgument(string newName)
         {
-            return RewriteFluentAssertion(assertion, context,
+            return RewriteFluentAssertion(assertion, context, [
                 FluentAssertionsEditAction.RemoveAssertionArgument(index: 0),
                 FluentAssertionsEditAction.RenameAssertion(newName)
-            );
+            ]);
         }
 
         // oldAssertion: subject.<method>(<arguments>).Should().<assertion>([arg1, arg2, arg3...]);
         // newAssertion: subject.Should().<newName>([arguments, arg1, arg2, arg3...]);
         CreateChangedDocument RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved(string newName)
         {
-            return RewriteFluentAssertion(assertion, context,
+            return RewriteFluentAssertion(assertion, context, [
                 FluentAssertionsEditAction.RenameAssertion(newName),
                 FluentAssertionsEditAction.SkipInvocationBeforeShould(),
                 FluentAssertionsEditAction.PrependArgumentsFromInvocationBeforeShouldToAssertion()
-            );
+            ]);
         }
 
         // oldAssertion: subject.<method>(<argument1>).Should().<assertion>([arg1, arg2, arg3...]);
         // newAssertion: subject.Should().<newName>([argument1, arg1, arg2, arg3...]);
         CreateChangedDocument RemoveMethodBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved(string newName)
         {
-            return RewriteFluentAssertion(assertion, context,
+            return RewriteFluentAssertion(assertion, context, [
                 FluentAssertionsEditAction.RenameAssertion(newName),
                 FluentAssertionsEditAction.SkipInvocationBeforeShould(),
                 FluentAssertionsEditAction.RemoveAssertionArgument(index: 0),
                 FluentAssertionsEditAction.PrependArgumentsFromInvocationBeforeShouldToAssertion(skipAssertionArguments: 1)
-            );
+            ]);
         }
 
         switch (visitorName)
         {
             case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_AnyShouldBeFalse):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("BeEmpty"),
                     FluentAssertionsEditAction.SkipInvocationBeforeShould()
-                );
+                ]);
             case nameof(DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("NotBeEmpty"),
                     FluentAssertionsEditAction.SkipInvocationBeforeShould()
-                );
+                ]);
             case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_ShouldHaveCount0):
                 return RenameAssertionAndRemoveFirstAssertionArgument("BeEmpty");
             case nameof(DiagnosticMetadata.CollectionShouldBeInAscendingOrder_OrderByShouldEqual):
@@ -110,8 +112,26 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.CollectionShouldContainSingle_WhereShouldHaveCount1):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved("ContainSingle");
             case nameof(DiagnosticMetadata.CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect):
-                break;
-            // return GetNewExpressionForSelectShouldEqualOtherCollectionSelectSyntaxVisitor(expression);
+                return RewriteFluentAssertion(assertion, context, [
+                    FluentAssertionsEditAction.SkipInvocationBeforeShould(),
+                    (editor, context) => {
+                        var firstLambda = (SimpleLambdaExpressionSyntax)context.InvocationBeforeShould.Arguments[1].GetFirstDescendent<IAnonymousFunctionOperation>().Syntax;
+                        var selectInvocation = context.Assertion.Arguments[0].GetFirstDescendent<IInvocationOperation>();
+                        var secondLambda = (SimpleLambdaExpressionSyntax)selectInvocation.Arguments[1].Value.Syntax;
+
+                        var newLambda = editor.Generator.ValueReturningLambdaExpression([firstLambda.Parameter, secondLambda.Parameter], SF.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            left: (ExpressionSyntax)firstLambda.Body,
+                            right: (ExpressionSyntax)secondLambda.Body
+                        ));
+
+                        var arguments = SF.ArgumentList()
+                            .AddArguments((ArgumentSyntax)editor.Generator.Argument(selectInvocation.Arguments[0].Syntax))
+                            .AddArguments((ArgumentSyntax)editor.Generator.Argument(newLambda))
+                            .AddArguments([..context.AssertionExpression.ArgumentList.Arguments.Skip(1)]);
+                        editor.ReplaceNode(context.AssertionExpression.ArgumentList, arguments);
+                    }
+                ]);
             case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_CountShouldBe0):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved("BeEmpty");
             case nameof(DiagnosticMetadata.CollectionShouldContainSingle_CountShouldBe1):
@@ -131,10 +151,10 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.CollectionShouldIntersectWith_IntersectShouldNotBeEmpty):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("IntersectWith");
             case nameof(DiagnosticMetadata.CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("HaveSameCount"),
                     FluentAssertionsEditAction.RemoveInvocationOnAssertionArgument(assertionArgumentIndex: 0, invocationArgumentIndex: 0)
-                );
+                ]);
             case nameof(DiagnosticMetadata.CollectionShouldNotContainItem_ContainsShouldBeFalse):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("NotContain");
             case nameof(DiagnosticMetadata.CollectionShouldNotContainNulls_SelectShouldNotContainNulls):
@@ -147,11 +167,11 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.CollectionShouldNotHaveCount_CountShouldNotBe):
                 return RemoveExpressionBeforeShouldAndRenameAssertion("NotHaveCount");
             case nameof(DiagnosticMetadata.CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("NotHaveSameCount"),
                     FluentAssertionsEditAction.SkipInvocationBeforeShould(),
                     FluentAssertionsEditAction.RemoveInvocationOnAssertionArgument(assertionArgumentIndex: 0, invocationArgumentIndex: 0)
-                );
+                ]);
             case nameof(DiagnosticMetadata.CollectionShouldNotIntersectWith_IntersectShouldBeEmpty):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("NotIntersectWith");
             case nameof(DiagnosticMetadata.CollectionShouldOnlyContainProperty_AllShouldBeTrue):
@@ -179,7 +199,7 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
                         
                         editor.ReplaceNode(context.Subject.Syntax, subject.Syntax.WithTriviaFrom(context.Subject.Syntax));
 
-                        var arguments = SyntaxFactory.ArgumentList()
+                        var arguments = SF.ArgumentList()
                             .AddArguments((ArgumentSyntax)editor.Generator.Argument(index.Syntax))
                             .AddArguments([..context.AssertionExpression.ArgumentList.Arguments]);
 
@@ -197,8 +217,8 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
                         var subject = skipInvocation.ChildOperations.First().UnwrapConversion();
 
                         editor.ReplaceNode(firstInvocation.Syntax, subject.Syntax.WithTriviaFrom(firstInvocation.Syntax));
-                        
-                        var arguments = SyntaxFactory.ArgumentList()
+
+                        var arguments = SF.ArgumentList()
                             .AddArguments((ArgumentSyntax)editor.Generator.Argument(skipValue.Syntax))
                             .AddArguments([..context.AssertionExpression.ArgumentList.Arguments]);
                         editor.ReplaceNode(context.AssertionExpression.ArgumentList, arguments);
@@ -226,7 +246,7 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
 
                         editor.ReplaceNode(context.Subject.Syntax, subject.Syntax.WithTriviaFrom(context.Subject.Syntax));
 
-                        var arguments = SyntaxFactory.ArgumentList()
+                        var arguments = SF.ArgumentList()
                             .AddArguments((ArgumentSyntax)editor.Generator.Argument(expected.Syntax))
                             .AddArguments([..context.AssertionExpression.ArgumentList.Arguments]);
 
@@ -234,29 +254,29 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
                     }
                 ]);
             case nameof(DiagnosticMetadata.StringShouldBeNullOrEmpty_StringIsNullOrEmptyShouldBeTrue):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("BeNullOrEmpty"),
                     FluentAssertionsEditAction.UnwrapInvocationOnSubject(argumentIndex: 0)
-                );
+                ]);
             case nameof(DiagnosticMetadata.StringShouldBeNullOrWhiteSpace_StringIsNullOrWhiteSpaceShouldBeTrue):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("BeNullOrWhiteSpace"),
                     FluentAssertionsEditAction.UnwrapInvocationOnSubject(argumentIndex: 0)
-                );
+                ]);
             case nameof(DiagnosticMetadata.StringShouldEndWith_EndsWithShouldBeTrue):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("EndWith");
             case nameof(DiagnosticMetadata.StringShouldStartWith_StartsWithShouldBeTrue):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("StartWith");
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrWhiteSpace_StringShouldNotBeNullOrWhiteSpace):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("NotBeNullOrWhiteSpace"),
                     FluentAssertionsEditAction.UnwrapInvocationOnSubject(argumentIndex: 0)
-                );
+                ]);
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringIsNullOrEmptyShouldBeFalse):
-                return RewriteFluentAssertion(assertion, context,
+                return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("NotBeNullOrEmpty"),
                     FluentAssertionsEditAction.UnwrapInvocationOnSubject(argumentIndex: 0)
-                );
+                ]);
             case nameof(DiagnosticMetadata.StringShouldHaveLength_LengthShouldBe):
                 return RemoveExpressionBeforeShouldAndRenameAssertion("HaveLength");
             case nameof(DiagnosticMetadata.DictionaryShouldContainKey_ContainsKeyShouldBeTrue):
@@ -314,10 +334,14 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith):
                 break;
             case nameof(DiagnosticMetadata.CollectionShouldEqual_CollectionShouldEquals):
-                return RewriteFluentAssertion(assertion, context, FluentAssertionsEditAction.RenameAssertion("Equal"));
+                return RewriteFluentAssertion(assertion, context, [
+                    FluentAssertionsEditAction.RenameAssertion("Equal")
+                ]);
             case nameof(DiagnosticMetadata.StringShouldBe_StringShouldEquals):
             case nameof(DiagnosticMetadata.ShouldBe_ShouldEquals):
-                return RewriteFluentAssertion(assertion, context, FluentAssertionsEditAction.RenameAssertion("Be"));
+                return RewriteFluentAssertion(assertion, context, [
+                    FluentAssertionsEditAction.RenameAssertion("Be")
+                ]);
             default:
                 return null;
         }

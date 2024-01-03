@@ -10,7 +10,7 @@ namespace FluentAssertions.Analyzers;
 public sealed partial class FluentAssertionsCodeFixProvider
 {
     // <subject>.<invocationBeforeShould>().Should().<assertion>(<arguments>)
-    private static CreateChangedDocument RewriteFluentAssertion(IInvocationOperation assertion, CodeFixContext context, params Action<DocumentEditor, FluentAssertionEditActionContext>[] actions)
+    private static CreateChangedDocument RewriteFluentAssertion(IInvocationOperation assertion, CodeFixContext context, Action<DocumentEditor, FluentAssertionEditActionContext>[] actions)
     {
         var assertionExpression = (InvocationExpressionSyntax)assertion.Syntax;
 
@@ -35,7 +35,7 @@ public sealed partial class FluentAssertionsCodeFixProvider
     }
 
     // <subject>.Should().<assertionA>(argumentsA).<andOrWhich>.<assertionB>(<argumentsB>)
-    private static CreateChangedDocument RewriteFluentChainedAssertion(IInvocationOperation assertionB, CodeFixContext context, params Action<DocumentEditor, FluentChainedAssertionEditActionContext>[] actions)
+    private static CreateChangedDocument RewriteFluentChainedAssertion(IInvocationOperation assertionB, CodeFixContext context, Action<DocumentEditor, FluentChainedAssertionEditActionContext>[] actions)
     {
         var assertionExpressionB = (InvocationExpressionSyntax)assertionB.Syntax;
 
