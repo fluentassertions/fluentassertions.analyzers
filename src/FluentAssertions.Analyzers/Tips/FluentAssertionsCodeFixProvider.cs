@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using CreateChangedDocument = System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Document>>;
 
@@ -164,7 +168,24 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_ElementAtIndexShouldBe):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("HaveElementAt");
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe):
-                break;
+                return RewriteFluentAssertion(assertion, context, [
+                    FluentAssertionsEditAction.RenameAssertion("HaveElementAt"),
+                    (editor, context) => {
+                        var (subject, index) = context.Subject switch {
+                            IPropertyReferenceOperation indexer => (indexer.Instance, indexer.Arguments[0].Value),
+                            IArrayElementReferenceOperation arrayElementReference => (arrayElementReference.ArrayReference, arrayElementReference.Indices[0]),
+                            _ => throw new NotSupportedException("Invalid subject for CollectionShouldHaveElementAt_IndexerShouldBe")
+                        };
+                        
+                        editor.ReplaceNode(context.Subject.Syntax, subject.Syntax.WithTriviaFrom(context.Subject.Syntax));
+
+                        var arguments = SyntaxFactory.ArgumentList()
+                            .AddArguments((ArgumentSyntax)editor.Generator.Argument(index.Syntax))
+                            .AddArguments([..context.AssertionExpression.ArgumentList.Arguments]);
+
+                        editor.ReplaceNode(context.AssertionExpression.ArgumentList, arguments);
+                    }
+                ]);
             // {
             //     var remove = NodeReplacement.RemoveAndRetrieveIndexerArguments("Should");
             //     var newExpression = GetNewExpression(expression, remove);
@@ -188,21 +209,24 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
                 break;
             // return GetCombinedAssertionsWithArguments(remove: "BeGreaterOrEqualTo", rename: "BeLessOrEqualTo", newName: "BeInRange");
             case nameof(DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo):
-                break; /*
-                {
-                    var remove = NodeReplacement.RemoveAndExtractArguments("Abs");
-                    var newExpression = GetNewExpression(expression, remove);
+                return RewriteFluentAssertion(assertion, context, [
+                    FluentAssertionsEditAction.RenameAssertion("BeApproximately"),
+                    (editor, context) => {
+                        var abs = (IInvocationOperation)context.Subject;
+                        var subtract = (IBinaryOperation)abs.Arguments[0].Value; 
 
-                    var subtractExpression = (BinaryExpressionSyntax)remove.Arguments[0].Expression;
+                        var subject = subtract.RightOperand;
+                        var expected = subtract.LeftOperand;
 
-                    var actual = subtractExpression.Right as IdentifierNameSyntax;
-                    var expected = subtractExpression.Left;
+                        editor.ReplaceNode(context.Subject.Syntax, subject.Syntax.WithTriviaFrom(context.Subject.Syntax));
 
-                    newExpression = GetNewExpression(newExpression, NodeReplacement.RenameAndPrependArguments("BeLessOrEqualTo", "BeApproximately", new SeparatedSyntaxList<ArgumentSyntax>().Add(SyntaxFactory.Argument(expected))));
+                        var arguments = SyntaxFactory.ArgumentList()
+                            .AddArguments((ArgumentSyntax)editor.Generator.Argument(expected.Syntax))
+                            .AddArguments([..context.AssertionExpression.ArgumentList.Arguments]);
 
-                    return RenameIdentifier(newExpression, "Math", actual.Identifier.Text);
-                }
-                */
+                        editor.ReplaceNode(context.AssertionExpression.ArgumentList, arguments);
+                    }
+                ]);
             case nameof(DiagnosticMetadata.StringShouldBeNullOrEmpty_StringIsNullOrEmptyShouldBeTrue):
                 return RewriteFluentAssertion(assertion, context,
                     FluentAssertionsEditAction.RenameAssertion("BeNullOrEmpty"),

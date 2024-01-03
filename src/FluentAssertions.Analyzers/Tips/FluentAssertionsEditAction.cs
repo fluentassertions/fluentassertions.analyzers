@@ -17,55 +17,32 @@ public record struct FluentAssertionEditActionContext(
     IInvocationOperation InvocationBeforeShould
 );
 
-public interface IFluentAssertionEditAction
-{
-    void Apply(DocumentEditor editor, FluentAssertionEditActionContext context);
-}
-
 public static class FluentAssertionsEditAction
 {
-    public static IFluentAssertionEditAction RenameAssertion(string newName) => new RenameAssertionEditAction(newName);
-    public static IFluentAssertionEditAction SkipInvocationBeforeShould() => new SkipInvocationBeforeShouldEditAction();
-    public static IFluentAssertionEditAction SkipExpressionBeforeShould() => new SkipExpressionBeforeShouldEditAction();
-    public static IFluentAssertionEditAction RemoveAssertionArgument(int index) => new RemoveAssertionArgumentEditAction(index);
-    public static IFluentAssertionEditAction PrependArgumentsFromInvocationBeforeShouldToAssertion(int skipAssertionArguments = 0) => new PrependArgumentsFromInvocationBeforeShouldToAssertionEditAction(skipAssertionArguments);
-    public static IFluentAssertionEditAction RemoveInvocationOnAssertionArgument(int assertionArgumentIndex, int invocationArgumentIndex) => new RemoveInvocationOnAssertionArgumentEditAction(assertionArgumentIndex, invocationArgumentIndex);
-    public static IFluentAssertionEditAction UnwrapInvocationOnSubject(int argumentIndex) => new UnwrapInvocationOnSubjectEditAction(argumentIndex);
-
-    private class RenameAssertionEditAction(string newName) : IFluentAssertionEditAction
+    public static Action<DocumentEditor, FluentAssertionEditActionContext> RenameAssertion(string newName)
     {
-        public void Apply(DocumentEditor editor, FluentAssertionEditActionContext context)
+        return (DocumentEditor editor, FluentAssertionEditActionContext context) =>
         {
             var newNameNode = (IdentifierNameSyntax)editor.Generator.IdentifierName(newName);
             var memberAccess = (MemberAccessExpressionSyntax)context.AssertionExpression.Expression;
             editor.ReplaceNode(memberAccess.Name, newNameNode);
-        }
+        };
     }
 
-    private class UnwrapInvocationOnSubjectEditAction(int argumentIndex) : IFluentAssertionEditAction
+    public static Action<DocumentEditor, FluentAssertionEditActionContext> SkipInvocationBeforeShould()
     {
-        public void Apply(DocumentEditor editor, FluentAssertionEditActionContext context)
-        {
-            var subjectReference = ((IInvocationOperation)context.Subject).Arguments[argumentIndex].Value;
-
-            editor.ReplaceNode(context.Subject.Syntax, subjectReference.Syntax.WithTriviaFrom(context.Subject.Syntax));
-        }
-    }
-
-    private class SkipInvocationBeforeShouldEditAction : IFluentAssertionEditAction
-    {
-        public void Apply(DocumentEditor editor, FluentAssertionEditActionContext context)
+        return (DocumentEditor editor, FluentAssertionEditActionContext context) =>
         {
             var invocationExpressionBeforeShould = (InvocationExpressionSyntax)context.InvocationBeforeShould.Syntax;
             var methodMemberAccess = (MemberAccessExpressionSyntax)invocationExpressionBeforeShould.Expression;
 
             editor.ReplaceNode(invocationExpressionBeforeShould, methodMemberAccess.Expression);
-        }
+        };
     }
 
-    private class SkipExpressionBeforeShouldEditAction : IFluentAssertionEditAction
+    public static Action<DocumentEditor, FluentAssertionEditActionContext> SkipExpressionBeforeShould()
     {
-        public void Apply(DocumentEditor editor, FluentAssertionEditActionContext context)
+        return (DocumentEditor editor, FluentAssertionEditActionContext context) =>
         {
             IEditAction skipExpressionNodeAction = context.Subject switch
             {
@@ -75,37 +52,46 @@ public static class FluentAssertionsEditAction
             };
 
             skipExpressionNodeAction.Apply(editor, context.AssertionExpression);
-        }
+        };
     }
 
-    private class RemoveAssertionArgumentEditAction(int index) : IFluentAssertionEditAction
+    public static Action<DocumentEditor, FluentAssertionEditActionContext> RemoveAssertionArgument(int index)
     {
-        public void Apply(DocumentEditor editor, FluentAssertionEditActionContext context)
+        return (DocumentEditor editor, FluentAssertionEditActionContext context) =>
         {
             editor.RemoveNode(context.AssertionExpression.ArgumentList.Arguments[index]);
-        }
+        };
     }
 
-    private class PrependArgumentsFromInvocationBeforeShouldToAssertionEditAction(int skipAssertionArguments) : IFluentAssertionEditAction
+    public static Action<DocumentEditor, FluentAssertionEditActionContext> PrependArgumentsFromInvocationBeforeShouldToAssertion(int skipAssertionArguments = 0)
     {
-        public void Apply(DocumentEditor editor, FluentAssertionEditActionContext context)
+        return (DocumentEditor editor, FluentAssertionEditActionContext context) =>
         {
             var invocationExpressionBeforeShould = (InvocationExpressionSyntax)context.InvocationBeforeShould.Syntax;
             var argumentList = invocationExpressionBeforeShould.ArgumentList;
 
             var combinedArguments = SyntaxFactory.ArgumentList(argumentList.Arguments.AddRange(context.AssertionExpression.ArgumentList.Arguments.Skip(skipAssertionArguments)));
             editor.ReplaceNode(context.AssertionExpression.ArgumentList, combinedArguments);
-        }
+        };
     }
-
-    private class RemoveInvocationOnAssertionArgumentEditAction(int assertionArgumentIndex, int invocationArgumentIndex) : IFluentAssertionEditAction
+    public static Action<DocumentEditor, FluentAssertionEditActionContext> RemoveInvocationOnAssertionArgument(int assertionArgumentIndex, int invocationArgumentIndex)
     {
-        public void Apply(DocumentEditor editor, FluentAssertionEditActionContext context)
+        return (DocumentEditor editor, FluentAssertionEditActionContext context) =>
         {
             var invocationArgument = (IInvocationOperation)context.Assertion.Arguments[assertionArgumentIndex].Value;
             var expected = invocationArgument.Arguments[invocationArgumentIndex].Value.UnwrapConversion();
 
             editor.ReplaceNode(invocationArgument.Syntax, expected.Syntax);
-        }
+        };
+    }
+
+    public static Action<DocumentEditor, FluentAssertionEditActionContext> UnwrapInvocationOnSubject(int argumentIndex)
+    {
+        return (DocumentEditor editor, FluentAssertionEditActionContext context) =>
+        {
+            var subjectReference = ((IInvocationOperation)context.Subject).Arguments[argumentIndex].Value;
+
+            editor.ReplaceNode(context.Subject.Syntax, subjectReference.Syntax.WithTriviaFrom(context.Subject.Syntax));
+        };
     }
 }

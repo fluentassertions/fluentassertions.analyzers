@@ -1,3 +1,4 @@
+using System;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
@@ -9,12 +10,12 @@ namespace FluentAssertions.Analyzers;
 public sealed partial class FluentAssertionsCodeFixProvider
 {
     // <subject>.<invocationBeforeShould>().Should().<assertion>(<arguments>)
-    private static CreateChangedDocument RewriteFluentAssertion(IInvocationOperation assertion, CodeFixContext context, params IFluentAssertionEditAction[] actions)
+    private static CreateChangedDocument RewriteFluentAssertion(IInvocationOperation assertion, CodeFixContext context, params Action<DocumentEditor, FluentAssertionEditActionContext>[] actions)
     {
         var assertionExpression = (InvocationExpressionSyntax)assertion.Syntax;
 
         assertion.TryGetFirstDescendent<IInvocationOperation>(out var should);
-        var subject = should?.Arguments[0].Value;
+        var subject = should?.Arguments[0].Value.UnwrapConversion();
 
         IInvocationOperation invocationBeforeShould = default;
         should?.TryGetFirstDescendent(out invocationBeforeShould);
@@ -26,7 +27,7 @@ public sealed partial class FluentAssertionsCodeFixProvider
             var editor = await DocumentEditor.CreateAsync(context.Document, ctx);
             foreach (var action in actions)
             {
-                action.Apply(editor, actionContext);
+                action(editor, actionContext);
             }
 
             return editor.GetChangedDocument();
@@ -34,7 +35,7 @@ public sealed partial class FluentAssertionsCodeFixProvider
     }
 
     // <subject>.Should().<assertionA>(argumentsA).<andOrWhich>.<assertionB>(<argumentsB>)
-    private static CreateChangedDocument RewriteFluentChainedAssertion(IInvocationOperation assertionB, CodeFixContext context, params IFluentChainedAssertionEditAction[] actions)
+    private static CreateChangedDocument RewriteFluentChainedAssertion(IInvocationOperation assertionB, CodeFixContext context, params Action<DocumentEditor, FluentChainedAssertionEditActionContext>[] actions)
     {
         var assertionExpressionB = (InvocationExpressionSyntax)assertionB.Syntax;
 
@@ -45,7 +46,7 @@ public sealed partial class FluentAssertionsCodeFixProvider
         var assertionExpressionA = (InvocationExpressionSyntax)assertionA.Syntax;
 
         assertionA.TryGetFirstDescendent<IInvocationOperation>(out var should);
-        
+
         var subject = should?.Arguments[0].Value;
 
         var actionContext = new FluentChainedAssertionEditActionContext(assertionA, assertionExpressionA, andOrWhich, assertionB, assertionExpressionB, should, subject);
@@ -55,7 +56,7 @@ public sealed partial class FluentAssertionsCodeFixProvider
             var editor = await DocumentEditor.CreateAsync(context.Document, ctx);
             foreach (var action in actions)
             {
-                action.Apply(editor, actionContext);
+                action(editor, actionContext);
             }
 
             return editor.GetChangedDocument();

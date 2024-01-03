@@ -1,4 +1,4 @@
-using System.Linq;
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,18 +17,11 @@ public record struct FluentChainedAssertionEditActionContext(
     IOperation Subject
 );
 
-public interface IFluentChainedAssertionEditAction
-{
-    void Apply(DocumentEditor editor, FluentChainedAssertionEditActionContext context);
-}
-
 public static class FluentChainedAssertionEditAction
 {
-    public static IFluentChainedAssertionEditAction CombineAssertionsWithName(string newName) => new CombineAssertionsWithNameEditAction(newName);
-
-    private class CombineAssertionsWithNameEditAction(string newName) : IFluentChainedAssertionEditAction
+    public static Action<DocumentEditor, FluentChainedAssertionEditActionContext> CombineAssertionsWithName(string newName)
     {
-        public void Apply(DocumentEditor editor, FluentChainedAssertionEditActionContext context)
+        return (DocumentEditor editor, FluentChainedAssertionEditActionContext context) =>
         {
             var newNameNode = (IdentifierNameSyntax)editor.Generator.IdentifierName(newName);
             
@@ -41,6 +34,6 @@ public static class FluentChainedAssertionEditAction
                 .WithArgumentList(allArguments);
 
             editor.ReplaceNode(context.AssertionBExpression, newAssertion);
-        }
+        };
     }
 }
