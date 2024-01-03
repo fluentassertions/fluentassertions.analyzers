@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace FluentAssertions.Analyzers;
 
-public class PrependArgumentsToInvocationWithoutFirstArgument(ArgumentListSyntax argumentList) : IEditAction
+public class PrependArgumentsToInvocationWithoutFirstArgumentAction(ArgumentListSyntax argumentList) : IEditAction
 {
     public void Apply(DocumentEditor editor, InvocationExpressionSyntax invocationExpression)
     {
