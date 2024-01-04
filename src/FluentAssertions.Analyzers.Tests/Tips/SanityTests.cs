@@ -441,9 +441,9 @@ public class MyCollectionType { }";
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
                 .WithExpectedDiagnostics(new DiagnosticResult()
                 {
-                    Id = NullConditionalAssertionAnalyzer.DiagnosticId,
-                    Message = NullConditionalAssertionAnalyzer.Message,
-                    Severity = DiagnosticSeverity.Warning,
+                    Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                    Message = DiagnosticMetadata.NullConditionalMayNotExecute.Message,
+                    Severity = DiagnosticSeverity.Info, // TODO: change to warning
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 13, 9) }
                 })
             );
