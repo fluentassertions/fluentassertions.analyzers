@@ -19,16 +19,21 @@ public record struct FluentChainedAssertionEditActionContext(
 
 public static class FluentChainedAssertionEditAction
 {
-    public static Action<DocumentEditor, FluentChainedAssertionEditActionContext> CombineAssertionsWithName(string newName)
+    public static Action<DocumentEditor, FluentChainedAssertionEditActionContext> CombineAssertionsWithNameAndArguments(string newName, CombineAssertionArgumentsStrategy strategy)
     {
         return (DocumentEditor editor, FluentChainedAssertionEditActionContext context) =>
         {
             var newNameNode = (IdentifierNameSyntax)editor.Generator.IdentifierName(newName);
-            
+
             var assertionMemberAccess = (MemberAccessExpressionSyntax)context.AssertionAExpression.Expression;
-            var allArguments = SyntaxFactory.ArgumentList()
-                .AddArguments([.. context.AssertionAExpression.ArgumentList.Arguments])
-                .AddArguments([.. context.AssertionBExpression.ArgumentList.Arguments]);
+
+            var allArguments = SyntaxFactory.ArgumentList(strategy switch
+            {
+                CombineAssertionArgumentsStrategy.FirstAssertionFirst => context.AssertionAExpression.ArgumentList.Arguments.AddRange(context.AssertionBExpression.ArgumentList.Arguments),
+                CombineAssertionArgumentsStrategy.InsertFirstAssertionIntoIndex1OfSecondAssertion => context.AssertionBExpression.ArgumentList.Arguments.InsertRange(1, context.AssertionAExpression.ArgumentList.Arguments),
+                CombineAssertionArgumentsStrategy.InsertSecondAssertionIntoIndex1OfFirstAssertion => context.AssertionAExpression.ArgumentList.Arguments.InsertRange(1, context.AssertionBExpression.ArgumentList.Arguments),
+                _ => throw new NotImplementedException(),
+            });
             var newAssertion = context.AssertionAExpression
                 .WithExpression(assertionMemberAccess.WithName(newNameNode))
                 .WithArgumentList(allArguments);
@@ -36,4 +41,11 @@ public static class FluentChainedAssertionEditAction
             editor.ReplaceNode(context.AssertionBExpression, newAssertion);
         };
     }
+}
+
+public enum CombineAssertionArgumentsStrategy
+{
+    FirstAssertionFirst,
+    InsertFirstAssertionIntoIndex1OfSecondAssertion,
+    InsertSecondAssertionIntoIndex1OfFirstAssertion,
 }

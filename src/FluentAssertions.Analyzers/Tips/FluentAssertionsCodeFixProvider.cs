@@ -31,16 +31,6 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             return null;
         }
 
-        // oldAssertion: subject.Should().<assertionA>({reasonArgs}).And.<assertionB>();
-        // oldAssertion: subject.Should().<assertionA>().And.<assertionB>({reasonArgs});
-        // newAssertion: subject.Should().<newName>({reasonArgs});
-        CreateChangedDocument GetCombinedAssertions(string newName)
-        {
-            return RewriteFluentChainedAssertion(assertion, context, [
-                FluentChainedAssertionEditAction.CombineAssertionsWithName(newName),
-            ]);
-        }
-
         // oldAssertion: subject.<property>.Should().<assertion>([arg1, arg2, arg3...]);
         // oldAssertion: subject.<method>().Should().<assertion>([arg1, arg2, arg3...]);
         // newAssertion: subject.Should().<newName>([arg2, arg3...]);
@@ -184,7 +174,9 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.CollectionShouldNotBeNullOrEmpty_ShouldNotBeEmptyAndNotBeNull):
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeNullAndNotBeEmpty):
             case nameof(DiagnosticMetadata.StringShouldNotBeNullOrEmpty_StringShouldNotBeEmptyAndNotBeNull):
-                return GetCombinedAssertions("NotBeNullOrEmpty");
+                return RewriteFluentChainedAssertion(assertion, context, [
+                    FluentChainedAssertionEditAction.CombineAssertionsWithNameAndArguments("NotBeNullOrEmpty", strategy: CombineAssertionArgumentsStrategy.FirstAssertionFirst),
+                ]);
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_ElementAtIndexShouldBe):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("HaveElementAt");
             case nameof(DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe):
@@ -196,7 +188,7 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
                             IArrayElementReferenceOperation arrayElementReference => (arrayElementReference.ArrayReference, arrayElementReference.Indices[0]),
                             _ => throw new NotSupportedException("Invalid subject for CollectionShouldHaveElementAt_IndexerShouldBe")
                         };
-                        
+
                         editor.ReplaceNode(context.Subject.Syntax, subject.Syntax.WithTriviaFrom(context.Subject.Syntax));
 
                         var arguments = SF.ArgumentList()
@@ -229,17 +221,19 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.NumericShouldBeNegative_ShouldBeLessThan):
                 return RenameAssertionAndRemoveFirstAssertionArgument("BeNegative");
             case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeGreaterOrEqualToAndBeLessOrEqualTo):
-                break;
-            // return GetCombinedAssertionsWithArguments(remove: "BeLessOrEqualTo", rename: "BeGreaterOrEqualTo", newName: "BeInRange");
+                return RewriteFluentChainedAssertion(assertion, context, [
+                    FluentChainedAssertionEditAction.CombineAssertionsWithNameAndArguments("BeInRange", strategy: CombineAssertionArgumentsStrategy.InsertFirstAssertionIntoIndex1OfSecondAssertion),
+                ]);
             case nameof(DiagnosticMetadata.NumericShouldBeInRange_BeLessOrEqualToAndBeGreaterOrEqualTo):
-                break;
-            // return GetCombinedAssertionsWithArguments(remove: "BeGreaterOrEqualTo", rename: "BeLessOrEqualTo", newName: "BeInRange");
+                return RewriteFluentChainedAssertion(assertion, context, [
+                    FluentChainedAssertionEditAction.CombineAssertionsWithNameAndArguments("BeInRange", strategy: CombineAssertionArgumentsStrategy.InsertSecondAssertionIntoIndex1OfFirstAssertion)
+                ]);
             case nameof(DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo):
                 return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("BeApproximately"),
                     (editor, context) => {
                         var abs = (IInvocationOperation)context.Subject;
-                        var subtract = (IBinaryOperation)abs.Arguments[0].Value; 
+                        var subtract = (IBinaryOperation)abs.Arguments[0].Value;
 
                         var subject = subtract.RightOperand;
                         var expected = subtract.LeftOperand;
