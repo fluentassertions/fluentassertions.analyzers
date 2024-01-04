@@ -49,6 +49,11 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         {
             return;
         }
+        
+        if (assertion.Parent.Kind is OperationKind.ConditionalAccess)
+        {
+            return; // Handled by NullConditionalAssertionAnalyzer
+        }
 
         var subject = invocation.Arguments[0].Value;
 

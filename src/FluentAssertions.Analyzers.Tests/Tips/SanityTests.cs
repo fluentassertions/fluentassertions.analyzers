@@ -410,7 +410,7 @@ public class OtherComponent
         }
 
         [TestMethod]
-        [NotImplemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/276")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/276")]
         public void ShouldNotFailToAnalyze2()
         {
             const string source = @"
@@ -434,34 +434,18 @@ public class MyResponse
     public IEnumerable<MyCollectionType>? MyCollection { get; set; }
 }
 public class MyCollectionType { }";
-            const string fixedSource = @"
-#nullable enable            
-using FluentAssertions;
-using FluentAssertions.Extensions;
-using System.Linq;
-using System.Collections.Generic;
 
-public class TestClass
-{
-    public static void Main()
-    {
-        var response = new MyResponse();
-        response.MyCollection?.Should().HaveCount(2);
-    }
-}
-
-public class MyResponse
-{
-    public IEnumerable<MyCollectionType>? MyCollection { get; set; }
-}
-public class MyCollectionType { }";
-
-            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
                 .WithSources(source)
-                .WithFixedSources(fixedSource)
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
-                .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
+                .WithAllAnalyzers()
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+                .WithExpectedDiagnostics(new DiagnosticResult()
+                {
+                    Id = NullConditionalAssertionAnalyzer.DiagnosticId,
+                    Message = NullConditionalAssertionAnalyzer.Message,
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 13, 9) }
+                })
             );
         }
     }
