@@ -49,10 +49,12 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
         {
             return;
         }
-        
-        if (assertion.Parent.Kind is OperationKind.ConditionalAccess)
+
+        if (HasConditionalAccessAncestor(invocation))
         {
-            return; // Handled by NullConditionalAssertionAnalyzer
+            var expressionStatement = invocation.GetFirstAncestor<IExpressionStatementOperation>();
+            context.ReportDiagnostic(CreateDiagnostic(expressionStatement, DiagnosticMetadata.NullConditionalMayNotExecute));
+            return;
         }
 
         var subject = invocation.Arguments[0].Value;

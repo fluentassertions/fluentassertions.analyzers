@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace FluentAssertions.Analyzers;
@@ -33,6 +34,22 @@ public partial class FluentAssertionsOperationAnalyzer
         nextAssertion = default;
         fluentAssertionProperty = default;
         exceptionProperty = default;
+        return false;
+    }
+
+    private static bool HasConditionalAccessAncestor(IInvocationOperation invocation)
+    {
+        var current = invocation.Parent;
+        while (current is not null)
+        {
+            if (current.Kind is OperationKind.ConditionalAccess)
+            {
+                return true;
+            }
+
+            current = current.Parent;
+        }
+
         return false;
     }
 

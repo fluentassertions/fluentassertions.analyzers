@@ -108,6 +108,7 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata CollectionShouldEqual_CollectionShouldEquals = new("Use .Should().Equal()", string.Empty);
     public static DiagnosticMetadata ShouldEquals = new("Use .Should().Be() or .Should().BeEquivalentTo or .Should().Equal() or other equivalency assertion", string.Empty);
     public static DiagnosticMetadata ShouldBe_ShouldEquals = new("Use .Should().Be()", string.Empty);
+    public static DiagnosticMetadata NullConditionalMayNotExecute = new("Use .Should() instead of ?.Should()", string.Empty);
 
     private static string GetHelpLink(string id) => $"https://fluentassertions.com/tips/#{id}";
 }

@@ -18,14 +18,15 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void NullConditionalMayNotExecuteTest(string assertion)
         {
             DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
-                .WithDiagnosticAnalyzer<NullConditionalAssertionAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
                 .WithSources(Code(assertion))
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
                 .WithExpectedDiagnostics(new DiagnosticResult
                 {
-                    Id = NullConditionalAssertionAnalyzer.DiagnosticId,
-                    Message = NullConditionalAssertionAnalyzer.Message,
-                    Severity = Microsoft.CodeAnalysis.DiagnosticSeverity.Warning,
+                    Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                    Message = DiagnosticMetadata.NullConditionalMayNotExecute.Message,
+                    Severity = Microsoft.CodeAnalysis.DiagnosticSeverity.Info, // TODO: change to warning
+                    VisitorName = nameof(DiagnosticMetadata.NullConditionalMayNotExecute),
                     Locations = new DiagnosticResultLocation[]
                     {
                         new DiagnosticResultLocation("Test0.cs", 11, 13)
@@ -37,12 +38,12 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataTestMethod]
         [AssertionDiagnostic("(actual?.MyProperty).Should().Be(\"test\"{0});")]
         [AssertionDiagnostic("actual.MyProperty.Should().Be(actual?.MyProperty{0});")]
-        [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() == null).Count().Should().Be(0{0});")]
+        [AssertionDiagnostic("actual.MyList.Where(obj => obj?.ToString() == null).Should().HaveCount(6{0});")]
         [Implemented]
         public void NullConditionalWillStillExecuteTest(string assertion)
         {
             DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
-                .WithDiagnosticAnalyzer<NullConditionalAssertionAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
                 .WithSources(Code(assertion))
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
             );

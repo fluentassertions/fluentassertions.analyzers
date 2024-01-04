@@ -25,7 +25,7 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             return null;
         }
 
-        if (visitorName is nameof(DiagnosticMetadata.ShouldEquals))
+        if (visitorName is nameof(DiagnosticMetadata.ShouldEquals) or nameof(DiagnosticMetadata.NullConditionalMayNotExecute))
         {
             return null;
         }
