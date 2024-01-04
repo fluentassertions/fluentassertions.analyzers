@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Composition;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -307,44 +306,32 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeOfType):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeOfType):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeOfType):
-                return ReplaceWithInnerException(assertion, context, "WithInnerExceptionExactly");
+                return ReplaceShouldThrowWithInnerException(assertion, context, "WithInnerExceptionExactly");
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeAssignableTo):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeAssignableTo):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowAndInnerExceptionShouldBeAssignableTo):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyAndInnerExceptionShouldBeAssignableTo):
-                return ReplaceWithInnerException(assertion, context, "WithInnerException");
+                return ReplaceShouldThrowWithInnerException(assertion, context, "WithInnerException");
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldContain):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldContain):
-                // return ReplaceContainMessage(expression, "Which");
-                break;
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldContain):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldContain):
-                // return ReplaceContainMessage(expression, "And");
-                break;
+                return ReplaceShouldThrowWithMessage(assertion, context, prefix: "*", postfix: "*");
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldBe):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldBe):
-                // return ReplaceBeMessage(expression, "Which");
-                break;
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldBe):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldBe):
-                // return ReplaceBeMessage(expression, "And");
-                break;
+                return ReplaceShouldThrowWithMessage(assertion, context);
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldStartWith):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldStartWith):
-                // return ReplaceStartWithMessage(expression, "Which");
-                break;
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldStartWith):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldStartWith):
-                // return ReplaceStartWithMessage(expression, "And");
-                break;
+                return ReplaceShouldThrowWithMessage(assertion, context, postfix: "*");
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowWhichMessageShouldEndWith):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyWhichMessageShouldEndWith):
-                // return ReplaceEndWithMessage(expression, "Which");
-                break;
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithMessage_ShouldThrowAndMessageShouldEndWith):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithMessage_ShouldThrowExactlyAndMessageShouldEndWith):
-                // return ReplaceEndWithMessage(expression, "And");
-                break;
+                return ReplaceShouldThrowWithMessage(assertion, context, prefix: "*");
             case nameof(DiagnosticMetadata.CollectionShouldEqual_CollectionShouldEquals):
                 return RewriteFluentAssertion(assertion, context, [
                     FluentAssertionsEditAction.RenameAssertion("Equal")
