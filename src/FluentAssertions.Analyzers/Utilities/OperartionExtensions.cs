@@ -45,6 +45,21 @@ internal static class OperartionExtensions
         return default;
     }
 
+    public static TOperation GetFirstAncestor<TOperation>(this IOperation parent) where TOperation : IOperation
+    {
+        IOperation current = parent;
+        while (current.Parent is not null)
+        {
+            current = current.Parent;
+            if (current is TOperation op)
+            {
+                return op;
+            }
+        }
+
+        return default;
+    }
+
     public static bool HasFirstDescendentInvocation(this IOperation parent, string invocationMethod)
     {
         return parent.TryGetFirstDescendent<IInvocationOperation>(out var invocation) && invocation.TargetMethod.Name == invocationMethod;
