@@ -13,7 +13,7 @@ internal static class OperartionExtensions
     public static bool TryGetFirstDescendent<TOperation>(this IOperation parent, out TOperation operation) where TOperation : IOperation
     {
         IOperation current = parent;
-        while (current.ChildOperations.Count == 1)
+        while (current.ChildOperations.Count >= 1)
         {
             current = current.ChildOperations.First();
             if (current is TOperation op)
@@ -25,6 +25,39 @@ internal static class OperartionExtensions
 
         operation = default;
         return false;
+    }
+
+    /// <summary>
+    /// Tries to get the first descendent of the parent operation. where each operation has only one child.
+    /// </summary>
+    public static TOperation GetFirstDescendent<TOperation>(this IOperation parent) where TOperation : IOperation
+    {
+        IOperation current = parent;
+        while (current.ChildOperations.Count >= 1)
+        {
+            current = current.ChildOperations.First();
+            if (current is TOperation op)
+            {
+                return op;
+            }
+        }
+
+        return default;
+    }
+
+    public static TOperation GetFirstAncestor<TOperation>(this IOperation parent) where TOperation : IOperation
+    {
+        IOperation current = parent;
+        while (current.Parent is not null)
+        {
+            current = current.Parent;
+            if (current is TOperation op)
+            {
+                return op;
+            }
+        }
+
+        return default;
     }
 
     public static bool HasFirstDescendentInvocation(this IOperation parent, string invocationMethod)

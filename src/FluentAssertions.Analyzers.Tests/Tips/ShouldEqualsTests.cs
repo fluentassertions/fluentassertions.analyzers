@@ -19,7 +19,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.ObjectStatement("actual.Should().Equals(expected);");
             var newSource = GenerateCode.ObjectStatement("actual.Should().Be(expected);");
 
-            DiagnosticVerifier.VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldSource, newSource);
+            VerifyFix(oldSource, newSource);
         }
 
         [TestMethod]
@@ -34,7 +34,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.ObjectStatement("if(true) { actual.Should().Equals(expected); }");
             var newSource = GenerateCode.ObjectStatement("if(true) { actual.Should().Be(expected); }");
 
-            DiagnosticVerifier.VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldSource, newSource);
+            VerifyFix(oldSource, newSource);
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.ObjectStatement("while(true) { actual.Should().Equals(expected); }");
             var newSource = GenerateCode.ObjectStatement("while(true) { actual.Should().Be(expected); }");
 
-            DiagnosticVerifier.VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldSource, newSource);
+            VerifyFix(oldSource, newSource);
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.ObjectStatement(methodInvocation + "ResultSupplier().Should().Equals(expected);");
             var newSource = GenerateCode.ObjectStatement(methodInvocation + "ResultSupplier().Should().Be(expected);");
 
-            DiagnosticVerifier.VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldSource, newSource);
+            VerifyFix(oldSource, newSource);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.DoubleAssertion("actual.Should().Equals(expected);");
             var newSource = GenerateCode.DoubleAssertion("actual.Should().Be(expected);");
 
-            DiagnosticVerifier.VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldSource, newSource);
+            VerifyFix(oldSource, newSource);
         }
 
         [TestMethod]
@@ -86,7 +86,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.StringAssertion("actual.Should().Equals(expected);");
             var newSource = GenerateCode.StringAssertion("actual.Should().Be(expected);");
 
-            DiagnosticVerifier.VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldSource, newSource);
+            VerifyFix(oldSource, newSource);
         }
 
         [TestMethod]
@@ -96,7 +96,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var oldSource = GenerateCode.GenericIListCodeBlockAssertion("actual.Should().Equals(expected);");
             var newSource = GenerateCode.GenericIListCodeBlockAssertion("actual.Should().Equal(expected);");
 
-            DiagnosticVerifier.VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldSource, newSource);
+            VerifyFix(oldSource, newSource);
         }
 
         private void VerifyCSharpDiagnosticExpressionBody(string sourceAssertion, DiagnosticMetadata metadata) => VerifyCSharpDiagnosticExpressionBody(sourceAssertion, 10, 13, metadata);
@@ -115,5 +115,14 @@ namespace FluentAssertions.Analyzers.Tests.Tips
                 Severity = DiagnosticSeverity.Info
             });
         }
+
+        private void VerifyFix(string oldSource, string newSource)
+            => DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+                .WithSources(oldSource)
+                .WithFixedSources(newSource)
+                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
     }
 }

@@ -142,7 +142,7 @@ namespace FluentAssertions.Analyzers.Tests
             var newSource = GenerateCode.NumericAssertion(newSourceAssertion, numericType);
 
             DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
-                .WithCodeFixProvider<FluentAssertionsCodeFix>()
+                .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
                 .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
                 .WithSources(oldSource)
                 .WithFixedSources(newSource)

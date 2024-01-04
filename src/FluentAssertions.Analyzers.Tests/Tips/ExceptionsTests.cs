@@ -105,7 +105,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().Throw<Exception>().And.Message.Should().EndWith(\"a constant string\"{0});",
             newAssertion: "action.Should().Throw<Exception>().WithMessage(\"*a constant string\"{0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.Message.Should().Be(expectedMessage{0});")]
@@ -205,7 +205,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().ThrowExactly<Exception>().And.Message.Should().EndWith(\"a constant string\"{0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithMessage(\"*a constant string\"{0});")]
         [Implemented]
-        public void ExceptionShouldThrowExactlyWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowExactlyWithMessage_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.InnerException.Should().BeOfType<ArgumentException>({0});")]
@@ -241,7 +241,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().ThrowExactly<Exception>().Which.InnerException.Should().BeOfType<ArgumentException>({0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithInnerExceptionExactly<ArgumentException>({0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithInnerExceptionExactly_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowWithInnerExceptionExactly_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("action.Should().ThrowExactly<Exception>().And.InnerException.Should().BeAssignableTo<ArgumentException>({0});")]
@@ -277,7 +277,7 @@ namespace FluentAssertions.Analyzers.Tests
             oldAssertion: "action.Should().ThrowExactly<Exception>().Which.InnerException.Should().BeAssignableTo<ArgumentException>({0});",
             newAssertion: "action.Should().ThrowExactly<Exception>().WithInnerException<ArgumentException>({0});")]
         [Implemented]
-        public void ExceptionShouldThrowWithInnerException_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix<FluentAssertionsCodeFix, FluentAssertionsOperationAnalyzer>(oldAssertion, newAssertion);
+        public void ExceptionShouldThrowWithInnerException_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
 
         private void VerifyCSharpDiagnostic(string sourceAssertion, DiagnosticMetadata metadata)
         {
@@ -296,14 +296,18 @@ namespace FluentAssertions.Analyzers.Tests
             });
         }
 
-        private void VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(string oldSourceAssertion, string newSourceAssertion)
-            where TCodeFixProvider : Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider, new()
-            where TDiagnosticAnalyzer : Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer, new()
+        private void VerifyCSharpFix(string oldSourceAssertion, string newSourceAssertion)
         {
             var oldSource = GenerateCode.ExceptionAssertion(oldSourceAssertion);
             var newSource = GenerateCode.ExceptionAssertion(newSourceAssertion);
 
-            DiagnosticVerifier.VerifyCSharpFix<TCodeFixProvider, TDiagnosticAnalyzer>(oldSource, newSource);
+            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+                .WithSources(oldSource)
+                .WithFixedSources(newSource)
+                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
         }
     }
 }

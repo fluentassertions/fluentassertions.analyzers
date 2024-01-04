@@ -460,7 +460,7 @@ public class MyCollectionType { }";
                 .WithSources(source)
                 .WithFixedSources(fixedSource)
                 .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
-                .WithCodeFixProvider<FluentAssertionsCodeFix>()
+                .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
             );
         }
