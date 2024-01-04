@@ -18,7 +18,6 @@ public static class Constants
     {
         public const string Category = "FluentAssertionCodeSmell";
 
-        public const string NullConditionalAssertion = $"{DiagnosticProperties.IdPrefix}0800";
         public const string AsyncVoid = $"{DiagnosticProperties.IdPrefix}0801";
         public const string ShouldEquals = $"{DiagnosticProperties.IdPrefix}0802";
     }
