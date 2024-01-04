@@ -21,19 +21,28 @@ public static class FluentChainedAssertionEditAction
 {
     public static Action<DocumentEditor, FluentChainedAssertionEditActionContext> CombineAssertionsWithNameAndArguments(string newName, CombineAssertionArgumentsStrategy strategy)
     {
+        return CombineAssertionsWithName(newName, (editor, context) =>
+        {
+            var arguments = strategy switch
+            {
+                CombineAssertionArgumentsStrategy.FirstAssertionFirst => context.AssertionAExpression.ArgumentList.Arguments.AddRange(context.AssertionBExpression.ArgumentList.Arguments),
+                CombineAssertionArgumentsStrategy.InsertFirstAssertionIntoIndex1OfSecondAssertion => context.AssertionBExpression.ArgumentList.Arguments.InsertRange(1, context.AssertionAExpression.ArgumentList.Arguments),
+                CombineAssertionArgumentsStrategy.InsertSecondAssertionIntoIndex1OfFirstAssertion => context.AssertionAExpression.ArgumentList.Arguments.InsertRange(1, context.AssertionBExpression.ArgumentList.Arguments),
+                _ => throw new NotImplementedException(),
+            };
+            return SyntaxFactory.ArgumentList(arguments);
+        });
+    }
+
+    public static Action<DocumentEditor, FluentChainedAssertionEditActionContext> CombineAssertionsWithName(string newName, Func<DocumentEditor, FluentChainedAssertionEditActionContext, ArgumentListSyntax> argumentsGenerator)
+    {
         return (DocumentEditor editor, FluentChainedAssertionEditActionContext context) =>
         {
             var newNameNode = (IdentifierNameSyntax)editor.Generator.IdentifierName(newName);
 
             var assertionMemberAccess = (MemberAccessExpressionSyntax)context.AssertionAExpression.Expression;
 
-            var allArguments = SyntaxFactory.ArgumentList(strategy switch
-            {
-                CombineAssertionArgumentsStrategy.FirstAssertionFirst => context.AssertionAExpression.ArgumentList.Arguments.AddRange(context.AssertionBExpression.ArgumentList.Arguments),
-                CombineAssertionArgumentsStrategy.InsertFirstAssertionIntoIndex1OfSecondAssertion => context.AssertionBExpression.ArgumentList.Arguments.InsertRange(1, context.AssertionAExpression.ArgumentList.Arguments),
-                CombineAssertionArgumentsStrategy.InsertSecondAssertionIntoIndex1OfFirstAssertion => context.AssertionAExpression.ArgumentList.Arguments.InsertRange(1, context.AssertionBExpression.ArgumentList.Arguments),
-                _ => throw new NotImplementedException(),
-            });
+            var allArguments = argumentsGenerator(editor, context);
             var newAssertion = context.AssertionAExpression
                 .WithExpression(assertionMemberAccess.WithName(newNameNode))
                 .WithArgumentList(allArguments);

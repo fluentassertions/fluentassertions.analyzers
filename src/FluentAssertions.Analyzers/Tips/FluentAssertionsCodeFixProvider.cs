@@ -282,15 +282,27 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             case nameof(DiagnosticMetadata.DictionaryShouldNotContainValue_ContainsValueShouldBeFalse):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithArgumentsFromRemoved("NotContainValue");
             case nameof(DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainKeyAndContainValue):
-                break;
-            // return GetCombinedAssertionsWithArguments(remove: "ContainValue", rename: "ContainKey", newName: "Contain");
+                return RewriteFluentChainedAssertion(assertion, context, [
+                    FluentChainedAssertionEditAction.CombineAssertionsWithNameAndArguments("Contain", strategy: CombineAssertionArgumentsStrategy.InsertSecondAssertionIntoIndex1OfFirstAssertion),
+                ]);
             case nameof(DiagnosticMetadata.DictionaryShouldContainKeyAndValue_ShouldContainValueAndContainKey):
-                break;
-            // return GetCombinedAssertionsWithArgumentsReversedOrder(remove: "ContainKey", rename: "ContainValue", newName: "Contain");
+                return RewriteFluentChainedAssertion(assertion, context, [
+                    FluentChainedAssertionEditAction.CombineAssertionsWithNameAndArguments("Contain", strategy: CombineAssertionArgumentsStrategy.InsertFirstAssertionIntoIndex1OfSecondAssertion),
+                ]);
             case nameof(DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainKeyAndContainValue):
-                break;
             case nameof(DiagnosticMetadata.DictionaryShouldContainPair_ShouldContainValueAndContainKey):
-                break;
+                return RewriteFluentChainedAssertion(assertion, context, [
+                    FluentChainedAssertionEditAction.CombineAssertionsWithName("Contain", (editor, context) =>
+                    {
+                        var pairAccessor = context.AssertionA.Arguments[0].GetFirstDescendent<IPropertyReferenceOperation>();
+                        var pairArgument = (ArgumentSyntax)editor.Generator.Argument(pairAccessor.Instance.Syntax);
+
+                        return SF.ArgumentList()
+                            .AddArguments(pairArgument)
+                            .AddArguments([..context.AssertionAExpression.ArgumentList.Arguments.Skip(1)])
+                            .AddArguments([..context.AssertionBExpression.ArgumentList.Arguments.Skip(1)]);
+                    }),
+                ]);
             case nameof(DiagnosticMetadata.ExceptionShouldThrowWithInnerException_ShouldThrowWhichInnerExceptionShouldBeOfType):
             case nameof(DiagnosticMetadata.ExceptionShouldThrowExactlyWithInnerException_ShouldThrowExactlyWhichInnerExceptionShouldBeOfType):
                 break;
