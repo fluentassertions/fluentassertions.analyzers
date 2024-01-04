@@ -52,8 +52,6 @@ public class DocumentEditorUtils
         foreach (var action in actions)
         {
             action.Apply(editor, invocationExpression);
-
-            var code = await editor.GetChangedDocument().GetTextAsync();
         }
 
         return editor.GetChangedDocument();

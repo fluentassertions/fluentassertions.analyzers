@@ -12,7 +12,7 @@ using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FluentAssertions.Analyzers;
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FluentAssertionsCodeFix)), Shared]
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FluentAssertionsCodeFixProvider)), Shared]
 public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBase<FluentAssertionsCodeFixProvider.EmptyTestContext>
 {
     protected override string Title => FluentAssertionsOperationAnalyzer.Title;
