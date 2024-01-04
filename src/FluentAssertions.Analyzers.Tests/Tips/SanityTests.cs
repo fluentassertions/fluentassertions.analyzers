@@ -372,7 +372,7 @@ public class TestType3
 
         [TestMethod]
         [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/215")]
-        public void ShouldNotFailToAnalyze()
+        public void ShouldNotFailToAnalyze1()
         {
             const string source = @"
 #nullable enable
@@ -405,6 +405,62 @@ public class OtherComponent
             DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
                 .WithSources(source)
                 .WithAllAnalyzers()
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
+        }
+
+        [TestMethod]
+        [NotImplemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/276")]
+        public void ShouldNotFailToAnalyze2()
+        {
+            const string source = @"
+#nullable enable            
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using System.Linq;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    public static void Main()
+    {
+        var response = new MyResponse();
+        response.MyCollection?.Count().Should().Be(2);
+    }
+}
+
+public class MyResponse
+{
+    public IEnumerable<MyCollectionType>? MyCollection { get; set; }
+}
+public class MyCollectionType { }";
+            const string fixedSource = @"
+#nullable enable            
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using System.Linq;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    public static void Main()
+    {
+        var response = new MyResponse();
+        response.MyCollection?.Should().HaveCount(2);
+    }
+}
+
+public class MyResponse
+{
+    public IEnumerable<MyCollectionType>? MyCollection { get; set; }
+}
+public class MyCollectionType { }";
+
+            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
+                .WithSources(source)
+                .WithFixedSources(fixedSource)
+                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithCodeFixProvider<FluentAssertionsCodeFix>()
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
             );
         }
