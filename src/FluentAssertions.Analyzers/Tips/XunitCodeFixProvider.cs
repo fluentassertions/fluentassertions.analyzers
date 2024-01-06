@@ -131,6 +131,10 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
 
                     return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "NotBeOfType", subjectIndex: 1, argumentsToRemove: [0]);
                 }
+            case "InRange" when ArgumentsCount(invocation, 3): // Assert.InRange<T>(T actual, T low, T high)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeInRange", subjectIndex: 0, argumentsToRemove: []);
+            case "NotInRange" when ArgumentsCount(invocation, 3): // Assert.NotInRange<T>(T actual, T low, T high)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeInRange", subjectIndex: 0, argumentsToRemove: []);
         }
         return null;
     }
