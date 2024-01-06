@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Composition;
+using System.Runtime.InteropServices.ComTypes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Operations;
@@ -26,6 +27,20 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeSameAs", subjectIndex: 1, argumentsToRemove: []);
             case "NotSame" when ArgumentsAreTypeOf(invocation, t.Object, t.Object): // Assert.NotSame(object expected, object actual)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeSameAs", subjectIndex: 1, argumentsToRemove: []);
+            case "Equivalent" when ArgumentsCount(invocation, 2): // Assert.Equivalent(object? expected, object? actual)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEquivalentTo", subjectIndex: 1, argumentsToRemove: []);
+            case "Equivalent" when ArgumentsCount(invocation, 3): // Assert.Equivalent(object? expected, object? actual, bool strict = false)
+                {
+                    if (invocation.Arguments[2].Value is ILiteralOperation literal)
+                    {
+                        return literal.ConstantValue.Value switch {
+                            false => DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEquivalentTo", subjectIndex: 1, argumentsToRemove: literal.IsImplicit ? [] : [2]),
+                            _ => null
+                        };
+                    }
+
+                    return null; // passing a reference for the "strict" argument
+                }
             case "Equal" when ArgumentsAreTypeOf(invocation, t.Float, t.Float, t.Float): // Assert.Equal(float expected, float actual, float tolerance)
             case "Equal" when ArgumentsAreTypeOf(invocation, t.Double, t.Double, t.Double): // Assert.Equal(double expected, double actual, double tolerance)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeApproximately", subjectIndex: 1, argumentsToRemove: []);
