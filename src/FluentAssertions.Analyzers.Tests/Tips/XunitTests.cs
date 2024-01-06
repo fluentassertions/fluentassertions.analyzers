@@ -672,6 +672,28 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             VerifyCSharpFix("long actual, long low, long high", oldAssertion, newAssertion);
         }
 
+        [DataTestMethod]
+        [DataRow("object actual, object expected", "Assert.Equivalent(expected, actual);")]
+        [DataRow("object actual, object expected", "Assert.Equivalent(expected, actual, false);")]
+        [DataRow("DateTime actual, DateTime expected", "Assert.Equivalent(expected, actual);")]
+        [DataRow("DateTime actual, DateTime expected", "Assert.Equivalent(expected, actual, false);")]
+        [DataRow("int actual, int expected", "Assert.Equivalent(expected, actual);")]
+        [DataRow("int actual, int expected", "Assert.Equivalent(expected, actual, false);")]
+        [Implemented]
+        public void AssertEquivalent_TestAnalyzer(string arguments, string assertion) =>
+            VerifyCSharpDiagnostic(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Equivalent(expected, actual);",
+            /* newAssertion: */ "actual.Should().BeEquivalentTo(expected);")]
+        [DataRow(
+            /* oldAssertion: */ "Assert.Equivalent(expected, actual, false);",
+            /* newAssertion: */ "actual.Should().BeEquivalentTo(expected);")]
+        [Implemented]
+        public void AssertEquivalent_TestCodeFix(string oldAssertion, string newAssertion)
+            => VerifyCSharpFix("object actual, object expected", oldAssertion, newAssertion);
+
         private void VerifyCSharpDiagnostic(string methodArguments, string assertion)
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
