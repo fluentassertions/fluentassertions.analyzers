@@ -648,6 +648,30 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertIsNotType_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("string actual, Type expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Assert.InRange(actual, low, high);")]
+        [Implemented]
+        public void AssertInRange_TestAnalyzer(string assertion)
+        {
+            VerifyCSharpDiagnostic("double actual, double low, double high", assertion);
+            VerifyCSharpDiagnostic("float actual, float low, float high", assertion);
+            VerifyCSharpDiagnostic("int actual, int low, int high", assertion);
+            VerifyCSharpDiagnostic("long actual, long low, long high", assertion);
+        }
+
+        [DataTestMethod]
+        [DataRow(
+            /* oldAssertion: */ "Assert.InRange(actual, low, high);",
+            /* newAssertion: */ "actual.Should().BeInRange(low, high);")]
+        [Implemented]
+        public void AssertInRange_TestCodeFix(string oldAssertion, string newAssertion)
+        {
+            VerifyCSharpFix("double actual, double low, double high", oldAssertion, newAssertion);
+            VerifyCSharpFix("float actual, float low, float high", oldAssertion, newAssertion);
+            VerifyCSharpFix("int actual, int low, int high", oldAssertion, newAssertion);
+            VerifyCSharpFix("long actual, long low, long high", oldAssertion, newAssertion);
+        }
+
         private void VerifyCSharpDiagnostic(string methodArguments, string assertion)
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
