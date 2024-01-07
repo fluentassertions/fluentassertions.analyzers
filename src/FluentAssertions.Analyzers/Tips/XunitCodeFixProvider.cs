@@ -150,6 +150,32 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeInRange", subjectIndex: 0, argumentsToRemove: []);
             case "NotInRange" when ArgumentsCount(invocation, 3): // Assert.NotInRange<T>(T actual, T low, T high)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeInRange", subjectIndex: 0, argumentsToRemove: []);
+            case "Throws" when ArgumentsCount(invocation, 1): // Assert.Throws<T>(Action testCode) where T : Exception
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactly", subjectIndex: 0, argumentsToRemove: []);
+            case "Throws" when ArgumentsAreTypeOf(invocation, t.Type, t.Action): // Assert.Throws(Type exceptionType, Action testCode)
+                {
+                    if (invocation.Arguments[0].Value is not ITypeOfOperation typeOf)
+                    {
+                        return null; // no fix for this
+                    }
+
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "ThrowExactly", subjectIndex: 1, argumentsToRemove: [0]);
+                }
+            case "Throws" when ArgumentsAreTypeOf(invocation, t.String, t.Action): // Assert.Throws(Type exceptionType, Action testCode)
+                break;
+            case "ThrowsAsync" when ArgumentsCount(invocation, 1): // Assert.ThrowsAsync<T>(Func<Task> testCode) where T : Exception
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactlyAsync", subjectIndex: 0, argumentsToRemove: []);
+            case "ThrowsAsync" when ArgumentsAreTypeOf(invocation, t.Type, t.FuncOfTask): // Assert.ThrowsAsync(Type exceptionType, Func<Task> testCode)
+                {
+                    if (invocation.Arguments[0].Value is not ITypeOfOperation typeOf)
+                    {
+                        return null; // no fix for this
+                    }
+
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "ThrowExactlyAsync", subjectIndex: 1, argumentsToRemove: [0]);
+                }
+            case "ThrowsAsync" when ArgumentsAreTypeOf(invocation, t.String, t.FuncOfTask): // Assert.ThrowsAsync(Type exceptionType, Func<Task> testCode)
+                break;
         }
         return null;
     }

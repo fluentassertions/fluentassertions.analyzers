@@ -694,6 +694,53 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertEquivalent_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("object actual, object expected", oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Action action", "Assert.Throws(typeof(ArgumentException), action);")]
+        [DataRow("Action action, Type exceptionType", "Assert.Throws(exceptionType, action);")]
+        [DataRow("Action action", "Assert.Throws<NullReferenceException>(action);")]
+        [DataRow("Action action", "Assert.Throws<ArgumentException>(\"propertyName\", action);")]
+        [Implemented]
+        public void AssertThrows_TestAnalyzer(string arguments, string assertion) 
+            => VerifyCSharpDiagnostic(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow("Action action", 
+            /* oldAssertion */ "Assert.Throws(typeof(ArgumentException), action);",
+            /* newAssertion */ "action.Should().ThrowExactly<ArgumentException>();")]
+        [DataRow("Action action", 
+            /* oldAssertion */ "Assert.Throws<NullReferenceException>(action);",
+            /* newAssertion */ "action.Should().ThrowExactly<NullReferenceException>();")]
+        [DataRow("Action action", 
+            /* oldAssertion */ "Assert.Throws<ArgumentException>(\"propertyName\", action);",
+            /* newAssertion */ "action.Should().ThrowExactly<ArgumentException>().WithParameterName(\"propertyName\")")]
+        [Implemented]
+        public void AssertThrows_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+            => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Func<Task> action", "Assert.ThrowsAsync(typeof(ArgumentException), action);")]
+        [DataRow("Func<Task> action, Type exceptionType", "Assert.ThrowsAsync(exceptionType, action);")]
+        [DataRow("Func<Task> action", "Assert.ThrowsAsync<NullReferenceException>(action);")]
+        [DataRow("Func<Task> action", "Assert.ThrowsAsync<ArgumentException>(\"propertyName\", action);")]
+        [Implemented]
+        public void AssertThrowsAsync_TestAnalyzer(string arguments, string assertion) 
+            => VerifyCSharpDiagnostic(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow("Func<Task> action", 
+            /* oldAssertion */ "Assert.ThrowsAsync(typeof(ArgumentException), action);",
+            /* newAssertion */ "action.Should().ThrowExactlyAsync<ArgumentException>();")]
+        [DataRow("Func<Task> action", 
+            /* oldAssertion */ "Assert.ThrowsAsync<NullReferenceException>(action);",
+            /* newAssertion */ "action.Should().ThrowExactlyAsync<NullReferenceException>();")]
+        [DataRow("Func<Task> action", 
+            /* oldAssertion */ "Assert.ThrowsAsync<ArgumentException>(\"propertyName\", action);",
+            /* newAssertion */ "action.Should().ThrowExactlyAsync<ArgumentException>().WithParameterName(\"propertyName\")")]
+        [Implemented]
+        public void AssertThrowsAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+            => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
+
+
         private void VerifyCSharpDiagnostic(string methodArguments, string assertion)
         {
             var source = GenerateCode.XunitAssertion(methodArguments, assertion);
