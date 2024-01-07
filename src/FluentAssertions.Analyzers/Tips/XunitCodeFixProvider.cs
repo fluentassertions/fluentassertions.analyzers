@@ -176,6 +176,10 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
                 }
             case "ThrowsAsync" when ArgumentsAreTypeOf(invocation, t.String, t.FuncOfTask): // Assert.ThrowsAsync(Type exceptionType, Func<Task> testCode)
                 break;
+            case "ThrowsAny" when ArgumentsCount(invocation, 1): // Assert.ThrowsAny<T>(Action testCode) where T : Exception
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "Throw", subjectIndex: 0, argumentsToRemove: []);
+            case "ThrowsAnyAsync" when ArgumentsCount(invocation, 1): // Assert.ThrowsAnyAsync<T>(Func<Task> testCode) where T : Exception
+                return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowAsync", subjectIndex: 0, argumentsToRemove: []);
         }
         return null;
     }

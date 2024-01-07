@@ -740,6 +740,34 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertThrowsAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
             => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
 
+        [DataTestMethod]
+        [DataRow("Action action", "Assert.ThrowsAny<NullReferenceException>(action);")]
+        [Implemented]
+        public void AssertThrowsAny_TestAnalyzer(string arguments, string assertion) 
+            => VerifyCSharpDiagnostic(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow("Action action", 
+            /* oldAssertion */ "Assert.ThrowsAny<NullReferenceException>(action);",
+            /* newAssertion */ "action.Should().Throw<NullReferenceException>();")]
+        [Implemented]
+        public void AssertThrowsAny_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+            => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
+
+        [DataTestMethod]
+        [DataRow("Func<Task> action", "Assert.ThrowsAnyAsync<NullReferenceException>(action);")]
+        [Implemented]
+        public void AssertThrowsAnyAsync_TestAnalyzer(string arguments, string assertion) 
+            => VerifyCSharpDiagnostic(arguments, assertion);
+
+        [DataTestMethod]
+        [DataRow("Func<Task> action", 
+            /* oldAssertion */ "Assert.ThrowsAnyAsync<NullReferenceException>(action);",
+            /* newAssertion */ "action.Should().ThrowAsync<NullReferenceException>();")]
+        [Implemented]
+        public void AssertThrowsAnyAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+            => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
+
 
         private void VerifyCSharpDiagnostic(string methodArguments, string assertion)
         {
