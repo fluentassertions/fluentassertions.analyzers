@@ -12,7 +12,7 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
 {
     public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAnalyzer.MSTestsRule.Id);
 
-    protected override CreateChangedDocument TryComputeFix(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext testContext, Diagnostic diagnostic)
+    protected override CreateChangedDocument TryComputeFixCore(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext testContext, Diagnostic diagnostic)
     {
         var assertType = invocation.TargetMethod.ContainingType;
         return assertType.Name switch

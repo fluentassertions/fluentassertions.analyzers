@@ -13,7 +13,7 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
 {
     public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAnalyzer.XunitRule.Id);
 
-    protected override CreateChangedDocument TryComputeFix(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t, Diagnostic diagnostic)
+    protected override CreateChangedDocument TryComputeFixCore(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t, Diagnostic diagnostic)
     {
         switch (invocation.TargetMethod.Name)
         {
