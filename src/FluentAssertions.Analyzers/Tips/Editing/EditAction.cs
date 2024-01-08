@@ -8,15 +8,18 @@ namespace FluentAssertions.Analyzers;
 
 public static class EditAction
 {
-    public static Action<DocumentEditor, InvocationExpressionSyntax> RemoveNode(SyntaxNode node)
-        => (editor, invocationExpression) => editor.RemoveNode(node);
+    public static Action<EditActionContext> RemoveNode(SyntaxNode node)
+        => context => context.Editor.RemoveNode(node);
 
-    public static Action<DocumentEditor, InvocationExpressionSyntax> SubjectShouldAssertion(int argumentIndex, string assertion)
-        => (editor, invocationExpression) => new SubjectShouldAssertionAction(argumentIndex, assertion).Apply(editor, invocationExpression);
+    public static Action<EditActionContext> RemoveInvocationArgument(int argumentIndex)
+        => context => context.Editor.RemoveNode(context.InvocationExpression.ArgumentList.Arguments[argumentIndex]);
 
-    public static Action<DocumentEditor, InvocationExpressionSyntax> SubjectShouldGenericAssertion(int argumentIndex, string assertion, ImmutableArray<ITypeSymbol> genericTypes)
-        => (editor, invocationExpression) => new SubjectShouldGenericAssertionAction(argumentIndex, assertion, genericTypes).Apply(editor, invocationExpression);
+    public static Action<EditActionContext> SubjectShouldAssertion(int argumentIndex, string assertion)
+        => context => new SubjectShouldAssertionAction(argumentIndex, assertion).Apply(context);
 
-    public static Action<DocumentEditor, InvocationExpressionSyntax> CreateEquivalencyAssertionOptionsLambda(int optionsIndex)
-        => (editor, invocationExpression) => new CreateEquivalencyAssertionOptionsLambdaAction(optionsIndex).Apply(editor, invocationExpression);
+    public static Action<EditActionContext> SubjectShouldGenericAssertion(int argumentIndex, string assertion, ImmutableArray<ITypeSymbol> genericTypes)
+        => context => new SubjectShouldGenericAssertionAction(argumentIndex, assertion, genericTypes).Apply(context);
+
+    public static Action<EditActionContext> CreateEquivalencyAssertionOptionsLambda(int optionsIndex)
+        => context => new CreateEquivalencyAssertionOptionsLambdaAction(optionsIndex).Apply(context.Editor, context.InvocationExpression);
 }
