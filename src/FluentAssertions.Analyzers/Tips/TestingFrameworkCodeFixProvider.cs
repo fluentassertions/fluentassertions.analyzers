@@ -1,6 +1,17 @@
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace FluentAssertions.Analyzers;
 
@@ -70,6 +81,41 @@ public abstract class TestingFrameworkCodeFixProvider : CodeFixProviderBase<Test
     {
         return invocation.TargetMethod.Parameters.Length == arguments;
     }
+
+    protected override Func<CancellationToken, Task<Document>> TryComputeFix(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t, Diagnostic diagnostic)
+    {
+        var fix = TryComputeFixCore(invocation, context, t, diagnostic);
+        if (fix is null)
+        {
+            return null;
+        }
+
+        return async ctx =>
+        {
+            const string fluentAssertionNamespace = "FluentAssertions";
+            var document = await fix(ctx);
+
+            var model = await document.GetSemanticModelAsync();
+            var scopes = model.GetImportScopes(diagnostic.Location.SourceSpan.Start);
+
+            var hasFluentAssertionImport = scopes.Any(scope => scope.Imports.Any(import => import.NamespaceOrType.ToString().Equals(fluentAssertionNamespace)));
+            if (hasFluentAssertionImport)
+            {
+                return document;
+            }
+
+            var root = (CompilationUnitSyntax) await document.GetSyntaxRootAsync();
+            root = root.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(fluentAssertionNamespace)).WithAdditionalAnnotations(Simplifier.AddImportsAnnotation));
+
+            document = document.WithSyntaxRoot(root);
+            document = await Formatter.OrganizeImportsAsync(document);
+
+            return document;
+        };
+    }
+
+    protected abstract Func<CancellationToken, Task<Document>> TryComputeFixCore(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t, Diagnostic diagnostic);
+
 
     public sealed class TestingFrameworkCodeFixContext(Compilation compilation)
     {
