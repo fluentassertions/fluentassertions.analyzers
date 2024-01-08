@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
 using System.Composition;
-using System.Runtime.InteropServices.ComTypes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Operations;
 using CreateChangedDocument = System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Document>>;
+using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FluentAssertions.Analyzers;
 
@@ -33,7 +33,8 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
                 {
                     if (invocation.Arguments[2].Value is ILiteralOperation literal)
                     {
-                        return literal.ConstantValue.Value switch {
+                        return literal.ConstantValue.Value switch
+                        {
                             false => DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEquivalentTo", subjectIndex: 1, argumentsToRemove: literal.IsImplicit ? [] : [2]),
                             _ => null
                         };
@@ -161,8 +162,8 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
 
                     return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "ThrowExactly", subjectIndex: 1, argumentsToRemove: [0]);
                 }
-            case "Throws" when ArgumentsAreTypeOf(invocation, t.String, t.Action): // Assert.Throws(Type exceptionType, Action testCode)
-                break;
+            case "Throws" when ArgumentsAreTypeOf(invocation, t.String, t.Action): // Assert.Throws(string paramName, Action testCode)
+                return RewriteThrowArgumentExceptionAssertion("ThrowExactly");
             case "ThrowsAsync" when ArgumentsCount(invocation, 1): // Assert.ThrowsAsync<T>(Func<Task> testCode) where T : Exception
                 return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowExactlyAsync", subjectIndex: 0, argumentsToRemove: []);
             case "ThrowsAsync" when ArgumentsAreTypeOf(invocation, t.Type, t.FuncOfTask): // Assert.ThrowsAsync(Type exceptionType, Func<Task> testCode)
@@ -174,13 +175,28 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
 
                     return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "ThrowExactlyAsync", subjectIndex: 1, argumentsToRemove: [0]);
                 }
-            case "ThrowsAsync" when ArgumentsAreTypeOf(invocation, t.String, t.FuncOfTask): // Assert.ThrowsAsync(Type exceptionType, Func<Task> testCode)
-                break;
+            case "ThrowsAsync" when ArgumentsAreTypeOf(invocation, t.String, t.FuncOfTask): // Assert.ThrowsAsync(string paramName, Func<Task> testCode)
+                return RewriteThrowArgumentExceptionAssertion("ThrowExactlyAsync");
             case "ThrowsAny" when ArgumentsCount(invocation, 1): // Assert.ThrowsAny<T>(Action testCode) where T : Exception
                 return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "Throw", subjectIndex: 0, argumentsToRemove: []);
             case "ThrowsAnyAsync" when ArgumentsCount(invocation, 1): // Assert.ThrowsAnyAsync<T>(Func<Task> testCode) where T : Exception
                 return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "ThrowAsync", subjectIndex: 0, argumentsToRemove: []);
         }
         return null;
+
+        CreateChangedDocument RewriteThrowArgumentExceptionAssertion(string newName)
+        {
+            return ctx => DocumentEditorUtils.RewriteExpression(invocation, [
+                EditAction.SubjectShouldGenericAssertion(argumentIndex: 1, newName, invocation.TargetMethod.TypeArguments),
+                (editActionContext) =>
+                {
+                    var generator = editActionContext.Editor.Generator;
+                    var withParameterName = generator.MemberAccessExpression(editActionContext.FluentAssertion.WithArgumentList(SF.ArgumentList()), "WithParameterName");
+                    var chainedAssertion = generator.InvocationExpression(withParameterName, editActionContext.InvocationExpression.ArgumentList.Arguments[0]);
+
+                    editActionContext.Editor.ReplaceNode(editActionContext.InvocationExpression, chainedAssertion);
+                }
+            ], context, ctx);
+        }
     }
 }

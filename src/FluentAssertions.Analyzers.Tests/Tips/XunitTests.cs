@@ -712,7 +712,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             /* newAssertion */ "action.Should().ThrowExactly<NullReferenceException>();")]
         [DataRow("Action action", 
             /* oldAssertion */ "Assert.Throws<ArgumentException>(\"propertyName\", action);",
-            /* newAssertion */ "action.Should().ThrowExactly<ArgumentException>().WithParameterName(\"propertyName\")")]
+            /* newAssertion */ "action.Should().ThrowExactly<ArgumentException>().WithParameterName(\"propertyName\");")]
         [Implemented]
         public void AssertThrows_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
             => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
@@ -735,7 +735,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             /* newAssertion */ "action.Should().ThrowExactlyAsync<NullReferenceException>();")]
         [DataRow("Func<Task> action", 
             /* oldAssertion */ "Assert.ThrowsAsync<ArgumentException>(\"propertyName\", action);",
-            /* newAssertion */ "action.Should().ThrowExactlyAsync<ArgumentException>().WithParameterName(\"propertyName\")")]
+            /* newAssertion */ "action.Should().ThrowExactlyAsync<ArgumentException>().WithParameterName(\"propertyName\");")]
         [Implemented]
         public void AssertThrowsAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
             => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
