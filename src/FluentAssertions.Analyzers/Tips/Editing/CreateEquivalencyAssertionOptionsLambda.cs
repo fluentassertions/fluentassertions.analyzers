@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace FluentAssertions.Analyzers;
 
-public class CreateEquivalencyAssertionOptionsLambda(int argumentIndex) : IEditAction
+public class CreateEquivalencyAssertionOptionsLambdaAction(int argumentIndex) : IEditAction
 {
     public void Apply(DocumentEditor editor, InvocationExpressionSyntax invocationExpression)
     {

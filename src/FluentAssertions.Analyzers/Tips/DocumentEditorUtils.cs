@@ -18,8 +18,8 @@ public class DocumentEditorUtils
         var invocationExpression = (InvocationExpressionSyntax)invocation.Syntax;
 
         return async ctx => await RewriteExpression(invocationExpression, [
-            ..Array.ConvertAll(argumentsToRemove, arg => new RemoveNodeAction(invocationExpression.ArgumentList.Arguments[arg])),
-            new SubjectShouldAssertionAction(subjectIndex, newName)
+            ..Array.ConvertAll(argumentsToRemove, arg => EditAction.RemoveNode(invocationExpression.ArgumentList.Arguments[arg])),
+            EditAction.SubjectShouldAssertion(subjectIndex, newName)
         ], context, ctx);
     }
 
@@ -30,8 +30,8 @@ public class DocumentEditorUtils
         var invocationExpression = (InvocationExpressionSyntax)invocation.Syntax;
 
         return async ctx => await RewriteExpression(invocationExpression, [
-             ..Array.ConvertAll(argumentsToRemove, arg => new RemoveNodeAction(invocationExpression.ArgumentList.Arguments[arg])),
-                new SubjectShouldGenericAssertionAction(subjectIndex, newName, genericTypes)
+             ..Array.ConvertAll(argumentsToRemove, arg => EditAction.RemoveNode(invocationExpression.ArgumentList.Arguments[arg])),
+                EditAction.SubjectShouldGenericAssertion(subjectIndex, newName, genericTypes)
          ], context, ctx);
     }
 
@@ -40,21 +40,20 @@ public class DocumentEditorUtils
         var invocationExpression = (InvocationExpressionSyntax)invocation.Syntax;
 
         return async ctx => await RewriteExpression(invocationExpression, [
-            new SubjectShouldAssertionAction(subjectIndex, newName),
-                new CreateEquivalencyAssertionOptionsLambda(optionsIndex)
+            EditAction.SubjectShouldAssertion(subjectIndex, newName),
+            EditAction.CreateEquivalencyAssertionOptionsLambda(optionsIndex)
         ], context, ctx);
     }
 
-    private static async Task<Document> RewriteExpression(InvocationExpressionSyntax invocationExpression, IEditAction[] actions, CodeFixContext context, CancellationToken cancellationToken)
+    private static async Task<Document> RewriteExpression(InvocationExpressionSyntax invocationExpression, Action<DocumentEditor, InvocationExpressionSyntax>[] actions, CodeFixContext context, CancellationToken cancellationToken)
     {
         var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken);
 
         foreach (var action in actions)
         {
-            action.Apply(editor, invocationExpression);
+            action(editor, invocationExpression);
         }
 
         return editor.GetChangedDocument();
     }
 }
-
