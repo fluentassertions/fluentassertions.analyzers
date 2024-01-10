@@ -448,45 +448,5 @@ public class MyCollectionType { }";
                 })
             );
         }
-
-        [TestMethod]
-        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/96")]
-        public void ShouldNotReportHaveCound1FollowedByAndConstraint()
-        {
-            const string source = @"
-using FluentAssertions;
-using System.Linq;
-using System.Collections.Generic;
-
-public class TestClass
-{
-    public static void Main()
-    {
-        IEnumerable<int> collection = new[] { 1, 2, 3 };
-        collection.Should().HaveCount(1).And.Contain(i => i == 1 );
-    }
-}";
-            const string newSource = @"
-using FluentAssertions;
-using System.Linq;
-using System.Collections.Generic;
-
-public class TestClass
-{
-    public static void Main()
-    {
-        IEnumerable<int> collection = new[] { 1, 2, 3 };
-        collection.Should().ContainSingle().And.Contain(i => i == 1 );
-    }
-}";
-
-            DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
-                .WithSources(source)
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
-                .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
-                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
-                .WithFixedSources(newSource)
-            );
-        }
     }
 }

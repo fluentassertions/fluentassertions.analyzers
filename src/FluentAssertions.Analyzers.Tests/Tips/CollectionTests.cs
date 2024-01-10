@@ -629,6 +629,12 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.ToList().Should().HaveCount(1{0}).And.ToString();",
             newAssertion: "actual.ToList().Should().ContainSingle({0}).And.ToString();")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Should().HaveCount(1{0}).And.Contain(item => item == expectedItem);",
+            newAssertion: "actual.Should().ContainSingle({0}).And.Contain(item => item == expectedItem);")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.AsEnumerable().Should().HaveCount(1{0}).And.Contain(item => item == expectedItem).And.ToString();",
+            newAssertion: "actual.AsEnumerable().Should().ContainSingle({0}).And.Contain(item => item == expectedItem).And.ToString();")]
         [Implemented]
         public void CollectionShouldContainSingle_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFixCodeBlock(oldAssertion, newAssertion);
 
