@@ -20,7 +20,7 @@ jobs:
         run: cd src/FluentAssertions.Analyzers.BenchmarkTests && dotnet run -c Release --exporters json --filter '*'
 
       - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark
+        uses: benchmark-action/github-action-benchmark@v1.18.0
         with:
           name: FluentAssertions.Analyzers Benchmark
           tool: 'benchmarkdotnet'
