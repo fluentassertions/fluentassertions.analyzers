@@ -88,13 +88,12 @@ public class AssertAnalyzer : DiagnosticAnalyzer
                 context.RegisterOperationAction(analyzerContext.AnalyzeMsTestThrow, OperationKind.Throw);
             }
 
-            // TODO: enable NUnit
-            // if (analyzerContext.IsNUnitAvailable)
-            // {
-            //     context.RegisterOperationAction(analyzerContext.AnalyzeNunitInvocation, OperationKind.Invocation);
-            //     context.RegisterOperationAction(analyzerContext.AnalyzeNunitDynamicInvocation, OperationKind.DynamicInvocation);
-            //     context.RegisterOperationAction(analyzerContext.AnalyzeNunitThrow, OperationKind.Throw);
-            // }
+            if (analyzerContext.IsNUnitAvailable)
+            {
+                context.RegisterOperationAction(analyzerContext.AnalyzeNunitInvocation, OperationKind.Invocation);
+                context.RegisterOperationAction(analyzerContext.AnalyzeNunitDynamicInvocation, OperationKind.DynamicInvocation);
+                context.RegisterOperationAction(analyzerContext.AnalyzeNunitThrow, OperationKind.Throw);
+            }
         });
     }
 
