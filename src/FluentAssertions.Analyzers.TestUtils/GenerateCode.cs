@@ -233,5 +233,26 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("    }")
             .AppendLine("}")
             .ToString();
+
+        public static string Nunit3Assertion(string methodArguments, string assertion) => new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using System.Collections.Generic;")
+            .AppendLine("using System.Collections.Immutable;")
+            .AppendLine("using System.Text.RegularExpressions;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("using NUnit.Framework;")
+            .AppendLine("using System.Threading.Tasks;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    class TestClass")
+            .AppendLine("    {")
+            .AppendLine($"        void TestMethod({methodArguments})")
+            .AppendLine("        {")
+            .AppendLine($"            {assertion}")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendLine("}")
+            .ToString();
     }
 }

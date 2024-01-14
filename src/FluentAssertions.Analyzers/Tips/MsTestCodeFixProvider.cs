@@ -12,14 +12,14 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
 {
     public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAnalyzer.MSTestsRule.Id);
 
-    protected override CreateChangedDocument TryComputeFixCore(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext testContext, Diagnostic diagnostic)
+    protected override CreateChangedDocument TryComputeFixCore(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t, Diagnostic diagnostic)
     {
         var assertType = invocation.TargetMethod.ContainingType;
         return assertType.Name switch
         {
-            "Assert" => TryComputeFixForAssert(invocation, context, testContext),
-            "StringAssert" => TryComputeFixForStringAssert(invocation, context, testContext),
-            "CollectionAssert" => TryComputeFixForCollectionAssert(invocation, context, testContext),
+            "Assert" => TryComputeFixForAssert(invocation, context, t),
+            "StringAssert" => TryComputeFixForStringAssert(invocation, context, t),
+            "CollectionAssert" => TryComputeFixForCollectionAssert(invocation, context, t),
             _ => null
         };
     }
