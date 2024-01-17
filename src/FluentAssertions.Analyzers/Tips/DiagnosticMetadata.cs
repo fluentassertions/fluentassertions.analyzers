@@ -47,7 +47,7 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata CollectionShouldHaveElementAt_SkipFirstShouldBe { get; } = new("Use .Should().HaveElementAt()", GetHelpLink("Collections-26"));
     public static DiagnosticMetadata CollectionShouldBeInAscendingOrder_OrderByShouldEqual { get; } = new("Use .Should().BeInAscendingOrder()", GetHelpLink("Collections-27"));
     public static DiagnosticMetadata CollectionShouldBeInDescendingOrder_OrderByDescendingShouldEqual { get; } = new("Use .Should().BeInDescendingOrder()", GetHelpLink("Collections-28"));
-    public static DiagnosticMetadata CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect { get; } = new("Use .Should().BeEquivalentTo()", GetHelpLink("Collections-29"));
+    public static DiagnosticMetadata CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect { get; } = new("Use .Should().Equal()", GetHelpLink("Collections-29"));
     public static DiagnosticMetadata CollectionShouldNotIntersectWith_IntersectShouldBeEmpty { get; } = new("Use .Should().NotIntersectWith()", GetHelpLink("Collections-30"));
     public static DiagnosticMetadata CollectionShouldIntersectWith_IntersectShouldNotBeEmpty { get; } = new("Use .Should().IntersectWith()", GetHelpLink("Collections-31"));
     public static DiagnosticMetadata CollectionShouldNotContainNulls_SelectShouldNotContainNulls { get; } = new("Use .Should().NotContainNulls()", GetHelpLink("Collections-32"));

@@ -448,5 +448,62 @@ public class MyCollectionType { }";
                 })
             );
         }
+
+        [TestMethod]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/290")]
+        public void ShouldNotReportIssue290()
+        {
+            const string source = @"
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+public class TestClass
+{
+    public static void Main()
+    {
+        IEnumerable<Item> expectedOrderedNames = new[] { new Item(""Alpha""), new Item(""Bravo""), new Item(""Charlie"") };
+        IEnumerable<Parent> actual = GetSortedItems();
+
+        actual.Select(x => x.Item).Should().Equal(expectedOrderedNames);
+    }
+
+    static IEnumerable<Parent> GetSortedItems()
+    {
+        yield return new Parent(""Bravo"");
+        yield return new Parent(""Charlie"");
+        yield return new Parent(""Alpha"");
+    }
+}
+
+public class Item
+{
+    public string Name { get; set; }
+    public Guid Id { get; set; }
+
+    public Item(string name)
+    {
+        Name = name;
+        Id = Guid.NewGuid();
+    }
+}
+
+public class Parent
+{
+    public Item Item { get; set; }
+
+    public Parent(string name)
+    {
+        Item = new Item(name);
+    }
+}";
+
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithSources(source)
+                .WithAllAnalyzers()
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
+            );
+        }
     }
 }
