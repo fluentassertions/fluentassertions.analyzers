@@ -179,7 +179,8 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
                         case nameof(Enumerable.OrderByDescending) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata) && invocationBeforeShould.Arguments[0].IsSameArgumentReference(assertion.Arguments[0]):
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeInDescendingOrder_OrderByDescendingShouldEqual));
                             return;
-                        case nameof(Enumerable.Select) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata) && assertion.Arguments[0].IsLambda():
+                        case nameof(Enumerable.Select) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata) 
+                            && assertion.Arguments[0].Value is IInvocationOperation { TargetMethod.Name: nameof(Enumerable.Select), Arguments.Length: 2 } expectedInvocation && expectedInvocation.Arguments[1].IsLambda():
                             context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldEqualOtherCollectionByComparer_SelectShouldEqualOtherCollectionSelect));
                             return;
                     }
