@@ -463,16 +463,17 @@ public class TestClass
 {
     public static void Main()
     {
-        IEnumerable<string> expectedOrderedNames = new[] { ""Alpha"", ""Bravo"", ""Charlie"" };
-        IEnumerable<Item> actual = GetSortedItems();
+        IEnumerable<Item> expectedOrderedNames = new[] { new Item(""Alpha""), new Item(""Bravo""), new Item(""Charlie"") };
+        IEnumerable<Parent> actual = GetSortedItems();
 
-        actual.Select(x => x.Name).Should().Equal(expectedOrderedNames);
+        actual.Select(x => x.Item).Should().Equal(expectedOrderedNames);
     }
 
-    static IEnumerable<Item> GetSortedItems() {
-        yield return new Item(""Bravo"", Guid.NewGuid());
-        yield return new Item(""Charlie"", Guid.NewGuid());
-        yield return new Item(""Alpha"", Guid.NewGuid());
+    static IEnumerable<Parent> GetSortedItems()
+    {
+        yield return new Parent(""Bravo"");
+        yield return new Parent(""Charlie"");
+        yield return new Parent(""Alpha"");
     }
 }
 
@@ -481,10 +482,20 @@ public class Item
     public string Name { get; set; }
     public Guid Id { get; set; }
 
-    public Item(string name, Guid id)
+    public Item(string name)
     {
         Name = name;
-        Id = id;
+        Id = Guid.NewGuid();
+    }
+}
+
+public class Parent
+{
+    public Item Item { get; set; }
+
+    public Parent(string name)
+    {
+        Item = new Item(name);
     }
 }";
 
