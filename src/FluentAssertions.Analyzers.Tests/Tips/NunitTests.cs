@@ -14,7 +14,7 @@ public class NunitTests
     [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
     [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
     [Implemented]
-    public void AssertTrue_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("bool actual", assertion);
+    public void AssertTrue_TestAnalyzer(string assertion) => VerifyDiagnostic("bool actual", assertion);
 
     [DataTestMethod]
     [AssertionCodeFix(
@@ -43,7 +43,7 @@ public class NunitTests
         newAssertion: "(actual == false).Should().BeTrue({0});")]
     [Implemented]
     public void AssertTrue_TestCodeFix(string oldAssertion, string newAssertion)
-        => VerifyCSharpFix("bool actual", oldAssertion, newAssertion);
+        => VerifyFix("bool actual", oldAssertion, newAssertion);
 
     [DataTestMethod]
     [AssertionDiagnostic("Assert.False(actual{0});")]
@@ -51,7 +51,7 @@ public class NunitTests
     [AssertionDiagnostic("Assert.IsFalse(actual{0});")]
     [AssertionDiagnostic("Assert.IsFalse(bool.Parse(\"false\"){0});")]
     [Implemented]
-    public void AssertFalse_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("bool actual", assertion);
+    public void AssertFalse_TestAnalyzer(string assertion) => VerifyDiagnostic("bool actual", assertion);
 
     [DataTestMethod]
     [AssertionCodeFix(
@@ -68,9 +68,43 @@ public class NunitTests
         newAssertion: "bool.Parse(\"false\").Should().BeFalse({0});")]
     [Implemented]
     public void AssertFalse_TestCodeFix(string oldAssertion, string newAssertion)
-        => VerifyCSharpFix("bool actual", oldAssertion, newAssertion);
+        => VerifyFix("bool actual", oldAssertion, newAssertion);
 
-    private void VerifyCSharpDiagnostic(string methodArguments, string assertion)
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.Null(actual{0});")]
+    [AssertionDiagnostic("Assert.IsNull(actual{0});")]
+    [Implemented]
+    public void AssertNull_TestAnalyzer(string assertion) => VerifyDiagnostic("object actual", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.Null(actual{0});",
+        newAssertion: "actual.Should().BeNull({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsNull(actual{0});",
+        newAssertion: "actual.Should().BeNull({0});")]
+    [Implemented]
+    public void AssertNull_TestCodeFix(string oldAssertion, string newAssertion)
+        => VerifyFix("object actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.NotNull(actual{0});")]
+    [AssertionDiagnostic("Assert.IsNotNull(actual{0});")]
+    [Implemented]
+    public void AssertNotNull_TestAnalyzer(string assertion) => VerifyDiagnostic("object actual", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.NotNull(actual{0});",
+        newAssertion: "actual.Should().NotBeNull({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsNotNull(actual{0});",
+        newAssertion: "actual.Should().NotBeNull({0});")]
+    [Implemented]
+    public void AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion)
+        => VerifyFix("object actual", oldAssertion, newAssertion);
+
+    private void VerifyDiagnostic(string methodArguments, string assertion)
     {
         var source = GenerateCode.Nunit3Assertion(methodArguments, assertion);
         DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
@@ -90,7 +124,7 @@ public class NunitTests
         );
     }
 
-    private void VerifyCSharpFix(string methodArguments, string oldAssertion, string newAssertion)
+    private void VerifyFix(string methodArguments, string oldAssertion, string newAssertion)
     {
         var oldSource = GenerateCode.Nunit3Assertion(methodArguments, oldAssertion);
         var newSource = GenerateCode.Nunit3Assertion(methodArguments, newAssertion);
