@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions.Analyzers.TestUtils;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -191,6 +192,200 @@ public class NunitTests
         newAssertion: "actual.Should().NotBeNull({0});")]
     [Implemented]
     public void Nunit4_AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("object actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.Greater(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertGreater_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.Greater(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertGreater_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.Greater(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeGreaterThan(arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertGreater_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.Greater(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeGreaterThan(arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertGreater_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.GreaterOrEqual(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertGreaterOrEqual_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.GreaterOrEqual(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertGreaterOrEqual_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.GreaterOrEqual(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeGreaterOrEqualTo(arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertGreaterOrEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.GreaterOrEqual(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeGreaterOrEqualTo(arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertGreaterOrEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.Less(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertLess_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.Less(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertLess_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.Less(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeLessThan(arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertLess_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.Less(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeLessThan(arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertLess_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.LessOrEqual(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertLessOrEqual_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.LessOrEqual(arg1, arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertLessOrEqual_TestAnalyzer(string assertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyDiagnostic(comparableArgument, assertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.LessOrEqual(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeLessOrEqualTo(arg2{0});")]
+    [Implemented]
+    public void Nunit3_AssertLessOrEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit3VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.LessOrEqual(arg1, arg2{0});",
+        newAssertion: "arg1.Should().BeLessOrEqualTo(arg2{0});")]
+    [Implemented]
+    public void Nunit4_AssertLessOrEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        foreach (var comparableArgument in ComparableArguments)
+        {
+            Nunit4VerifyFix(comparableArgument, oldAssertion, newAssertion);
+        }
+    }
+
+    private static readonly string[] ComparableArguments = Array.ConvertAll(new string[] { "int", "uint", "long", "ulong", "float", "double", "decimal" }, x => $"{x} arg1, {x} arg2");
 
     private void Nunit3VerifyDiagnostic(string methodArguments, string assertion)
         => VerifyDiagnostic(GenerateCode.Nunit3Assertion(methodArguments, assertion), PackageReference.Nunit_3_14_0);

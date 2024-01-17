@@ -122,6 +122,9 @@ public abstract class TestingFrameworkCodeFixProvider : CodeFixProviderBase<Test
         public INamedTypeSymbol Object { get; } = compilation.ObjectType;
         public INamedTypeSymbol String { get; } = compilation.GetTypeByMetadataName("System.String");
         public INamedTypeSymbol Int32 { get; } = compilation.GetTypeByMetadataName("System.Int32");
+        public INamedTypeSymbol UInt32 { get; } = compilation.GetTypeByMetadataName("System.UInt32");
+        public INamedTypeSymbol Long { get; } = compilation.GetTypeByMetadataName("System.Int64");
+        public INamedTypeSymbol ULong { get; } = compilation.GetTypeByMetadataName("System.UInt64");
         public INamedTypeSymbol Float { get; } = compilation.GetTypeByMetadataName("System.Single");
         public INamedTypeSymbol Double { get; } = compilation.GetTypeByMetadataName("System.Double");
         public INamedTypeSymbol Decimal { get; } = compilation.GetTypeByMetadataName("System.Decimal");
