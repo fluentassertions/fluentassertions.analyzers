@@ -22,36 +22,15 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
 
         return assertType.Name switch
         {
-            "Assert" when isNunit3 => TryComputeFixForNunit3Assert(invocation, context, t),
-            "ClassicAssert" when isNunit4 => TryComputeFixForNunit4ClassicAssert(invocation, context, t),
+            "Assert" when isNunit3 => TryComputeFixForNunitClassicAssert(invocation, context, t),
+            "ClassicAssert" when isNunit4 => TryComputeFixForNunitClassicAssert(invocation, context, t),
             //"StringAssert" => TryComputeFixForStringAssert(invocation, context, testContext),
             //"CollectionAssert" => TryComputeFixForCollectionAssert(invocation, context, testContext),
             _ => null
         };
     }
 
-    private CreateChangedDocument TryComputeFixForNunit3Assert(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t)
-    {
-        switch (invocation.TargetMethod.Name)
-        {
-            case "True": // Assert.True(bool condition)
-            case "IsTrue": // Assert.IsTrue(bool condition)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: []);
-            case "False": // Assert.False(bool condition)
-            case "IsFalse": // Assert.IsFalse(bool condition)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeFalse", subjectIndex: 0, argumentsToRemove: []);
-            case "Null": // Assert.Null(object anObject)
-            case "IsNull": // Assert.IsNull(object anObject)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeNull", subjectIndex: 0, argumentsToRemove: []);
-            case "NotNull": // Assert.NotNull(object anObject)
-            case "IsNotNull": // Assert.IsNotNull(object anObject)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", subjectIndex: 0, argumentsToRemove: []);
-        }
-
-        return null;
-    }
-
-    private CreateChangedDocument TryComputeFixForNunit4ClassicAssert(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t)
+    private CreateChangedDocument TryComputeFixForNunitClassicAssert(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t)
     {
         switch (invocation.TargetMethod.Name)
         {
