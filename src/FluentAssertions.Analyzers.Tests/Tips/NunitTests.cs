@@ -429,7 +429,7 @@ public class NunitTests
     [Implemented]
     public void Nunit3_AssertEqualObject_TestAnalyzer(string assertion)
         => Nunit3VerifyDiagnostic("object expected, object actual", assertion);
-    
+
     [DataTestMethod]
     [AssertionDiagnostic("ClassicAssert.AreEqual(expected, actual{0});")]
     [Implemented]
@@ -479,7 +479,7 @@ public class NunitTests
     [Implemented]
     public void Nunit4_AssertNotEqualObject_TestCodeFix(string oldAssertion, string newAssertion)
         => Nunit4VerifyFix("object expected, object actual", oldAssertion, newAssertion);
-        
+
     [DataTestMethod]
     [AssertionDiagnostic("Assert.AreSame(expected, actual{0});")]
     [Implemented]
@@ -507,6 +507,163 @@ public class NunitTests
     [Implemented]
     public void Nunit4_AssertSame_TestCodeFix(string oldAssertion, string newAssertion)
         => Nunit4VerifyFix("object expected, object actual", oldAssertion, newAssertion);
+
+    #endregion
+
+    #region Assert.Types.cs
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.IsAssignableFrom(typeof(string), actual{0});")]
+    [AssertionDiagnostic("Assert.IsAssignableFrom(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.IsAssignableFrom<string>(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsAssignableFrom_TestAnalyzer(string assertion)
+        => Nunit3VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.IsAssignableFrom(typeof(string), actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsAssignableFrom(expected, actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsAssignableFrom<string>(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsAssignableFrom_TestAnalyzer(string assertion)
+        => Nunit4VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsAssignableFrom(typeof(string), actual{0});",
+        newAssertion: "actual.Should().BeAssignableTo<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsAssignableFrom(expected, actual{0});",
+        newAssertion: "actual.Should().BeAssignableTo(expected{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit3VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsAssignableFrom(typeof(string), actual{0});",
+        newAssertion: "actual.Should().BeAssignableTo<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsAssignableFrom(expected, actual{0});",
+        newAssertion: "actual.Should().BeAssignableTo(expected{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit4VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.IsNotAssignableFrom(typeof(string), actual{0});")]
+    [AssertionDiagnostic("Assert.IsNotAssignableFrom(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.IsNotAssignableFrom<string>(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsNotAssignableFrom_TestAnalyzer(string assertion)
+        => Nunit3VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.IsNotAssignableFrom(typeof(string), actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsNotAssignableFrom(expected, actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsNotAssignableFrom<string>(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsNotAssignableFrom_TestAnalyzer(string assertion)
+        => Nunit4VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsNotAssignableFrom(typeof(string), actual{0});",
+        newAssertion: "actual.Should().NotBeAssignableTo<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsNotAssignableFrom(expected, actual{0});",
+        newAssertion: "actual.Should().NotBeAssignableTo(expected{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsNotAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit3VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsNotAssignableFrom(typeof(string), actual{0});",
+        newAssertion: "actual.Should().NotBeAssignableTo<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsNotAssignableFrom(expected, actual{0});",
+        newAssertion: "actual.Should().NotBeAssignableTo(expected{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsNotAssignableFrom_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit4VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
+
+    // void IsInstanceOf(Type expected, object? actual, string message, params object?[]? args)
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.IsInstanceOf(typeof(string), actual{0});")]
+    [AssertionDiagnostic("Assert.IsInstanceOf(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.IsInstanceOf<string>(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsInstanceOf_TestAnalyzer(string assertion)
+        => Nunit3VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.IsInstanceOf(typeof(string), actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsInstanceOf(expected, actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsInstanceOf<string>(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsInstanceOf_TestAnalyzer(string assertion)
+        => Nunit4VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsInstanceOf(typeof(string), actual{0});",
+        newAssertion: "actual.Should().BeOfType<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsInstanceOf(expected, actual{0});",
+        newAssertion: "actual.Should().BeOfType(expected{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsInstanceOf_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit3VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsInstanceOf(typeof(string), actual{0});",
+        newAssertion: "actual.Should().BeOfType<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsInstanceOf(expected, actual{0});",
+        newAssertion: "actual.Should().BeOfType(expected{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsInstanceOf_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit4VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.IsNotInstanceOf(typeof(string), actual{0});")]
+    [AssertionDiagnostic("Assert.IsNotInstanceOf(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.IsNotInstanceOf<string>(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsNotInstanceOf_TestAnalyzer(string assertion)
+        => Nunit3VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.IsNotInstanceOf(typeof(string), actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsNotInstanceOf(expected, actual{0});")]
+    [AssertionDiagnostic("ClassicAssert.IsNotInstanceOf<string>(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsNotInstanceOf_TestAnalyzer(string assertion)
+        => Nunit4VerifyDiagnostic("object actual, Type expected", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsNotInstanceOf(typeof(string), actual{0});",
+        newAssertion: "actual.Should().NotBeOfType<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.IsNotInstanceOf(expected, actual{0});",
+        newAssertion: "actual.Should().NotBeOfType(expected{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsNotInstanceOf_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit3VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsNotInstanceOf(typeof(string), actual{0});",
+        newAssertion: "actual.Should().NotBeOfType<string>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.IsNotInstanceOf(expected, actual{0});",
+        newAssertion: "actual.Should().NotBeOfType(expected{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsNotInstanceOf_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit4VerifyFix("object actual, Type expected", oldAssertion, newAssertion);
 
     #endregion
 
