@@ -236,6 +236,7 @@ namespace FluentAssertions.Analyzers.TestUtils
 
         public static string Nunit3Assertion(string methodArguments, string assertion) => new StringBuilder()
             .AppendLine("using System;")
+            .AppendLine("using System.Collections;")
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Collections.Immutable;")
             .AppendLine("using System.Text.RegularExpressions;")
@@ -257,6 +258,7 @@ namespace FluentAssertions.Analyzers.TestUtils
 
         public static string Nunit4Assertion(string methodArguments, string assertion) => new StringBuilder()
             .AppendLine("using System;")
+            .AppendLine("using System.Collections;")
             .AppendLine("using System.Collections.Generic;")
             .AppendLine("using System.Collections.Immutable;")
             .AppendLine("using System.Text.RegularExpressions;")

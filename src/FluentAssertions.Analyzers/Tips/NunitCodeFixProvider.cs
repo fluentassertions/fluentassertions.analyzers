@@ -5,6 +5,8 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Operations;
 using CreateChangedDocument = System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Document>>;
 using System;
+using FluentAssertions.Analyzers.Utilities;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace FluentAssertions.Analyzers;
 
@@ -171,6 +173,30 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
             case "IsNotInstanceOf" when ArgumentsAreTypeOf(invocation, t.Object): // Assert.IsNotInstanceOf<T>(object actual)
             case "IsNotInstanceOf" when ArgumentsAreTypeOf(invocation, t.Object, t.String, t.ObjectArray): // Assert.IsNotInstanceOf<T>(object actual, string message, params object[] parms)
                 return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "NotBeOfType", subjectIndex: 0, argumentsToRemove: []);
+            case "Contains": // Assert.Contains(object expected, ICollection actual)
+                {
+                    var collectionArgument = invocation.Arguments[1].Value.UnwrapConversion();
+                    if (collectionArgument.Type.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_IEnumerable_T))
+                    {
+                        return async ctx => await DocumentEditorUtils.RewriteExpression(invocation, [
+                            (EditActionContext editActionContext) => 
+                            {
+                                ITypeSymbol elementType = collectionArgument.Type switch
+                                {
+                                    INamedTypeSymbol namedType => namedType.TypeArguments[0],
+                                    IArrayTypeSymbol arrayType => arrayType.ElementType,
+                                    _ => null
+                                };
+
+                                var argumentToCast = editActionContext.InvocationExpression.ArgumentList.Arguments[0];
+                                var castExpression = editActionContext.Editor.Generator.CastExpression(elementType, argumentToCast.Expression);
+                                editActionContext.Editor.ReplaceNode(argumentToCast.Expression, castExpression.WithAdditionalAnnotations(Simplifier.Annotation));
+                            },
+                            EditAction.SubjectShouldAssertion(argumentIndex: 1, "Contain")
+                        ], context, ctx);
+                    }
+                    return null;
+                }
         }
         return null;
     }
