@@ -194,6 +194,24 @@ public class NunitTests
     [Implemented]
     public void Nunit4_AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("object actual", oldAssertion, newAssertion);
 
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.IsNaN(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertIsNaN_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("double actual", assertion);
+        Nunit3VerifyNoFix("double actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.IsNaN(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertIsNaN_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("double actual", assertion);
+        Nunit4VerifyNoFix("double actual", assertion);
+    }
+
     #endregion
 
     #region Assert.Comparisons.cs

@@ -197,6 +197,9 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
                     }
                     return null;
                 }
+
+            case "IsNaN": // Assert.IsNaN(double actual)
+                return null;
         }
         return null;
     }
