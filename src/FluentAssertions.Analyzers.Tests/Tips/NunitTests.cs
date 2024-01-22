@@ -310,6 +310,11 @@ public class NunitTests
         Nunit4VerifyFix("string actual", oldAssertion, newAssertion);
     }
 
+    // Zero
+    // NotZero
+    // Positive
+    // Negative
+
     #endregion
 
     #region Assert.Comparisons.cs
