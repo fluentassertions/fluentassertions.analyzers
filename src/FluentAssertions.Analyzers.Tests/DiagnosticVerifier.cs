@@ -38,6 +38,24 @@ namespace FluentAssertions.Analyzers.Tests
         public static void VerifyFix(CodeFixVerifierArguments arguments)
             => VerifyFix(arguments, arguments.DiagnosticAnalyzers.Single(), arguments.CodeFixProviders.Single(), arguments.FixedSources.Single());
 
+        public static void VerifyNoFix(CodeFixVerifierArguments arguments)
+            => VerifyNoFix(arguments, arguments.DiagnosticAnalyzers.Single(), arguments.CodeFixProviders.Single());
+        private static void VerifyNoFix(CsProjectArguments arguments, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider)
+        {
+            var document = CsProjectGenerator.CreateDocument(arguments);
+            var analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(new[] { analyzer }, new[] { document });
+            var compilerDiagnostics = GetCompilerDiagnostics(document);
+            var attempts = analyzerDiagnostics.Length;
+
+            for (int i = 0; i < attempts; ++i)
+            {
+                var actions = new List<CodeAction>();
+                var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, d) => actions.Add(a), CancellationToken.None);
+                codeFixProvider.RegisterCodeFixesAsync(context).Wait();
+
+                actions.Should().BeEmpty("There should be no code fix actions available to suppress the diagnostic.");
+            }
+        }
 
         /// <summary>
         /// General verifier for codefixes.
