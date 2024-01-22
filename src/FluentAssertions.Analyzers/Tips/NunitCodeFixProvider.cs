@@ -48,6 +48,20 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
             case "NotNull": // Assert.NotNull(object anObject)
             case "IsNotNull": // Assert.IsNotNull(object anObject)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", subjectIndex: 0, argumentsToRemove: []);
+            case "IsNaN": // Assert.IsNaN(double actual)
+                return null;
+            case "IsEmpty": // Assert.IsEmpty(IEnumerable collection) | Assert.IsEmpty(string s)
+                if (invocation.Arguments[0].Value.UnwrapConversion().Type.SpecialType is SpecialType.System_Collections_IEnumerable)
+                {
+                    return null;
+                }
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEmpty", subjectIndex: 0, argumentsToRemove: []);
+            case "IsNotEmpty": // Assert.IsNotEmpty(IEnumerable collection) | Assert.IsNotEmpty(string s)
+                if (invocation.Arguments[0].Value.UnwrapConversion().Type.SpecialType is SpecialType.System_Collections_IEnumerable)
+                {
+                    return null;
+                }
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeEmpty", subjectIndex: 0, argumentsToRemove: []);
             case "Greater" when ArgumentsAreTypeOf(invocation, t.Int32, t.Int32): // Assert.Greater(int arg1, int arg2)
             case "Greater" when ArgumentsAreTypeOf(invocation, t.UInt32, t.UInt32): // Assert.Greater(uint arg1, uint arg2)
             case "Greater" when ArgumentsAreTypeOf(invocation, t.Long, t.Long): // Assert.Greater(long arg1, long arg2)
@@ -179,7 +193,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
                     if (collectionArgument.Type.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_IEnumerable_T))
                     {
                         return async ctx => await DocumentEditorUtils.RewriteExpression(invocation, [
-                            (EditActionContext editActionContext) => 
+                            (EditActionContext editActionContext) =>
                             {
                                 ITypeSymbol elementType = collectionArgument.Type switch
                                 {
@@ -197,9 +211,6 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
                     }
                     return null;
                 }
-
-            case "IsNaN": // Assert.IsNaN(double actual)
-                return null;
         }
         return null;
     }
