@@ -15,7 +15,7 @@ public class DocumentEditorUtils
 {
     public static CreateChangedDocument RenameMethodToSubjectShouldAssertion(IInvocationOperation invocation, CodeFixContext context, string newName, int subjectIndex, int[] argumentsToRemove)
     {
-        return async ctx => await RewriteExpression(invocation, [
+        return ctx => RewriteExpressionCore(invocation, [
             ..Array.ConvertAll(argumentsToRemove, arg => EditAction.RemoveInvocationArgument(arg)),
             EditAction.SubjectShouldAssertion(subjectIndex, newName)
         ], context, ctx);
@@ -25,7 +25,7 @@ public class DocumentEditorUtils
         => RenameMethodToSubjectShouldGenericAssertion(invocation, invocation.TargetMethod.TypeArguments, context, newName, subjectIndex, argumentsToRemove);
     public static CreateChangedDocument RenameMethodToSubjectShouldGenericAssertion(IInvocationOperation invocation, ImmutableArray<ITypeSymbol> genericTypes, CodeFixContext context, string newName, int subjectIndex, int[] argumentsToRemove)
     {
-        return async ctx => await RewriteExpression(invocation, [
+        return ctx => RewriteExpressionCore(invocation, [
             ..Array.ConvertAll(argumentsToRemove, arg => EditAction.RemoveInvocationArgument(arg)),
             EditAction.SubjectShouldGenericAssertion(subjectIndex, newName, genericTypes)
          ], context, ctx);
@@ -33,13 +33,16 @@ public class DocumentEditorUtils
 
     public static CreateChangedDocument RenameMethodToSubjectShouldAssertionWithOptionsLambda(IInvocationOperation invocation, CodeFixContext context, string newName, int subjectIndex, int optionsIndex)
     {
-        return async ctx => await RewriteExpression(invocation, [
+        return ctx => RewriteExpressionCore(invocation, [
             EditAction.SubjectShouldAssertion(subjectIndex, newName),
             EditAction.CreateEquivalencyAssertionOptionsLambda(optionsIndex)
         ], context, ctx);
     }
 
-    public static async Task<Document> RewriteExpression(IInvocationOperation invocation, Action<EditActionContext>[] actions, CodeFixContext context, CancellationToken cancellationToken)
+    public static CreateChangedDocument RewriteExpression(IInvocationOperation invocation, Action<EditActionContext>[] actions, CodeFixContext context)
+        => ctx => RewriteExpressionCore(invocation, actions, context, ctx);
+
+    private static async Task<Document> RewriteExpressionCore(IInvocationOperation invocation, Action<EditActionContext>[] actions, CodeFixContext context, CancellationToken cancellationToken)
     {
         var invocationExpression = (InvocationExpressionSyntax)invocation.Syntax;
 
