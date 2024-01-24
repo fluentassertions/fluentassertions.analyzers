@@ -36,8 +36,8 @@ public class DiagnosticMetadata
     public static DiagnosticMetadata CollectionShouldBeEmpty_CountShouldBe0 { get; } = new("Use .Should().BeEmpty()", GetHelpLink("Collections-16"));
     public static DiagnosticMetadata CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount { get; } = new("Use .Should().HaveSameCount()", GetHelpLink("Collections-17"));
     public static DiagnosticMetadata CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount { get; } = new("Use .Should().NotHaveSameCount()", GetHelpLink("Collections-18"));
-    public static DiagnosticMetadata CollectionShouldContainProperty_WhereShouldNotBeEmpty { get; } = new("Use .Should().NotBeEmpty()", GetHelpLink("Collections-19"));
-    public static DiagnosticMetadata CollectionShouldNotContainProperty_WhereShouldBeEmpty { get; } = new("Use .Should().BeEmpty()", GetHelpLink("Collections-20"));
+    public static DiagnosticMetadata CollectionShouldContainProperty_WhereShouldNotBeEmpty { get; } = new("Use .Should().Contain()", GetHelpLink("Collections-19"));
+    public static DiagnosticMetadata CollectionShouldNotContainProperty_WhereShouldBeEmpty { get; } = new("Use .Should().NotContain()", GetHelpLink("Collections-20"));
     public static DiagnosticMetadata CollectionShouldContainSingle_WhereShouldHaveCount1 { get; } = new("Use .Should().HaveCount()", GetHelpLink("Collections-21"));
     public static DiagnosticMetadata CollectionShouldNotContainProperty_ShouldOnlyContainNot { get; } = new("Use .Should().NotContain()", GetHelpLink("Collections-22"));
     public static DiagnosticMetadata CollectionShouldNotBeNullOrEmpty_ShouldNotBeNullAndNotBeEmpty { get; } = new("Use .Should().NotBeNullOrEmpty()", GetHelpLink("Collections-23"));
