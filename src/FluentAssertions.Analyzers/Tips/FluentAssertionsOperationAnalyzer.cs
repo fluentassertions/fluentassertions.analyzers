@@ -289,10 +289,10 @@ public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
             case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].IsLiteralValue(0):
                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_ShouldHaveCount0));
                 return;
-            case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].HasFirstDescendentInvocation(nameof(Enumerable.Count)):
+            case "HaveCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].Value is IInvocationOperation { TargetMethod.Name: nameof(Enumerable.Count) }:
                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount));
                 return;
-            case "HaveSameCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].HasFirstDescendentInvocation(nameof(Enumerable.Distinct)):
+            case "HaveSameCount" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3) && assertion.Arguments[0].Value is IInvocationOperation { TargetMethod.Name: nameof(Enumerable.Distinct) }:
                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItems_ShouldHaveSameCountThisCollectionDistinct));
                 return;
             case "OnlyHaveUniqueItems" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):

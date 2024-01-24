@@ -321,6 +321,13 @@ namespace FluentAssertions.Analyzers.Tests
         public void CollectionShouldHaveCount_LengthShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveCount_LengthShouldBe);
 
         [DataTestMethod]
+        [AssertionDiagnostic("actual.Should().HaveCount(expected.Count() + 1{0});")]
+        [AssertionDiagnostic("actual.Should().HaveCount(expected.Count() + unexpected.Count(){0});")]
+        [AssertionDiagnostic("actual.Should().HaveCount(expected.Count + unexpected.Count{0});")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/300")]
+        public void CollectionShouldHaveCount_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
+
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().Be(k{0});",
             newAssertion: "actual.Should().HaveCount(k{0});")]
@@ -532,6 +539,13 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ToArray().Should().HaveCount(expected.Count(){0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveSameCount_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("actual.Should().HaveCount(expected.Count() + 1{0});")]
+        [AssertionDiagnostic("actual.Should().HaveCount(expected.Count() + unexpected.Count(){0});")]
+        [AssertionDiagnostic("actual.Should().HaveCount(1 + expected.Count(){0});")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/300")]
+        public void CollectionShouldHaveSameCount_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -1032,7 +1046,7 @@ namespace FluentAssertions.Analyzers.Tests
         {
             var oldSource = GenerateCode.GenericIListExpressionBodyAssertion(oldSourceAssertion);
             var newSource = GenerateCode.GenericIListExpressionBodyAssertion(newSourceAssertion);
-            
+
             VerifyFix(oldSource, newSource);
         }
 
