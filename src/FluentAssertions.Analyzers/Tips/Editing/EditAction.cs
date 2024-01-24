@@ -22,4 +22,12 @@ public static class EditAction
 
     public static Action<EditActionContext> CreateEquivalencyAssertionOptionsLambda(int optionsIndex)
         => context => new CreateEquivalencyAssertionOptionsLambdaAction(optionsIndex).Apply(context.Editor, context.InvocationExpression);
+
+    public static Action<EditActionContext> AddArgumentToAssertionArguments(int index, Func<SyntaxGenerator, SyntaxNode> expressionFactory)
+        => context =>
+    {
+        var argument = (ArgumentSyntax)context.Editor.Generator.Argument(expressionFactory(context.Editor.Generator));
+        var arguments = context.FluentAssertion.ArgumentList.Arguments.Insert(index, argument);
+        context.Editor.ReplaceNode(context.InvocationExpression.ArgumentList, context.InvocationExpression.ArgumentList.WithArguments(arguments));
+    };
 }

@@ -186,7 +186,7 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
 
         CreateChangedDocument RewriteThrowArgumentExceptionAssertion(string newName)
         {
-            return ctx => DocumentEditorUtils.RewriteExpression(invocation, [
+            return DocumentEditorUtils.RewriteExpression(invocation, [
                 EditAction.SubjectShouldGenericAssertion(argumentIndex: 1, newName, invocation.TargetMethod.TypeArguments),
                 (editActionContext) =>
                 {
@@ -196,7 +196,7 @@ public class XunitCodeFixProvider : TestingFrameworkCodeFixProvider
 
                     editActionContext.Editor.ReplaceNode(editActionContext.InvocationExpression, chainedAssertion);
                 }
-            ], context, ctx);
+            ], context);
         }
     }
 }

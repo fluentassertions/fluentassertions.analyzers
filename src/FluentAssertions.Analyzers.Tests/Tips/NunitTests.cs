@@ -310,10 +310,215 @@ public class NunitTests
         Nunit4VerifyFix("string actual", oldAssertion, newAssertion);
     }
 
-    // Zero
-    // NotZero
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.Zero(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertZero_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("int actual", assertion);
+        Nunit3VerifyDiagnostic("uint actual", assertion);
+        Nunit3VerifyDiagnostic("long actual", assertion);
+        Nunit3VerifyDiagnostic("ulong actual", assertion);
+        Nunit3VerifyDiagnostic("float actual", assertion);
+        Nunit3VerifyDiagnostic("double actual", assertion);
+        Nunit3VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.Zero(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertZero_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("int actual", assertion);
+        Nunit4VerifyDiagnostic("uint actual", assertion);
+        Nunit4VerifyDiagnostic("long actual", assertion);
+        Nunit4VerifyDiagnostic("ulong actual", assertion);
+        Nunit4VerifyDiagnostic("float actual", assertion);
+        Nunit4VerifyDiagnostic("double actual", assertion);
+        Nunit4VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.Zero(actual{0});",
+        newAssertion: "actual.Should().Be(0{0});")]
+    [Implemented]
+    public void Nunit3_AssertZero_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyFix("int actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("uint actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("long actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("ulong actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("float actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("double actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.Zero(actual{0});",
+        newAssertion: "actual.Should().Be(0{0});")]
+    [Implemented]
+    public void Nunit4_AssertZero_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit4VerifyFix("int actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("uint actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("long actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("ulong actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("float actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("double actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.NotZero(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertNotZero_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("int actual", assertion);
+        Nunit3VerifyDiagnostic("uint actual", assertion);
+        Nunit3VerifyDiagnostic("long actual", assertion);
+        Nunit3VerifyDiagnostic("ulong actual", assertion);
+        Nunit3VerifyDiagnostic("float actual", assertion);
+        Nunit3VerifyDiagnostic("double actual", assertion);
+        Nunit3VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.NotZero(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertNotZero_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("int actual", assertion);
+        Nunit4VerifyDiagnostic("uint actual", assertion);
+        Nunit4VerifyDiagnostic("long actual", assertion);
+        Nunit4VerifyDiagnostic("ulong actual", assertion);
+        Nunit4VerifyDiagnostic("float actual", assertion);
+        Nunit4VerifyDiagnostic("double actual", assertion);
+        Nunit4VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.NotZero(actual{0});",
+        newAssertion: "actual.Should().NotBe(0{0});")]
+    [Implemented]
+    public void Nunit3_AssertNotZero_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyFix("int actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("uint actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("long actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("ulong actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("float actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("double actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.NotZero(actual{0});",
+        newAssertion: "actual.Should().NotBe(0{0});")]
+    [Implemented]
+    public void Nunit4_AssertNotZero_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit4VerifyFix("int actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("uint actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("long actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("ulong actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("float actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("double actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
+
     // Positive
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.Positive(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertPositive_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("int actual", assertion);
+        Nunit3VerifyDiagnostic("uint actual", assertion);
+        Nunit3VerifyDiagnostic("long actual", assertion);
+        Nunit3VerifyDiagnostic("ulong actual", assertion);
+        Nunit3VerifyDiagnostic("float actual", assertion);
+        Nunit3VerifyDiagnostic("double actual", assertion);
+        Nunit3VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.Positive(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertPositive_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("int actual", assertion);
+        Nunit4VerifyDiagnostic("uint actual", assertion);
+        Nunit4VerifyDiagnostic("long actual", assertion);
+        Nunit4VerifyDiagnostic("ulong actual", assertion);
+        Nunit4VerifyDiagnostic("float actual", assertion);
+        Nunit4VerifyDiagnostic("double actual", assertion);
+        Nunit4VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.Positive(actual{0});",
+        newAssertion: "actual.Should().BePositive({0});")]
+    [Implemented]
+    public void Nunit3_AssertPositive_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyFix("int actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("uint actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("long actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("ulong actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("float actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("double actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
+
     // Negative
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.Negative(actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertNegative_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("int actual", assertion);
+        Nunit3VerifyDiagnostic("uint actual", assertion);
+        Nunit3VerifyDiagnostic("long actual", assertion);
+        Nunit3VerifyDiagnostic("ulong actual", assertion);
+        Nunit3VerifyDiagnostic("float actual", assertion);
+        Nunit3VerifyDiagnostic("double actual", assertion);
+        Nunit3VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.Negative(actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertNegative_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("int actual", assertion);
+        Nunit4VerifyDiagnostic("uint actual", assertion);
+        Nunit4VerifyDiagnostic("long actual", assertion);
+        Nunit4VerifyDiagnostic("ulong actual", assertion);
+        Nunit4VerifyDiagnostic("float actual", assertion);
+        Nunit4VerifyDiagnostic("double actual", assertion);
+        Nunit4VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.Negative(actual{0});",
+        newAssertion: "actual.Should().BeNegative({0});")]
+    [Implemented]
+    public void Nunit3_AssertNegative_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyFix("int actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("uint actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("long actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("ulong actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("float actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("double actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
 
     #endregion
 
