@@ -918,6 +918,11 @@ namespace FluentAssertions.Analyzers.Tests
         public void CollectionShouldOnlyHaveUniqueItems_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldOnlyHaveUniqueItems_ShouldHaveSameCountThisCollectionDistinct);
 
         [DataTestMethod]
+        [AssertionDiagnostic("actual.Should().HaveSameCount(expected.Distinct(){0});")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/299")]
+        public void CollectionShouldOnlyHaveUniqueItems_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
+
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Should().HaveSameCount(actual.Distinct(){0});",
             newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
