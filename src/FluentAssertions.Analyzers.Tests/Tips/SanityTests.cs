@@ -362,7 +362,7 @@ public class TestType3
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
                 .WithExpectedDiagnostics(new DiagnosticResult()
                 {
-                    Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                    Id = FluentAssertionsAnalyzer.DiagnosticId,
                     Message = DiagnosticMetadata.CollectionShouldNotBeEmpty_AnyShouldBeTrue.Message,
                     Severity = DiagnosticSeverity.Info,
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 11, 9) }
@@ -441,7 +441,7 @@ public class MyCollectionType { }";
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
                 .WithExpectedDiagnostics(new DiagnosticResult()
                 {
-                    Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                    Id = FluentAssertionsAnalyzer.DiagnosticId,
                     Message = DiagnosticMetadata.NullConditionalMayNotExecute.Message,
                     Severity = DiagnosticSeverity.Info, // TODO: change to warning
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 13, 9) }

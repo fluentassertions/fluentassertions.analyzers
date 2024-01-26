@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace FluentAssertions.Analyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public partial class FluentAssertionsOperationAnalyzer : DiagnosticAnalyzer
+public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
 {
     public const string Title = "Simplify Assertion";
     public const string DiagnosticId = "FAA0001";

@@ -15,8 +15,8 @@ namespace FluentAssertions.Analyzers;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FluentAssertionsCodeFixProvider)), Shared]
 public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBase<FluentAssertionsCodeFixProvider.EmptyTestContext>
 {
-    protected override string Title => FluentAssertionsOperationAnalyzer.Title;
-    public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(FluentAssertionsOperationAnalyzer.DiagnosticId);
+    protected override string Title => FluentAssertionsAnalyzer.Title;
+    public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(FluentAssertionsAnalyzer.DiagnosticId);
 
     protected override CreateChangedDocument TryComputeFix(IInvocationOperation assertion, CodeFixContext context, EmptyTestContext t, Diagnostic diagnostic)
     {

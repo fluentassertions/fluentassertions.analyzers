@@ -105,7 +105,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             var source = GenerateCode.ObjectStatement(sourceAssertion);
             DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(source, new DiagnosticResult
             {
-                Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                Id = FluentAssertionsAnalyzer.DiagnosticId,
                 Message = metadata.Message,
                 VisitorName = metadata.Name,
                 Locations = new DiagnosticResultLocation[]
@@ -120,7 +120,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             => DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
                 .WithSources(oldSource)
                 .WithFixedSources(newSource)
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsAnalyzer>()
                 .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
             );

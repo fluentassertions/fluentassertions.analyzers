@@ -19,7 +19,7 @@ namespace TestProject
 }";
 
             DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsAnalyzer>()
                 .WithSources(source)
             );
         }
@@ -51,7 +51,7 @@ namespace TestProject
 }";
 
             DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsAnalyzer>()
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
                 .WithSources(source)
             );

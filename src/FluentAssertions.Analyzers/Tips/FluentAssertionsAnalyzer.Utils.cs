@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace FluentAssertions.Analyzers;
 
-public partial class FluentAssertionsOperationAnalyzer
+public partial class FluentAssertionsAnalyzer
 {
     private static bool IsEnumerableMethodWithoutArguments(IInvocationOperation invocation, FluentAssertionsMetadata metadata)
         => invocation.IsContainedInType(metadata.Enumerable) && invocation.Arguments.Length == 1;
