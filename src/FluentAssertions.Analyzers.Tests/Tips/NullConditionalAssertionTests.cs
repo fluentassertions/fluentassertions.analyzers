@@ -18,12 +18,12 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void NullConditionalMayNotExecuteTest(string assertion)
         {
             DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsAnalyzer>()
                 .WithSources(Code(assertion))
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
                 .WithExpectedDiagnostics(new DiagnosticResult
                 {
-                    Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                    Id = FluentAssertionsAnalyzer.DiagnosticId,
                     Message = DiagnosticMetadata.NullConditionalMayNotExecute.Message,
                     Severity = Microsoft.CodeAnalysis.DiagnosticSeverity.Info, // TODO: change to warning
                     VisitorName = nameof(DiagnosticMetadata.NullConditionalMayNotExecute),
@@ -43,7 +43,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void NullConditionalWillStillExecuteTest(string assertion)
         {
             DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsAnalyzer>()
                 .WithSources(Code(assertion))
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
             );

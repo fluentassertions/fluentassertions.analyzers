@@ -1,4 +1,4 @@
-name: CI
+name: Integration
 on: 
   pull_request:
     branches: 
@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        config: [Debug, Release]
     runs-on: ${{ matrix.os }}
     env:
       NUGET_CERT_REVOCATION_MODE: offline
@@ -23,6 +22,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.x
-      - run: dotnet build
-      - run: dotnet test src/FluentAssertions.Analyzers.Tests --configuration Release --filter 'TestCategory=Completed' /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-      - run: dotnet pack src/FluentAssertions.Analyzers/FluentAssertions.Analyzers.csproj
+      - run: dotnet test src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs # before formatting
+      - run: dotnet format analyzers src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs --diagnostics FAA0001 --severity info --verbosity normal
+      - run: dotnet test src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs # after formatting

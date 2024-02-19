@@ -117,7 +117,7 @@ namespace FluentAssertions.Analyzers.Tests
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)
                 .WithExpectedDiagnostics(new DiagnosticResult
                 {
-                    Id = FluentAssertionsOperationAnalyzer.DiagnosticId,
+                    Id = FluentAssertionsAnalyzer.DiagnosticId,
                     Message = metadata.Message,
                     VisitorName = metadata.Name,
                     Locations = new DiagnosticResultLocation[]
@@ -143,7 +143,7 @@ namespace FluentAssertions.Analyzers.Tests
 
             DiagnosticVerifier.VerifyFix(new CodeFixVerifierArguments()
                 .WithCodeFixProvider<FluentAssertionsCodeFixProvider>()
-                .WithDiagnosticAnalyzer<FluentAssertionsOperationAnalyzer>()
+                .WithDiagnosticAnalyzer<FluentAssertionsAnalyzer>()
                 .WithSources(oldSource)
                 .WithFixedSources(newSource)
                 .WithPackageReferences(PackageReference.FluentAssertions_6_12_0)

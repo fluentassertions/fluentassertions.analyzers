@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.BenchmarkTests", "src\FluentAssertions.Analyzers.BenchmarkTests\FluentAssertions.Analyzers.BenchmarkTests.csproj", "{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8EFE7955-E63C-4055-A9FF-76C7CE0A1151}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj", "{2F84FE09-8CB4-48AE-A119-671C509213CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,11 +45,18 @@ Global
 		{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F84FE09-8CB4-48AE-A119-671C509213CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F84FE09-8CB4-48AE-A119-671C509213CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F84FE09-8CB4-48AE-A119-671C509213CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F84FE09-8CB4-48AE-A119-671C509213CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BF3D005-625C-4CEC-B3FB-298B956402BE}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2F84FE09-8CB4-48AE-A119-671C509213CF} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
 	EndGlobalSection
 EndGlobal
