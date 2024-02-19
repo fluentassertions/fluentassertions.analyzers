@@ -23,5 +23,5 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - run: dotnet test src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs # before formatting
-      - run: dotnet format analyzers src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs --diagnostics FAA0001 --severity info
+      - run: dotnet format analyzers src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs --diagnostics FAA0001 --severity info --verbosity normal
       - run: dotnet test src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs # after formatting
