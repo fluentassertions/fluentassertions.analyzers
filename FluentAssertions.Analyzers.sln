@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8EFE7955-E63
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj", "{2F84FE09-8CB4-48AE-A119-671C509213CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator.csproj", "{2871B22C-AEFC-4C33-9BBF-695699E61B57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{2F84FE09-8CB4-48AE-A119-671C509213CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F84FE09-8CB4-48AE-A119-671C509213CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F84FE09-8CB4-48AE-A119-671C509213CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2871B22C-AEFC-4C33-9BBF-695699E61B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2871B22C-AEFC-4C33-9BBF-695699E61B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2871B22C-AEFC-4C33-9BBF-695699E61B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2871B22C-AEFC-4C33-9BBF-695699E61B57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +64,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2F84FE09-8CB4-48AE-A119-671C509213CF} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
+		{2871B22C-AEFC-4C33-9BBF-695699E61B57} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
 	EndGlobalSection
 EndGlobal
