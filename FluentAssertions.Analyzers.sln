@@ -1,6 +1,7 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34601.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers.Tests", "src\FluentAssertions.Analyzers.Tests\FluentAssertions.Analyzers.Tests.csproj", "{979824BD-5936-4969-B43B-BF613B3C0C5F}"
 EndProject
@@ -15,15 +16,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers", "src\FluentAssertions.Analyzers\FluentAssertions.Analyzers.csproj", "{3BA672F7-00D8-4E77-89A0-D46DD99D35AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.TestUtils", "src\FluentAssertions.Analyzers.TestUtils\FluentAssertions.Analyzers.TestUtils.csproj", "{BD9FC8CC-C23D-4ECC-A926-4BE35C78D338}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers.TestUtils", "src\FluentAssertions.Analyzers.TestUtils\FluentAssertions.Analyzers.TestUtils.csproj", "{BD9FC8CC-C23D-4ECC-A926-4BE35C78D338}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.BenchmarkTests", "src\FluentAssertions.Analyzers.BenchmarkTests\FluentAssertions.Analyzers.BenchmarkTests.csproj", "{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers.BenchmarkTests", "src\FluentAssertions.Analyzers.BenchmarkTests\FluentAssertions.Analyzers.BenchmarkTests.csproj", "{FE6D8A05-1383-4BCD-AD65-2EF741E48F44}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8EFE7955-E63C-4055-A9FF-76C7CE0A1151}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj", "{2F84FE09-8CB4-48AE-A119-671C509213CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj", "{2F84FE09-8CB4-48AE-A119-671C509213CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator.csproj", "{2871B22C-AEFC-4C33-9BBF-695699E61B57}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{48BE11CB-8BAF-4099-9D93-AE9BB74BB190}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{72192514-FA22-4699-8EE1-39D34CFE1025}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator.csproj", "{2871B22C-AEFC-4C33-9BBF-695699E61B57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,11 +64,15 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{979824BD-5936-4969-B43B-BF613B3C0C5F} = {48BE11CB-8BAF-4099-9D93-AE9BB74BB190}
+		{3BA672F7-00D8-4E77-89A0-D46DD99D35AA} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
+		{BD9FC8CC-C23D-4ECC-A926-4BE35C78D338} = {48BE11CB-8BAF-4099-9D93-AE9BB74BB190}
+		{FE6D8A05-1383-4BCD-AD65-2EF741E48F44} = {48BE11CB-8BAF-4099-9D93-AE9BB74BB190}
+		{2F84FE09-8CB4-48AE-A119-671C509213CF} = {72192514-FA22-4699-8EE1-39D34CFE1025}
+		{2871B22C-AEFC-4C33-9BBF-695699E61B57} = {72192514-FA22-4699-8EE1-39D34CFE1025}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BF3D005-625C-4CEC-B3FB-298B956402BE}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{2F84FE09-8CB4-48AE-A119-671C509213CF} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
-		{2871B22C-AEFC-4C33-9BBF-695699E61B57} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
 	EndGlobalSection
 EndGlobal
