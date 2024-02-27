@@ -18,10 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\FluentAssertions.Analyzers\FluentAssertions.Analyzers.csproj" />
     <Analyzer Include="..\FluentAssertions.Analyzers\bin\Debug\netstandard2.0\FluentAssertions.Analyzers.dll" />
-    <ProjectReference 
-      Include="..\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator.csproj"
-      OutputItemType="Analyzer"
-    />
   </ItemGroup>
 
 </Project>

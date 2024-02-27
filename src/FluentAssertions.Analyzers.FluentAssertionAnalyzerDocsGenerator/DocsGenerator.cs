@@ -1,33 +1,43 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator;
 
-[Generator]
-public class DocsGenerator : ISourceGenerator
+public class DocsGenerator
 {
-    public void Execute(GeneratorExecutionContext context)
+    public async Task Execute()
     {
-        foreach (var tree in context.Compilation.SyntaxTrees)
+        MSBuildLocator.RegisterDefaults();
+
+        using var workspace = MSBuildWorkspace.Create();
+
+        var project = await workspace.OpenProjectAsync(@"..\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj");
+
+        var compilation = await project.GetCompilationAsync();
+
+        foreach (var tree in compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
         {
-        var root = tree.GetRoot();
+            Console.WriteLine($"File: {Path.GetFileName(tree.FilePath)}");
+
+            var root = await tree.GetRootAsync();
             var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+
             foreach (var method in methods)
             {
-                var methodSymbol = context.Compilation.GetSemanticModel(method.SyntaxTree).GetDeclaredSymbol(method);
-                var methodString = methodSymbol?.ToDisplayString();
-                if (methodString != null)
-                {
-                    // TODO: generate markdown file
-                }
+                Console.WriteLine($"  method: {method.Identifier}");
+                Console.WriteLine();
+                var bodyLines = method.Body.ToFullString().Split(Environment.NewLine)[1..^2];
+                var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
+                var normalizedBody = bodyLines.Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
+                var methodBody = $"```cs{Environment.NewLine}{normalizedBody}{Environment.NewLine}```";
+                Console.WriteLine(methodBody);
             }
         }
-    }
-
-    public void Initialize(GeneratorInitializationContext context)
-    {
     }
 }
