@@ -1,3 +1,4 @@
+using System.Text;
 using FluentAssertions.Analyzers.TestUtils;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -319,6 +320,29 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ToArray().Length.Should().Be(1{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveCount_LengthShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveCount_LengthShouldBe);
+
+        [DataTestMethod]
+        [AssertionDiagnostic(@"var array = new string[0, 0]; array.Length.Should().Be(0{0});")]
+        [AssertionDiagnostic(@"var array = new string[0, 0, 0]; array.Length.Should().Be(0{0});")]
+        [AssertionDiagnostic(@"var array = new string[0, 0, 0, 0]; array.Length.Should().Be(0{0});")]
+        [AssertionDiagnostic(@"var array = new string[1, 1]; array.Length.Should().Be(0{0});")]
+        [AssertionDiagnostic(@"var array = new string[2, 2]; array.Length.Should().Be(0{0});")]
+        [AssertionDiagnostic(@"var array = new string[3, 3, 3]; array.Length.Should().Be(0{0});")]
+        public void CollectionShouldHaveCount_LengthShouldBe_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new StringBuilder()
+            .AppendLine("using System;")
+            .AppendLine("using FluentAssertions;")
+            .AppendLine("using FluentAssertions.Extensions;")
+            .AppendLine("namespace TestNamespace")
+            .AppendLine("{")
+            .AppendLine("    public class TestClass")
+            .AppendLine("    {")
+            .AppendLine("        public void TestMethod()")
+            .AppendLine("       {")
+            .AppendLine(assertion)
+            .AppendLine("       }")
+            .AppendLine("    }")
+            .AppendLine("}")
+            .ToString());
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.Should().HaveCount(expected.Count() + 1{0});")]

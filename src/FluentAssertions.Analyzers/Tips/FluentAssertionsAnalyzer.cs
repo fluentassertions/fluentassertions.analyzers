@@ -336,7 +336,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                     {
                         switch (propertyBeforeShould.Property.Name)
                         {
-                            case nameof(Array.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_Array):
+                            case nameof(Array.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_Array) && propertyBeforeShould.Instance.Type is IArrayTypeSymbol { Rank: 1 }:
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_LengthShouldBe));
                                 return;
                             case nameof(string.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_String):
