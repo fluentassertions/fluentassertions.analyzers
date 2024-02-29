@@ -30,6 +30,8 @@ public class DocsGenerator
 
         var docs = new StringBuilder();
 
+        docs.AppendLine("# FluentAssertions Analyzer Docs");
+
         foreach (var tree in compilationWithAnalyzers.Compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
         {
             Console.WriteLine($"File: {Path.GetFileName(tree.FilePath)}");
@@ -39,18 +41,20 @@ public class DocsGenerator
 
             foreach (var method in methods)
             {
-                docs.AppendLine($"# method: {method.Identifier}");
+                docs.AppendLine($"## method: {method.Identifier}");
                 docs.AppendLine();
                 var bodyLines = method.Body.ToFullString().Split(Environment.NewLine)[1..^2];
                 var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
                 var normalizedBody = bodyLines.Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
                 var methodBody = $"```cs{Environment.NewLine}{normalizedBody}{Environment.NewLine}```";
                 docs.AppendLine(methodBody);
+                docs.AppendLine();
             }
 
             var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
             foreach (var diagnostic in diagnostics.Where(diagnostic => analyzer.SupportedDiagnostics.Any(d => d.Id == diagnostic.Id)))
             {
+                Console.WriteLine($"source: {root.FindNode(diagnostic.Location.SourceSpan)}");
                 Console.WriteLine($"  diagnostic: {diagnostic}");
             }
         }
