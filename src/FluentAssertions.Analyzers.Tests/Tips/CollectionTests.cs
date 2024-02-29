@@ -328,6 +328,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic(@"var array = new string[1, 1]; array.Length.Should().Be(0{0});")]
         [AssertionDiagnostic(@"var array = new string[2, 2]; array.Length.Should().Be(0{0});")]
         [AssertionDiagnostic(@"var array = new string[3, 3, 3]; array.Length.Should().Be(0{0});")]
+        [Implemented(Reason = "https://github.com/fluentassertions/fluentassertions.analyzers/issues/309")]
         public void CollectionShouldHaveCount_LengthShouldBe_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(new StringBuilder()
             .AppendLine("using System;")
             .AppendLine("using FluentAssertions;")
