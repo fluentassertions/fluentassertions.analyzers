@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.MSBuild;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator;
@@ -19,9 +22,15 @@ public class DocsGenerator
 
         var project = await workspace.OpenProjectAsync(@"..\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj");
 
-        var compilation = await project.GetCompilationAsync();
+        DiagnosticAnalyzer analyzer = new FluentAssertionsAnalyzer();
+        var codeFixer = new FluentAssertionsCodeFixProvider();
 
-        foreach (var tree in compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
+        var compilation = await project.GetCompilationAsync();
+        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
+
+        var docs = new StringBuilder();
+
+        foreach (var tree in compilationWithAnalyzers.Compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
         {
             Console.WriteLine($"File: {Path.GetFileName(tree.FilePath)}");
 
@@ -30,14 +39,24 @@ public class DocsGenerator
 
             foreach (var method in methods)
             {
-                Console.WriteLine($"  method: {method.Identifier}");
-                Console.WriteLine();
+                docs.AppendLine($"# method: {method.Identifier}");
+                docs.AppendLine();
                 var bodyLines = method.Body.ToFullString().Split(Environment.NewLine)[1..^2];
                 var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
                 var normalizedBody = bodyLines.Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
                 var methodBody = $"```cs{Environment.NewLine}{normalizedBody}{Environment.NewLine}```";
-                Console.WriteLine(methodBody);
+                docs.AppendLine(methodBody);
+            }
+
+            var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
+            foreach (var diagnostic in diagnostics.Where(diagnostic => analyzer.SupportedDiagnostics.Any(d => d.Id == diagnostic.Id)))
+            {
+                Console.WriteLine($"  diagnostic: {diagnostic}");
             }
         }
+
+        var docsPath = Path.Combine(Environment.CurrentDirectory, "..", "..", "docs", "FluentAssertionsAnalyzer.md");
+        Directory.CreateDirectory(Path.GetDirectoryName(docsPath));
+        await File.WriteAllTextAsync(docsPath, docs.ToString());
     }
 }
