@@ -29,8 +29,14 @@ public class DocsGenerator
         var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
 
         var docs = new StringBuilder();
+        var toc = new StringBuilder();
+        var scenarios = new StringBuilder();
 
         docs.AppendLine("# FluentAssertions Analyzer Docs");
+        docs.AppendLine();
+
+        scenarios.AppendLine("## Scenarios");
+        scenarios.AppendLine();
 
         foreach (var tree in compilationWithAnalyzers.Compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
         {
@@ -41,14 +47,18 @@ public class DocsGenerator
 
             foreach (var method in methods)
             {
-                docs.AppendLine($"## method: {method.Identifier}");
-                docs.AppendLine();
+                scenarios.AppendLine($"### scenario: {method.Identifier}");
+                scenarios.AppendLine();
                 var bodyLines = method.Body.ToFullString().Split(Environment.NewLine)[1..^2];
                 var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
                 var normalizedBody = bodyLines.Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
                 var methodBody = $"```cs{Environment.NewLine}{normalizedBody}{Environment.NewLine}```";
-                docs.AppendLine(methodBody);
-                docs.AppendLine();
+                scenarios.AppendLine(methodBody);
+                scenarios.AppendLine();
+
+                var newAssertion = bodyLines[^1].Trim();
+
+                toc.AppendLine($"- [{method.Identifier}](#scenario-{method.Identifier.Text.ToLower()}) - `{newAssertion}`");
             }
 
             var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
@@ -58,6 +68,10 @@ public class DocsGenerator
                 Console.WriteLine($"  diagnostic: {diagnostic}");
             }
         }
+
+        docs.AppendLine(toc.ToString());
+        docs.AppendLine();
+        docs.AppendLine(scenarios.ToString());
 
         var docsPath = Path.Combine(Environment.CurrentDirectory, "..", "..", "docs", "FluentAssertionsAnalyzer.md");
         Directory.CreateDirectory(Path.GetDirectoryName(docsPath));

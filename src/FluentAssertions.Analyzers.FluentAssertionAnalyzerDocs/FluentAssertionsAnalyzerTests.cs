@@ -143,7 +143,7 @@ public class FluentAssertionsAnalyzerTests
     }
 
     [TestMethod]
-    public void CollectionShouldContainSingle_CountShouldBe1()
+    public void CollectionShouldContainSingle()
     {
         // arrange
         var collection = new List<int> { 1 };

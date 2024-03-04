@@ -1,5 +1,29 @@
 # FluentAssertions Analyzer Docs
-## method: CollectionsShouldNotBeEmpty
+
+- [CollectionsShouldNotBeEmpty](#scenario-collectionsshouldnotbeempty) - `collection.Should().NotBeEmpty();`
+- [CollectionShouldBeEmpty](#scenario-collectionshouldbeempty) - `collection.Should().BeEmpty();`
+- [CollectionShouldNotContainCondition](#scenario-collectionshouldnotcontaincondition) - `collection.Should().NotContain(i => i == 4);`
+- [CollectionShouldNotContainItem](#scenario-collectionshouldnotcontainitem) - `collection.Should().NotContain(4);`
+- [CollectionShouldOnlyContainProperty](#scenario-collectionshouldonlycontainproperty) - `collection.Should().OnlyContain(x => x > 0);`
+- [CollectionShouldContainItem](#scenario-collectionshouldcontainitem) - `collection.Should().Contain(2);`
+- [CollectionShouldContainCondition](#scenario-collectionshouldcontaincondition) - `collection.Should().Contain(i => i == 2);`
+- [CollectionShouldHaveCount_Count](#scenario-collectionshouldhavecount_count) - `collection.Should().HaveCount(3);`
+- [CollectionShouldHaveCount_Length](#scenario-collectionshouldhavecount_length) - `collection.Should().HaveCount(3);`
+- [CollectionShouldNotHaveCount_Count](#scenario-collectionshouldnothavecount_count) - `collection.Should().NotHaveCount(4);`
+- [CollectionShouldContainSingle](#scenario-collectionshouldcontainsingle) - `collection.Should().ContainSingle();`
+- [CollectionShouldHaveCountGreaterThan_CountShouldBeGreaterThan](#scenario-collectionshouldhavecountgreaterthan_countshouldbegreaterthan) - `collection.Should().HaveCountGreaterThan(2);`
+- [CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo](#scenario-collectionshouldhavecountgreaterorequalto_countshouldbegreaterorequalto) - `collection.Should().HaveCountGreaterOrEqualTo(3);`
+- [CollectionShouldHaveCountLessThan_CountShouldBeLessThan](#scenario-collectionshouldhavecountlessthan_countshouldbelessthan) - `collection.Should().HaveCountLessThan(4);`
+- [CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo](#scenario-collectionshouldhavecountlessorequalto_countshouldbelessorequalto) - `collection.Should().HaveCountLessOrEqualTo(3);`
+- [CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount](#scenario-collectionshouldhavesamecount_shouldhavecountothercollectioncount) - `collection.Should().HaveSameCount(otherCollection);`
+- [CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount](#scenario-collectionshouldnothavesamecount_countshouldnotbeothercollectioncount) - `collection.Should().NotHaveSameCount(otherCollection);`
+- [CollectionShouldContainSingle_WhereShouldHaveCount1](#scenario-collectionshouldcontainsingle_whereshouldhavecount1) - `collection.Should().ContainSingle(i => i == 1);`
+- [CollectionShouldNotBeNullOrEmpty](#scenario-collectionshouldnotbenullorempty) - `collection.Should().NotBeNullOrEmpty();`
+
+
+## Scenarios
+
+### scenario: CollectionsShouldNotBeEmpty
 
 ```cs
 // arrange
@@ -12,7 +36,7 @@ collection.Any().Should().BeTrue();
 collection.Should().NotBeEmpty();
 ```
 
-## method: CollectionShouldBeEmpty
+### scenario: CollectionShouldBeEmpty
 
 ```cs
 // arrange
@@ -27,7 +51,7 @@ collection.Should().HaveCount(0);
 collection.Should().BeEmpty();
 ```
 
-## method: CollectionShouldNotContainCondition
+### scenario: CollectionShouldNotContainCondition
 
 ```cs
 // arrange
@@ -41,7 +65,7 @@ collection.Where(i => i == 4).Should().BeEmpty();
 collection.Should().NotContain(i => i == 4);
 ```
 
-## method: CollectionShouldNotContainItem
+### scenario: CollectionShouldNotContainItem
 
 ```cs
 // arrange
@@ -54,7 +78,7 @@ collection.Contains(4).Should().BeFalse();
 collection.Should().NotContain(4);
 ```
 
-## method: CollectionShouldOnlyContainProperty
+### scenario: CollectionShouldOnlyContainProperty
 
 ```cs
 // arrange
@@ -67,7 +91,7 @@ collection.All(x => x > 0).Should().BeTrue();
 collection.Should().OnlyContain(x => x > 0);
 ```
 
-## method: CollectionShouldContainItem
+### scenario: CollectionShouldContainItem
 
 ```cs
 // arrange
@@ -80,7 +104,7 @@ collection.Contains(2).Should().BeTrue();
 collection.Should().Contain(2);
 ```
 
-## method: CollectionShouldContainCondition
+### scenario: CollectionShouldContainCondition
 
 ```cs
 // arrange
@@ -94,7 +118,7 @@ collection.Where(i => i == 2).Should().NotBeEmpty();
 collection.Should().Contain(i => i == 2);
 ```
 
-## method: CollectionShouldHaveCount_Count
+### scenario: CollectionShouldHaveCount_Count
 
 ```cs
 // arrange
@@ -107,7 +131,7 @@ collection.Count().Should().Be(3);
 collection.Should().HaveCount(3);
 ```
 
-## method: CollectionShouldHaveCount_Length
+### scenario: CollectionShouldHaveCount_Length
 
 ```cs
 // arrange
@@ -120,7 +144,7 @@ collection.Length.Should().Be(3);
 collection.Should().HaveCount(3);
 ```
 
-## method: CollectionShouldNotHaveCount_Count
+### scenario: CollectionShouldNotHaveCount_Count
 
 ```cs
 // arrange
@@ -133,7 +157,7 @@ collection.Count().Should().NotBe(4);
 collection.Should().NotHaveCount(4);
 ```
 
-## method: CollectionShouldContainSingle_CountShouldBe1
+### scenario: CollectionShouldContainSingle
 
 ```cs
 // arrange
@@ -147,7 +171,7 @@ collection.Should().HaveCount(1);
 collection.Should().ContainSingle();
 ```
 
-## method: CollectionShouldHaveCountGreaterThan_CountShouldBeGreaterThan
+### scenario: CollectionShouldHaveCountGreaterThan_CountShouldBeGreaterThan
 
 ```cs
 // arrange
@@ -160,7 +184,7 @@ collection.Count().Should().BeGreaterThan(2);
 collection.Should().HaveCountGreaterThan(2);
 ```
 
-## method: CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo
+### scenario: CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo
 
 ```cs
 // arrange
@@ -173,7 +197,7 @@ collection.Count().Should().BeGreaterOrEqualTo(3);
 collection.Should().HaveCountGreaterOrEqualTo(3);
 ```
 
-## method: CollectionShouldHaveCountLessThan_CountShouldBeLessThan
+### scenario: CollectionShouldHaveCountLessThan_CountShouldBeLessThan
 
 ```cs
 // arrange
@@ -186,7 +210,7 @@ collection.Count().Should().BeLessThan(4);
 collection.Should().HaveCountLessThan(4);
 ```
 
-## method: CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo
+### scenario: CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo
 
 ```cs
 // arrange
@@ -199,7 +223,7 @@ collection.Count().Should().BeLessOrEqualTo(3);
 collection.Should().HaveCountLessOrEqualTo(3);
 ```
 
-## method: CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount
+### scenario: CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount
 
 ```cs
 // arrange
@@ -213,7 +237,7 @@ collection.Should().HaveCount(otherCollection.Count());
 collection.Should().HaveSameCount(otherCollection);
 ```
 
-## method: CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount
+### scenario: CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount
 
 ```cs
 // arrange
@@ -227,7 +251,7 @@ collection.Count().Should().NotBe(otherCollection.Count());
 collection.Should().NotHaveSameCount(otherCollection);
 ```
 
-## method: CollectionShouldContainSingle_WhereShouldHaveCount1
+### scenario: CollectionShouldContainSingle_WhereShouldHaveCount1
 
 ```cs
 // arrange
@@ -240,7 +264,7 @@ collection.Where(i => i == 1).Should().HaveCount(1);
 collection.Should().ContainSingle(i => i == 1);
 ```
 
-## method: CollectionShouldNotBeNullOrEmpty
+### scenario: CollectionShouldNotBeNullOrEmpty
 
 ```cs
 // arrange
@@ -253,4 +277,5 @@ collection.Should().NotBeNull().And.NotBeEmpty();
 // new assertion:
 collection.Should().NotBeNullOrEmpty();
 ```
+
 
