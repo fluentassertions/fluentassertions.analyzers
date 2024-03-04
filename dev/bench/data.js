@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1709549240434,
+  "lastUpdate": 1709551413726,
   "repoUrl": "https://github.com/fluentassertions/fluentassertions.analyzers",
   "entries": {
     "FluentAssertions.Analyzers Benchmark": [
@@ -5676,6 +5676,50 @@ window.BENCHMARK_DATA = {
             "value": 256.6654824843773,
             "unit": "ns",
             "range": "± 0.9319810242214928"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "committer": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "id": "b3775b3e44c8045c2158575e6581324963db342b",
+          "message": "docs: add TOC",
+          "timestamp": "2024-02-25T02:25:19Z",
+          "url": "https://github.com/fluentassertions/fluentassertions.analyzers/pull/313/commits/b3775b3e44c8045c2158575e6581324963db342b"
+        },
+        "date": 1709551412409,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation_SingleSource_ObjectStatement_Analyzing",
+            "value": 354.16370432193463,
+            "unit": "ns",
+            "range": "± 3.1011782554687684"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation_SingleSource_ObjectStatement_Analyzing",
+            "value": 256.89590686162313,
+            "unit": "ns",
+            "range": "± 2.757499797208947"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.SmallCompilation_MultipleSources_StringAssertions_Analyzing",
+            "value": 799.7392292703901,
+            "unit": "ns",
+            "range": "± 5.0833481941653424"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.SmallCompilation_MultipleSources_StringAssertions_Analyzing",
+            "value": 248.6747969309489,
+            "unit": "ns",
+            "range": "± 3.3704783236606537"
           }
         ]
       }
