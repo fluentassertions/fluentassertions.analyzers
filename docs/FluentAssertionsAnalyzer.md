@@ -62,6 +62,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.All(x => x > 0).Should().BeTrue();
+
 // new assertion:
 collection.Should().OnlyContain(x => x > 0);
 ```
@@ -74,6 +75,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Contains(2).Should().BeTrue();
+
 // new assertion:
 collection.Should().Contain(2);
 ```
@@ -100,6 +102,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().Be(3);
+
 // new assertion:
 collection.Should().HaveCount(3);
 ```
@@ -112,6 +115,7 @@ var collection = new int[] { 1, 2, 3 };
 
 // old assertion:
 collection.Length.Should().Be(3);
+
 // new assertion:
 collection.Should().HaveCount(3);
 ```
@@ -124,6 +128,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().NotBe(4);
+
 // new assertion:
 collection.Should().NotHaveCount(4);
 ```
@@ -150,6 +155,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().BeGreaterThan(2);
+
 // new assertion:
 collection.Should().HaveCountGreaterThan(2);
 ```
@@ -162,6 +168,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().BeGreaterOrEqualTo(3);
+
 // new assertion:
 collection.Should().HaveCountGreaterOrEqualTo(3);
 ```
@@ -174,6 +181,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().BeLessThan(4);
+
 // new assertion:
 collection.Should().HaveCountLessThan(4);
 ```
@@ -186,6 +194,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().BeLessOrEqualTo(3);
+
 // new assertion:
 collection.Should().HaveCountLessOrEqualTo(3);
 ```
@@ -199,6 +208,7 @@ var otherCollection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Should().HaveCount(otherCollection.Count());
+
 // new assertion:
 collection.Should().HaveSameCount(otherCollection);
 ```
@@ -212,6 +222,7 @@ var otherCollection = new List<int> { 1, 2, 3, 4 };
 
 // old assertion:
 collection.Count().Should().NotBe(otherCollection.Count());
+
 // new assertion:
 collection.Should().NotHaveSameCount(otherCollection);
 ```
@@ -224,6 +235,7 @@ var collection = new List<int> { 1 };
 
 // old assertion:
 collection.Where(i => i == 1).Should().HaveCount(1);
+
 // new assertion:
 collection.Should().ContainSingle(i => i == 1);
 ```

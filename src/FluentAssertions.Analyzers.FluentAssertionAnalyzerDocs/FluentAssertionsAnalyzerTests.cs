@@ -71,6 +71,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.All(x => x > 0).Should().BeTrue();
+
         // new assertion:
         collection.Should().OnlyContain(x => x > 0);
     }
@@ -83,6 +84,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Contains(2).Should().BeTrue();
+
         // new assertion:
         collection.Should().Contain(2);
     }
@@ -109,6 +111,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Count().Should().Be(3);
+
         // new assertion:
         collection.Should().HaveCount(3);
     }
@@ -121,6 +124,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Length.Should().Be(3);
+
         // new assertion:
         collection.Should().HaveCount(3);
     }
@@ -133,6 +137,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Count().Should().NotBe(4);
+
         // new assertion:
         collection.Should().NotHaveCount(4);
     }
@@ -159,6 +164,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Count().Should().BeGreaterThan(2);
+
         // new assertion:
         collection.Should().HaveCountGreaterThan(2);
     }
@@ -171,6 +177,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Count().Should().BeGreaterOrEqualTo(3);
+
         // new assertion:
         collection.Should().HaveCountGreaterOrEqualTo(3);
     }
@@ -183,6 +190,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Count().Should().BeLessThan(4);
+
         // new assertion:
         collection.Should().HaveCountLessThan(4);
     }
@@ -195,6 +203,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Count().Should().BeLessOrEqualTo(3);
+
         // new assertion:
         collection.Should().HaveCountLessOrEqualTo(3);
     }
@@ -208,6 +217,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Should().HaveCount(otherCollection.Count());
+
         // new assertion:
         collection.Should().HaveSameCount(otherCollection);
     }
@@ -221,6 +231,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Count().Should().NotBe(otherCollection.Count());
+
         // new assertion:
         collection.Should().NotHaveSameCount(otherCollection);
     }
@@ -233,6 +244,7 @@ public class FluentAssertionsAnalyzerTests
 
         // old assertion:
         collection.Where(i => i == 1).Should().HaveCount(1);
+
         // new assertion:
         collection.Should().ContainSingle(i => i == 1);
     }

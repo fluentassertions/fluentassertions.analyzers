@@ -23,5 +23,16 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - run: dotnet test src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs # before formatting
+      - name: Run the docs generator
+        shell: pwsh
+        run: |
+          pushd src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator
+          dotnet run
+          popd
+          $output = git status --porcelain=v1 -- docs
+          if ($output) {
+            git diff -- docs
+            throw "The docs generator has made changes to the docs folder. Please commit these changes and push them to the repository."
+          }
       - run: dotnet format analyzers src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs --diagnostics FAA0001 --severity info --verbosity normal
       - run: dotnet test src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs # after formatting
