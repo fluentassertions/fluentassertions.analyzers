@@ -18,7 +18,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Any().Should().BeTrue();
 
         // new assertion:
-        collection.Should().NotBeEmpty();
+        collection.Should().NotBeEmpty(); // comment to break CI
     }
 
     [TestMethod]
