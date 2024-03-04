@@ -28,6 +28,10 @@ using the latest stable version:
 dotnet add package FluentAssertions.Analyzers
 ```
 
+## Docs
+
+- [FluentAssertions Analyzer Docs](docs/FluentAssertionsAnalyzer.md)
+
 ## Getting Started
 
 ### Build
