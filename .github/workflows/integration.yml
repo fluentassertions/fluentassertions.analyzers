@@ -31,9 +31,7 @@ jobs:
           popd
           $output = git status --porcelain=v1 -- docs
           if ($output) {
-            foreach ($change in $output -split "`n") {
-              Write-Host "::error file=$change,::Local modifications"
-            }
+            git diff -- docs
             throw "The docs generator has made changes to the docs folder. Please commit these changes and push them to the repository."
           }
       - run: dotnet format analyzers src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs --diagnostics FAA0001 --severity info --verbosity normal

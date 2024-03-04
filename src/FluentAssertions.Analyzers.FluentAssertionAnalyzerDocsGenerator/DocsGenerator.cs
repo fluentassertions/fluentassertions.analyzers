@@ -20,7 +20,7 @@ public class DocsGenerator
 
         using var workspace = MSBuildWorkspace.Create();
 
-        var project = await workspace.OpenProjectAsync(@"..\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj");
+        var project = await workspace.OpenProjectAsync(Path.Combine("..", "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs", "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj"));
 
         DiagnosticAnalyzer analyzer = new FluentAssertionsAnalyzer();
         var codeFixer = new FluentAssertionsCodeFixProvider();
