@@ -82,8 +82,7 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             return RewriteFluentAssertion(assertion, context, [
                 FluentAssertionsEditAction.RenameAssertion(newName),
                 FluentAssertionsEditAction.SkipExpressionBeforeShould(),
-                FluentAssertionsEditAction.RemoveAssertionArgument(index: 0),
-                FluentAssertionsEditAction.PrependArgumentsFromInvocationBeforeShouldToAssertion(skipAssertionArguments: 1)
+                FluentAssertionsEditAction.RemoveAssertionArgument(index: 0)
             ]);
         }
 
