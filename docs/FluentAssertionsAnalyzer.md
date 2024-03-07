@@ -45,6 +45,7 @@ var collection = new List<int>();
 // old assertion:
 collection.Any().Should().BeFalse();
 collection.Count().Should().Be(0);
+collection.Count.Should().Be(0);
 collection.Should().HaveCount(0);
 
 // new assertion:
@@ -126,6 +127,7 @@ var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().Be(3);
+collection.Count.Should().Be(3);
 
 // new assertion:
 collection.Should().HaveCount(3);
@@ -165,6 +167,7 @@ var collection = new List<int> { 1 };
 
 // old assertion:
 collection.Count().Should().Be(1);
+collection.Count.Should().Be(1);
 collection.Should().HaveCount(1);
 
 // new assertion:
