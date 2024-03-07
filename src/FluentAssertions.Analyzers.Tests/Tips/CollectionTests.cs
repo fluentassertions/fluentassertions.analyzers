@@ -293,8 +293,10 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.Count().Should().Be(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().Be(k{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().Be(6{0}).And.ToString();")]
-        [AssertionDiagnostic("actual.ToList().Count().Should().Be(k{0}).And.ToString();;")]
-        [AssertionDiagnostic("actual.ToList().Count().Should().Be(6{0}).And.ToString();;")]
+        [AssertionDiagnostic("actual.ToList().Count().Should().Be(k{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToList().Count().Should().Be(6{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToList().Count.Should().Be(k{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.ToList().Count.Should().Be(6{0}).And.ToString();")]
         [AssertionDiagnostic("actual.ToArray().Count().Should().Be(k{0}).And.ToString();")]
         [AssertionDiagnostic("actual.ToArray().Count().Should().Be(6{0}).And.ToString();")]
         [Implemented]
@@ -365,6 +367,18 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().Be(6{0});",
             newAssertion: "actual.Should().HaveCount(6{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToList().Count.Should().Be(k{0});",
+            newAssertion: "actual.ToList().Should().HaveCount(k{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToList().Count.Should().Be(0{0});",
+            newAssertion: "actual.ToList().Should().BeEmpty({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToList().Count.Should().Be(1{0});",
+            newAssertion: "actual.ToList().Should().ContainSingle({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToList().Count.Should().Be(6{0});",
+            newAssertion: "actual.ToList().Should().HaveCount(6{0});")]
         [AssertionCodeFix(
             oldAssertion: "actual.ToArray().Length.Should().Be(6{0});",
             newAssertion: "actual.ToArray().Should().HaveCount(6{0});")]

@@ -74,6 +74,18 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
             ]);
         }
 
+        // oldAssertion: subject.<method>(<argument1>).Should().<assertion>([arg1, arg2, arg3...]);
+        // oldAssertion: subject.<property>.Should().<assertion>([arg1, arg2, arg3...]);
+        // newAssertion: subject.Should().<newName>([argument1, arg1, arg2, arg3...]);
+        CreateChangedDocument RemoveExpressionBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved(string newName)
+        {
+            return RewriteFluentAssertion(assertion, context, [
+                FluentAssertionsEditAction.RenameAssertion(newName),
+                FluentAssertionsEditAction.SkipExpressionBeforeShould(),
+                FluentAssertionsEditAction.RemoveAssertionArgument(index: 0)
+            ]);
+        }
+
         switch (visitorName)
         {
             case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_AnyShouldBeFalse):
@@ -121,10 +133,14 @@ public sealed partial class FluentAssertionsCodeFixProvider : CodeFixProviderBas
                         editor.ReplaceNode(context.AssertionExpression.ArgumentList, arguments);
                     }
                 ]);
+            case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_CountPropertyShouldBe0):
+                return RemoveExpressionBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved("BeEmpty");
             case nameof(DiagnosticMetadata.CollectionShouldBeEmpty_CountShouldBe0):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved("BeEmpty");
             case nameof(DiagnosticMetadata.CollectionShouldContainSingle_CountShouldBe1):
                 return RemoveMethodBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved("ContainSingle");
+            case nameof(DiagnosticMetadata.CollectionShouldContainSingle_CountPropertyShouldBe1):
+                return RemoveExpressionBeforeShouldAndRenameAssertionWithoutFirstArgumentWithArgumentsFromRemoved("ContainSingle");
             case nameof(DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe):
                 return RemoveExpressionBeforeShouldAndRenameAssertion("HaveCount");
             case nameof(DiagnosticMetadata.CollectionShouldHaveCount_LengthShouldBe):
