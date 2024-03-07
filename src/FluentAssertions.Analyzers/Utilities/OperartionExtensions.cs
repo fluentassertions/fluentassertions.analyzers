@@ -73,6 +73,8 @@ internal static class OperartionExtensions
         => invocation.TargetMethod.ContainingType.ConstructedFromType(type);
     public static bool IsContainedInType(this IInvocationOperation invocation, INamedTypeSymbol type)
         => invocation.TargetMethod.ContainingType.ConstructedFromType(type);
+    public static bool ImplementsOrIsInterface(this IPropertyReferenceOperation property, SpecialType type)
+        => property.Property.ContainingType.ImplementsOrIsInterface(type);
     public static bool ImplementsOrIsInterface(this IInvocationOperation invocation, SpecialType type)
         => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
     public static bool ImplementsOrIsInterface(this IInvocationOperation invocation, INamedTypeSymbol type)

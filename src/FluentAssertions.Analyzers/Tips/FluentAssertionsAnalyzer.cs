@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -341,6 +340,20 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                                 return;
                             case nameof(string.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_String):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldHaveLength_LengthShouldBe));
+                                return;
+                            case nameof(List<object>.Count) when propertyBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T):
+                                if (assertion.Arguments[0].IsLiteralValue(1))
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainSingle_CountShouldBe1));
+                                }
+                                else if (assertion.Arguments[0].IsLiteralValue(0))
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_CountShouldBe0));
+                                }
+                                else
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCount_CountShouldBe));
+                                }
                                 return;
                         }
                     }
