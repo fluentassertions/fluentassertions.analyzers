@@ -344,11 +344,11 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                             case nameof(List<object>.Count) when propertyBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T):
                                 if (assertion.Arguments[0].IsLiteralValue(1))
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainSingle_CountShouldBe1));
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldContainSingle_CountPropertyShouldBe1));
                                 }
                                 else if (assertion.Arguments[0].IsLiteralValue(0))
                                 {
-                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_CountShouldBe0));
+                                    context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldBeEmpty_CountPropertyShouldBe0));
                                 }
                                 else
                                 {
