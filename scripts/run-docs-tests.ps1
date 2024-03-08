@@ -14,12 +14,10 @@ if ($FormatAndExecuteTestsAgain) {
     dotnet format analyzers --diagnostics FAA0001 --severity info --verbosity normal
     Pop-Location
     Pop-Location
-}
 
-if ($ValidateNoChanges) {
-    $output = git status --porcelain=v1 -- docs
-    if ($output) {
-        git diff -- docs
-        throw "The docs generator has made changes to the docs folder. Please commit these changes and push them to the repository."
-    }
+    Push-Location src
+    Push-Location FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator
+    dotnet run verify
+    Pop-Location
+    Pop-Location
 }

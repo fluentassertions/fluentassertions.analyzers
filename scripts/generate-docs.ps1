@@ -5,7 +5,7 @@ param (
 
 Push-Location src
 Push-Location FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator
-dotnet run
+dotnet run generate
 Pop-Location
 Pop-Location
 

@@ -4,11 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.MSBuild;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator;
 
@@ -16,16 +14,9 @@ public class DocsGenerator
 {
     public async Task Execute()
     {
-        MSBuildLocator.RegisterDefaults();
-
-        using var workspace = MSBuildWorkspace.Create();
-
-        var project = await workspace.OpenProjectAsync(Path.Combine("..", "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs", "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj"));
-
         DiagnosticAnalyzer analyzer = new FluentAssertionsAnalyzer();
-        var codeFixer = new FluentAssertionsCodeFixProvider();
 
-        var compilation = await project.GetCompilationAsync();
+        var compilation = await FluentAssertionAnalyzerDocsUtils.GetFluentAssertionAnalyzerDocsCompilation();
         var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
 
         var docs = new StringBuilder();
