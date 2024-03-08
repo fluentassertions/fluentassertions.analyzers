@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator;
 
@@ -37,9 +36,9 @@ public class DocsVerifier
 
                 foreach (var oldAssertion in oldAssertions)
                 {
-                    if (!oldAssertion.IsEquivalentTo(newAssertion))
+                    if (!oldAssertion.WithoutTrivia().IsEquivalentTo(newAssertion.WithoutTrivia()))
                     {
-                        issues.AppendLine($"[{tree.FilePath}:{oldAssertion.GetLocation().GetLineSpan().Span.Start}] {method.Identifier} - actual: {oldAssertion} expected: {newAssertion}");
+                        issues.AppendLine($"[{tree.FilePath.Split('\\')[^1]}:{oldAssertion.GetLocation().GetLineSpan().Span.Start}] {method.Identifier} - actual: {oldAssertion.ToFullString()} expected: {newAssertion.ToFullString()}");
                     }
                 }
             }
