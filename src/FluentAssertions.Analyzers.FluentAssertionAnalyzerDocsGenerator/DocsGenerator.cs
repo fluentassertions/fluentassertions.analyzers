@@ -36,7 +36,7 @@ public class DocsGenerator
             var root = await tree.GetRootAsync();
             var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
-            foreach (var method in methods)
+            foreach (var method in methods.Where(m => m.AttributeLists.Any(list => list.Attributes.Count is 1 && list.Attributes[0].Name.ToString() is "TestMethod")))
             {
                 scenarios.AppendLine($"### scenario: {method.Identifier}");
                 scenarios.AppendLine();
@@ -50,6 +50,8 @@ public class DocsGenerator
                 var newAssertion = bodyLines[^1].Trim();
 
                 toc.AppendLine($"- [{method.Identifier}](#scenario-{method.Identifier.Text.ToLower()}) - `{newAssertion}`");
+
+                var testWithFailure = methods.FirstOrDefault(m => m.Identifier.Text == $"{method.Identifier.Text}_Failures");
             }
 
             var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
