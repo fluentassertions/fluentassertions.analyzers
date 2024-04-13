@@ -169,7 +169,7 @@ public class FluentAssertionsAnalyzerTests
     {
         using var scope = new AssertionScope();
         // arrange
-        var collection = new List<int> { 1, 2, 3, 4, 5 };
+        var collection = new List<int> { 1, 3, 4, 5 };
 
         // old assertion:
         collection.Contains(2).Should().BeTrue();
