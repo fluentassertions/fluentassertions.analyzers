@@ -40,6 +40,7 @@ collection.Should().NotBeEmpty();
 
 ```cs
 // arrange
+var collection = new List<int> { };
 
 // old assertion:
 collection.Any().Should().BeTrue(); 	// fail message: Expected collection.Any() to be true, but found False.
@@ -68,6 +69,7 @@ collection.Should().BeEmpty();
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Any().Should().BeFalse(); 	// fail message: Expected collection.Any() to be false, but found True.
@@ -97,6 +99,7 @@ collection.Should().NotContain(i => i == 4);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, 4, 5 };
 
 // old assertion:
 collection.Any(i => i == 4).Should().BeFalse(); 	// fail message: Expected collection.Any(i => i == 4) to be false, but found True.
@@ -123,6 +126,7 @@ collection.Should().NotContain(4);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, 4, 5 };
 
 // old assertion:
 collection.Contains(4).Should().BeFalse(); 	// fail message: Expected collection.Contains(4) to be false, but found True.
@@ -148,6 +152,7 @@ collection.Should().OnlyContain(x => x > 0);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, -1 };
 
 // old assertion:
 collection.All(x => x > 0).Should().BeTrue(); 	// fail message: Expected collection.All(x => x > 0) to be true, but found False.
@@ -173,6 +178,7 @@ collection.Should().Contain(2);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 3, 4, 5 };
 
 // old assertion:
 collection.Contains(2).Should().BeTrue(); 	// fail message: Expected collection.Contains(2) to be true, but found False.
@@ -199,6 +205,7 @@ collection.Should().Contain(i => i == 2);
 
 ```cs
 // arrange
+var collection = new List<int> { 3, 4, 5 };
 
 // old assertion:
 collection.Any(i => i == 2).Should().BeTrue(); 	// fail message: Expected collection.Any(i => i == 2) to be true, but found False.
@@ -226,6 +233,7 @@ collection.Should().HaveCount(3);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, 4, 5 };
 
 // old assertion:
 collection.Count().Should().Be(3); 	// fail message: Expected collection.Count() to be 3, but found 5.
@@ -252,6 +260,7 @@ collection.Should().HaveCount(3);
 
 ```cs
 // arrange
+var collection = new int[] { 1, 2, 3, 4, 5 };
 
 // old assertion:
 collection.Length.Should().Be(3); 	// fail message: Expected collection.Length to be 3, but found 5.
@@ -277,6 +286,7 @@ collection.Should().NotHaveCount(4);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, 4 };
 
 // old assertion:
 collection.Count().Should().NotBe(4); 	// fail message: Did not expect collection.Count() to be 4.
@@ -304,6 +314,7 @@ collection.Should().ContainSingle();
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().Be(1); 	// fail message: Expected collection.Count() to be 1, but found 3.
@@ -331,6 +342,7 @@ collection.Should().HaveCountGreaterThan(2);
 
 ```cs
 // arrange
+var collection = new List<int> { 1 };
 
 // old assertion:
 collection.Count().Should().BeGreaterThan(2); 	// fail message: Expected collection.Count() to be greater than 2, but found 1.
@@ -356,6 +368,7 @@ collection.Should().HaveCountGreaterOrEqualTo(3);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2 };
 
 // old assertion:
 collection.Count().Should().BeGreaterOrEqualTo(3); 	// fail message: Expected collection.Count() to be greater than or equal to 3, but found 2.
@@ -381,6 +394,7 @@ collection.Should().HaveCountLessThan(4);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, 4, 5 };
 
 // old assertion:
 collection.Count().Should().BeLessThan(4); 	// fail message: Expected collection.Count() to be less than 4, but found 5.
@@ -406,6 +420,7 @@ collection.Should().HaveCountLessOrEqualTo(3);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, 4 };
 
 // old assertion:
 collection.Count().Should().BeLessOrEqualTo(3); 	// fail message: Expected collection.Count() to be less than or equal to 3, but found 4.
@@ -432,6 +447,7 @@ collection.Should().HaveSameCount(otherCollection);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Should().HaveCount(otherCollection.Count()); 	// fail message: Expected collection to contain 4 item(s), but found 3: {1, 2, 3}.
@@ -458,6 +474,7 @@ collection.Should().NotHaveSameCount(otherCollection);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
 collection.Count().Should().NotBe(otherCollection.Count()); 	// fail message: Did not expect collection.Count() to be 3.
@@ -483,6 +500,7 @@ collection.Should().ContainSingle(i => i == 1);
 
 ```cs
 // arrange
+var collection = new List<int> { 1, 2, 3, 1 };
 
 // old assertion:
 collection.Where(i => i == 1).Should().HaveCount(1); 	// fail message: Expected collection.Where(i => i == 1) to contain 1 item(s), but found 2: {1, 1}.
@@ -509,6 +527,7 @@ collection.Should().NotBeNullOrEmpty();
 
 ```cs
 // arrange
+var collection = new List<int>();
 
 // old assertion:
 collection.Should().NotBeEmpty().And.NotBeNull(); 	// fail message: Expected collection not to be empty.
