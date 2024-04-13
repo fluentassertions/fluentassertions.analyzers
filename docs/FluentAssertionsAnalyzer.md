@@ -36,6 +36,18 @@ collection.Any().Should().BeTrue();
 collection.Should().NotBeEmpty();
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Any().Should().BeTrue(); 	// fail message: Expected collection.Any() to be true, but found False.
+
+// new assertion:
+collection.Should().NotBeEmpty(); 	// fail message: Expected collection not to be empty.
+```
+
 ### scenario: CollectionShouldBeEmpty
 
 ```cs
@@ -52,6 +64,21 @@ collection.Should().HaveCount(0);
 collection.Should().BeEmpty();
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Any().Should().BeFalse(); 	// fail message: Expected collection.Any() to be false, but found True.
+collection.Count().Should().Be(0); 	// fail message: Expected collection.Count() to be 0, but found 3 (difference of 3).
+collection.Count.Should().Be(0); 	// fail message: Expected collection.Count to be 0, but found 3 (difference of 3).
+collection.Should().HaveCount(0); 	// fail message: Expected collection to contain 0 item(s), but found 3: {1, 2, 3}.
+
+// new assertion:
+collection.Should().BeEmpty(); 	// fail message: Expected collection to be empty, but found {1, 2, 3}.
+```
+
 ### scenario: CollectionShouldNotContainCondition
 
 ```cs
@@ -64,6 +91,19 @@ collection.Where(i => i == 4).Should().BeEmpty();
 
 // new assertion:
 collection.Should().NotContain(i => i == 4);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Any(i => i == 4).Should().BeFalse(); 	// fail message: Expected collection.Any(i => i == 4) to be false, but found True.
+collection.Where(i => i == 4).Should().BeEmpty(); 	// fail message: Expected collection.Where(i => i == 4) to be empty, but found {4}.
+
+// new assertion:
+collection.Should().NotContain(i => i == 4); 	// fail message: Expected collection {1, 2, 3, 4, 5} to not have any items matching (i == 4), but found {4}.
 ```
 
 ### scenario: CollectionShouldNotContainItem
@@ -79,6 +119,18 @@ collection.Contains(4).Should().BeFalse();
 collection.Should().NotContain(4);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Contains(4).Should().BeFalse(); 	// fail message: Expected collection.Contains(4) to be false, but found True.
+
+// new assertion:
+collection.Should().NotContain(4); 	// fail message: Expected collection {1, 2, 3, 4, 5} to not contain 4.
+```
+
 ### scenario: CollectionShouldOnlyContainProperty
 
 ```cs
@@ -92,6 +144,18 @@ collection.All(x => x > 0).Should().BeTrue();
 collection.Should().OnlyContain(x => x > 0);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.All(x => x > 0).Should().BeTrue(); 	// fail message: Expected collection.All(x => x > 0) to be true, but found False.
+
+// new assertion:
+collection.Should().OnlyContain(x => x > 0); 	// fail message: Expected collection to contain only items matching (x > 0), but {-1} do(es) not match.
+```
+
 ### scenario: CollectionShouldContainItem
 
 ```cs
@@ -103,6 +167,18 @@ collection.Contains(2).Should().BeTrue();
 
 // new assertion:
 collection.Should().Contain(2);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Contains(2).Should().BeTrue(); 	// fail message: Expected collection.Contains(2) to be true, but found False.
+
+// new assertion:
+collection.Should().Contain(2); 	// fail message: Expected collection {1, 3, 4, 5} to contain 2.
 ```
 
 ### scenario: CollectionShouldContainCondition
@@ -119,6 +195,19 @@ collection.Where(i => i == 2).Should().NotBeEmpty();
 collection.Should().Contain(i => i == 2);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Any(i => i == 2).Should().BeTrue(); 	// fail message: Expected collection.Any(i => i == 2) to be true, but found False.
+collection.Where(i => i == 2).Should().NotBeEmpty(); 	// fail message: Expected collection.Where(i => i == 2) not to be empty.
+
+// new assertion:
+collection.Should().Contain(i => i == 2); 	// fail message: Expected collection {3, 4, 5} to have an item matching (i == 2).
+```
+
 ### scenario: CollectionShouldHaveCount_Count
 
 ```cs
@@ -131,6 +220,19 @@ collection.Count.Should().Be(3);
 
 // new assertion:
 collection.Should().HaveCount(3);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().Be(3); 	// fail message: Expected collection.Count() to be 3, but found 5.
+collection.Count.Should().Be(3); 	// fail message: Expected collection.Count to be 3, but found 5.
+
+// new assertion:
+collection.Should().HaveCount(3); 	// fail message: Expected collection to contain 3 item(s), but found 5: {1, 2, 3, 4, 5}.
 ```
 
 ### scenario: CollectionShouldHaveCount_Length
@@ -146,6 +248,18 @@ collection.Length.Should().Be(3);
 collection.Should().HaveCount(3);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Length.Should().Be(3); 	// fail message: Expected collection.Length to be 3, but found 5.
+
+// new assertion:
+collection.Should().HaveCount(3); 	// fail message: Expected collection to contain 3 item(s), but found 5: {1, 2, 3, 4, 5}.
+```
+
 ### scenario: CollectionShouldNotHaveCount_Count
 
 ```cs
@@ -157,6 +271,18 @@ collection.Count().Should().NotBe(4);
 
 // new assertion:
 collection.Should().NotHaveCount(4);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().NotBe(4); 	// fail message: Did not expect collection.Count() to be 4.
+
+// new assertion:
+collection.Should().NotHaveCount(4); 	// fail message: Expected collection to not contain 4 item(s), but found 4.
 ```
 
 ### scenario: CollectionShouldContainSingle
@@ -174,6 +300,20 @@ collection.Should().HaveCount(1);
 collection.Should().ContainSingle();
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().Be(1); 	// fail message: Expected collection.Count() to be 1, but found 3.
+collection.Count.Should().Be(1); 	// fail message: Expected collection.Count to be 1, but found 3.
+collection.Should().HaveCount(1); 	// fail message: Expected collection to contain 1 item(s), but found 3: {1, 2, 3}.
+
+// new assertion:
+collection.Should().ContainSingle(); 	// fail message: Expected collection to contain a single item, but found {1, 2, 3}.
+```
+
 ### scenario: CollectionShouldHaveCountGreaterThan_CountShouldBeGreaterThan
 
 ```cs
@@ -185,6 +325,18 @@ collection.Count().Should().BeGreaterThan(2);
 
 // new assertion:
 collection.Should().HaveCountGreaterThan(2);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().BeGreaterThan(2); 	// fail message: Expected collection.Count() to be greater than 2, but found 1.
+
+// new assertion:
+collection.Should().HaveCountGreaterThan(2); 	// fail message: Expected collection to contain more than 2 item(s), but found 1: {1}.
 ```
 
 ### scenario: CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo
@@ -200,6 +352,18 @@ collection.Count().Should().BeGreaterOrEqualTo(3);
 collection.Should().HaveCountGreaterOrEqualTo(3);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().BeGreaterOrEqualTo(3); 	// fail message: Expected collection.Count() to be greater than or equal to 3, but found 2.
+
+// new assertion:
+collection.Should().HaveCountGreaterOrEqualTo(3); 	// fail message: Expected collection to contain at least 3 item(s), but found 2: {1, 2}.
+```
+
 ### scenario: CollectionShouldHaveCountLessThan_CountShouldBeLessThan
 
 ```cs
@@ -213,6 +377,18 @@ collection.Count().Should().BeLessThan(4);
 collection.Should().HaveCountLessThan(4);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().BeLessThan(4); 	// fail message: Expected collection.Count() to be less than 4, but found 5.
+
+// new assertion:
+collection.Should().HaveCountLessThan(4); 	// fail message: Expected collection to contain fewer than 4 item(s), but found 5: {1, 2, 3, 4, 5}.
+```
+
 ### scenario: CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo
 
 ```cs
@@ -224,6 +400,18 @@ collection.Count().Should().BeLessOrEqualTo(3);
 
 // new assertion:
 collection.Should().HaveCountLessOrEqualTo(3);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().BeLessOrEqualTo(3); 	// fail message: Expected collection.Count() to be less than or equal to 3, but found 4.
+
+// new assertion:
+collection.Should().HaveCountLessOrEqualTo(3); 	// fail message: Expected collection to contain at most 3 item(s), but found 4: {1, 2, 3, 4}.
 ```
 
 ### scenario: CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount
@@ -240,6 +428,18 @@ collection.Should().HaveCount(otherCollection.Count());
 collection.Should().HaveSameCount(otherCollection);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Should().HaveCount(otherCollection.Count()); 	// fail message: Expected collection to contain 4 item(s), but found 3: {1, 2, 3}.
+
+// new assertion:
+collection.Should().HaveSameCount(otherCollection); 	// fail message: Expected collection to have 4 item(s), but found 3.
+```
+
 ### scenario: CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount
 
 ```cs
@@ -252,6 +452,18 @@ collection.Count().Should().NotBe(otherCollection.Count());
 
 // new assertion:
 collection.Should().NotHaveSameCount(otherCollection);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Count().Should().NotBe(otherCollection.Count()); 	// fail message: Did not expect collection.Count() to be 3.
+
+// new assertion:
+collection.Should().NotHaveSameCount(otherCollection); 	// fail message: Expected collection to not have 3 item(s), but found 3.
 ```
 
 ### scenario: CollectionShouldContainSingle_WhereShouldHaveCount1
@@ -267,6 +479,18 @@ collection.Where(i => i == 1).Should().HaveCount(1);
 collection.Should().ContainSingle(i => i == 1);
 ```
 
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Where(i => i == 1).Should().HaveCount(1); 	// fail message: Expected collection.Where(i => i == 1) to contain 1 item(s), but found 2: {1, 1}.
+
+// new assertion:
+collection.Should().ContainSingle(i => i == 1); 	// fail message: Expected collection to contain a single item matching (i == 1), but 2 such items were found.
+```
+
 ### scenario: CollectionShouldNotBeNullOrEmpty
 
 ```cs
@@ -279,6 +503,19 @@ collection.Should().NotBeNull().And.NotBeEmpty();
 
 // new assertion:
 collection.Should().NotBeNullOrEmpty();
+```
+
+#### Failure messages
+
+```cs
+// arrange
+
+// old assertion:
+collection.Should().NotBeEmpty().And.NotBeNull(); 	// fail message: Expected collection not to be empty.
+collection.Should().NotBeNull().And.NotBeEmpty(); 	// fail message: Expected collection not to be empty.
+
+// new assertion:
+collection.Should().NotBeNullOrEmpty(); 	// fail message: Expected collection not to be empty.
 ```
 
 
