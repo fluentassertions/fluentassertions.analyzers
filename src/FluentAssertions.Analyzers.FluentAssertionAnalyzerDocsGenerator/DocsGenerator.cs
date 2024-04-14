@@ -80,7 +80,8 @@ public class DocsGenerator
                         .Select((x, i) => x.ToString().TrimStart() + " \t// fail message: " + exceptionMessageLines[i]);
                     var newAssertion = statements.Single(x => x.Span.CompareTo(newAssertionComment.Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLines[^1];
 
-                    var arrange = bodyLines[0..2].Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
+                    var arrange = bodyLines.TakeWhile(x => !string.IsNullOrEmpty(x))
+                        .Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
 
                     var methodBody = $"```cs{Environment.NewLine}{arrange}{Environment.NewLine}```";
 

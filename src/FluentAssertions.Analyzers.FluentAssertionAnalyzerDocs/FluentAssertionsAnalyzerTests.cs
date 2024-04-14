@@ -542,4 +542,168 @@ public class FluentAssertionsAnalyzerTests
         // new assertion:
         collection.Should().NotBeNullOrEmpty();
     }
+
+    [TestMethod]
+    public void DictionaryShouldContainKey()
+    {
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.ContainsKey("two").Should().BeTrue();
+
+        // new assertion:
+        dictionary.Should().ContainKey("two");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void DictionaryShouldContainKey_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.ContainsKey("two").Should().BeTrue();
+
+        // new assertion:
+        dictionary.Should().ContainKey("two");
+    }
+
+    [TestMethod]
+    public void DictionaryShouldNotContainKey()
+    {
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.ContainsKey("four").Should().BeFalse();
+
+        // new assertion:
+        dictionary.Should().NotContainKey("four");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void DictionaryShouldNotContainKey_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4 };
+
+        // old assertion:
+        dictionary.ContainsKey("four").Should().BeFalse();
+
+        // new assertion:
+        dictionary.Should().NotContainKey("four");
+    }
+
+    [TestMethod]
+    public void DictionaryShouldContainValue()
+    {
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.ContainsValue(2).Should().BeTrue();
+
+        // new assertion:
+        dictionary.Should().ContainValue(2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void DictionaryShouldContainValue_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.ContainsValue(4).Should().BeTrue();
+
+        // new assertion:
+        dictionary.Should().ContainValue(4);
+    }
+
+    [TestMethod]
+    public void DictionaryShouldNotContainValue()
+    {
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.ContainsValue(4).Should().BeFalse();
+
+        // new assertion:
+        dictionary.Should().NotContainValue(4);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void DictionaryShouldNotContainValue_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4 };
+
+        // old assertion:
+        dictionary.ContainsValue(4).Should().BeFalse();
+
+        // new assertion:
+        dictionary.Should().NotContainValue(4);
+    }
+
+    [TestMethod]
+    public void DictionaryShouldContainKeyAndValue()
+    {
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.Should().ContainKey("two").And.ContainValue(2);
+
+        // new assertion:
+        dictionary.Should().Contain("two", 2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void DictionaryShouldContainKeyAndValue_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+        // old assertion:
+        dictionary.Should().ContainKey("two").And.ContainValue(4);
+
+        // new assertion:
+        dictionary.Should().Contain("two", 4);
+    }
+
+    [TestMethod]
+    public void DictionaryShouldContainPair()
+    {
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+        var pair = new KeyValuePair<string, int>("two", 2);
+
+        // old assertion:
+        dictionary.Should().ContainKey(pair.Key).And.ContainValue(pair.Value);
+
+        // new assertion:
+        dictionary.Should().Contain(pair);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void DictionaryShouldContainPair_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+        var pair = new KeyValuePair<string, int>("two", 4);
+
+        // old assertion:
+        dictionary.Should().ContainKey(pair.Key).And.ContainValue(pair.Value);
+
+        // new assertion:
+        dictionary.Should().Contain(pair);
+    }
 }

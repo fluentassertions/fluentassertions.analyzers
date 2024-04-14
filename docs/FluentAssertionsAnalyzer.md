@@ -19,6 +19,12 @@
 - [CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount](#scenario-collectionshouldnothavesamecount_countshouldnotbeothercollectioncount) - `collection.Should().NotHaveSameCount(otherCollection);`
 - [CollectionShouldContainSingle_WhereShouldHaveCount1](#scenario-collectionshouldcontainsingle_whereshouldhavecount1) - `collection.Should().ContainSingle(i => i == 1);`
 - [CollectionShouldNotBeNullOrEmpty](#scenario-collectionshouldnotbenullorempty) - `collection.Should().NotBeNullOrEmpty();`
+- [DictionaryShouldContainKey](#scenario-dictionaryshouldcontainkey) - `dictionary.Should().ContainKey("two");`
+- [DictionaryShouldNotContainKey](#scenario-dictionaryshouldnotcontainkey) - `dictionary.Should().NotContainKey("four");`
+- [DictionaryShouldContainValue](#scenario-dictionaryshouldcontainvalue) - `dictionary.Should().ContainValue(2);`
+- [DictionaryShouldNotContainValue](#scenario-dictionaryshouldnotcontainvalue) - `dictionary.Should().NotContainValue(4);`
+- [DictionaryShouldContainKeyAndValue](#scenario-dictionaryshouldcontainkeyandvalue) - `dictionary.Should().Contain("two", 2);`
+- [DictionaryShouldContainPair](#scenario-dictionaryshouldcontainpair) - `dictionary.Should().Contain(pair);`
 
 
 ## Scenarios
@@ -448,6 +454,7 @@ collection.Should().HaveSameCount(otherCollection);
 ```cs
 // arrange
 var collection = new List<int> { 1, 2, 3 };
+var otherCollection = new List<int> { 2, 3, 4, 5 };
 
 // old assertion:
 collection.Should().HaveCount(otherCollection.Count()); 	// fail message: Expected collection to contain 4 item(s), but found 3: {1, 2, 3}.
@@ -475,6 +482,7 @@ collection.Should().NotHaveSameCount(otherCollection);
 ```cs
 // arrange
 var collection = new List<int> { 1, 2, 3 };
+var otherCollection = new List<int> { 4, 5, 6 };
 
 // old assertion:
 collection.Count().Should().NotBe(otherCollection.Count()); 	// fail message: Did not expect collection.Count() to be 3.
@@ -535,6 +543,164 @@ collection.Should().NotBeNull().And.NotBeEmpty(); 	// fail message: Expected col
 
 // new assertion:
 collection.Should().NotBeNullOrEmpty(); 	// fail message: Expected collection not to be empty.
+```
+
+### scenario: DictionaryShouldContainKey
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+// old assertion:
+dictionary.ContainsKey("two").Should().BeTrue();
+
+// new assertion:
+dictionary.Should().ContainKey("two");
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["three"] = 3 };
+
+// old assertion:
+dictionary.ContainsKey("two").Should().BeTrue(); 	// fail message: Expected dictionary.ContainsKey("two") to be true, but found False.
+
+// new assertion:
+dictionary.Should().ContainKey("two"); 	// fail message: Expected dictionary {["one"] = 1, ["three"] = 3} to contain key "two".
+```
+
+### scenario: DictionaryShouldNotContainKey
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+// old assertion:
+dictionary.ContainsKey("four").Should().BeFalse();
+
+// new assertion:
+dictionary.Should().NotContainKey("four");
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4 };
+
+// old assertion:
+dictionary.ContainsKey("four").Should().BeFalse(); 	// fail message: Expected dictionary.ContainsKey("four") to be false, but found True.
+
+// new assertion:
+dictionary.Should().NotContainKey("four"); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4} not to contain key "four", but found it anyhow.
+```
+
+### scenario: DictionaryShouldContainValue
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+// old assertion:
+dictionary.ContainsValue(2).Should().BeTrue();
+
+// new assertion:
+dictionary.Should().ContainValue(2);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+// old assertion:
+dictionary.ContainsValue(4).Should().BeTrue(); 	// fail message: Expected dictionary.ContainsValue(4) to be true, but found False.
+
+// new assertion:
+dictionary.Should().ContainValue(4); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3} to contain value 4.
+```
+
+### scenario: DictionaryShouldNotContainValue
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+// old assertion:
+dictionary.ContainsValue(4).Should().BeFalse();
+
+// new assertion:
+dictionary.Should().NotContainValue(4);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4 };
+
+// old assertion:
+dictionary.ContainsValue(4).Should().BeFalse(); 	// fail message: Expected dictionary.ContainsValue(4) to be false, but found True.
+
+// new assertion:
+dictionary.Should().NotContainValue(4); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4} not to contain value 4, but found it anyhow.
+```
+
+### scenario: DictionaryShouldContainKeyAndValue
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+// old assertion:
+dictionary.Should().ContainKey("two").And.ContainValue(2);
+
+// new assertion:
+dictionary.Should().Contain("two", 2);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+
+// old assertion:
+dictionary.Should().ContainKey("two").And.ContainValue(4); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3} to contain value 4.
+
+// new assertion:
+dictionary.Should().Contain("two", 4); 	// fail message: Expected dictionary to contain value 4 at key "two", but found 2.
+```
+
+### scenario: DictionaryShouldContainPair
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+var pair = new KeyValuePair<string, int>("two", 2);
+
+// old assertion:
+dictionary.Should().ContainKey(pair.Key).And.ContainValue(pair.Value);
+
+// new assertion:
+dictionary.Should().Contain(pair);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
+var pair = new KeyValuePair<string, int>("two", 4);
+
+// old assertion:
+dictionary.Should().ContainKey(pair.Key).And.ContainValue(pair.Value); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3} to contain value 4.
+
+// new assertion:
+dictionary.Should().Contain(pair); 	// fail message: Expected dictionary to contain value 4 at key "two", but found 2.
 ```
 
 
