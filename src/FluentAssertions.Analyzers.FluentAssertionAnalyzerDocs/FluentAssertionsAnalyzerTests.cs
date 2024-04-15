@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions.Execution;
@@ -705,5 +706,346 @@ public class FluentAssertionsAnalyzerTests
 
         // new assertion:
         dictionary.Should().Contain(pair);
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowWithMessage_Be()
+    {
+        // arrange
+        static void ThrowException() => throw new Exception("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().Be("message");
+        act.Should().Throw<Exception>().Which.Message.Should().Be("message");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("message");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowWithMessage_Be_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new Exception("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().Be("message");
+        act.Should().Throw<Exception>().Which.Message.Should().Be("message");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("message");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowWithMessage_Contain()
+    {
+        // arrange
+        static void ThrowException() => throw new Exception("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().Contain("mess");
+        act.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("*mess*");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowWithMessage_Contain_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new Exception("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().Contain("mess");
+        act.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("*mess*");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowWithMessage_EndWith()
+    {
+        // arrange
+        static void ThrowException() => throw new Exception("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().EndWith("age");
+        act.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("*age");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowWithMessage_EndWith_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new Exception("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().EndWith("age");
+        act.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("*age");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowWithMessage_StartWith()
+    {
+        // arrange
+        static void ThrowException() => throw new Exception("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
+        act.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("mes*");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowWithMessage_StartWith_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new Exception("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
+        act.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
+
+        // new assertion:
+        act.Should().Throw<Exception>().WithMessage("mes*");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowExactlyWithMessage_Be()
+    {
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("message");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowExactlyWithMessage_Be_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new ArgumentException("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("message");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowExactlyWithMessage_Contain()
+    {
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowExactlyWithMessage_Contain_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new ArgumentException("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowExactlyWithMessage_EndWith()
+    {
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowExactlyWithMessage_EndWith_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new ArgumentException("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowExactlyWithMessage_StartWith()
+    {
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowExactlyWithMessage_StartWith_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new ArgumentException("wrong");
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
+        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowExactlyWithInnerExceptionExactly_BeOfType()
+    {
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
+        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowExactlyWithInnerExceptionExactly_BeOfType_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>();
+        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>();
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<ArgumentException>();
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowWithInnerExceptionExactly_BeOfType()
+    {
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
+        act.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
+
+        // new assertion:
+        act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowWithInnerExceptionExactly_BeOfType_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>();
+        act.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>();
+
+        // new assertion:
+        act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<ArgumentException>();
+    }
+
+    [TestMethod]
+    public void ExceptionShouldThrowExactlyWithInnerException_BeAssignableTo()
+    {
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<InvalidOperationException>();
+        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<InvalidOperationException>();
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void ExceptionShouldThrowExactlyWithInnerException_BeAssignableTo_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
+        Action act = ThrowException;
+
+        // old assertion:
+        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<ArgumentException>();
+        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<ArgumentException>();
+
+        // new assertion:
+        act.Should().ThrowExactly<ArgumentException>().WithInnerException<ArgumentException>();
     }
 }
