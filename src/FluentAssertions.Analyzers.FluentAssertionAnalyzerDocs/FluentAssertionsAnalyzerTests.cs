@@ -10,7 +10,7 @@ namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 public class FluentAssertionsAnalyzerTests
 {
     [TestMethod]
-    public void CollectionsShouldNotBeEmpty()
+    public void CollectionShouldNotBeEmpty()
     {
         // arrange
         var collection = new List<int> { 1, 2, 3 };
@@ -23,7 +23,7 @@ public class FluentAssertionsAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void CollectionsShouldNotBeEmpty_Failure()
+    public void CollectionShouldNotBeEmpty_Failure()
     {
         using var scope = new AssertionScope();
         // arrange
@@ -713,14 +713,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new Exception("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().Be("message");
-        act.Should().Throw<Exception>().Which.Message.Should().Be("message");
+        action.Should().Throw<Exception>().And.Message.Should().Be("message");
+        action.Should().Throw<Exception>().Which.Message.Should().Be("message");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("message");
+        action.Should().Throw<Exception>().WithMessage("message");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -729,14 +729,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new Exception("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().Be("message");
-        act.Should().Throw<Exception>().Which.Message.Should().Be("message");
+        action.Should().Throw<Exception>().And.Message.Should().Be("message");
+        action.Should().Throw<Exception>().Which.Message.Should().Be("message");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("message");
+        action.Should().Throw<Exception>().WithMessage("message");
     }
 
     [TestMethod]
@@ -744,14 +744,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new Exception("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().Contain("mess");
-        act.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
+        action.Should().Throw<Exception>().And.Message.Should().Contain("mess");
+        action.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("*mess*");
+        action.Should().Throw<Exception>().WithMessage("*mess*");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -760,14 +760,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new Exception("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().Contain("mess");
-        act.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
+        action.Should().Throw<Exception>().And.Message.Should().Contain("mess");
+        action.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("*mess*");
+        action.Should().Throw<Exception>().WithMessage("*mess*");
     }
 
     [TestMethod]
@@ -775,14 +775,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new Exception("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().EndWith("age");
-        act.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
+        action.Should().Throw<Exception>().And.Message.Should().EndWith("age");
+        action.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("*age");
+        action.Should().Throw<Exception>().WithMessage("*age");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -791,14 +791,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new Exception("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().EndWith("age");
-        act.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
+        action.Should().Throw<Exception>().And.Message.Should().EndWith("age");
+        action.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("*age");
+        action.Should().Throw<Exception>().WithMessage("*age");
     }
 
     [TestMethod]
@@ -806,14 +806,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new Exception("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
-        act.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
+        action.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
+        action.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("mes*");
+        action.Should().Throw<Exception>().WithMessage("mes*");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -822,14 +822,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new Exception("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
-        act.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
+        action.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
+        action.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
 
         // new assertion:
-        act.Should().Throw<Exception>().WithMessage("mes*");
+        action.Should().Throw<Exception>().WithMessage("mes*");
     }
 
     [TestMethod]
@@ -837,14 +837,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new ArgumentException("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("message");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("message");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -853,14 +853,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new ArgumentException("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("message");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("message");
     }
 
     [TestMethod]
@@ -868,14 +868,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new ArgumentException("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -884,14 +884,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new ArgumentException("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
     }
 
     [TestMethod]
@@ -899,14 +899,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new ArgumentException("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -915,14 +915,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new ArgumentException("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
     }
 
     [TestMethod]
@@ -930,14 +930,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new ArgumentException("message");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -946,14 +946,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new ArgumentException("wrong");
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
-        act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
+        action.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
+        action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
+        action.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
     }
 
     [TestMethod]
@@ -961,14 +961,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
-        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
+        action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
+        action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
+        action.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -977,14 +977,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>();
-        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>();
+        action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>();
+        action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>();
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<ArgumentException>();
+        action.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<ArgumentException>();
     }
 
     [TestMethod]
@@ -992,14 +992,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
-        act.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
+        action.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
+        action.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
 
         // new assertion:
-        act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
+        action.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -1008,14 +1008,14 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>();
-        act.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>();
+        action.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>();
+        action.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>();
 
         // new assertion:
-        act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<ArgumentException>();
+        action.Should().Throw<ArgumentException>().WithInnerExceptionExactly<ArgumentException>();
     }
 
     [TestMethod]
@@ -1023,14 +1023,14 @@ public class FluentAssertionsAnalyzerTests
     {
         // arrange
         static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<InvalidOperationException>();
-        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<InvalidOperationException>();
+        action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<InvalidOperationException>();
+        action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<InvalidOperationException>();
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();
+        action.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -1039,13 +1039,13 @@ public class FluentAssertionsAnalyzerTests
         using var scope = new AssertionScope();
         // arrange
         static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-        Action act = ThrowException;
+        Action action = ThrowException;
 
         // old assertion:
-        act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<ArgumentException>();
-        act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<ArgumentException>();
+        action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<ArgumentException>();
+        action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<ArgumentException>();
 
         // new assertion:
-        act.Should().ThrowExactly<ArgumentException>().WithInnerException<ArgumentException>();
+        action.Should().ThrowExactly<ArgumentException>().WithInnerException<ArgumentException>();
     }
 }
