@@ -4,7 +4,7 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 # FluentAssertions Analyzer Docs
 
-- [CollectionsShouldNotBeEmpty](#scenario-collectionsshouldnotbeempty) - `collection.Should().NotBeEmpty();`
+- [CollectionShouldNotBeEmpty](#scenario-collectionshouldnotbeempty) - `collection.Should().NotBeEmpty();`
 - [CollectionShouldBeEmpty](#scenario-collectionshouldbeempty) - `collection.Should().BeEmpty();`
 - [CollectionShouldNotContainCondition](#scenario-collectionshouldnotcontaincondition) - `collection.Should().NotContain(i => i == 4);`
 - [CollectionShouldNotContainItem](#scenario-collectionshouldnotcontainitem) - `collection.Should().NotContain(4);`
@@ -29,22 +29,22 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [DictionaryShouldNotContainValue](#scenario-dictionaryshouldnotcontainvalue) - `dictionary.Should().NotContainValue(4);`
 - [DictionaryShouldContainKeyAndValue](#scenario-dictionaryshouldcontainkeyandvalue) - `dictionary.Should().Contain("two", 2);`
 - [DictionaryShouldContainPair](#scenario-dictionaryshouldcontainpair) - `dictionary.Should().Contain(pair);`
-- [ExceptionShouldThrowWithMessage_Be](#scenario-exceptionshouldthrowwithmessage_be) - `act.Should().Throw<Exception>().WithMessage("message");`
-- [ExceptionShouldThrowWithMessage_Contain](#scenario-exceptionshouldthrowwithmessage_contain) - `act.Should().Throw<Exception>().WithMessage("*mess*");`
-- [ExceptionShouldThrowWithMessage_EndWith](#scenario-exceptionshouldthrowwithmessage_endwith) - `act.Should().Throw<Exception>().WithMessage("*age");`
-- [ExceptionShouldThrowWithMessage_StartWith](#scenario-exceptionshouldthrowwithmessage_startwith) - `act.Should().Throw<Exception>().WithMessage("mes*");`
-- [ExceptionShouldThrowExactlyWithMessage_Be](#scenario-exceptionshouldthrowexactlywithmessage_be) - `act.Should().ThrowExactly<ArgumentException>().WithMessage("message");`
-- [ExceptionShouldThrowExactlyWithMessage_Contain](#scenario-exceptionshouldthrowexactlywithmessage_contain) - `act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");`
-- [ExceptionShouldThrowExactlyWithMessage_EndWith](#scenario-exceptionshouldthrowexactlywithmessage_endwith) - `act.Should().ThrowExactly<ArgumentException>().WithMessage("*age");`
-- [ExceptionShouldThrowExactlyWithMessage_StartWith](#scenario-exceptionshouldthrowexactlywithmessage_startwith) - `act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");`
-- [ExceptionShouldThrowExactlyWithInnerExceptionExactly_BeOfType](#scenario-exceptionshouldthrowexactlywithinnerexceptionexactly_beoftype) - `act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();`
-- [ExceptionShouldThrowWithInnerExceptionExactly_BeOfType](#scenario-exceptionshouldthrowwithinnerexceptionexactly_beoftype) - `act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();`
-- [ExceptionShouldThrowExactlyWithInnerException_BeAssignableTo](#scenario-exceptionshouldthrowexactlywithinnerexception_beassignableto) - `act.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();`
+- [ExceptionShouldThrowWithMessage_Be](#scenario-exceptionshouldthrowwithmessage_be) - `action.Should().Throw<Exception>().WithMessage("message");`
+- [ExceptionShouldThrowWithMessage_Contain](#scenario-exceptionshouldthrowwithmessage_contain) - `action.Should().Throw<Exception>().WithMessage("*mess*");`
+- [ExceptionShouldThrowWithMessage_EndWith](#scenario-exceptionshouldthrowwithmessage_endwith) - `action.Should().Throw<Exception>().WithMessage("*age");`
+- [ExceptionShouldThrowWithMessage_StartWith](#scenario-exceptionshouldthrowwithmessage_startwith) - `action.Should().Throw<Exception>().WithMessage("mes*");`
+- [ExceptionShouldThrowExactlyWithMessage_Be](#scenario-exceptionshouldthrowexactlywithmessage_be) - `action.Should().ThrowExactly<ArgumentException>().WithMessage("message");`
+- [ExceptionShouldThrowExactlyWithMessage_Contain](#scenario-exceptionshouldthrowexactlywithmessage_contain) - `action.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");`
+- [ExceptionShouldThrowExactlyWithMessage_EndWith](#scenario-exceptionshouldthrowexactlywithmessage_endwith) - `action.Should().ThrowExactly<ArgumentException>().WithMessage("*age");`
+- [ExceptionShouldThrowExactlyWithMessage_StartWith](#scenario-exceptionshouldthrowexactlywithmessage_startwith) - `action.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");`
+- [ExceptionShouldThrowExactlyWithInnerExceptionExactly_BeOfType](#scenario-exceptionshouldthrowexactlywithinnerexceptionexactly_beoftype) - `action.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();`
+- [ExceptionShouldThrowWithInnerExceptionExactly_BeOfType](#scenario-exceptionshouldthrowwithinnerexceptionexactly_beoftype) - `action.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();`
+- [ExceptionShouldThrowExactlyWithInnerException_BeAssignableTo](#scenario-exceptionshouldthrowexactlywithinnerexception_beassignableto) - `action.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();`
 
 
 ## Scenarios
 
-### scenario: CollectionsShouldNotBeEmpty
+### scenario: CollectionShouldNotBeEmpty
 
 ```cs
 // arrange
@@ -723,14 +723,14 @@ dictionary.Should().Contain(pair); 	// fail message: Expected dictionary to cont
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().Be("message");
-act.Should().Throw<Exception>().Which.Message.Should().Be("message");
+action.Should().Throw<Exception>().And.Message.Should().Be("message");
+action.Should().Throw<Exception>().Which.Message.Should().Be("message");
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("message");
+action.Should().Throw<Exception>().WithMessage("message");
 ```
 
 #### Failure messages
@@ -738,14 +738,14 @@ act.Should().Throw<Exception>().WithMessage("message");
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().Be("message"); 	// fail message: Expected act to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
-act.Should().Throw<Exception>().Which.Message.Should().Be("message"); 	// fail message: Expected act to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
+action.Should().Throw<Exception>().And.Message.Should().Be("message"); 	// fail message: Expected action to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
+action.Should().Throw<Exception>().Which.Message.Should().Be("message"); 	// fail message: Expected action to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("message"); 	// fail message: Expected exception message to match the equivalent of "message", but "wrong" does not.
+action.Should().Throw<Exception>().WithMessage("message"); 	// fail message: Expected exception message to match the equivalent of "message", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowWithMessage_Contain
@@ -753,14 +753,14 @@ act.Should().Throw<Exception>().WithMessage("message"); 	// fail message: Expect
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().Contain("mess");
-act.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
+action.Should().Throw<Exception>().And.Message.Should().Contain("mess");
+action.Should().Throw<Exception>().Which.Message.Should().Contain("mess");
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("*mess*");
+action.Should().Throw<Exception>().WithMessage("*mess*");
 ```
 
 #### Failure messages
@@ -768,14 +768,14 @@ act.Should().Throw<Exception>().WithMessage("*mess*");
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().Contain("mess"); 	// fail message: Expected act "wrong" to contain "mess".
-act.Should().Throw<Exception>().Which.Message.Should().Contain("mess"); 	// fail message: Expected act "wrong" to contain "mess".
+action.Should().Throw<Exception>().And.Message.Should().Contain("mess"); 	// fail message: Expected action "wrong" to contain "mess".
+action.Should().Throw<Exception>().Which.Message.Should().Contain("mess"); 	// fail message: Expected action "wrong" to contain "mess".
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("*mess*"); 	// fail message: Expected exception message to match the equivalent of "*mess*", but "wrong" does not.
+action.Should().Throw<Exception>().WithMessage("*mess*"); 	// fail message: Expected exception message to match the equivalent of "*mess*", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowWithMessage_EndWith
@@ -783,14 +783,14 @@ act.Should().Throw<Exception>().WithMessage("*mess*"); 	// fail message: Expecte
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().EndWith("age");
-act.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
+action.Should().Throw<Exception>().And.Message.Should().EndWith("age");
+action.Should().Throw<Exception>().Which.Message.Should().EndWith("age");
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("*age");
+action.Should().Throw<Exception>().WithMessage("*age");
 ```
 
 #### Failure messages
@@ -798,14 +798,14 @@ act.Should().Throw<Exception>().WithMessage("*age");
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().EndWith("age"); 	// fail message: Expected act "wrong" to end with "age".
-act.Should().Throw<Exception>().Which.Message.Should().EndWith("age"); 	// fail message: Expected act "wrong" to end with "age".
+action.Should().Throw<Exception>().And.Message.Should().EndWith("age"); 	// fail message: Expected action "wrong" to end with "age".
+action.Should().Throw<Exception>().Which.Message.Should().EndWith("age"); 	// fail message: Expected action "wrong" to end with "age".
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("*age"); 	// fail message: Expected exception message to match the equivalent of "*age", but "wrong" does not.
+action.Should().Throw<Exception>().WithMessage("*age"); 	// fail message: Expected exception message to match the equivalent of "*age", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowWithMessage_StartWith
@@ -813,14 +813,14 @@ act.Should().Throw<Exception>().WithMessage("*age"); 	// fail message: Expected 
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
-act.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
+action.Should().Throw<Exception>().And.Message.Should().StartWith("mes");
+action.Should().Throw<Exception>().Which.Message.Should().StartWith("mes");
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("mes*");
+action.Should().Throw<Exception>().WithMessage("mes*");
 ```
 
 #### Failure messages
@@ -828,14 +828,14 @@ act.Should().Throw<Exception>().WithMessage("mes*");
 ```cs
 // arrange
 static void ThrowException() => throw new Exception("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<Exception>().And.Message.Should().StartWith("mes"); 	// fail message: Expected act to start with "mes", but "wrong" differs near "wro" (index 0).
-act.Should().Throw<Exception>().Which.Message.Should().StartWith("mes"); 	// fail message: Expected act to start with "mes", but "wrong" differs near "wro" (index 0).
+action.Should().Throw<Exception>().And.Message.Should().StartWith("mes"); 	// fail message: Expected action to start with "mes", but "wrong" differs near "wro" (index 0).
+action.Should().Throw<Exception>().Which.Message.Should().StartWith("mes"); 	// fail message: Expected action to start with "mes", but "wrong" differs near "wro" (index 0).
 
 // new assertion:
-act.Should().Throw<Exception>().WithMessage("mes*"); 	// fail message: Expected exception message to match the equivalent of "mes*", but "wrong" does not.
+action.Should().Throw<Exception>().WithMessage("mes*"); 	// fail message: Expected exception message to match the equivalent of "mes*", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowExactlyWithMessage_Be
@@ -843,14 +843,14 @@ act.Should().Throw<Exception>().WithMessage("mes*"); 	// fail message: Expected 
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message");
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message");
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("message");
+action.Should().ThrowExactly<ArgumentException>().WithMessage("message");
 ```
 
 #### Failure messages
@@ -858,14 +858,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("message");
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message"); 	// fail message: Expected act to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message"); 	// fail message: Expected act to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Be("message"); 	// fail message: Expected action to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Be("message"); 	// fail message: Expected action to be "message" with a length of 7, but "wrong" has a length of 5, differs near "wro" (index 0).
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("message"); 	// fail message: Expected exception message to match the equivalent of "message", but "wrong" does not.
+action.Should().ThrowExactly<ArgumentException>().WithMessage("message"); 	// fail message: Expected exception message to match the equivalent of "message", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowExactlyWithMessage_Contain
@@ -873,14 +873,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("message"); 	// fail 
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess");
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess");
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
+action.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
 ```
 
 #### Failure messages
@@ -888,14 +888,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess"); 	// fail message: Expected act "wrong" to contain "mess".
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess"); 	// fail message: Expected act "wrong" to contain "mess".
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().Contain("mess"); 	// fail message: Expected action "wrong" to contain "mess".
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().Contain("mess"); 	// fail message: Expected action "wrong" to contain "mess".
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*"); 	// fail message: Expected exception message to match the equivalent of "*mess*", but "wrong" does not.
+action.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*"); 	// fail message: Expected exception message to match the equivalent of "*mess*", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowExactlyWithMessage_EndWith
@@ -903,14 +903,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*"); 	// fail m
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age");
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age");
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
+action.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
 ```
 
 #### Failure messages
@@ -918,14 +918,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age"); 	// fail message: Expected act "wrong" to end with "age".
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age"); 	// fail message: Expected act "wrong" to end with "age".
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().EndWith("age"); 	// fail message: Expected action "wrong" to end with "age".
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().EndWith("age"); 	// fail message: Expected action "wrong" to end with "age".
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("*age"); 	// fail message: Expected exception message to match the equivalent of "*age", but "wrong" does not.
+action.Should().ThrowExactly<ArgumentException>().WithMessage("*age"); 	// fail message: Expected exception message to match the equivalent of "*age", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowExactlyWithMessage_StartWith
@@ -933,14 +933,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("*age"); 	// fail mes
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes");
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes");
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
+action.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
 ```
 
 #### Failure messages
@@ -948,14 +948,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("wrong");
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes"); 	// fail message: Expected act to start with "mes", but "wrong" differs near "wro" (index 0).
-act.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes"); 	// fail message: Expected act to start with "mes", but "wrong" differs near "wro" (index 0).
+action.Should().ThrowExactly<ArgumentException>().And.Message.Should().StartWith("mes"); 	// fail message: Expected action to start with "mes", but "wrong" differs near "wro" (index 0).
+action.Should().ThrowExactly<ArgumentException>().Which.Message.Should().StartWith("mes"); 	// fail message: Expected action to start with "mes", but "wrong" differs near "wro" (index 0).
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*"); 	// fail message: Expected exception message to match the equivalent of "mes*", but "wrong" does not.
+action.Should().ThrowExactly<ArgumentException>().WithMessage("mes*"); 	// fail message: Expected exception message to match the equivalent of "mes*", but "wrong" does not.
 ```
 
 ### scenario: ExceptionShouldThrowExactlyWithInnerExceptionExactly_BeOfType
@@ -963,14 +963,14 @@ act.Should().ThrowExactly<ArgumentException>().WithMessage("mes*"); 	// fail mes
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
-act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
+action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
+action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
+action.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
 ```
 
 #### Failure messages
@@ -978,14 +978,14 @@ act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<Invalid
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
-act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
+action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
+action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<ArgumentException>(); 	// fail message: Expected inner System.ArgumentException, but found System.InvalidOperationException: Operation is not valid due to the current state of the object..
+action.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<ArgumentException>(); 	// fail message: Expected inner System.ArgumentException, but found System.InvalidOperationException: Operation is not valid due to the current state of the object..
 ```
 
 ### scenario: ExceptionShouldThrowWithInnerExceptionExactly_BeOfType
@@ -993,14 +993,14 @@ act.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<Argumen
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
-act.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
+action.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<InvalidOperationException>();
+action.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<InvalidOperationException>();
 
 // new assertion:
-act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
+action.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
 ```
 
 #### Failure messages
@@ -1008,14 +1008,14 @@ act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperati
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
-act.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
+action.Should().Throw<ArgumentException>().And.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
+action.Should().Throw<ArgumentException>().Which.InnerException.Should().BeOfType<ArgumentException>(); 	// fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException.
 
 // new assertion:
-act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<ArgumentException>(); 	// fail message: Expected inner System.ArgumentException, but found System.InvalidOperationException: Operation is not valid due to the current state of the object..
+action.Should().Throw<ArgumentException>().WithInnerExceptionExactly<ArgumentException>(); 	// fail message: Expected inner System.ArgumentException, but found System.InvalidOperationException: Operation is not valid due to the current state of the object..
 ```
 
 ### scenario: ExceptionShouldThrowExactlyWithInnerException_BeAssignableTo
@@ -1023,14 +1023,14 @@ act.Should().Throw<ArgumentException>().WithInnerExceptionExactly<ArgumentExcept
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<InvalidOperationException>();
-act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<InvalidOperationException>();
+action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<InvalidOperationException>();
+action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<InvalidOperationException>();
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();
+action.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();
 ```
 
 #### Failure messages
@@ -1038,14 +1038,14 @@ act.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperati
 ```cs
 // arrange
 static void ThrowException() => throw new ArgumentException("message", new InvalidOperationException());
-Action act = ThrowException;
+Action action = ThrowException;
 
 // old assertion:
-act.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<ArgumentException>(); 	// fail message: Expected act to be assignable to System.ArgumentException, but System.InvalidOperationException is not.
-act.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<ArgumentException>(); 	// fail message: Expected act to be assignable to System.ArgumentException, but System.InvalidOperationException is not.
+action.Should().ThrowExactly<ArgumentException>().And.InnerException.Should().BeAssignableTo<ArgumentException>(); 	// fail message: Expected action to be assignable to System.ArgumentException, but System.InvalidOperationException is not.
+action.Should().ThrowExactly<ArgumentException>().Which.InnerException.Should().BeAssignableTo<ArgumentException>(); 	// fail message: Expected action to be assignable to System.ArgumentException, but System.InvalidOperationException is not.
 
 // new assertion:
-act.Should().ThrowExactly<ArgumentException>().WithInnerException<ArgumentException>(); 	// fail message: Expected inner System.ArgumentException, but found System.InvalidOperationException: Operation is not valid due to the current state of the object..
+action.Should().ThrowExactly<ArgumentException>().WithInnerException<ArgumentException>(); 	// fail message: Expected inner System.ArgumentException, but found System.InvalidOperationException: Operation is not valid due to the current state of the object..
 ```
 
 
