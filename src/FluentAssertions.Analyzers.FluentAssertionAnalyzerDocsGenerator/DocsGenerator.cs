@@ -26,6 +26,11 @@ public class DocsGenerator
         var toc = new StringBuilder();
         var scenarios = new StringBuilder();
 
+        docs.AppendLine("<!--");
+        docs.AppendLine("This is a generated file, please edit src\\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\\DocsGenerator.cs to change the contents");
+        docs.AppendLine("-->");
+        docs.AppendLine();
+
         docs.AppendLine("# FluentAssertions Analyzer Docs");
         docs.AppendLine();
 

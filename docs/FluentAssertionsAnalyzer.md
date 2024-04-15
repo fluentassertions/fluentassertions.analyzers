@@ -1,3 +1,7 @@
+<!--
+This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\DocsGenerator.cs to change the contents
+-->
+
 # FluentAssertions Analyzer Docs
 
 - [CollectionsShouldNotBeEmpty](#scenario-collectionsshouldnotbeempty) - `collection.Should().NotBeEmpty();`
