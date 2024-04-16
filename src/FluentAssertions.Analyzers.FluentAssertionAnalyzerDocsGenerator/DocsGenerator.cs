@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions.Analyzers.TestUtils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,10 +18,10 @@ public class DocsGenerator
 {
     public async Task Execute()
     {
-        DiagnosticAnalyzer analyzer = new FluentAssertionsAnalyzer();
+        var analyzers = ImmutableArray.Create(CodeAnalyzersUtils.GetAllAnalyzers());
 
         var compilation = await FluentAssertionAnalyzerDocsUtils.GetFluentAssertionAnalyzerDocsCompilation();
-        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
+        var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers);
 
         var testAssembly = typeof(FluentAssertionAnalyzerDocs.FluentAssertionsAnalyzerTests).Assembly;
 
@@ -150,7 +151,7 @@ public class DocsGenerator
             }
 
             var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
-            foreach (var diagnostic in diagnostics.Where(diagnostic => analyzer.SupportedDiagnostics.Any(d => d.Id == diagnostic.Id)))
+            foreach (var diagnostic in diagnostics.Where(diagnostic => analyzers.Any(analyzer => analyzer.SupportedDiagnostics.Any(d => d.Id == diagnostic.Id))))
             {
                 Console.WriteLine($"source: {root.FindNode(diagnostic.Location.SourceSpan)}");
                 Console.WriteLine($"  diagnostic: {diagnostic}");
