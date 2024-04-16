@@ -22,27 +22,29 @@ public class DocsGenerator
         var compilation = await FluentAssertionAnalyzerDocsUtils.GetFluentAssertionAnalyzerDocsCompilation();
         var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
 
-        var docs = new StringBuilder();
-        var toc = new StringBuilder();
-        var scenarios = new StringBuilder();
-
-        docs.AppendLine("<!--");
-        docs.AppendLine("This is a generated file, please edit src\\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\\DocsGenerator.cs to change the contents");
-        docs.AppendLine("-->");
-        docs.AppendLine();
-
-        docs.AppendLine("# FluentAssertions Analyzer Docs");
-        docs.AppendLine();
-
-        scenarios.AppendLine("## Scenarios");
-        scenarios.AppendLine();
-
-        var testAssembly = typeof(FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.FluentAssertionsAnalyzerTests).Assembly;
+        var testAssembly = typeof(FluentAssertionAnalyzerDocs.FluentAssertionsAnalyzerTests).Assembly;
 
         foreach (var tree in compilationWithAnalyzers.Compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
         {
             Console.WriteLine($"File: {Path.GetFileName(tree.FilePath)}");
 
+            var docsName = Path.GetFileNameWithoutExtension(tree.FilePath).Replace("Tests", ".md");
+
+            var docs = new StringBuilder();
+            var toc = new StringBuilder();
+            var scenarios = new StringBuilder();
+    
+            docs.AppendLine("<!--");
+            docs.AppendLine("This is a generated file, please edit src\\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\\DocsGenerator.cs to change the contents");
+            docs.AppendLine("-->");
+            docs.AppendLine();
+
+            var subject = Path.GetFileNameWithoutExtension(tree.FilePath).Replace("AnalyzerTests", string.Empty);
+            docs.AppendLine($"# {subject} Analyzer Docs");
+            docs.AppendLine();
+    
+            scenarios.AppendLine("## Scenarios");
+            scenarios.AppendLine();
 
             var root = await tree.GetRootAsync();
             var classDef = root.DescendantNodes().OfType<ClassDeclarationSyntax>().First();
@@ -114,22 +116,22 @@ public class DocsGenerator
                 Console.WriteLine($"source: {root.FindNode(diagnostic.Location.SourceSpan)}");
                 Console.WriteLine($"  diagnostic: {diagnostic}");
             }
+
+            docs.AppendLine(toc.ToString());
+            docs.AppendLine();
+            docs.AppendLine(scenarios.ToString());
+
+            var docsPath = Path.Combine(Environment.CurrentDirectory, "..", "..", "docs", docsName);
+            Directory.CreateDirectory(Path.GetDirectoryName(docsPath));
+            await File.WriteAllTextAsync(docsPath, docs.ToString());
         }
-
-        docs.AppendLine(toc.ToString());
-        docs.AppendLine();
-        docs.AppendLine(scenarios.ToString());
-
-        var docsPath = Path.Combine(Environment.CurrentDirectory, "..", "..", "docs", "FluentAssertionsAnalyzer.md");
-        Directory.CreateDirectory(Path.GetDirectoryName(docsPath));
-        await File.WriteAllTextAsync(docsPath, docs.ToString());
     }
 
-    private string[] GetMethodExceptionMessageLines(object instnace, MethodInfo method)
+    private string[] GetMethodExceptionMessageLines(object instance, MethodInfo method)
     {
         try
         {
-            method.Invoke(instnace, null);
+            method.Invoke(instance, null);
         }
         catch (Exception ex) when (ex.InnerException is AssertFailedException exception)
         {
