@@ -21,14 +21,15 @@ public class DocsVerifier
 
             var root = await tree.GetRootAsync();
             var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+            var methodsMap = methods.ToDictionary(m => m.Identifier.Text);
 
-            foreach (var method in methods)
+            foreach (var method in methods.Where(m => m.AttributeLists.Any(list => list.Attributes.Count is 1 && list.Attributes[0].Name.ToString() is "TestMethod")))
             {
                 Console.WriteLine($"### scenario: {method.Identifier}");
 
                 var oldAssertionComment = method.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// old assertion:"));
                 var newAssertionComment = method.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// new assertion:"));
-                
+
                 var statements = method.Body.Statements.OfType<ExpressionStatementSyntax>();
 
                 var oldAssertions = statements.Where(x => x.Span.CompareTo(oldAssertionComment.Span) > 0 && x.Span.CompareTo(newAssertionComment.Span) < 0);
@@ -40,6 +41,47 @@ public class DocsVerifier
                     {
                         issues.AppendLine($"[{tree.FilePath.Split('\\')[^1]}:{oldAssertion.GetLocation().GetLineSpan().Span.Start}] {method.Identifier} - actual: {oldAssertion.ToFullString()} expected: {newAssertion.ToFullString()}");
                     }
+                }
+
+                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure", out var methodFailure))
+                {
+                    var oldAssertionFailureComment = methodFailure.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// old assertion:"));
+                    var newAssertionFailureComment = methodFailure.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// new assertion:"));
+
+                    var statementsFailure = methodFailure.Body.Statements.OfType<ExpressionStatementSyntax>();
+
+                    var oldAssertionsFailure = statementsFailure.Where(x => x.Span.CompareTo(oldAssertionFailureComment.Span) > 0 && x.Span.CompareTo(newAssertionFailureComment.Span) < 0);
+                    var newAssertionFailure = statementsFailure.Single(x => x.Span.CompareTo(newAssertionFailureComment.Span) > 0);
+
+                    foreach (var oldAssertionFailure in oldAssertionsFailure)
+                    {
+                        if (!oldAssertionFailure.WithoutTrivia().IsEquivalentTo(newAssertionFailure.WithoutTrivia()))
+                        {
+                            issues.AppendLine($"[{tree.FilePath.Split('\\')[^1]}:{oldAssertionFailure.GetLocation().GetLineSpan().Span.Start}] {methodFailure.Identifier} - actual: {oldAssertionFailure.ToFullString()} expected: {newAssertionFailure.ToFullString()}");
+                        }
+                    }
+                }
+
+                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_OldAssertion", out var testWithFailureOldAssertion)
+                && methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_NewAssertion", out var testWithFailureNewAssertion))
+                {
+                    var oldAssertionFailureComment = testWithFailureOldAssertion.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// old assertion:"));
+                    var newAssertionFailureComment = testWithFailureNewAssertion.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// new assertion:"));
+
+                    var statementsFailureOldAssertion = testWithFailureOldAssertion.Body.Statements.OfType<ExpressionStatementSyntax>();
+                    var statementsFailureNewAssertion = testWithFailureNewAssertion.Body.Statements.OfType<ExpressionStatementSyntax>();
+
+                    var oldAssertionsFailure = statementsFailureOldAssertion.Where(x => x.Span.CompareTo(oldAssertionFailureComment.Span) > 0 && x.Span.CompareTo(newAssertionFailureComment.Span) < 0);
+                    var newAssertionFailure = statementsFailureNewAssertion.Single(x => x.Span.CompareTo(newAssertionFailureComment.Span) > 0);
+
+                    foreach (var oldAssertionFailure in oldAssertionsFailure)
+                    {
+                        if (!oldAssertionFailure.WithoutTrivia().IsEquivalentTo(newAssertionFailure.WithoutTrivia()))
+                        {
+                            issues.AppendLine($"[{tree.FilePath.Split('\\')[^1]}:{oldAssertionFailure.GetLocation().GetLineSpan().Span.Start}] {testWithFailureOldAssertion.Identifier} - actual: {oldAssertionFailure.ToFullString()} expected: {newAssertionFailure.ToFullString()}");
+                        }
+                    }
+                
                 }
             }
         }
