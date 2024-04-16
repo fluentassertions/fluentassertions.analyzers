@@ -22,37 +22,41 @@ public class DocsGenerator
         var compilation = await FluentAssertionAnalyzerDocsUtils.GetFluentAssertionAnalyzerDocsCompilation();
         var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
 
-        var docs = new StringBuilder();
-        var toc = new StringBuilder();
-        var scenarios = new StringBuilder();
-
-        docs.AppendLine("<!--");
-        docs.AppendLine("This is a generated file, please edit src\\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\\DocsGenerator.cs to change the contents");
-        docs.AppendLine("-->");
-        docs.AppendLine();
-
-        docs.AppendLine("# FluentAssertions Analyzer Docs");
-        docs.AppendLine();
-
-        scenarios.AppendLine("## Scenarios");
-        scenarios.AppendLine();
-
-        var testAssembly = typeof(FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.FluentAssertionsAnalyzerTests).Assembly;
+        var testAssembly = typeof(FluentAssertionAnalyzerDocs.FluentAssertionsAnalyzerTests).Assembly;
 
         foreach (var tree in compilationWithAnalyzers.Compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
         {
             Console.WriteLine($"File: {Path.GetFileName(tree.FilePath)}");
 
+            var docsName = Path.GetFileNameWithoutExtension(tree.FilePath).Replace("Tests", ".md");
+
+            var docs = new StringBuilder();
+            var toc = new StringBuilder();
+            var scenarios = new StringBuilder();
+
+            docs.AppendLine("<!--");
+            docs.AppendLine("This is a generated file, please edit src\\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\\DocsGenerator.cs to change the contents");
+            docs.AppendLine("-->");
+            docs.AppendLine();
+
+            var subject = Path.GetFileNameWithoutExtension(tree.FilePath).Replace("AnalyzerTests", string.Empty);
+            docs.AppendLine($"# {subject} Analyzer Docs");
+            docs.AppendLine();
+
+            scenarios.AppendLine("## Scenarios");
+            scenarios.AppendLine();
 
             var root = await tree.GetRootAsync();
             var classDef = root.DescendantNodes().OfType<ClassDeclarationSyntax>().First();
             var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+            var methodsMap = methods.ToDictionary(m => m.Identifier.Text);
 
             var classType = testAssembly.GetType($"FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.{classDef.Identifier.Text}");
             var classInstance = Activator.CreateInstance(classType);
 
             foreach (var method in methods.Where(m => m.AttributeLists.Any(list => list.Attributes.Count is 1 && list.Attributes[0].Name.ToString() is "TestMethod")))
             {
+                // success scenario:
                 {
                     scenarios.AppendLine($"### scenario: {method.Identifier}");
                     scenarios.AppendLine();
@@ -67,8 +71,10 @@ public class DocsGenerator
 
                     toc.AppendLine($"- [{method.Identifier}](#scenario-{method.Identifier.Text.ToLower()}) - `{newAssertion}`");
                 }
+
+                // FluentAssertion failures scenario:
+                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure", out var testWithFailure))
                 {
-                    var testWithFailure = methods.FirstOrDefault(m => m.Identifier.Text == $"{method.Identifier.Text}_Failure");
                     var testMethodWithFailure = classType.GetMethod(testWithFailure.Identifier.Text);
 
                     var exceptionMessageLines = GetMethodExceptionMessageLines(classInstance, testMethodWithFailure);
@@ -88,8 +94,6 @@ public class DocsGenerator
                     var arrange = bodyLines.TakeWhile(x => !string.IsNullOrEmpty(x))
                         .Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
 
-                    var methodBody = $"```cs{Environment.NewLine}{arrange}{Environment.NewLine}```";
-
                     scenarios.AppendLine($"#### Failure messages");
                     scenarios.AppendLine();
                     scenarios.AppendLine("```cs");
@@ -106,6 +110,43 @@ public class DocsGenerator
                     scenarios.AppendLine("```");
                     scenarios.AppendLine();
                 }
+
+                // Testing Libraries failures scenarios:
+                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_OldAssertion", out var testWithFailureOldAssertion)
+                && methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_NewAssertion", out var testWithFailureNewAssertion))
+                {
+                    var testMethodWithFailureOldAssertion = classType.GetMethod(testWithFailureOldAssertion.Identifier.Text);
+                    var testMethodWithFailureNewAssertion = classType.GetMethod(testWithFailureNewAssertion.Identifier.Text);
+
+                    var exceptionMessageLinesOldAssertion = GetMethodExceptionMessage(classInstance, testMethodWithFailureOldAssertion);
+                    var exceptionMessageLinesNewAssertion = GetMethodExceptionMessage(classInstance, testMethodWithFailureNewAssertion);
+
+                    var oldAssertionComment = testWithFailureOldAssertion.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// old assertion:"));
+                    var newAssertionComment = testWithFailureNewAssertion.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// new assertion:"));
+
+                    var bodyLines = testWithFailureNewAssertion.Body.ToFullString().Split(Environment.NewLine)[2..^2];
+                    var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
+
+                    var oldAssertion = testWithFailureOldAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(oldAssertionComment.Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesOldAssertion;
+                    var newAssertion = testWithFailureNewAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(newAssertionComment.Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesNewAssertion;
+
+                    var arrange = bodyLines.TakeWhile(x => !string.IsNullOrEmpty(x))
+                        .Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
+
+                    scenarios.AppendLine($"#### Failure messages");
+                    scenarios.AppendLine();
+                    scenarios.AppendLine("```cs");
+                    scenarios.AppendLine(arrange);
+                    scenarios.AppendLine();
+                    scenarios.AppendLine($"// old assertion:");
+                    scenarios.AppendLine(oldAssertion);
+                    scenarios.AppendLine();
+                    scenarios.AppendLine($"// new assertion:");
+                    scenarios.AppendLine(newAssertion);
+                    scenarios.AppendLine("```");
+                    scenarios.AppendLine();
+                }
+
             }
 
             var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
@@ -114,26 +155,28 @@ public class DocsGenerator
                 Console.WriteLine($"source: {root.FindNode(diagnostic.Location.SourceSpan)}");
                 Console.WriteLine($"  diagnostic: {diagnostic}");
             }
+
+            docs.AppendLine(toc.ToString());
+            docs.AppendLine();
+            docs.AppendLine(scenarios.ToString());
+
+            var docsPath = Path.Combine(Environment.CurrentDirectory, "..", "..", "docs", docsName);
+            Directory.CreateDirectory(Path.GetDirectoryName(docsPath));
+            await File.WriteAllTextAsync(docsPath, docs.ToString());
         }
-
-        docs.AppendLine(toc.ToString());
-        docs.AppendLine();
-        docs.AppendLine(scenarios.ToString());
-
-        var docsPath = Path.Combine(Environment.CurrentDirectory, "..", "..", "docs", "FluentAssertionsAnalyzer.md");
-        Directory.CreateDirectory(Path.GetDirectoryName(docsPath));
-        await File.WriteAllTextAsync(docsPath, docs.ToString());
     }
 
-    private string[] GetMethodExceptionMessageLines(object instnace, MethodInfo method)
+    private string[] GetMethodExceptionMessageLines(object instance, MethodInfo method)
+        => GetMethodExceptionMessage(instance, method).Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+    private string GetMethodExceptionMessage(object instance, MethodInfo method)
     {
         try
         {
-            method.Invoke(instnace, null);
+            method.Invoke(instance, null);
         }
         catch (Exception ex) when (ex.InnerException is AssertFailedException exception)
         {
-            return exception.Message.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            return exception.Message;
         }
 
         throw new InvalidOperationException("Method did not throw an exception");
