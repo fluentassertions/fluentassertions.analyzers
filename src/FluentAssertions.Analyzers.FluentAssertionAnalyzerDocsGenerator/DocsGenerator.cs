@@ -113,22 +113,23 @@ public class DocsGenerator
                 }
 
                 // Testing Libraries failures scenarios:
-                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_OldAssertion", out var testWithFailureOldAssertion)
-                && methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_NewAssertion", out var testWithFailureNewAssertion))
+                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_NewAssertion", out var testWithFailureNewAssertion))
                 {
-                    var testMethodWithFailureOldAssertion = classType.GetMethod(testWithFailureOldAssertion.Identifier.Text);
+                    var testWithFailureOldAssertions = methodsMap.Where(x => x.Key.StartsWith($"{method.Identifier.Text}_Failure_OldAssertion")).Select(x => x.Value);
+
+                    var testMethodWithFailureOldAssertions = testWithFailureOldAssertions.Select(m => classType.GetMethod(m.Identifier.Text));
                     var testMethodWithFailureNewAssertion = classType.GetMethod(testWithFailureNewAssertion.Identifier.Text);
 
-                    var exceptionMessageLinesOldAssertion = GetMethodExceptionMessage(classInstance, testMethodWithFailureOldAssertion);
+                    var exceptionMessageLinesOldAssertions = testMethodWithFailureOldAssertions.Select(m => GetMethodExceptionMessage(classInstance, m)).ToArray();
                     var exceptionMessageLinesNewAssertion = GetMethodExceptionMessage(classInstance, testMethodWithFailureNewAssertion);
 
-                    var oldAssertionComment = testWithFailureOldAssertion.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// old assertion:"));
+                    var oldAssertionComment = testWithFailureOldAssertions.Select(x => x.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// old assertion:"))).ToArray();
                     var newAssertionComment = testWithFailureNewAssertion.DescendantTrivia().First(x => x.IsKind(SyntaxKind.SingleLineCommentTrivia) && x.ToString().Equals("// new assertion:"));
 
                     var bodyLines = testWithFailureNewAssertion.Body.ToFullString().Split(Environment.NewLine)[2..^2];
                     var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
 
-                    var oldAssertion = testWithFailureOldAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(oldAssertionComment.Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesOldAssertion;
+                    var oldAssertions = testWithFailureOldAssertions.Select((x, i) => x.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(oldAssertionComment[i].Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesOldAssertions[i]);
                     var newAssertion = testWithFailureNewAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(newAssertionComment.Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesNewAssertion;
 
                     var arrange = bodyLines.TakeWhile(x => !string.IsNullOrEmpty(x))
@@ -140,7 +141,10 @@ public class DocsGenerator
                     scenarios.AppendLine(arrange);
                     scenarios.AppendLine();
                     scenarios.AppendLine($"// old assertion:");
-                    scenarios.AppendLine(oldAssertion);
+                    foreach (var oldAssertion in oldAssertions)
+                    {
+                        scenarios.AppendLine(oldAssertion);
+                    }
                     scenarios.AppendLine();
                     scenarios.AppendLine($"// new assertion:");
                     scenarios.AppendLine(newAssertion);
