@@ -93,7 +93,7 @@ public class MsTestAnalyzerTests
     public void ObjectAssertIsNull_Failure_OldAssertion()
     {
         // arrange
-        var obj = new object();
+        var obj = "test";
 
         // old assertion:
         Assert.IsNull(obj);
@@ -103,7 +103,7 @@ public class MsTestAnalyzerTests
     public void ObjectAssertIsNull_Failure_NewAssertion()
     {
         // arrange
-        var obj = new object();
+        var obj = "test";
 
         // new assertion:
         obj.Should().BeNull();

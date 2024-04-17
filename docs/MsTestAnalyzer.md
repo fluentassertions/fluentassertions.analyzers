@@ -80,13 +80,13 @@ obj.Should().BeNull();
 #### Failure messages
 
 ```cs
-var obj = new object();
+var obj = "test";
 
 // old assertion:
 Assert.IsNull(obj); 	// fail message: Assert.IsNull failed. 
 
 // new assertion:
-obj.Should().BeNull(); 	// fail message: Expected obj to be <null>, but found System.Object (HashCode=53299218).
+obj.Should().BeNull(); 	// fail message: Expected obj to be <null>, but found "test".
 ```
 
 ### scenario: ObjectAssertIsNotNull
