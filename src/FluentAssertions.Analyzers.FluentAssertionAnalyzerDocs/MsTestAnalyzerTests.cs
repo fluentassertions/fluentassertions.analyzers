@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
