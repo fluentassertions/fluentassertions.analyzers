@@ -306,40 +306,40 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual{0});")]
         [Implemented]
-        public void AssertOptionalIntAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual, int? expected", assertion);
+        public void AssertOptionalIntegerAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual, int? expected", assertion);
 
         [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual{0});",
             newAssertion: "actual.Should().Be(expected{0});")]
         [Implemented]
-        public void AssertOptionalIntAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
+        public void AssertOptionalIntegerAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("int? actual, int? expected", oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(actual, null{0});")]
         [Implemented]
-        public void AssertOptionalIntAndNullAreEqual1_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
+        public void AssertOptionalIntegerAndNullAreEqual1_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
 
         [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(actual, null{0});",
             newAssertion: "actual.Should().BeNull({0});")]
         [Implemented]
-        public void AssertOptionalIntAndNullAreEqual1_TestCodeFix(string oldAssertion, string newAssertion)
+        public void AssertOptionalIntegerAndNullAreEqual1_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("int? actual", oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(null, actual{0});")]
         [Implemented]
-        public void AssertOptionalIntAndNullAreEqual2_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
+        public void AssertOptionalIntegerAndNullAreEqual2_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
 
         [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(null, actual{0});",
             newAssertion: "actual.Should().BeNull({0});")]
         [Implemented]
-        public void AssertOptionalIntAndNullAreEqual2_TestCodeFix(string oldAssertion, string newAssertion)
+        public void AssertOptionalIntegerAndNullAreEqual2_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("int? actual", oldAssertion, newAssertion);
 
         [DataTestMethod]
