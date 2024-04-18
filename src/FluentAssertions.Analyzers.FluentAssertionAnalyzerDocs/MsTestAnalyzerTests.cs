@@ -235,7 +235,7 @@ public class MsTestAnalyzerTests
         object obj2 = "foo";
 
         // old assertion:
-        Assert.AreEqual(obj1, obj2);
+        Assert.AreEqual(obj2, obj1);
 
         // new assertion:
         obj1.Should().Be(obj2);
@@ -249,7 +249,7 @@ public class MsTestAnalyzerTests
         object obj2 = 42;
 
         // old assertion:
-        Assert.AreEqual(obj1, obj2);
+        Assert.AreEqual(obj2, obj1);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -271,7 +271,7 @@ public class MsTestAnalyzerTests
         int? number2 = 42;
 
         // old assertion:
-        Assert.AreEqual(number1, number2);
+        Assert.AreEqual(number2, number1);
 
         // new assertion:
         number1.Should().Be(number2);
@@ -285,7 +285,7 @@ public class MsTestAnalyzerTests
         int? number2 = 6;
 
         // old assertion:
-        Assert.AreEqual(number1, number2);
+        Assert.AreEqual(number2, number1);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -352,7 +352,7 @@ public class MsTestAnalyzerTests
         double delta = 0.00159;
 
         // old assertion:
-        Assert.AreEqual(number1, number2, delta);
+        Assert.AreEqual(number2, number1, delta);
 
         // new assertion:
         number1.Should().BeApproximately(number2, delta);
@@ -367,7 +367,7 @@ public class MsTestAnalyzerTests
         double delta = 0.0001;
 
         // old assertion:
-        Assert.AreEqual(number1, number2, delta);
+        Assert.AreEqual(number2, number1, delta);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -391,7 +391,7 @@ public class MsTestAnalyzerTests
         float delta = 0.00159f;
 
         // old assertion:
-        Assert.AreEqual(number1, number2, delta);
+        Assert.AreEqual(number2, number1, delta);
 
         // new assertion:
         number1.Should().BeApproximately(number2, delta);
@@ -406,7 +406,7 @@ public class MsTestAnalyzerTests
         float delta = 0.0001f;
 
         // old assertion:
-        Assert.AreEqual(number1, number2, delta);
+        Assert.AreEqual(number2, number1, delta);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -429,9 +429,9 @@ public class MsTestAnalyzerTests
         string str2 = "foo";
 
         // old assertion:
-        Assert.AreEqual(str1, str2);
-        Assert.AreEqual(str1, str2, ignoreCase: false);
-        Assert.AreEqual(str1, str2, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+        Assert.AreEqual(str2, str1);
+        Assert.AreEqual(str2, str1, ignoreCase: false);
+        Assert.AreEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
 
         // new assertion:
         str1.Should().Be(str2);
@@ -445,7 +445,7 @@ public class MsTestAnalyzerTests
         string str2 = "FoO";
 
         // old assertion:
-        Assert.AreEqual(str1, str2);
+        Assert.AreEqual(str2, str1);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -456,7 +456,7 @@ public class MsTestAnalyzerTests
         string str2 = "FoO";
 
         // old assertion:
-        Assert.AreEqual(str1, str2, ignoreCase: false);
+        Assert.AreEqual(str2, str1, ignoreCase: false);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -467,7 +467,7 @@ public class MsTestAnalyzerTests
         string str2 = "FoO";
 
         // old assertion:
-        Assert.AreEqual(str1, str2, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+        Assert.AreEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -489,8 +489,8 @@ public class MsTestAnalyzerTests
         string str2 = "FoO";
 
         // old assertion:
-        Assert.AreEqual(str1, str2, ignoreCase: true);
-        Assert.AreEqual(str1, str2, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+        Assert.AreEqual(str2, str1, ignoreCase: true);
+        Assert.AreEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
 
         // new assertion:
         str1.Should().BeEquivalentTo(str2);
@@ -504,7 +504,7 @@ public class MsTestAnalyzerTests
         string str2 = "bar";
 
         // old assertion:
-        Assert.AreEqual(str1, str2, ignoreCase: true);
+        Assert.AreEqual(str2, str1, ignoreCase: true);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -515,7 +515,7 @@ public class MsTestAnalyzerTests
         string str2 = "bar";
 
         // old assertion:
-        Assert.AreEqual(str1, str2, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+        Assert.AreEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -537,7 +537,7 @@ public class MsTestAnalyzerTests
         object obj2 = "bar";
 
         // old assertion:
-        Assert.AreNotEqual(obj1, obj2);
+        Assert.AreNotEqual(obj2, obj1);
 
         // new assertion:
         obj1.Should().NotBe(obj2);
@@ -551,7 +551,7 @@ public class MsTestAnalyzerTests
         object obj2 = "foo";
 
         // old assertion:
-        Assert.AreNotEqual(obj1, obj2);
+        Assert.AreNotEqual(obj2, obj1);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -573,7 +573,7 @@ public class MsTestAnalyzerTests
         int? number2 = 6;
 
         // old assertion:
-        Assert.AreNotEqual(number1, number2);
+        Assert.AreNotEqual(number2, number1);
 
         // new assertion:
         number1.Should().NotBe(number2);
@@ -587,7 +587,7 @@ public class MsTestAnalyzerTests
         int? number2 = 42;
 
         // old assertion:
-        Assert.AreNotEqual(number1, number2);
+        Assert.AreNotEqual(number2, number1);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -610,7 +610,7 @@ public class MsTestAnalyzerTests
         double delta = 0.0001;
 
         // old assertion:
-        Assert.AreNotEqual(number1, number2, delta);
+        Assert.AreNotEqual(number2, number1, delta);
 
         // new assertion:
         number1.Should().NotBeApproximately(number2, delta);
@@ -625,7 +625,7 @@ public class MsTestAnalyzerTests
         double delta = 0.00159;
 
         // old assertion:
-        Assert.AreNotEqual(number1, number2, delta);
+        Assert.AreNotEqual(number2, number1, delta);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -649,7 +649,7 @@ public class MsTestAnalyzerTests
         float delta = 0.0001f;
 
         // old assertion:
-        Assert.AreNotEqual(number1, number2, delta);
+        Assert.AreNotEqual(number2, number1, delta);
 
         // new assertion:
         number1.Should().NotBeApproximately(number2, delta);
@@ -664,7 +664,7 @@ public class MsTestAnalyzerTests
         float delta = 0.00159f;
 
         // old assertion:
-        Assert.AreNotEqual(number1, number2, delta);
+        Assert.AreNotEqual(number2, number1, delta);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -687,9 +687,9 @@ public class MsTestAnalyzerTests
         string str2 = "bar";
 
         // old assertion:
-        Assert.AreNotEqual(str1, str2);
-        Assert.AreNotEqual(str1, str2, ignoreCase: false);
-        Assert.AreNotEqual(str1, str2, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+        Assert.AreNotEqual(str2, str1);
+        Assert.AreNotEqual(str2, str1, ignoreCase: false);
+        Assert.AreNotEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
 
         // new assertion:
         str1.Should().NotBe(str2);
@@ -703,7 +703,7 @@ public class MsTestAnalyzerTests
         string str2 = "foo";
 
         // old assertion:
-        Assert.AreNotEqual(str1, str2);
+        Assert.AreNotEqual(str2, str1);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -714,7 +714,7 @@ public class MsTestAnalyzerTests
         string str2 = "foo";
 
         // old assertion:
-        Assert.AreNotEqual(str1, str2, ignoreCase: false);
+        Assert.AreNotEqual(str2, str1, ignoreCase: false);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -725,7 +725,7 @@ public class MsTestAnalyzerTests
         string str2 = "foo";
 
         // old assertion:
-        Assert.AreNotEqual(str1, str2, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+        Assert.AreNotEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -747,8 +747,8 @@ public class MsTestAnalyzerTests
         string str2 = "bar";
 
         // old assertion:
-        Assert.AreNotEqual(str1, str2, ignoreCase: true);
-        Assert.AreNotEqual(str1, str2, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+        Assert.AreNotEqual(str2, str1, ignoreCase: true);
+        Assert.AreNotEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
 
         // new assertion:
         str1.Should().NotBeEquivalentTo(str2);
@@ -762,7 +762,7 @@ public class MsTestAnalyzerTests
         string str2 = "FoO";
 
         // old assertion:
-        Assert.AreNotEqual(str1, str2, ignoreCase: true);
+        Assert.AreNotEqual(str2, str1, ignoreCase: true);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
@@ -773,7 +773,7 @@ public class MsTestAnalyzerTests
         string str2 = "FoO";
 
         // old assertion:
-        Assert.AreNotEqual(str1, str2, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+        Assert.AreNotEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
