@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
-using FluentAssertions.Execution;
+using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
@@ -93,7 +91,7 @@ public class MsTestAnalyzerTests
     public void ObjectAssertIsNull_Failure_OldAssertion()
     {
         // arrange
-        var obj = "test";
+        var obj = "foo";
 
         // old assertion:
         Assert.IsNull(obj);
@@ -103,7 +101,7 @@ public class MsTestAnalyzerTests
     public void ObjectAssertIsNull_Failure_NewAssertion()
     {
         // arrange
-        var obj = "test";
+        var obj = "foo";
 
         // new assertion:
         obj.Should().BeNull();
@@ -228,5 +226,565 @@ public class MsTestAnalyzerTests
 
         // new assertion:
         obj.Should().NotBeOfType<List<object>>();
+    }
+
+    [TestMethod]
+    public void AssertObjectAreEqual()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = "foo";
+
+        // old assertion:
+        Assert.AreEqual(obj2, obj1);
+
+        // new assertion:
+        obj1.Should().Be(obj2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertObjectAreEqual_Failure_OldAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = 42;
+
+        // old assertion:
+        Assert.AreEqual(obj2, obj1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertObjectAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = 42;
+
+        // new assertion:
+        obj1.Should().Be(obj2);
+    }
+
+    [TestMethod]
+    public void AssertOptionalIntegerAreEqual()
+    {
+        // arrange
+        int? number1 = 42;
+        int? number2 = 42;
+
+        // old assertion:
+        Assert.AreEqual(number2, number1);
+
+        // new assertion:
+        number1.Should().Be(number2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertOptionalIntegerAreEqual_Failure_OldAssertion()
+    {
+        // arrange
+        int? number1 = 42;
+        int? number2 = 6;
+
+        // old assertion:
+        Assert.AreEqual(number2, number1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertOptionalIntegerAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        int? number1 = 42;
+        int? number2 = 6;
+
+        // new assertion:
+        number1.Should().Be(number2);
+    }
+
+    [TestMethod]
+    public void AssertOptionalIntegerAndNullAreEqual()
+    {
+        // arrange
+        int? number = null;
+
+        // old assertion:
+        Assert.AreEqual(number, null);
+        Assert.AreEqual(null, number);
+
+        // new assertion:
+        number.Should().BeNull();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertOptionalIntegerAndNullAreEqual_Failure_OldAssertion_0()
+    {
+        // arrange
+        int? number = 42;
+
+        // old assertion:
+        Assert.AreEqual(number, null);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertOptionalIntegerAndNullAreEqual_Failure_OldAssertion_1()
+    {
+        // arrange
+        int? number = 42;
+
+        // old assertion:
+        Assert.AreEqual(null, number);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertOptionalIntegerAndNullAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        int? number = 42;
+
+        // new assertion:
+        number.Should().BeNull();
+    }
+
+    [TestMethod]
+    public void AssertDoubleAreEqual()
+    {
+        // arrange
+        double number1 = 3.14;
+        double number2 = 3.141;
+        double delta = 0.00159;
+
+        // old assertion:
+        Assert.AreEqual(number2, number1, delta);
+
+        // new assertion:
+        number1.Should().BeApproximately(number2, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertDoubleAreEqual_Failure_OldAssertion()
+    {
+        // arrange
+        double number1 = 3.14;
+        double number2 = 4.2;
+        double delta = 0.0001;
+
+        // old assertion:
+        Assert.AreEqual(number2, number1, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertDoubleAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        double number1 = 3.14;
+        double number2 = 4.2;
+        double delta = 0.0001;
+
+        // new assertion:
+        number1.Should().BeApproximately(number2, delta);
+    }
+
+    [TestMethod]
+    public void AssertFloatAreEqual()
+    {
+        // arrange
+        float number1 = 3.14f;
+        float number2 = 3.141f;
+        float delta = 0.00159f;
+
+        // old assertion:
+        Assert.AreEqual(number2, number1, delta);
+
+        // new assertion:
+        number1.Should().BeApproximately(number2, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertFloatAreEqual_Failure_OldAssertion()
+    {
+        // arrange
+        float number1 = 3.14f;
+        float number2 = 4.2f;
+        float delta = 0.0001f;
+
+        // old assertion:
+        Assert.AreEqual(number2, number1, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertFloatAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        float number1 = 3.14f;
+        float number2 = 4.2f;
+        float delta = 0.0001f;
+
+        // new assertion:
+        number1.Should().BeApproximately(number2, delta);
+    }
+
+    [TestMethod]
+    public void AssertStringAreEqual_CaseSensitive()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "foo";
+
+        // old assertion:
+        Assert.AreEqual(str2, str1);
+        Assert.AreEqual(str2, str1, ignoreCase: false);
+        Assert.AreEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+
+        // new assertion:
+        str1.Should().Be(str2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreEqual_CaseSensitive_Failure_OldAssertion_0()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // old assertion:
+        Assert.AreEqual(str2, str1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreEqual_CaseSensitive_Failure_OldAssertion_1()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // old assertion:
+        Assert.AreEqual(str2, str1, ignoreCase: false);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreEqual_CaseSensitive_Failure_OldAssertion_2()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // old assertion:
+        Assert.AreEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreEqual_CaseSensitive_Failure_NewAssertion()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // new assertion:
+        str1.Should().Be(str2);
+    }
+
+    [TestMethod]
+    public void AssertStringAreEqual_IgnoreCase()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // old assertion:
+        Assert.AreEqual(str2, str1, ignoreCase: true);
+        Assert.AreEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+
+        // new assertion:
+        str1.Should().BeEquivalentTo(str2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreEqual_IgnoreCase_Failure_OldAssertion_0()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "bar";
+
+        // old assertion:
+        Assert.AreEqual(str2, str1, ignoreCase: true);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreEqual_IgnoreCase_Failure_OldAssertion_1()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "bar";
+
+        // old assertion:
+        Assert.AreEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreEqual_IgnoreCase_Failure_NewAssertion()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "bar";
+
+        // new assertion:
+        str1.Should().BeEquivalentTo(str2);
+    }
+
+    [TestMethod]
+    public void AssertObjectAreNotEqual()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = "bar";
+
+        // old assertion:
+        Assert.AreNotEqual(obj2, obj1);
+
+        // new assertion:
+        obj1.Should().NotBe(obj2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertObjectAreNotEqual_Failure_OldAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = "foo";
+
+        // old assertion:
+        Assert.AreNotEqual(obj2, obj1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertObjectAreNotEqual_Failure_NewAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = "foo";
+
+        // new assertion:
+        obj1.Should().NotBe(obj2);
+    }
+
+    [TestMethod]
+    public void AssertOptionalIntegerAreNotEqual()
+    {
+        // arrange
+        int? number1 = 42;
+        int? number2 = 6;
+
+        // old assertion:
+        Assert.AreNotEqual(number2, number1);
+
+        // new assertion:
+        number1.Should().NotBe(number2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertOptionalIntegerAreNotEqual_Failure_OldAssertion()
+    {
+        // arrange
+        int? number1 = 42;
+        int? number2 = 42;
+
+        // old assertion:
+        Assert.AreNotEqual(number2, number1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertOptionalIntegerAreNotEqual_Failure_NewAssertion()
+    {
+        // arrange
+        int? number1 = 42;
+        int? number2 = 42;
+
+        // new assertion:
+        number1.Should().NotBe(number2);
+    }
+
+    [TestMethod]
+    public void AssertDoubleAreNotEqual()
+    {
+        // arrange
+        double number1 = 3.14;
+        double number2 = 4.2;
+        double delta = 0.0001;
+
+        // old assertion:
+        Assert.AreNotEqual(number2, number1, delta);
+
+        // new assertion:
+        number1.Should().NotBeApproximately(number2, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertDoubleAreNotEqual_Failure_OldAssertion()
+    {
+        // arrange
+        double number1 = 3.14;
+        double number2 = 3.141;
+        double delta = 0.00159;
+
+        // old assertion:
+        Assert.AreNotEqual(number2, number1, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertDoubleAreNotEqual_Failure_NewAssertion()
+    {
+        // arrange
+        double number1 = 3.14;
+        double number2 = 3.141;
+        double delta = 0.00159;
+
+        // new assertion:
+        number1.Should().NotBeApproximately(number2, delta);
+    }
+
+    [TestMethod]
+    public void AssertFloatAreNotEqual()
+    {
+        // arrange
+        float number1 = 3.14f;
+        float number2 = 4.2f;
+        float delta = 0.0001f;
+
+        // old assertion:
+        Assert.AreNotEqual(number2, number1, delta);
+
+        // new assertion:
+        number1.Should().NotBeApproximately(number2, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertFloatAreNotEqual_Failure_OldAssertion()
+    {
+        // arrange
+        float number1 = 3.14f;
+        float number2 = 3.141f;
+        float delta = 0.00159f;
+
+        // old assertion:
+        Assert.AreNotEqual(number2, number1, delta);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertFloatAreNotEqual_Failure_NewAssertion()
+    {
+        // arrange
+        float number1 = 3.14f;
+        float number2 = 3.141f;
+        float delta = 0.00159f;
+
+        // new assertion:
+        number1.Should().NotBeApproximately(number2, delta);
+    }
+
+    [TestMethod]
+    public void AssertStringAreNotEqual_CaseSensitive()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "bar";
+
+        // old assertion:
+        Assert.AreNotEqual(str2, str1);
+        Assert.AreNotEqual(str2, str1, ignoreCase: false);
+        Assert.AreNotEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+
+        // new assertion:
+        str1.Should().NotBe(str2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreNotEqual_CaseSensitive_Failure_OldAssertion_0()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "foo";
+
+        // old assertion:
+        Assert.AreNotEqual(str2, str1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreNotEqual_CaseSensitive_Failure_OldAssertion_1()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "foo";
+
+        // old assertion:
+        Assert.AreNotEqual(str2, str1, ignoreCase: false);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreNotEqual_CaseSensitive_Failure_OldAssertion_2()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "foo";
+
+        // old assertion:
+        Assert.AreNotEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreNotEqual_CaseSensitive_Failure_NewAssertion()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "foo";
+
+        // new assertion:
+        str1.Should().NotBe(str2);
+    }
+
+    [TestMethod]
+    public void AssertStringAreNotEqual_IgnoreCase()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "bar";
+
+        // old assertion:
+        Assert.AreNotEqual(str2, str1, ignoreCase: true);
+        Assert.AreNotEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+
+        // new assertion:
+        str1.Should().NotBeEquivalentTo(str2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreNotEqual_IgnoreCase_Failure_OldAssertion_0()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // old assertion:
+        Assert.AreNotEqual(str2, str1, ignoreCase: true);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreNotEqual_IgnoreCase_Failure_OldAssertion_1()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // old assertion:
+        Assert.AreNotEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertStringAreNotEqual_IgnoreCase_Failure_NewAssertion()
+    {
+        // arrange
+        string str1 = "foo";
+        string str2 = "FoO";
+
+        // new assertion:
+        str1.Should().NotBeEquivalentTo(str2);
     }
 }

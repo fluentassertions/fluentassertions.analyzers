@@ -184,6 +184,6 @@ public class DocsGenerator
             return exception.Message;
         }
 
-        throw new InvalidOperationException("Method did not throw an exception");
+        throw new InvalidOperationException($"Method {instance.GetType().Name}.{method.Name} did not throw an exception");
     }
 }
