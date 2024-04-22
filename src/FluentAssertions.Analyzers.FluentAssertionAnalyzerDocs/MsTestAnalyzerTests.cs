@@ -787,4 +787,76 @@ public class MsTestAnalyzerTests
         // new assertion:
         str1.Should().NotBeEquivalentTo(str2);
     }
+
+    [TestMethod]
+    public void AssertAreSame()
+    {
+        // arrange
+        var obj1 = new object();
+        var obj2 = obj1;
+
+        // old assertion:
+        Assert.AreSame(obj2, obj1);
+
+        // new assertion:
+        obj1.Should().BeSameAs(obj2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertAreSame_Failure_OldAssertion()
+    {
+        // arrange
+        object obj1 = 6;
+        object obj2 = "foo";
+
+        // old assertion:
+        Assert.AreSame(obj2, obj1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertAreSame_Failure_NewAssertion()
+    {
+        // arrange
+        object obj1 = 6;
+        object obj2 = "foo";
+
+        // new assertion:
+        obj1.Should().BeSameAs(obj2);
+    }
+
+    [TestMethod]
+    public void AssertAreNotSame()
+    {
+        // arrange
+        object obj1 = 6;
+        object obj2 = "foo";
+
+        // old assertion:
+        Assert.AreNotSame(obj2, obj1);
+
+        // new assertion:
+        obj1.Should().NotBeSameAs(obj2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertAreNotSame_Failure_OldAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = "foo";
+
+        // old assertion:
+        Assert.AreNotSame(obj2, obj1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertAreNotSame_Failure_NewAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+        object obj2 = "foo";
+
+        // new assertion:
+        obj1.Should().NotBeSameAs(obj2);
+    }
 }

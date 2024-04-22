@@ -23,6 +23,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertFloatAreNotEqual](#scenario-assertfloatarenotequal) - `number1.Should().NotBeApproximately(number2, delta);`
 - [AssertStringAreNotEqual_CaseSensitive](#scenario-assertstringarenotequal_casesensitive) - `str1.Should().NotBe(str2);`
 - [AssertStringAreNotEqual_IgnoreCase](#scenario-assertstringarenotequal_ignorecase) - `str1.Should().NotBeEquivalentTo(str2);`
+- [AssertAreSame](#scenario-assertaresame) - `obj1.Should().BeSameAs(obj2);`
+- [AssertAreNotSame](#scenario-assertarenotsame) - `obj1.Should().NotBeSameAs(obj2);`
 
 
 ## Scenarios
@@ -550,6 +552,60 @@ Assert.AreNotEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCul
 
 // new assertion:
 str1.Should().NotBeEquivalentTo(str2); 	// fail message: Expected str1 not to be equivalent to "FoO", but they are.
+```
+
+### scenario: AssertAreSame
+
+```cs
+// arrange
+var obj1 = new object();
+var obj2 = obj1;
+
+// old assertion:
+Assert.AreSame(obj2, obj1);
+
+// new assertion:
+obj1.Should().BeSameAs(obj2);
+```
+
+#### Failure messages
+
+```cs
+object obj1 = 6;
+object obj2 = "foo";
+
+// old assertion:
+Assert.AreSame(obj2, obj1); 	// fail message: Assert.AreSame failed. 
+
+// new assertion:
+obj1.Should().BeSameAs(obj2); 	// fail message: Expected obj1 to refer to "foo", but found 6.
+```
+
+### scenario: AssertAreNotSame
+
+```cs
+// arrange
+object obj1 = 6;
+object obj2 = "foo";
+
+// old assertion:
+Assert.AreNotSame(obj2, obj1);
+
+// new assertion:
+obj1.Should().NotBeSameAs(obj2);
+```
+
+#### Failure messages
+
+```cs
+object obj1 = "foo";
+object obj2 = "foo";
+
+// old assertion:
+Assert.AreNotSame(obj2, obj1); 	// fail message: Assert.AreNotSame failed. 
+
+// new assertion:
+obj1.Should().NotBeSameAs(obj2); 	// fail message: Did not expect obj1 to refer to "foo".
 ```
 
 
