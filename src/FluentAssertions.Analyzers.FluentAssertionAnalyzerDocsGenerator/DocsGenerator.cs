@@ -177,7 +177,15 @@ public class DocsGenerator
     {
         try
         {
-            method.Invoke(instance, null);
+            var result = method.Invoke(instance, null);
+            if (result is Task task)
+            {
+                task.GetAwaiter().GetResult();
+            }
+        }
+        catch (Exception ex) when (ex.InnerException is null)
+        {
+            return ex.Message;
         }
         catch (Exception ex) when (ex.InnerException is AssertFailedException exception)
         {

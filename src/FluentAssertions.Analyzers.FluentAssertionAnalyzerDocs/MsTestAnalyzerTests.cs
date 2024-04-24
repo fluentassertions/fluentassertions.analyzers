@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using System;
+using System.Threading.Tasks;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
@@ -858,5 +860,77 @@ public class MsTestAnalyzerTests
 
         // new assertion:
         obj1.Should().NotBeSameAs(obj2);
+    }
+
+    [TestMethod]
+    public void AssertThrowsException()
+    {
+        // arrange
+        static void ThrowException() => throw new InvalidOperationException();
+        Action action = ThrowException;
+
+        // old assertion:
+        Assert.ThrowsException<InvalidOperationException>(action);
+
+        // new assertion:
+        action.Should().ThrowExactly<InvalidOperationException>();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertThrowsException_Failure_OldAssertion()
+    {
+        // arrange
+        static void ThrowException() => throw new InvalidOperationException();
+        Action action = ThrowException;
+
+        // old assertion:
+        Assert.ThrowsException<ArgumentException>(action);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertThrowsException_Failure_NewAssertion()
+    {
+        // arrange
+        static void ThrowException() => throw new InvalidOperationException();
+        Action action = ThrowException;
+
+        // new assertion:
+        action.Should().ThrowExactly<ArgumentException>();
+    }
+
+    [TestMethod]
+    public async Task AssertThrowsExceptionAsync()
+    {
+        // arrange
+        static async Task ThrowExceptionAsync() => throw new InvalidOperationException();
+        Func<Task> action = ThrowExceptionAsync;
+
+        // old assertion:
+        await Assert.ThrowsExceptionAsync<InvalidOperationException>(action);
+
+        // new assertion:
+        await action.Should().ThrowExactlyAsync<InvalidOperationException>();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public async Task AssertThrowsExceptionAsync_Failure_OldAssertion()
+    {
+        // arrange
+        static async Task ThrowExceptionAsync() => throw new InvalidOperationException();
+        Func<Task> action = ThrowExceptionAsync;
+
+        // old assertion:
+        await Assert.ThrowsExceptionAsync<ArgumentException>(action);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public async Task AssertThrowsExceptionAsync_Failure_NewAssertion()
+    {
+        // arrange
+        static async Task ThrowExceptionAsync() => throw new InvalidOperationException();
+        Func<Task> action = ThrowExceptionAsync;
+
+        // new assertion:
+        await action.Should().ThrowExactlyAsync<ArgumentException>();
     }
 }
