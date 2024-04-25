@@ -902,7 +902,7 @@ public class MsTestAnalyzerTests
     public async Task AssertThrowsExceptionAsync()
     {
         // arrange
-        static async Task ThrowExceptionAsync() => throw new InvalidOperationException();
+        static Task ThrowExceptionAsync() => throw new InvalidOperationException();
         Func<Task> action = ThrowExceptionAsync;
 
         // old assertion:
@@ -916,7 +916,7 @@ public class MsTestAnalyzerTests
     public async Task AssertThrowsExceptionAsync_Failure_OldAssertion()
     {
         // arrange
-        static async Task ThrowExceptionAsync() => throw new InvalidOperationException();
+        static Task ThrowExceptionAsync() => throw new InvalidOperationException();
         Func<Task> action = ThrowExceptionAsync;
 
         // old assertion:
@@ -927,7 +927,7 @@ public class MsTestAnalyzerTests
     public async Task AssertThrowsExceptionAsync_Failure_NewAssertion()
     {
         // arrange
-        static async Task ThrowExceptionAsync() => throw new InvalidOperationException();
+        static Task ThrowExceptionAsync() => throw new InvalidOperationException();
         Func<Task> action = ThrowExceptionAsync;
 
         // new assertion:

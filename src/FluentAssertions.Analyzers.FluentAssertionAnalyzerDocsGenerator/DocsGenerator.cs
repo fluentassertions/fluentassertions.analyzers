@@ -129,8 +129,8 @@ public class DocsGenerator
                     var bodyLines = testWithFailureNewAssertion.Body.ToFullString().Split(Environment.NewLine)[2..^2];
                     var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
 
-                    var oldAssertions = testWithFailureOldAssertions.Select((x, i) => x.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(oldAssertionComment[i].Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesOldAssertions[i]);
-                    var newAssertion = testWithFailureNewAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(newAssertionComment.Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesNewAssertion;
+                    var oldAssertions = testWithFailureOldAssertions.Select((x, i) => x.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(oldAssertionComment[i].Span) > 0).ToString().TrimStart() + " /* fail message: " + exceptionMessageLinesOldAssertions[i] + " */");
+                    var newAssertion = testWithFailureNewAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(newAssertionComment.Span) > 0).ToString().TrimStart() + " /* fail message: " + exceptionMessageLinesNewAssertion + " */";
 
                     var arrange = bodyLines.TakeWhile(x => !string.IsNullOrEmpty(x))
                         .Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
