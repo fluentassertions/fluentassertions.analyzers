@@ -10,6 +10,7 @@ Pop-Location
 Pop-Location
 
 if ($ValidateNoChanges) {
+    git config core.autocrlf false
     $output = git status --porcelain=v1 -- docs
     if ($output) {
         git diff -- docs
