@@ -175,6 +175,8 @@ public class DocsGenerator
         => GetMethodExceptionMessage(instance, method).Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
     private string GetMethodExceptionMessage(object instance, MethodInfo method)
     {
+        ResetTestFrameworks();
+
         try
         {
             var result = method.Invoke(instance, null);
@@ -187,11 +189,19 @@ public class DocsGenerator
         {
             return ex.Message;
         }
-        catch (Exception ex) when (ex.InnerException is AssertFailedException exception)
+        catch (Exception ex) when (ex.InnerException is Exception exception)
         {
             return exception.Message;
         }
 
         throw new InvalidOperationException($"Method {instance.GetType().Name}.{method.Name} did not throw an exception");
+    }
+
+    private static void ResetTestFrameworks()
+    {
+        var testContext = typeof(NUnit.Framework.Internal.TestExecutionContext);
+        testContext.GetProperty("CurrentContext").SetValue(null, new NUnit.Framework.Internal.TestExecutionContext.AdhocContext());
+
+        NUnit.Framework.Internal.TestExecutionContext.CurrentContext.CurrentResult.AssertionResults.Clear();
     }
 }
