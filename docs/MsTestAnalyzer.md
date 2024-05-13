@@ -945,7 +945,7 @@ Action action = ThrowException;
 // old assertion:
 Assert.ThrowsException<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|106_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1266
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|106_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1264
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsException[T](Action action, String message, Object[] parameters) */
 
 // new assertion:
@@ -975,7 +975,7 @@ Func<Task> action = ThrowExceptionAsync;
 // old assertion:
 await Assert.ThrowsExceptionAsync<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1302
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1300
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsExceptionAsync[T](Func`1 action, String message, Object[] parameters) */
 
 // new assertion:
