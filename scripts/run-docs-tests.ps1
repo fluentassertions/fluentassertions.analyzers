@@ -11,7 +11,7 @@ Pop-Location
 if ($FormatAndExecuteTestsAgain) {
     Push-Location src
     Push-Location FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs
-    dotnet format analyzers --diagnostics FAA0001 FAA0003 --severity info --verbosity normal
+    dotnet format analyzers --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity normal
     Pop-Location
     Pop-Location
 
