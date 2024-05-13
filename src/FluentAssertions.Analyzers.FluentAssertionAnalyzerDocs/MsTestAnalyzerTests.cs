@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
 using System;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
@@ -1313,5 +1314,176 @@ public class MsTestAnalyzerTests
 
         // new assertion:
         await action.Should().ThrowExactlyAsync<ArgumentException>();
+    }
+
+    [TestMethod]
+    public void StringAssertContains()
+    {
+        // arrange
+        var str = "foo";
+
+        // old assertion:
+        StringAssert.Contains(str, "oo");
+
+        // new assertion:
+        str.Should().Contain("oo");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertContains_Failure_OldAssertion()
+    {
+        // arrange
+        var str = "foo";
+
+        // old assertion:
+        StringAssert.Contains(str, "bar");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertContains_Failure_NewAssertion()
+    {
+        // arrange
+        var str = "foo";
+
+        // new assertion:
+        str.Should().Contain("bar");
+    }
+
+    [TestMethod]
+    public void StringAssertStartsWith()
+    {
+        // arrange
+        var str = "foo";
+
+        // old assertion:
+        StringAssert.StartsWith(str, "fo");
+
+        // new assertion:
+        str.Should().StartWith("fo");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertStartsWith_Failure_OldAssertion()
+    {
+        // arrange
+        var str = "foo";
+
+        // old assertion:
+        StringAssert.StartsWith(str, "oo");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertStartsWith_Failure_NewAssertion()
+    {
+        // arrange
+        var str = "foo";
+
+        // new assertion:
+        str.Should().StartWith("oo");
+    }
+
+    [TestMethod]
+    public void StringAssertEndsWith()
+    {
+        // arrange
+        var str = "foo";
+
+        // old assertion:
+        StringAssert.EndsWith(str, "oo");
+
+        // new assertion:
+        str.Should().EndWith("oo");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertEndsWith_Failure_OldAssertion()
+    {
+        // arrange
+        var str = "foo";
+
+        // old assertion:
+        StringAssert.EndsWith(str, "fo");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertEndsWith_Failure_NewAssertion()
+    {
+        // arrange
+        var str = "foo";
+
+        // new assertion:
+        str.Should().EndWith("fo");
+    }
+
+    [TestMethod]
+    public void StringAssertMatches()
+    {
+        // arrange
+        var str = "foo";
+        var pattern = new Regex("f.o");
+
+        // old assertion:
+        StringAssert.Matches(str, pattern);
+
+        // new assertion:
+        str.Should().MatchRegex(pattern);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertMatches_Failure_OldAssertion()
+    {
+        // arrange
+        var str = "foo";
+        var pattern = new Regex("b.r");
+
+        // old assertion:
+        StringAssert.Matches(str, pattern);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertMatches_Failure_NewAssertion()
+    {
+        // arrange
+        var str = "foo";
+        var pattern = new Regex("b.r");
+
+        // new assertion:
+        str.Should().MatchRegex(pattern);
+    }
+
+    [TestMethod]
+    public void StringAssertDoesNotMatch()
+    {
+        // arrange
+        var str = "foo";
+        var pattern = new Regex("b.r");
+
+        // old assertion:
+        StringAssert.DoesNotMatch(str, pattern);
+
+        // new assertion:
+        str.Should().NotMatchRegex(pattern);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertDoesNotMatch_Failure_OldAssertion()
+    {
+        // arrange
+        var str = "foo";
+        var pattern = new Regex("f.o");
+
+        // old assertion:
+        StringAssert.DoesNotMatch(str, pattern);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringAssertDoesNotMatch_Failure_NewAssertion()
+    {
+        // arrange
+        var str = "foo";
+        var pattern = new Regex("f.o");
+
+        // new assertion:
+        str.Should().NotMatchRegex(pattern);
     }
 }
