@@ -13,7 +13,10 @@ if ($ValidateNoChanges) {
     git config core.autocrlf false
     $output = git status --porcelain=v1 -- docs
     if ($output) {
-        git diff -- docs
-        throw "The docs generator has made changes to the docs folder. Please commit these changes and push them to the repository."
+        $diff = git diff -- docs # HACK to ignore crlf changes 
+        if ($diff) {
+            git diff -- docs 
+            throw "The docs generator has made changes to the docs folder. Please commit these changes and push them to the repository."
+        }
     }
 }

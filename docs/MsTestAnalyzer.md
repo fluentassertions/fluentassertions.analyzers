@@ -25,6 +25,17 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertStringAreNotEqual_IgnoreCase](#scenario-assertstringarenotequal_ignorecase) - `str1.Should().NotBeEquivalentTo(str2);`
 - [AssertAreSame](#scenario-assertaresame) - `obj1.Should().BeSameAs(obj2);`
 - [AssertAreNotSame](#scenario-assertarenotsame) - `obj1.Should().NotBeSameAs(obj2);`
+- [CollectionAssertAllItemsAreInstancesOfType](#scenario-collectionassertallitemsareinstancesoftype) - `list.Should().AllBeOfType<int>();`
+- [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `list1.Should().Equal(list2);`
+- [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `list1.Should().NotEqual(list2);`
+- [CollectionAssertAreEquivalent](#scenario-collectionassertareequivalent) - `list1.Should().BeEquivalentTo(list2);`
+- [CollectionAssertAreNotEquivalent](#scenario-collectionassertarenotequivalent) - `list1.Should().NotBeEquivalentTo(list2);`
+- [CollectionAssertAllItemsAreNotNull](#scenario-collectionassertallitemsarenotnull) - `list.Should().NotContainNulls();`
+- [CollectionAssertAllItemsAreUnique](#scenario-collectionassertallitemsareunique) - `list.Should().OnlyHaveUniqueItems();`
+- [CollectionAssertContains](#scenario-collectionassertcontains) - `list.Should().Contain(2);`
+- [CollectionAssertDoesNotContain](#scenario-collectionassertdoesnotcontain) - `list.Should().NotContain(4);`
+- [CollectionAssertIsSubsetOf](#scenario-collectionassertissubsetof) - `list2.Should().BeSubsetOf(list1);`
+- [CollectionAssertIsNotSubsetOf](#scenario-collectionassertisnotsubsetof) - `list2.Should().NotBeSubsetOf(list1);`
 - [AssertThrowsException](#scenario-assertthrowsexception) - `action.Should().ThrowExactly<InvalidOperationException>();`
 - [AssertThrowsExceptionAsync](#scenario-assertthrowsexceptionasync) - `await action.Should().ThrowExactlyAsync<InvalidOperationException>();`
 
@@ -610,6 +621,307 @@ Assert.AreNotSame(obj2, obj1); /* fail message: Assert.AreNotSame failed.  */
 obj1.Should().NotBeSameAs(obj2); /* fail message: Did not expect obj1 to refer to "foo". */
 ```
 
+### scenario: CollectionAssertAllItemsAreInstancesOfType
+
+```cs
+// arrange
+var list = new List<object> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(list, typeof(int));
+
+// new assertion:
+list.Should().AllBeOfType<int>();
+```
+
+#### Failure messages
+
+```cs
+var list = new List<object> { 1, 2, "foo" };
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(list, typeof(int)); /* fail message: CollectionAssert.AllItemsAreInstancesOfType failed. Element at index 2 is not of expected type. Expected type:<System.Int32>. Actual type:<System.String>. */
+
+// new assertion:
+list.Should().AllBeOfType<int>(); /* fail message: Expected type to be "System.Int32", but found "[System.Int32, System.Int32, System.String]". */
+```
+
+### scenario: CollectionAssertAreEqual
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AreEqual(list2, list1);
+
+// new assertion:
+list1.Should().Equal(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 4 };
+
+// old assertion:
+CollectionAssert.AreEqual(list2, list1); /* fail message: CollectionAssert.AreEqual failed. (Element at index 2 do not match.) */
+
+// new assertion:
+list1.Should().Equal(list2); /* fail message: Expected list1 to be equal to {1, 2, 4}, but {1, 2, 3} differs at index 2. */
+```
+
+### scenario: CollectionAssertAreNotEqual
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 4 };
+
+// old assertion:
+CollectionAssert.AreNotEqual(list2, list1);
+
+// new assertion:
+list1.Should().NotEqual(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AreNotEqual(list2, list1); /* fail message: CollectionAssert.AreNotEqual failed. (Both collection contain same elements.) */
+
+// new assertion:
+list1.Should().NotEqual(list2); /* fail message: Did not expect collections {1, 2, 3} and {1, 2, 3} to be equal. */
+```
+
+### scenario: CollectionAssertAreEquivalent
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 3, 2, 1 };
+
+// old assertion:
+CollectionAssert.AreEquivalent(list2, list1);
+
+// new assertion:
+list1.Should().BeEquivalentTo(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 2, 3, 4 };
+
+// old assertion:
+CollectionAssert.AreEquivalent(list2, list1); /* fail message: CollectionAssert.AreEquivalent failed. The expected collection contains 1 occurrence(s) of <4>. The actual collection contains 0 occurrence(s).  */
+
+// new assertion:
+list1.Should().BeEquivalentTo(list2); /* fail message: Expected list1[2] to be 4, but found 1.
+
+With configuration:
+- Use declared types and members
+- Compare enums by value
+- Compare tuples by their properties
+- Compare anonymous types by their properties
+- Compare records by their members
+- Include non-browsable members
+- Include all non-private properties
+- Include all non-private fields
+- Match member by name (or throw)
+- Be strict about the order of items in byte arrays
+- Without automatic conversion.
+ */
+```
+
+### scenario: CollectionAssertAreNotEquivalent
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 2, 3, 4 };
+
+// old assertion:
+CollectionAssert.AreNotEquivalent(list2, list1);
+
+// new assertion:
+list1.Should().NotBeEquivalentTo(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 2, 3, 1 };
+
+// old assertion:
+CollectionAssert.AreNotEquivalent(list2, list1); /* fail message: CollectionAssert.AreNotEquivalent failed. Both collections contain the same elements.  */
+
+// new assertion:
+list1.Should().NotBeEquivalentTo(list2); /* fail message: Expected list1 {1, 2, 3} not to be equivalent to collection {2, 3, 1}. */
+```
+
+### scenario: CollectionAssertAllItemsAreNotNull
+
+```cs
+// arrange
+var list = new List<object> { 1, "foo", true };
+
+// old assertion:
+CollectionAssert.AllItemsAreNotNull(list);
+
+// new assertion:
+list.Should().NotContainNulls();
+```
+
+#### Failure messages
+
+```cs
+var list = new List<object> { 1, null, true };
+
+// old assertion:
+CollectionAssert.AllItemsAreNotNull(list); /* fail message: CollectionAssert.AllItemsAreNotNull failed.  */
+
+// new assertion:
+list.Should().NotContainNulls(); /* fail message: Expected list not to contain <null>s, but found one at index 1. */
+```
+
+### scenario: CollectionAssertAllItemsAreUnique
+
+```cs
+// arrange
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AllItemsAreUnique(list);
+
+// new assertion:
+list.Should().OnlyHaveUniqueItems();
+```
+
+#### Failure messages
+
+```cs
+var list = new List<int> { 1, 2, 1 };
+
+// old assertion:
+CollectionAssert.AllItemsAreUnique(list); /* fail message: CollectionAssert.AllItemsAreUnique failed. Duplicate item found:<1>.  */
+
+// new assertion:
+list.Should().OnlyHaveUniqueItems(); /* fail message: Expected list to only have unique items, but item 1 is not unique. */
+```
+
+### scenario: CollectionAssertContains
+
+```cs
+// arrange
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.Contains(list, 2);
+
+// new assertion:
+list.Should().Contain(2);
+```
+
+#### Failure messages
+
+```cs
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.Contains(list, 4); /* fail message: CollectionAssert.Contains failed.  */
+
+// new assertion:
+list.Should().Contain(4); /* fail message: Expected list {1, 2, 3} to contain 4. */
+```
+
+### scenario: CollectionAssertDoesNotContain
+
+```cs
+// arrange
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.DoesNotContain(list, 4);
+
+// new assertion:
+list.Should().NotContain(4);
+```
+
+#### Failure messages
+
+```cs
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.DoesNotContain(list, 2); /* fail message: CollectionAssert.DoesNotContain failed.  */
+
+// new assertion:
+list.Should().NotContain(2); /* fail message: Expected list {1, 2, 3} to not contain 2. */
+```
+
+### scenario: CollectionAssertIsSubsetOf
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3 };
+
+// old assertion:
+CollectionAssert.IsSubsetOf(list2, list1);
+
+// new assertion:
+list2.Should().BeSubsetOf(list1);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3, 5 };
+
+// old assertion:
+CollectionAssert.IsSubsetOf(list2, list1); /* fail message: CollectionAssert.IsSubsetOf failed.  */
+
+// new assertion:
+list2.Should().BeSubsetOf(list1); /* fail message: Expected list2 to be a subset of {1, 2, 3, 4}, but items {5} are not part of the superset. */
+```
+
+### scenario: CollectionAssertIsNotSubsetOf
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3, 5 };
+
+// old assertion:
+CollectionAssert.IsNotSubsetOf(list2, list1);
+
+// new assertion:
+list2.Should().NotBeSubsetOf(list1);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3 };
+
+// old assertion:
+CollectionAssert.IsNotSubsetOf(list2, list1); /* fail message: CollectionAssert.IsNotSubsetOf failed.  */
+
+// new assertion:
+list2.Should().NotBeSubsetOf(list1); /* fail message: Did not expect list2 {2, 3} to be a subset of {1, 2, 3, 4}. */
+```
+
 ### scenario: AssertThrowsException
 
 ```cs
@@ -633,7 +945,7 @@ Action action = ThrowException;
 // old assertion:
 Assert.ThrowsException<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|73_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 883
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|106_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1266
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsException[T](Action action, String message, Object[] parameters) */
 
 // new assertion:
@@ -663,7 +975,7 @@ Func<Task> action = ThrowExceptionAsync;
 // old assertion:
 await Assert.ThrowsExceptionAsync<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|76_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 919
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1302
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsExceptionAsync[T](Func`1 action, String message, Object[] parameters) */
 
 // new assertion:

@@ -863,6 +863,389 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod]
+    public void CollectionAssertAllItemsAreInstancesOfType()
+    {
+        // arrange
+        var list = new List<object> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreInstancesOfType(list, typeof(int));
+
+        // new assertion:
+        list.Should().AllBeOfType<int>();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion()
+    {
+        // arrange
+        var list = new List<object> { 1, 2, "foo" };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreInstancesOfType(list, typeof(int));
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_NewAssertion()
+    {
+        // arrange
+        var list = new List<object> { 1, 2, "foo" };
+
+        // new assertion:
+        list.Should().AllBeOfType<int>();
+    }
+
+    [TestMethod]
+    public void CollectionAssertAreEqual()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AreEqual(list2, list1);
+
+        // new assertion:
+        list1.Should().Equal(list2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreEqual_Failure_OldAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 1, 2, 4 };
+
+        // old assertion:
+        CollectionAssert.AreEqual(list2, list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 1, 2, 4 };
+
+        // new assertion:
+        list1.Should().Equal(list2);
+    }
+
+    [TestMethod]
+    public void CollectionAssertAreNotEqual()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 1, 2, 4 };
+
+        // old assertion:
+        CollectionAssert.AreNotEqual(list2, list1);
+
+        // new assertion:
+        list1.Should().NotEqual(list2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreNotEqual_Failure_OldAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AreNotEqual(list2, list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreNotEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 1, 2, 3 };
+
+        // new assertion:
+        list1.Should().NotEqual(list2);
+    }
+
+    [TestMethod]
+    public void CollectionAssertAreEquivalent()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 3, 2, 1 };
+
+        // old assertion:
+        CollectionAssert.AreEquivalent(list2, list1);
+
+        // new assertion:
+        list1.Should().BeEquivalentTo(list2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreEquivalent_Failure_OldAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 2, 3, 4 };
+
+        // old assertion:
+        CollectionAssert.AreEquivalent(list2, list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreEquivalent_Failure_NewAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 2, 3, 4 };
+
+        // new assertion:
+        list1.Should().BeEquivalentTo(list2);
+    }
+
+    [TestMethod]
+    public void CollectionAssertAreNotEquivalent()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 2, 3, 4 };
+
+        // old assertion:
+        CollectionAssert.AreNotEquivalent(list2, list1);
+
+        // new assertion:
+        list1.Should().NotBeEquivalentTo(list2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreNotEquivalent_Failure_OldAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 2, 3, 1 };
+
+        // old assertion:
+        CollectionAssert.AreNotEquivalent(list2, list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAreNotEquivalent_Failure_NewAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3 };
+        var list2 = new List<int> { 2, 3, 1 };
+
+        // new assertion:
+        list1.Should().NotBeEquivalentTo(list2);
+    }
+
+    [TestMethod]
+    public void CollectionAssertAllItemsAreNotNull()
+    {
+        // arrange
+        var list = new List<object> { 1, "foo", true };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreNotNull(list);
+
+        // new assertion:
+        list.Should().NotContainNulls();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion()
+    {
+        // arrange
+        var list = new List<object> { 1, null, true };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreNotNull(list);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAllItemsAreNotNull_Failure_NewAssertion()
+    {
+        // arrange
+        var list = new List<object> { 1, null, true };
+
+        // new assertion:
+        list.Should().NotContainNulls();
+    }
+
+    [TestMethod]
+    public void CollectionAssertAllItemsAreUnique()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreUnique(list);
+
+        // new assertion:
+        list.Should().OnlyHaveUniqueItems();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAllItemsAreUnique_Failure_OldAssertion()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 1 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreUnique(list);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertAllItemsAreUnique_Failure_NewAssertion()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 1 };
+
+        // new assertion:
+        list.Should().OnlyHaveUniqueItems();
+    }
+
+    [TestMethod]
+    public void CollectionAssertContains()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.Contains(list, 2);
+
+        // new assertion:
+        list.Should().Contain(2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertContains_Failure_OldAssertion()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.Contains(list, 4);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertContains_Failure_NewAssertion()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 3 };
+
+        // new assertion:
+        list.Should().Contain(4);
+    }
+
+    [TestMethod]
+    public void CollectionAssertDoesNotContain()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(list, 4);
+
+        // new assertion:
+        list.Should().NotContain(4);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertDoesNotContain_Failure_OldAssertion()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(list, 2);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertDoesNotContain_Failure_NewAssertion()
+    {
+        // arrange
+        var list = new List<int> { 1, 2, 3 };
+
+        // new assertion:
+        list.Should().NotContain(2);
+    }
+
+    [TestMethod]
+    public void CollectionAssertIsSubsetOf()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3, 4 };
+        var list2 = new List<int> { 2, 3 };
+
+        // old assertion:
+        CollectionAssert.IsSubsetOf(list2, list1);
+
+        // new assertion:
+        list2.Should().BeSubsetOf(list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertIsSubsetOf_Failure_OldAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3, 4 };
+        var list2 = new List<int> { 2, 3, 5 };
+
+        // old assertion:
+        CollectionAssert.IsSubsetOf(list2, list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertIsSubsetOf_Failure_NewAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3, 4 };
+        var list2 = new List<int> { 2, 3, 5 };
+
+        // new assertion:
+        list2.Should().BeSubsetOf(list1);
+    }
+
+    [TestMethod]
+    public void CollectionAssertIsNotSubsetOf()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3, 4 };
+        var list2 = new List<int> { 2, 3, 5 };
+
+        // old assertion:
+        CollectionAssert.IsNotSubsetOf(list2, list1);
+
+        // new assertion:
+        list2.Should().NotBeSubsetOf(list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertIsNotSubsetOf_Failure_OldAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3, 4 };
+        var list2 = new List<int> { 2, 3 };
+
+        // old assertion:
+        CollectionAssert.IsNotSubsetOf(list2, list1);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void CollectionAssertIsNotSubsetOf_Failure_NewAssertion()
+    {
+        // arrange
+        var list1 = new List<int> { 1, 2, 3, 4 };
+        var list2 = new List<int> { 2, 3 };
+
+        // new assertion:
+        list2.Should().NotBeSubsetOf(list1);
+    }
+
+    
+
+    [TestMethod]
     public void AssertThrowsException()
     {
         // arrange
