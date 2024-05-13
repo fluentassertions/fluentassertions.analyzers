@@ -94,4 +94,92 @@ public class NunitAnalyzerTests
         // new assertion:
         flag.Should().BeFalse();
     }
+
+    [TestMethod]
+    public void AssertNull()
+    {
+        // arrange
+        object obj = null;
+
+        // old assertion:
+        Assert.IsNull(obj);
+        Assert.Null(obj);
+
+        // new assertion:
+        obj.Should().BeNull();
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNull_Failure_OldAssertion_0()
+    {
+        // arrange
+        object obj = "foo";
+
+        // old assertion:
+        Assert.Null(obj);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNull_Failure_OldAssertion_1()
+    {
+        // arrange
+        object obj = "foo";
+
+        // old assertion:
+        Assert.IsNull(obj);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNull_Failure_NewAssertion()
+    {
+        // arrange
+        object obj = "foo";
+
+        // new assertion:
+        obj.Should().BeNull();
+    }
+
+    [TestMethod]
+    public void AssertNotNull()
+    {
+        // arrange
+        object obj = "foo";
+
+        // old assertion:
+        Assert.IsNotNull(obj);
+        Assert.NotNull(obj);
+
+        // new assertion:
+        obj.Should().NotBeNull();
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNotNull_Failure_OldAssertion_0()
+    {
+        // arrange
+        object obj = null;
+
+        // old assertion:
+        Assert.NotNull(obj);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNotNull_Failure_OldAssertion_1()
+    {
+        // arrange
+        object obj = null;
+
+        // old assertion:
+        Assert.IsNotNull(obj);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNotNull_Failure_NewAssertion()
+    {
+        // arrange
+        object obj = null;
+
+        // new assertion:
+        obj.Should().NotBeNull();
+    }
 }
