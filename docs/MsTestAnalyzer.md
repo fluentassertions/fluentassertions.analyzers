@@ -38,6 +38,11 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [CollectionAssertIsNotSubsetOf](#scenario-collectionassertisnotsubsetof) - `list2.Should().NotBeSubsetOf(list1);`
 - [AssertThrowsException](#scenario-assertthrowsexception) - `action.Should().ThrowExactly<InvalidOperationException>();`
 - [AssertThrowsExceptionAsync](#scenario-assertthrowsexceptionasync) - `await action.Should().ThrowExactlyAsync<InvalidOperationException>();`
+- [StringAssertContains](#scenario-stringassertcontains) - `str.Should().Contain("oo");`
+- [StringAssertStartsWith](#scenario-stringassertstartswith) - `str.Should().StartWith("fo");`
+- [StringAssertEndsWith](#scenario-stringassertendswith) - `str.Should().EndWith("oo");`
+- [StringAssertMatches](#scenario-stringassertmatches) - `str.Should().MatchRegex(pattern);`
+- [StringAssertDoesNotMatch](#scenario-stringassertdoesnotmatch) - `str.Should().NotMatchRegex(pattern);`
 
 
 ## Scenarios
@@ -945,7 +950,7 @@ Action action = ThrowException;
 // old assertion:
 Assert.ThrowsException<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|106_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1264
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|106_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1265
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsException[T](Action action, String message, Object[] parameters) */
 
 // new assertion:
@@ -975,11 +980,140 @@ Func<Task> action = ThrowExceptionAsync;
 // old assertion:
 await Assert.ThrowsExceptionAsync<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1300
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1301
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsExceptionAsync[T](Func`1 action, String message, Object[] parameters) */
 
 // new assertion:
 await action.Should().ThrowExactlyAsync<ArgumentException>(); /* fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException. */
+```
+
+### scenario: StringAssertContains
+
+```cs
+// arrange
+var str = "foo";
+
+// old assertion:
+StringAssert.Contains(str, "oo");
+
+// new assertion:
+str.Should().Contain("oo");
+```
+
+#### Failure messages
+
+```cs
+var str = "foo";
+
+// old assertion:
+StringAssert.Contains(str, "bar"); /* fail message: StringAssert.Contains failed. String 'foo' does not contain string 'bar'. . */
+
+// new assertion:
+str.Should().Contain("bar"); /* fail message: Expected str "foo" to contain "bar". */
+```
+
+### scenario: StringAssertStartsWith
+
+```cs
+// arrange
+var str = "foo";
+
+// old assertion:
+StringAssert.StartsWith(str, "fo");
+
+// new assertion:
+str.Should().StartWith("fo");
+```
+
+#### Failure messages
+
+```cs
+var str = "foo";
+
+// old assertion:
+StringAssert.StartsWith(str, "oo"); /* fail message: StringAssert.StartsWith failed. String 'foo' does not start with string 'oo'. . */
+
+// new assertion:
+str.Should().StartWith("oo"); /* fail message: Expected str to start with "oo", but "foo" differs near "foo" (index 0). */
+```
+
+### scenario: StringAssertEndsWith
+
+```cs
+// arrange
+var str = "foo";
+
+// old assertion:
+StringAssert.EndsWith(str, "oo");
+
+// new assertion:
+str.Should().EndWith("oo");
+```
+
+#### Failure messages
+
+```cs
+var str = "foo";
+
+// old assertion:
+StringAssert.EndsWith(str, "fo"); /* fail message: StringAssert.EndsWith failed. String 'foo' does not end with string 'fo'. . */
+
+// new assertion:
+str.Should().EndWith("fo"); /* fail message: Expected str "foo" to end with "fo". */
+```
+
+### scenario: StringAssertMatches
+
+```cs
+// arrange
+var str = "foo";
+var pattern = new Regex("f.o");
+
+// old assertion:
+StringAssert.Matches(str, pattern);
+
+// new assertion:
+str.Should().MatchRegex(pattern);
+```
+
+#### Failure messages
+
+```cs
+var str = "foo";
+var pattern = new Regex("b.r");
+
+// old assertion:
+StringAssert.Matches(str, pattern); /* fail message: StringAssert.Matches failed. String 'foo' does not match pattern 'b.r'. . */
+
+// new assertion:
+str.Should().MatchRegex(pattern); /* fail message: Expected str to match regex "b.r", but "foo" does not match. */
+```
+
+### scenario: StringAssertDoesNotMatch
+
+```cs
+// arrange
+var str = "foo";
+var pattern = new Regex("b.r");
+
+// old assertion:
+StringAssert.DoesNotMatch(str, pattern);
+
+// new assertion:
+str.Should().NotMatchRegex(pattern);
+```
+
+#### Failure messages
+
+```cs
+var str = "foo";
+var pattern = new Regex("f.o");
+
+// old assertion:
+StringAssert.DoesNotMatch(str, pattern); /* fail message: StringAssert.DoesNotMatch failed. String 'foo' matches pattern 'f.o'. . */
+
+// new assertion:
+str.Should().NotMatchRegex(pattern); /* fail message: Did not expect str to match regex "f.o", but "foo" matches. */
 ```
 
 
