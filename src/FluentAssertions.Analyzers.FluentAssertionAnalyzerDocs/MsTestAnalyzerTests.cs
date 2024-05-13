@@ -1243,8 +1243,6 @@ public class MsTestAnalyzerTests
         list2.Should().NotBeSubsetOf(list1);
     }
 
-    
-
     [TestMethod]
     public void AssertThrowsException()
     {
