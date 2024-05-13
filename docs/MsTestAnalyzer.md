@@ -25,6 +25,17 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertStringAreNotEqual_IgnoreCase](#scenario-assertstringarenotequal_ignorecase) - `str1.Should().NotBeEquivalentTo(str2);`
 - [AssertAreSame](#scenario-assertaresame) - `obj1.Should().BeSameAs(obj2);`
 - [AssertAreNotSame](#scenario-assertarenotsame) - `obj1.Should().NotBeSameAs(obj2);`
+- [CollectionAssertAllItemsAreInstancesOfType](#scenario-collectionassertallitemsareinstancesoftype) - `list.Should().AllBeOfType<int>();`
+- [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `list1.Should().Equal(list2);`
+- [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `list1.Should().NotEqual(list2);`
+- [CollectionAssertAreEquivalent](#scenario-collectionassertareequivalent) - `list1.Should().BeEquivalentTo(list2);`
+- [CollectionAssertAreNotEquivalent](#scenario-collectionassertarenotequivalent) - `list1.Should().NotBeEquivalentTo(list2);`
+- [CollectionAssertAllItemsAreNotNull](#scenario-collectionassertallitemsarenotnull) - `list.Should().NotContainNulls();`
+- [CollectionAssertAllItemsAreUnique](#scenario-collectionassertallitemsareunique) - `list.Should().OnlyHaveUniqueItems();`
+- [CollectionAssertContains](#scenario-collectionassertcontains) - `list.Should().Contain(2);`
+- [CollectionAssertDoesNotContain](#scenario-collectionassertdoesnotcontain) - `list.Should().NotContain(4);`
+- [CollectionAssertIsSubsetOf](#scenario-collectionassertissubsetof) - `list2.Should().BeSubsetOf(list1);`
+- [CollectionAssertIsNotSubsetOf](#scenario-collectionassertisnotsubsetof) - `list2.Should().NotBeSubsetOf(list1);`
 
 
 ## Scenarios
@@ -51,7 +62,7 @@ var flag = false;
 Assert.IsTrue(flag); 	// fail message: Assert.IsTrue failed. 
 
 // new assertion:
-flag.Should().BeTrue(); 	// fail message: Expected flag to be true, but found False.
+flag.Should().BeTrue(); 	/* fail message: Expected flag to be true, but found False. */
 ```
 
 ### scenario: BooleanAssertIsFalse
@@ -76,7 +87,7 @@ var flag = true;
 Assert.IsFalse(flag); 	// fail message: Assert.IsFalse failed. 
 
 // new assertion:
-flag.Should().BeFalse(); 	// fail message: Expected flag to be false, but found True.
+flag.Should().BeFalse(); 	/* fail message: Expected flag to be false, but found True. */
 ```
 
 ### scenario: ObjectAssertIsNull
@@ -101,7 +112,7 @@ var obj = "foo";
 Assert.IsNull(obj); 	// fail message: Assert.IsNull failed. 
 
 // new assertion:
-obj.Should().BeNull(); 	// fail message: Expected obj to be <null>, but found "foo".
+obj.Should().BeNull(); 	/* fail message: Expected obj to be <null>, but found "foo". */
 ```
 
 ### scenario: ObjectAssertIsNotNull
@@ -126,7 +137,7 @@ object obj = null;
 Assert.IsNotNull(obj); 	// fail message: Assert.IsNotNull failed. 
 
 // new assertion:
-obj.Should().NotBeNull(); 	// fail message: Expected obj not to be <null>.
+obj.Should().NotBeNull(); 	/* fail message: Expected obj not to be <null>. */
 ```
 
 ### scenario: ReferenceTypeAssertIsInstanceOfType
@@ -153,7 +164,7 @@ Assert.IsInstanceOfType(obj, typeof(List<object>)); 	// fail message: Assert.IsI
 Assert.IsInstanceOfType<List<object>>(obj); 	// fail message: Assert.IsInstanceOfType failed.  Expected type:<System.Collections.Generic.List`1[System.Object]>. Actual type:<System.Collections.Generic.List`1[System.Int32]>.
 
 // new assertion:
-obj.Should().BeOfType<List<object>>(); 	// fail message: Expected type to be System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], but found System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]].
+obj.Should().BeOfType<List<object>>(); 	/* fail message: Expected type to be System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], but found System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]. */
 ```
 
 ### scenario: ReferenceTypeAssertIsNotInstanceOfType
@@ -180,7 +191,7 @@ Assert.IsNotInstanceOfType(obj, typeof(List<object>)); 	// fail message: Assert.
 Assert.IsNotInstanceOfType<List<object>>(obj); 	// fail message: Assert.IsNotInstanceOfType failed. Wrong Type:<System.Collections.Generic.List`1[System.Object]>. Actual type:<System.Collections.Generic.List`1[System.Object]>. 
 
 // new assertion:
-obj.Should().NotBeOfType<List<object>>(); 	// fail message: Expected type not to be [System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e], but it is.
+obj.Should().NotBeOfType<List<object>>(); 	/* fail message: Expected type not to be [System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e], but it is. */
 ```
 
 ### scenario: AssertObjectAreEqual
@@ -207,7 +218,7 @@ object obj2 = 42;
 Assert.AreEqual(obj2, obj1); 	// fail message: Assert.AreEqual failed. Expected:<42 (System.Int32)>. Actual:<foo (System.String)>. 
 
 // new assertion:
-obj1.Should().Be(obj2); 	// fail message: Expected obj1 to be 42, but found "foo".
+obj1.Should().Be(obj2); 	/* fail message: Expected obj1 to be 42, but found "foo". */
 ```
 
 ### scenario: AssertOptionalIntegerAreEqual
@@ -234,7 +245,7 @@ int? number2 = 6;
 Assert.AreEqual(number2, number1); 	// fail message: Assert.AreEqual failed. Expected:<6>. Actual:<42>. 
 
 // new assertion:
-number1.Should().Be(number2); 	// fail message: Expected number1 to be 6, but found 42 (difference of 36).
+number1.Should().Be(number2); 	/* fail message: Expected number1 to be 6, but found 42 (difference of 36). */
 ```
 
 ### scenario: AssertOptionalIntegerAndNullAreEqual
@@ -261,7 +272,7 @@ Assert.AreEqual(number, null); 	// fail message: Assert.AreEqual failed. Expecte
 Assert.AreEqual(null, number); 	// fail message: Assert.AreEqual failed. Expected:<(null)>. Actual:<42>. 
 
 // new assertion:
-number.Should().BeNull(); 	// fail message: Did not expect a value, but found 42.
+number.Should().BeNull(); 	/* fail message: Did not expect a value, but found 42. */
 ```
 
 ### scenario: AssertDoubleAreEqual
@@ -290,7 +301,7 @@ double delta = 0.0001;
 Assert.AreEqual(number2, number1, delta); 	// fail message: Assert.AreEqual failed. Expected a difference no greater than <0.0001> between expected value <4.2> and actual value <3.14>. 
 
 // new assertion:
-number1.Should().BeApproximately(number2, delta); 	// fail message: Expected number1 to approximate 4.2 +/- 0.0001, but 3.14 differed by 1.06.
+number1.Should().BeApproximately(number2, delta); 	/* fail message: Expected number1 to approximate 4.2 +/- 0.0001, but 3.14 differed by 1.06. */
 ```
 
 ### scenario: AssertFloatAreEqual
@@ -319,7 +330,7 @@ float delta = 0.0001f;
 Assert.AreEqual(number2, number1, delta); 	// fail message: Assert.AreEqual failed. Expected a difference no greater than <0.0001> between expected value <4.2> and actual value <3.14>. 
 
 // new assertion:
-number1.Should().BeApproximately(number2, delta); 	// fail message: Expected number1 to approximate 4.2F +/- 0.0001F, but 3.14F differed by 1.0599997F.
+number1.Should().BeApproximately(number2, delta); 	/* fail message: Expected number1 to approximate 4.2F +/- 0.0001F, but 3.14F differed by 1.0599997F. */
 ```
 
 ### scenario: AssertStringAreEqual_CaseSensitive
@@ -350,7 +361,7 @@ Assert.AreEqual(str2, str1, ignoreCase: false); 	// fail message: Assert.AreEqua
 Assert.AreEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture); 	// fail message: Assert.AreEqual failed. Expected:<FoO>. Actual:<foo>. 
 
 // new assertion:
-str1.Should().Be(str2); 	// fail message: Expected str1 to be "FoO", but "foo" differs near "foo" (index 0).
+str1.Should().Be(str2); 	/* fail message: Expected str1 to be "FoO", but "foo" differs near "foo" (index 0). */
 ```
 
 ### scenario: AssertStringAreEqual_IgnoreCase
@@ -379,7 +390,7 @@ Assert.AreEqual(str2, str1, ignoreCase: true); 	// fail message: Assert.AreEqual
 Assert.AreEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture); 	// fail message: Assert.AreEqual failed. Expected:<bar>. Actual:<foo>. 
 
 // new assertion:
-str1.Should().BeEquivalentTo(str2); 	// fail message: Expected str1 to be equivalent to "bar", but "foo" differs near "foo" (index 0).
+str1.Should().BeEquivalentTo(str2); 	/* fail message: Expected str1 to be equivalent to "bar", but "foo" differs near "foo" (index 0). */
 ```
 
 ### scenario: AssertObjectAreNotEqual
@@ -406,7 +417,7 @@ object obj2 = "foo";
 Assert.AreNotEqual(obj2, obj1); 	// fail message: Assert.AreNotEqual failed. Expected any value except:<foo>. Actual:<foo>. 
 
 // new assertion:
-obj1.Should().NotBe(obj2); 	// fail message: Did not expect obj1 to be equal to "foo".
+obj1.Should().NotBe(obj2); 	/* fail message: Did not expect obj1 to be equal to "foo". */
 ```
 
 ### scenario: AssertOptionalIntegerAreNotEqual
@@ -433,7 +444,7 @@ int? number2 = 42;
 Assert.AreNotEqual(number2, number1); 	// fail message: Assert.AreNotEqual failed. Expected any value except:<42>. Actual:<42>. 
 
 // new assertion:
-number1.Should().NotBe(number2); 	// fail message: Did not expect number1 to be 42.
+number1.Should().NotBe(number2); 	/* fail message: Did not expect number1 to be 42. */
 ```
 
 ### scenario: AssertDoubleAreNotEqual
@@ -462,7 +473,7 @@ double delta = 0.00159;
 Assert.AreNotEqual(number2, number1, delta); 	// fail message: Assert.AreNotEqual failed. Expected a difference greater than <0.00159> between expected value <3.141> and actual value <3.14>. 
 
 // new assertion:
-number1.Should().NotBeApproximately(number2, delta); 	// fail message: Expected number1 to not approximate 3.141 +/- 0.00159, but 3.14 only differed by 0.0009999999999998899.
+number1.Should().NotBeApproximately(number2, delta); 	/* fail message: Expected number1 to not approximate 3.141 +/- 0.00159, but 3.14 only differed by 0.0009999999999998899. */
 ```
 
 ### scenario: AssertFloatAreNotEqual
@@ -491,7 +502,7 @@ float delta = 0.00159f;
 Assert.AreNotEqual(number2, number1, delta); 	// fail message: Assert.AreNotEqual failed. Expected a difference greater than <0.00159> between expected value <3.141> and actual value <3.14>. 
 
 // new assertion:
-number1.Should().NotBeApproximately(number2, delta); 	// fail message: Expected number1 to not approximate 3.141F +/- 0.00159F, but 3.14F only differed by 0.0009999275F.
+number1.Should().NotBeApproximately(number2, delta); 	/* fail message: Expected number1 to not approximate 3.141F +/- 0.00159F, but 3.14F only differed by 0.0009999275F. */
 ```
 
 ### scenario: AssertStringAreNotEqual_CaseSensitive
@@ -522,7 +533,7 @@ Assert.AreNotEqual(str2, str1, ignoreCase: false); 	// fail message: Assert.AreN
 Assert.AreNotEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture); 	// fail message: Assert.AreNotEqual failed. Expected any value except:<foo>. Actual:<foo>. 
 
 // new assertion:
-str1.Should().NotBe(str2); 	// fail message: Expected str1 not to be "foo".
+str1.Should().NotBe(str2); 	/* fail message: Expected str1 not to be "foo". */
 ```
 
 ### scenario: AssertStringAreNotEqual_IgnoreCase
@@ -551,7 +562,7 @@ Assert.AreNotEqual(str2, str1, ignoreCase: true); 	// fail message: Assert.AreNo
 Assert.AreNotEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture); 	// fail message: Assert.AreNotEqual failed. Expected any value except:<FoO>. Actual:<foo>. 
 
 // new assertion:
-str1.Should().NotBeEquivalentTo(str2); 	// fail message: Expected str1 not to be equivalent to "FoO", but they are.
+str1.Should().NotBeEquivalentTo(str2); 	/* fail message: Expected str1 not to be equivalent to "FoO", but they are. */
 ```
 
 ### scenario: AssertAreSame
@@ -578,7 +589,7 @@ object obj2 = "foo";
 Assert.AreSame(obj2, obj1); 	// fail message: Assert.AreSame failed. 
 
 // new assertion:
-obj1.Should().BeSameAs(obj2); 	// fail message: Expected obj1 to refer to "foo", but found 6.
+obj1.Should().BeSameAs(obj2); 	/* fail message: Expected obj1 to refer to "foo", but found 6. */
 ```
 
 ### scenario: AssertAreNotSame
@@ -605,7 +616,308 @@ object obj2 = "foo";
 Assert.AreNotSame(obj2, obj1); 	// fail message: Assert.AreNotSame failed. 
 
 // new assertion:
-obj1.Should().NotBeSameAs(obj2); 	// fail message: Did not expect obj1 to refer to "foo".
+obj1.Should().NotBeSameAs(obj2); 	/* fail message: Did not expect obj1 to refer to "foo". */
+```
+
+### scenario: CollectionAssertAllItemsAreInstancesOfType
+
+```cs
+// arrange
+var list = new List<object> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(list, typeof(int));
+
+// new assertion:
+list.Should().AllBeOfType<int>();
+```
+
+#### Failure messages
+
+```cs
+var list = new List<object> { 1, 2, "foo" };
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(list, typeof(int)); 	// fail message: CollectionAssert.AllItemsAreInstancesOfType failed. Element at index 2 is not of expected type. Expected type:<System.Int32>. Actual type:<System.String>.
+
+// new assertion:
+list.Should().AllBeOfType<int>(); 	/* fail message: Expected type to be "System.Int32", but found "[System.Int32, System.Int32, System.String]". */
+```
+
+### scenario: CollectionAssertAreEqual
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AreEqual(list2, list1);
+
+// new assertion:
+list1.Should().Equal(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 4 };
+
+// old assertion:
+CollectionAssert.AreEqual(list2, list1); 	// fail message: CollectionAssert.AreEqual failed. (Element at index 2 do not match.)
+
+// new assertion:
+list1.Should().Equal(list2); 	/* fail message: Expected list1 to be equal to {1, 2, 4}, but {1, 2, 3} differs at index 2. */
+```
+
+### scenario: CollectionAssertAreNotEqual
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 4 };
+
+// old assertion:
+CollectionAssert.AreNotEqual(list2, list1);
+
+// new assertion:
+list1.Should().NotEqual(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AreNotEqual(list2, list1); 	// fail message: CollectionAssert.AreNotEqual failed. (Both collection contain same elements.)
+
+// new assertion:
+list1.Should().NotEqual(list2); 	/* fail message: Did not expect collections {1, 2, 3} and {1, 2, 3} to be equal. */
+```
+
+### scenario: CollectionAssertAreEquivalent
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 3, 2, 1 };
+
+// old assertion:
+CollectionAssert.AreEquivalent(list2, list1);
+
+// new assertion:
+list1.Should().BeEquivalentTo(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 2, 3, 4 };
+
+// old assertion:
+CollectionAssert.AreEquivalent(list2, list1); 	// fail message: CollectionAssert.AreEquivalent failed. The expected collection contains 1 occurrence(s) of <4>. The actual collection contains 0 occurrence(s). 
+
+// new assertion:
+list1.Should().BeEquivalentTo(list2); 	/* fail message: Expected list1[2] to be 4, but found 1.
+
+With configuration:
+- Use declared types and members
+- Compare enums by value
+- Compare tuples by their properties
+- Compare anonymous types by their properties
+- Compare records by their members
+- Include non-browsable members
+- Include all non-private properties
+- Include all non-private fields
+- Match member by name (or throw)
+- Be strict about the order of items in byte arrays
+- Without automatic conversion.
+ */
+```
+
+### scenario: CollectionAssertAreNotEquivalent
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 2, 3, 4 };
+
+// old assertion:
+CollectionAssert.AreNotEquivalent(list2, list1);
+
+// new assertion:
+list1.Should().NotBeEquivalentTo(list2);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3 };
+var list2 = new List<int> { 2, 3, 1 };
+
+// old assertion:
+CollectionAssert.AreNotEquivalent(list2, list1); 	// fail message: CollectionAssert.AreNotEquivalent failed. Both collections contain the same elements. 
+
+// new assertion:
+list1.Should().NotBeEquivalentTo(list2); 	/* fail message: Expected list1 {1, 2, 3} not to be equivalent to collection {2, 3, 1}. */
+```
+
+### scenario: CollectionAssertAllItemsAreNotNull
+
+```cs
+// arrange
+var list = new List<object> { 1, "foo", true };
+
+// old assertion:
+CollectionAssert.AllItemsAreNotNull(list);
+
+// new assertion:
+list.Should().NotContainNulls();
+```
+
+#### Failure messages
+
+```cs
+var list = new List<object> { 1, null, true };
+
+// old assertion:
+CollectionAssert.AllItemsAreNotNull(list); 	// fail message: CollectionAssert.AllItemsAreNotNull failed. 
+
+// new assertion:
+list.Should().NotContainNulls(); 	/* fail message: Expected list not to contain <null>s, but found one at index 1. */
+```
+
+### scenario: CollectionAssertAllItemsAreUnique
+
+```cs
+// arrange
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AllItemsAreUnique(list);
+
+// new assertion:
+list.Should().OnlyHaveUniqueItems();
+```
+
+#### Failure messages
+
+```cs
+var list = new List<int> { 1, 2, 1 };
+
+// old assertion:
+CollectionAssert.AllItemsAreUnique(list); 	// fail message: CollectionAssert.AllItemsAreUnique failed. Duplicate item found:<1>. 
+
+// new assertion:
+list.Should().OnlyHaveUniqueItems(); 	/* fail message: Expected list to only have unique items, but item 1 is not unique. */
+```
+
+### scenario: CollectionAssertContains
+
+```cs
+// arrange
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.Contains(list, 2);
+
+// new assertion:
+list.Should().Contain(2);
+```
+
+#### Failure messages
+
+```cs
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.Contains(list, 4); 	// fail message: CollectionAssert.Contains failed. 
+
+// new assertion:
+list.Should().Contain(4); 	/* fail message: Expected list {1, 2, 3} to contain 4. */
+```
+
+### scenario: CollectionAssertDoesNotContain
+
+```cs
+// arrange
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.DoesNotContain(list, 4);
+
+// new assertion:
+list.Should().NotContain(4);
+```
+
+#### Failure messages
+
+```cs
+var list = new List<int> { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.DoesNotContain(list, 2); 	// fail message: CollectionAssert.DoesNotContain failed. 
+
+// new assertion:
+list.Should().NotContain(2); 	/* fail message: Expected list {1, 2, 3} to not contain 2. */
+```
+
+### scenario: CollectionAssertIsSubsetOf
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3 };
+
+// old assertion:
+CollectionAssert.IsSubsetOf(list2, list1);
+
+// new assertion:
+list2.Should().BeSubsetOf(list1);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3, 5 };
+
+// old assertion:
+CollectionAssert.IsSubsetOf(list2, list1); 	// fail message: CollectionAssert.IsSubsetOf failed. 
+
+// new assertion:
+list2.Should().BeSubsetOf(list1); 	/* fail message: Expected list2 to be a subset of {1, 2, 3, 4}, but items {5} are not part of the superset. */
+```
+
+### scenario: CollectionAssertIsNotSubsetOf
+
+```cs
+// arrange
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3, 5 };
+
+// old assertion:
+CollectionAssert.IsNotSubsetOf(list2, list1);
+
+// new assertion:
+list2.Should().NotBeSubsetOf(list1);
+```
+
+#### Failure messages
+
+```cs
+var list1 = new List<int> { 1, 2, 3, 4 };
+var list2 = new List<int> { 2, 3 };
+
+// old assertion:
+CollectionAssert.IsNotSubsetOf(list2, list1); 	// fail message: CollectionAssert.IsNotSubsetOf failed. 
+
+// new assertion:
+list2.Should().NotBeSubsetOf(list1); 	/* fail message: Did not expect list2 {2, 3} to be a subset of {1, 2, 3, 4}. */
 ```
 
 

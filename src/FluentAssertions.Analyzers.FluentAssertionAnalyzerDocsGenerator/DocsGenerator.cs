@@ -130,7 +130,7 @@ public class DocsGenerator
                     var paddingToRemove = bodyLines[0].IndexOf(bodyLines[0].TrimStart());
 
                     var oldAssertions = testWithFailureOldAssertions.Select((x, i) => x.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(oldAssertionComment[i].Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesOldAssertions[i]);
-                    var newAssertion = testWithFailureNewAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(newAssertionComment.Span) > 0).ToString().TrimStart() + " \t// fail message: " + exceptionMessageLinesNewAssertion;
+                    var newAssertion = testWithFailureNewAssertion.Body.Statements.OfType<ExpressionStatementSyntax>().Single(x => x.Span.CompareTo(newAssertionComment.Span) > 0).ToString().TrimStart() + " \t/* fail message: " + exceptionMessageLinesNewAssertion + " */";
 
                     var arrange = bodyLines.TakeWhile(x => !string.IsNullOrEmpty(x))
                         .Select(l => l.Length > paddingToRemove ? l.Substring(paddingToRemove) : l).Aggregate((a, b) => $"{a}{Environment.NewLine}{b}");
