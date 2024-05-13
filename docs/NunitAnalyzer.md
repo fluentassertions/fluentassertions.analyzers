@@ -8,6 +8,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [BooleanAssertIsFalse](#scenario-booleanassertisfalse) - `flag.Should().BeFalse();`
 - [AssertNull](#scenario-assertnull) - `obj.Should().BeNull();`
 - [AssertNotNull](#scenario-assertnotnull) - `obj.Should().NotBeNull();`
+- [AssertIsEmpty](#scenario-assertisempty) - `collection.Should().BeEmpty();`
+- [AssertIsNotEmpty](#scenario-assertisnotempty) - `collection.Should().NotBeEmpty();`
 
 
 ## Scenarios
@@ -134,6 +136,60 @@ Assert.IsNotNull(obj); /* fail message:   Expected: not null
 
 // new assertion:
 obj.Should().NotBeNull(); /* fail message: Expected obj not to be <null>. */
+```
+
+### scenario: AssertIsEmpty
+
+```cs
+// arrange
+var collection = new List<int>();
+
+// old assertion:
+Assert.IsEmpty(collection);
+
+// new assertion:
+collection.Should().BeEmpty();
+```
+
+#### Failure messages
+
+```cs
+var collection = new List<int> { 1, 2, 3 };
+
+// old assertion:
+Assert.IsEmpty(collection); /* fail message:   Expected: <empty>
+  But was:  < 1, 2, 3 >
+ */
+
+// new assertion:
+collection.Should().BeEmpty(); /* fail message: Expected collection to be empty, but found {1, 2, 3}. */
+```
+
+### scenario: AssertIsNotEmpty
+
+```cs
+// arrange
+var collection = new List<int> { 1, 2, 3 };
+
+// old assertion:
+Assert.IsNotEmpty(collection);
+
+// new assertion:
+collection.Should().NotBeEmpty();
+```
+
+#### Failure messages
+
+```cs
+var collection = new List<int>();
+
+// old assertion:
+Assert.IsNotEmpty(collection); /* fail message:   Expected: not <empty>
+  But was:  <empty>
+ */
+
+// new assertion:
+collection.Should().NotBeEmpty(); /* fail message: Expected collection not to be empty. */
 ```
 
 
