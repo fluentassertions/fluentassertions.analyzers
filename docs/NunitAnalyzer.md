@@ -6,6 +6,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 - [BooleanAssertIsTrue](#scenario-booleanassertistrue) - `flag.Should().BeTrue();`
 - [BooleanAssertIsFalse](#scenario-booleanassertisfalse) - `flag.Should().BeFalse();`
+- [AssertNull](#scenario-assertnull) - `obj.Should().BeNull();`
+- [AssertNotNull](#scenario-assertnotnull) - `obj.Should().NotBeNull();`
 
 
 ## Scenarios
@@ -70,6 +72,68 @@ Assert.IsFalse(flag); /* fail message:   Expected: False
 
 // new assertion:
 flag.Should().BeFalse(); /* fail message: Expected flag to be false, but found True. */
+```
+
+### scenario: AssertNull
+
+```cs
+// arrange
+object obj = null;
+
+// old assertion:
+Assert.IsNull(obj);
+Assert.Null(obj);
+
+// new assertion:
+obj.Should().BeNull();
+```
+
+#### Failure messages
+
+```cs
+object obj = "foo";
+
+// old assertion:
+Assert.Null(obj); /* fail message:   Expected: null
+  But was:  "foo"
+ */
+Assert.IsNull(obj); /* fail message:   Expected: null
+  But was:  "foo"
+ */
+
+// new assertion:
+obj.Should().BeNull(); /* fail message: Expected obj to be <null>, but found "foo". */
+```
+
+### scenario: AssertNotNull
+
+```cs
+// arrange
+object obj = "foo";
+
+// old assertion:
+Assert.IsNotNull(obj);
+Assert.NotNull(obj);
+
+// new assertion:
+obj.Should().NotBeNull();
+```
+
+#### Failure messages
+
+```cs
+object obj = null;
+
+// old assertion:
+Assert.NotNull(obj); /* fail message:   Expected: not null
+  But was:  null
+ */
+Assert.IsNotNull(obj); /* fail message:   Expected: not null
+  But was:  null
+ */
+
+// new assertion:
+obj.Should().NotBeNull(); /* fail message: Expected obj not to be <null>. */
 ```
 
 
