@@ -233,31 +233,38 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
-        if (invocation.Arguments.Length is 1 && invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean)) // Assert.That(subject)
+        if (invocation.Arguments.Length is 1 && invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean) // Assert.That(subject)
+            || invocation.Arguments.Length > 2 && invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean) && invocation.Arguments[1].Value.Type.EqualsSymbol(t.String)) // Assert.That(subject, message)
         {
             return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: []);
         }
 
-        if (invocation.Arguments[1].Value.UnwrapConversion() is IPropertyReferenceOperation constraint && constraint.Property.ContainingType.EqualsSymbol(t.Is))
-        {
-            switch (constraint)
-            {
-                case { Property.Name: "True" }: // Assert.That(subject, Is.True)
-                case { Property.Name: "Not", Parent: IPropertyReferenceOperation { Property.Name: "False" } }: // Assert.That(subject, Is.Not.False)
-                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: [1]);
+        if (invocation.Arguments[1].Value.UnwrapConversion() is not IPropertyReferenceOperation constraint) return null;
 
-                case { Property.Name: "Not", Parent: IPropertyReferenceOperation { Property.Name: "True" } }: // Assert.That(subject, Is.Not.True)
-                case { Property.Name: "False" }: // Assert.That(subject, Is.False)
-                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeFalse", subjectIndex: 0, argumentsToRemove: [1]);
-                default:
-                    return null;
-            }
+        switch (constraint.Property.Name)
+        {
+            case "True" when constraint.Property.ContainingType.EqualsSymbol(t.Is): // Assert.That(subject, Is.True)
+            case "False" when constraint.Instance is IPropertyReferenceOperation { Property.Name: "Not" } chainedReference && PropertyReferencedFromType(chainedReference, t.Is): // Assert.That(subject, Is.Not.False)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: [1]);
+            case "True" when constraint.Instance is IPropertyReferenceOperation { Property.Name: "Not" } chainedReference && PropertyReferencedFromType(chainedReference, t.Is): // Assert.That(subject, Is.Not.True)
+            case "False" when PropertyReferencedFromType(constraint, t.Is): // Assert.That(subject, Is.False)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeFalse", subjectIndex: 0, argumentsToRemove: [1]);
+
+            default:
+                return null;
         }
-        return null;
+
     }
+
+    private static bool PropertyReferencedFromType(IPropertyReferenceOperation propertyReference, INamedTypeSymbol type) => propertyReference.Property.ContainingType.EqualsSymbol(type);
 
     public class NunitCodeFixContext(Compilation compilation) : TestingFrameworkCodeFixProvider.TestingFrameworkCodeFixContext(compilation)
     {
         public INamedTypeSymbol Is { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Is");
+        public INamedTypeSymbol Has { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Has");
+        public INamedTypeSymbol Does { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Does");
+        public INamedTypeSymbol Contains { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Contains");
+        public INamedTypeSymbol Throws { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Throws");
+        public INamedTypeSymbol ConstraintExpression { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Constraints.ConstraintExpression");
     }
 }

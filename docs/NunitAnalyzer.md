@@ -23,6 +23,9 @@ var flag = true;
 // old assertion:
 Assert.IsTrue(flag);
 Assert.True(flag);
+Assert.That(flag);
+Assert.That(flag, Is.True);
+Assert.That(flag, Is.Not.False);
 
 // new assertion:
 flag.Should().BeTrue();
@@ -40,6 +43,15 @@ Assert.True(flag); /* fail message:   Expected: True
 Assert.IsTrue(flag); /* fail message:   Expected: True
   But was:  False
  */
+Assert.That(flag); /* fail message:   Expected: True
+  But was:  False
+ */
+Assert.That(flag, Is.True); /* fail message:   Expected: True
+  But was:  False
+ */
+Assert.That(flag, Is.Not.False); /* fail message:   Expected: not False
+  But was:  False
+ */
 
 // new assertion:
 flag.Should().BeTrue(); /* fail message: Expected flag to be true, but found False. */
@@ -54,6 +66,8 @@ var flag = false;
 // old assertion:
 Assert.IsFalse(flag);
 Assert.False(flag);
+Assert.That(flag, Is.False);
+Assert.That(flag, Is.Not.True);
 
 // new assertion:
 flag.Should().BeFalse();
@@ -69,6 +83,12 @@ Assert.False(flag); /* fail message:   Expected: False
   But was:  True
  */
 Assert.IsFalse(flag); /* fail message:   Expected: False
+  But was:  True
+ */
+Assert.That(flag, Is.False); /* fail message:   Expected: False
+  But was:  True
+ */
+Assert.That(flag, Is.Not.True); /* fail message:   Expected: not True
   But was:  True
  */
 
