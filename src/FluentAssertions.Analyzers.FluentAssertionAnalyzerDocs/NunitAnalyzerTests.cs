@@ -1,7 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Assert = NUnit.Framework.Assert;
-using FluentAssertions;
 using System.Collections.Generic;
+using NUnit.Framework;
+using FluentAssertions;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
@@ -17,6 +18,9 @@ public class NunitAnalyzerTests
         // old assertion:
         Assert.IsTrue(flag);
         Assert.True(flag);
+        Assert.That(flag);
+        Assert.That(flag, Is.True);
+        Assert.That(flag, Is.Not.False);
 
         // new assertion:
         flag.Should().BeTrue();
@@ -43,6 +47,36 @@ public class NunitAnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
+    public void BooleanAssertIsTrue_Failure_OldAssertion_2()
+    {
+        // arrange
+        var flag = false;
+
+        // old assertion:
+        Assert.That(flag);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void BooleanAssertIsTrue_Failure_OldAssertion_3()
+    {
+        // arrange
+        var flag = false;
+
+        // old assertion:
+        Assert.That(flag, Is.True);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void BooleanAssertIsTrue_Failure_OldAssertion_4()
+    {
+        // arrange
+        var flag = false;
+
+        // old assertion:
+        Assert.That(flag, Is.Not.False);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
     public void BooleanAssertIsTrue_Failure_NewAssertion()
     {
         // arrange
@@ -61,6 +95,8 @@ public class NunitAnalyzerTests
         // old assertion:
         Assert.IsFalse(flag);
         Assert.False(flag);
+        Assert.That(flag, Is.False);
+        Assert.That(flag, Is.Not.True);
 
         // new assertion:
         flag.Should().BeFalse();
@@ -84,6 +120,26 @@ public class NunitAnalyzerTests
 
         // old assertion:
         Assert.IsFalse(flag);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void BooleanAssertIsFalse_Failure_OldAssertion_2()
+    {
+        // arrange
+        var flag = true;
+
+        // old assertion:
+        Assert.That(flag, Is.False);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void BooleanAssertIsFalse_Failure_OldAssertion_3()
+    {
+        // arrange
+        var flag = true;
+
+        // old assertion:
+        Assert.That(flag, Is.Not.True);
     }
 
     [TestMethod, ExpectedTestFrameworkException]
