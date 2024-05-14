@@ -1,7 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Assert = NUnit.Framework.Assert;
-using FluentAssertions;
 using System.Collections.Generic;
+using NUnit.Framework;
+using FluentAssertions;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
@@ -17,6 +18,8 @@ public class NunitAnalyzerTests
         // old assertion:
         Assert.IsTrue(flag);
         Assert.True(flag);
+        Assert.That(flag);
+        Assert.That(flag, Is.True);
 
         // new assertion:
         flag.Should().BeTrue();

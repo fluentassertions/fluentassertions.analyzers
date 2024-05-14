@@ -11,10 +11,11 @@ using Microsoft.CodeAnalysis.Simplification;
 namespace FluentAssertions.Analyzers;
 
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NunitCodeFixProvider)), Shared]
-public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
+public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFixProvider.NunitCodeFixContext>
 {
     public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssertAnalyzer.NUnitRule.Id);
-    protected override CreateChangedDocument TryComputeFixCore(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t, Diagnostic diagnostic)
+    protected override NunitCodeFixContext CreateTestContext(SemanticModel semanticModel) => new(semanticModel.Compilation);
+    protected override CreateChangedDocument TryComputeFixCore(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t, Diagnostic diagnostic)
     {
         var assertType = invocation.TargetMethod.ContainingType;
         var nunitVersion = assertType.ContainingAssembly.Identity.Version;
@@ -24,6 +25,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
 
         return assertType.Name switch
         {
+            "Assert" when invocation.TargetMethod.Name is "That" => TryComputeFixForNunitThat(invocation, context, t),
             "Assert" when isNunit3 => TryComputeFixForNunitClassicAssert(invocation, context, t),
             "ClassicAssert" when isNunit4 => TryComputeFixForNunitClassicAssert(invocation, context, t),
             //"StringAssert" => TryComputeFixForStringAssert(invocation, context, testContext),
@@ -32,7 +34,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
         };
     }
 
-    private CreateChangedDocument TryComputeFixForNunitClassicAssert(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t)
+    private CreateChangedDocument TryComputeFixForNunitClassicAssert(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
         switch (invocation.TargetMethod.Name)
         {
@@ -227,5 +229,35 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider
                 }
         }
         return null;
+    }
+
+    private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
+    {
+        if (invocation.Arguments.Length is 1 && invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean)) // Assert.That(subject)
+        {
+            return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: []);
+        }
+
+        if (invocation.Arguments[1].Value.UnwrapConversion() is IPropertyReferenceOperation constraint && constraint.Property.ContainingType.EqualsSymbol(t.Is))
+        {
+            switch (constraint)
+            {
+                case { Property.Name: "True" }: // Assert.That(subject, Is.True)
+                case { Property.Name: "Not", Parent: IPropertyReferenceOperation { Property.Name: "False" } }: // Assert.That(subject, Is.Not.False)
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: [1]);
+
+                case { Property.Name: "Not", Parent: IPropertyReferenceOperation { Property.Name: "True" } }: // Assert.That(subject, Is.Not.True)
+                case { Property.Name: "False" }: // Assert.That(subject, Is.False)
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeFalse", subjectIndex: 0, argumentsToRemove: [1]);
+                default:
+                    return null;
+            }
+        }
+        return null;
+    }
+
+    public class NunitCodeFixContext(Compilation compilation) : TestingFrameworkCodeFixProvider.TestingFrameworkCodeFixContext(compilation)
+    {
+        public INamedTypeSymbol Is { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Is");
     }
 }
