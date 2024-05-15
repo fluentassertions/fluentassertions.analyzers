@@ -17,7 +17,9 @@ if ($FormatAndExecuteTestsAgain) {
         Write-Host "formatting code... - Iteration $i"
         $out = dotnet format analyzers --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity normal 2>&1 | Out-String
 
+        Write-Host "-------------$i-------------"
         Write-Host $out
+        Write-Host "-------------$i-------------"
 
         $i++
     } while (($out -ccontains "Unable to fix FAA0004. Code fix NunitCodeFixProvider didn't return a Fix All action") -or ($out -ccontains "Unable to fix FAA0003. Code fix MsTestCodeFixProvider didn't return a Fix All action"))
