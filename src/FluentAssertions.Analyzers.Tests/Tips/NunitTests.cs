@@ -99,6 +99,8 @@ public class NunitTests
     [AssertionDiagnostic("Assert.False(bool.Parse(\"false\"){0});")]
     [AssertionDiagnostic("Assert.IsFalse(actual{0});")]
     [AssertionDiagnostic("Assert.IsFalse(bool.Parse(\"false\"){0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.False{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.True{0});")]
     [Implemented]
     public void Nunit3_AssertFalse_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("bool actual", assertion);
 
@@ -123,6 +125,12 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "Assert.IsFalse(bool.Parse(\"false\"){0});",
         newAssertion: "bool.Parse(\"false\").Should().BeFalse({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.False{0});",
+        newAssertion: "actual.Should().BeFalse({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.True{0});",
+        newAssertion: "actual.Should().BeFalse({0});")]
     [Implemented]
     public void Nunit3_AssertFalse_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("bool actual", oldAssertion, newAssertion);
 
