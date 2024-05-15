@@ -11,7 +11,11 @@ Pop-Location
 if ($FormatAndExecuteTestsAgain) {
     Push-Location src
     Push-Location FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs
-    dotnet format analyzers FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.csproj --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity diagnostic
+
+    do {
+        $out = dotnet format analyzers --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity normal
+    } while ($out -ccontains "Unable to fix FAA0004. Code fix NunitCodeFixProvider didn't return a Fix All action")
+
     Pop-Location
     Pop-Location
 
