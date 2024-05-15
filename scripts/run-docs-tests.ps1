@@ -15,7 +15,7 @@ if ($FormatAndExecuteTestsAgain) {
     $i = 1;
     do {
         Write-Host "formatting code... - Iteration $i"
-        $out = dotnet format analyzers --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity normal
+        $out = dotnet format analyzers --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity normal 2>&1 | Out-String
 
         Write-Host $out
 
