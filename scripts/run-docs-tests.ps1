@@ -20,7 +20,7 @@ if ($FormatAndExecuteTestsAgain) {
         Write-Host $out
 
         $i++
-    } while ($out -cnotcontains "Unable to fix FAA0004. Code fix NunitCodeFixProvider didn't return a Fix All action")
+    } while ($out -ccontains "Unable to fix FAA0004. Code fix NunitCodeFixProvider didn't return a Fix All action")
 
     Pop-Location
     Pop-Location
