@@ -11,7 +11,20 @@ Pop-Location
 if ($FormatAndExecuteTestsAgain) {
     Push-Location src
     Push-Location FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs
-    dotnet format analyzers --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity normal
+
+    $i = 1;
+    do {
+        Write-Host "formatting code... - Iteration $i"
+        $out = dotnet format analyzers --diagnostics FAA0001 FAA0003 FAA0004 --severity info --verbosity normal 2>&1 | Out-String | Join-String
+
+        Write-Host "-------------$i-------------"
+        Write-Host $out
+        Write-Host "-------------$i-------------"
+        Write-Host "output length: $($out.Length)"
+
+        $i++
+    } while ($out.Contains("Unable to fix FAA000"))
+
     Pop-Location
     Pop-Location
 
