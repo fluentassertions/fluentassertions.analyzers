@@ -23,7 +23,7 @@ if ($FormatAndExecuteTestsAgain) {
         Write-Host "output length: $($out.Length)"
 
         $i++
-    } while (($out -ccontains "Unable to fix FAA000"))
+    } while ($out.Contains("Unable to fix FAA000"))
 
     Pop-Location
     Pop-Location
