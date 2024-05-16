@@ -23,7 +23,7 @@ if ($FormatAndExecuteTestsAgain) {
         Write-Host "output length: $($out.Length)"
 
         $i++
-    } while (($out -ccontains "Unable to fix FAA0004. Code fix NunitCodeFixProvider didn't return a Fix All action") -or ($out -ccontains "Unable to fix FAA0003. Code fix MsTestCodeFixProvider didn't return a Fix All action"))
+    } while (($out -ccontains "didn't return a Fix All action"))
 
     Pop-Location
     Pop-Location
