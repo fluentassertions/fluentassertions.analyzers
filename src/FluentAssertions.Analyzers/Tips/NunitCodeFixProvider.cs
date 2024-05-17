@@ -259,6 +259,16 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             else if (IsPropertyOfSymbol(constraint, "Not", "Empty", t.Is)) // Assert.That(subject, Is.Not.Empty)
                 return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeEmpty");
         }
+        else if (IsPropertyOfSymbol(constraint, "Zero", t.Is))
+            return DocumentEditorUtils.RewriteExpression(invocation, [
+                EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
+                EditAction.SubjectShouldAssertion(argumentIndex: 0, "Be"),
+            ], context);
+        else if (IsPropertyOfSymbol(constraint, "Not", "Zero", t.Is))
+            return DocumentEditorUtils.RewriteExpression(invocation, [
+                    EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
+                EditAction.SubjectShouldAssertion(argumentIndex: 0, "NotBe"),
+            ], context);
 
         return null;
 

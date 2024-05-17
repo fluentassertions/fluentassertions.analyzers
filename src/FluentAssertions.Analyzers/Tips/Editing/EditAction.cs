@@ -17,6 +17,14 @@ public static class EditAction
     public static Action<EditActionContext> SubjectShouldAssertion(int argumentIndex, string assertion)
         => context => new SubjectShouldAssertionAction(argumentIndex, assertion).Apply(context);
 
+    public static Action<EditActionContext> ReplaceAssertionArgument(int index, Func<SyntaxGenerator, SyntaxNode> expressionFactory)
+        => context =>
+    {
+        var argument = context.InvocationExpression.ArgumentList.Arguments[index];
+        var newArgumentExpression = (ExpressionSyntax)expressionFactory(context.Editor.Generator);
+        context.Editor.ReplaceNode(argument.Expression, newArgumentExpression);
+    };
+
     public static Action<EditActionContext> SubjectShouldGenericAssertion(int argumentIndex, string assertion, ImmutableArray<ITypeSymbol> genericTypes)
         => context => new SubjectShouldGenericAssertionAction(argumentIndex, assertion, genericTypes).Apply(context);
 

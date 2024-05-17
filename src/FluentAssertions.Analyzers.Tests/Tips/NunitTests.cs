@@ -15,9 +15,6 @@ public class NunitTests
     [AssertionDiagnostic("Assert.True(bool.Parse(\"true\"){0});")]
     [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
     [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
-    [AssertionDiagnostic("Assert.That(actual{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.True{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Not.False{0});")]
     [Implemented]
     public void Nunit3_AssertTrue_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("bool actual", assertion);
 
@@ -28,6 +25,13 @@ public class NunitTests
     [AssertionDiagnostic("ClassicAssert.IsTrue(bool.Parse(\"true\"){0});")]
     [Implemented]
     public void Nunit4_AssertTrue_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("bool actual", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.True{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.False{0});")]
+    [Implemented]
+    public void Nunit_AssertTrue_TestAnalyzer(string assertion) => NunitVerifyDiagnostic("bool actual", assertion);
 
     [DataTestMethod]
     [AssertionCodeFix(
@@ -54,15 +58,6 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "Assert.IsTrue(actual == false{0});",
         newAssertion: "(actual == false).Should().BeTrue({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual{0});",
-        newAssertion: "actual.Should().BeTrue({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.True{0});",
-        newAssertion: "actual.Should().BeTrue({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Not.False{0});",
-        newAssertion: "actual.Should().BeTrue({0});")]
     [Implemented]
     public void Nunit3_AssertTrue_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("bool actual", oldAssertion, newAssertion);
 
@@ -95,12 +90,23 @@ public class NunitTests
     public void Nunit4_AssertTrue_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("bool actual", oldAssertion, newAssertion);
 
     [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual{0});",
+        newAssertion: "actual.Should().BeTrue({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.True{0});",
+        newAssertion: "actual.Should().BeTrue({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.False{0});",
+        newAssertion: "actual.Should().BeTrue({0});")]
+    [Implemented]
+    public void Nunit_AssertTrue_TestCodeFix(string oldAssertion, string newAssertion) => NunitVerifyFix("bool actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
     [AssertionDiagnostic("Assert.False(actual{0});")]
     [AssertionDiagnostic("Assert.False(bool.Parse(\"false\"){0});")]
     [AssertionDiagnostic("Assert.IsFalse(actual{0});")]
     [AssertionDiagnostic("Assert.IsFalse(bool.Parse(\"false\"){0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.False{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Not.True{0});")]
     [Implemented]
     public void Nunit3_AssertFalse_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("bool actual", assertion);
 
@@ -111,6 +117,12 @@ public class NunitTests
     [AssertionDiagnostic("ClassicAssert.IsFalse(bool.Parse(\"false\"){0});")]
     [Implemented]
     public void Nunit4_AssertFalse_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("bool actual", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual, Is.False{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.True{0});")]
+    [Implemented]
+    public void Nunit_AssertFalse_TestAnalyzer(string assertion) => NunitVerifyDiagnostic("bool actual", assertion);
 
     [DataTestMethod]
     [AssertionCodeFix(
@@ -125,12 +137,6 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "Assert.IsFalse(bool.Parse(\"false\"){0});",
         newAssertion: "bool.Parse(\"false\").Should().BeFalse({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.False{0});",
-        newAssertion: "actual.Should().BeFalse({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Not.True{0});",
-        newAssertion: "actual.Should().BeFalse({0});")]
     [Implemented]
     public void Nunit3_AssertFalse_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("bool actual", oldAssertion, newAssertion);
 
@@ -151,9 +157,18 @@ public class NunitTests
     public void Nunit4_AssertFalse_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("bool actual", oldAssertion, newAssertion);
 
     [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.False{0});",
+        newAssertion: "actual.Should().BeFalse({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.True{0});",
+        newAssertion: "actual.Should().BeFalse({0});")]
+    [Implemented]
+    public void Nunit_AssertFalse_TestCodeFix(string oldAssertion, string newAssertion) => NunitVerifyFix("bool actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
     [AssertionDiagnostic("Assert.Null(actual{0});")]
     [AssertionDiagnostic("Assert.IsNull(actual{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Null{0});")]
     [Implemented]
     public void Nunit3_AssertNull_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("object actual", assertion);
 
@@ -164,14 +179,16 @@ public class NunitTests
     public void Nunit4_AssertNull_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("object actual", assertion);
 
     [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual, Is.Null{0});")]
+    [Implemented]
+    public void Nunit_AssertNull_TestAnalyzer(string assertion) => NunitVerifyDiagnostic("object actual", assertion);
+
+    [DataTestMethod]
     [AssertionCodeFix(
         oldAssertion: "Assert.Null(actual{0});",
         newAssertion: "actual.Should().BeNull({0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.IsNull(actual{0});",
-        newAssertion: "actual.Should().BeNull({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Null{0});",
         newAssertion: "actual.Should().BeNull({0});")]
     [Implemented]
     public void Nunit3_AssertNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("object actual", oldAssertion, newAssertion);
@@ -187,9 +204,15 @@ public class NunitTests
     public void Nunit4_AssertNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("object actual", oldAssertion, newAssertion);
 
     [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Null{0});",
+        newAssertion: "actual.Should().BeNull({0});")]
+    [Implemented]
+    public void Nunit_AssertNull_TestCodeFix(string oldAssertion, string newAssertion) => NunitVerifyFix("object actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
     [AssertionDiagnostic("Assert.NotNull(actual{0});")]
     [AssertionDiagnostic("Assert.IsNotNull(actual{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Not.Null{0});")]
     [Implemented]
     public void Nunit3_AssertNotNull_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("object actual", assertion);
 
@@ -200,14 +223,16 @@ public class NunitTests
     public void Nunit4_AssertNotNull_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("object actual", assertion);
 
     [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.Null{0});")]
+    [Implemented]
+    public void Nunit_AssertNotNull_TestAnalyzer(string assertion) => NunitVerifyDiagnostic("object actual", assertion);
+
+    [DataTestMethod]
     [AssertionCodeFix(
         oldAssertion: "Assert.NotNull(actual{0});",
         newAssertion: "actual.Should().NotBeNull({0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.IsNotNull(actual{0});",
-        newAssertion: "actual.Should().NotBeNull({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Not.Null{0});",
         newAssertion: "actual.Should().NotBeNull({0});")]
     [Implemented]
     public void Nunit3_AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("object actual", oldAssertion, newAssertion);
@@ -221,6 +246,13 @@ public class NunitTests
         newAssertion: "actual.Should().NotBeNull({0});")]
     [Implemented]
     public void Nunit4_AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("object actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.Null{0});",
+        newAssertion: "actual.Should().NotBeNull({0});")]
+    [Implemented]
+    public void Nunit_AssertNotNull_TestCodeFix(string oldAssertion, string newAssertion) => NunitVerifyFix("object actual", oldAssertion, newAssertion);
 
     [DataTestMethod]
     [AssertionDiagnostic("Assert.IsNaN(actual{0});")]
@@ -243,7 +275,6 @@ public class NunitTests
     // IsEmpty
     [DataTestMethod]
     [AssertionDiagnostic("Assert.IsEmpty(actual{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Empty{0});")]
     [Implemented]
     public void Nunit3_AssertIsEmpty_TestAnalyzer(string assertion)
     {
@@ -265,11 +296,19 @@ public class NunitTests
     }
 
     [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual, Is.Empty{0});")]
+    [Implemented]
+    public void Nunit_AssertIsEmpty_TestAnalyzer(string assertion)
+    {
+        NunitVerifyDiagnostic("object[] actual", assertion);
+        NunitVerifyDiagnostic("IEnumerable<int> actual", assertion);
+        NunitVerifyDiagnostic("IEnumerable actual", assertion);
+        NunitVerifyDiagnostic("string actual", assertion);
+    }
+
+    [DataTestMethod]
     [AssertionCodeFix(
         oldAssertion: "Assert.IsEmpty(actual{0});",
-        newAssertion: "actual.Should().BeEmpty({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Empty{0});",
         newAssertion: "actual.Should().BeEmpty({0});")]
     [Implemented]
     public void Nunit3_AssertIsEmpty_TestCodeFix(string oldAssertion, string newAssertion)
@@ -293,10 +332,22 @@ public class NunitTests
         Nunit4VerifyFix("string actual", oldAssertion, newAssertion);
     }
 
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Empty{0});",
+        newAssertion: "actual.Should().BeEmpty({0});")]
+    [Implemented]
+    public void Nunit_AssertIsEmpty_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        NunitVerifyFix("object[] actual", oldAssertion, newAssertion);
+        NunitVerifyFix("IEnumerable<int> actual", oldAssertion, newAssertion);
+        NunitVerifyNoFix("IEnumerable actual", oldAssertion);
+        NunitVerifyFix("string actual", oldAssertion, newAssertion);
+    }
+
     // IsNotEmpty
     [DataTestMethod]
     [AssertionDiagnostic("Assert.IsNotEmpty(actual{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Not.Empty{0});")]
     [Implemented]
     public void Nunit3_AssertIsNotEmpty_TestAnalyzer(string assertion)
     {
@@ -316,13 +367,21 @@ public class NunitTests
         Nunit4VerifyDiagnostic("IEnumerable actual", assertion);
         Nunit4VerifyDiagnostic("string actual", assertion);
     }
+    
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.Empty{0});")]
+    [Implemented]
+    public void Nunit_AssertIsNotEmpty_TestAnalyzer(string assertion)
+    {
+        NunitVerifyDiagnostic("object[] actual", assertion);
+        NunitVerifyDiagnostic("IEnumerable<int> actual", assertion);
+        NunitVerifyDiagnostic("IEnumerable actual", assertion);
+        NunitVerifyDiagnostic("string actual", assertion);
+    }
 
     [DataTestMethod]
     [AssertionCodeFix(
         oldAssertion: "Assert.IsNotEmpty(actual{0});",
-        newAssertion: "actual.Should().NotBeEmpty({0});")]
-    [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Not.Empty{0});",
         newAssertion: "actual.Should().NotBeEmpty({0});")]
     [Implemented]
     public void Nunit3_AssertIsNotEmpty_TestCodeFix(string oldAssertion, string newAssertion)
@@ -344,6 +403,19 @@ public class NunitTests
         Nunit4VerifyFix("IEnumerable<int> actual", oldAssertion, newAssertion);
         Nunit4VerifyNoFix("IEnumerable actual", oldAssertion);
         Nunit4VerifyFix("string actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.Empty{0});",
+        newAssertion: "actual.Should().NotBeEmpty({0});")]
+    [Implemented]
+    public void Nunit_AssertIsNotEmpty_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        NunitVerifyFix("object[] actual", oldAssertion, newAssertion);
+        NunitVerifyFix("IEnumerable<int> actual", oldAssertion, newAssertion);
+        NunitVerifyNoFix("IEnumerable actual", oldAssertion);
+        NunitVerifyFix("string actual", oldAssertion, newAssertion);
     }
 
     [DataTestMethod]
@@ -372,6 +444,20 @@ public class NunitTests
         Nunit4VerifyDiagnostic("float actual", assertion);
         Nunit4VerifyDiagnostic("double actual", assertion);
         Nunit4VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual, Is.Zero{0});")]
+    [Implemented]
+    public void Nunit_AssertZero_TestAnalyzer(string assertion)
+    {
+        NunitVerifyDiagnostic("int actual", assertion);
+        NunitVerifyDiagnostic("uint actual", assertion);
+        NunitVerifyDiagnostic("long actual", assertion);
+        NunitVerifyDiagnostic("ulong actual", assertion);
+        NunitVerifyDiagnostic("float actual", assertion);
+        NunitVerifyDiagnostic("double actual", assertion);
+        NunitVerifyDiagnostic("decimal actual", assertion);
     }
 
     [DataTestMethod]
@@ -407,6 +493,22 @@ public class NunitTests
     }
 
     [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Zero{0});",
+        newAssertion: "actual.Should().Be(0{0});")]
+    [Implemented]
+    public void Nunit_AssertZero_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        NunitVerifyFix("int actual", oldAssertion, newAssertion);
+        NunitVerifyFix("uint actual", oldAssertion, newAssertion);
+        NunitVerifyFix("long actual", oldAssertion, newAssertion);
+        NunitVerifyFix("ulong actual", oldAssertion, newAssertion);
+        NunitVerifyFix("float actual", oldAssertion, newAssertion);
+        NunitVerifyFix("double actual", oldAssertion, newAssertion);
+        NunitVerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
     [AssertionDiagnostic("Assert.NotZero(actual{0});")]
     [Implemented]
     public void Nunit3_AssertNotZero_TestAnalyzer(string assertion)
@@ -432,6 +534,20 @@ public class NunitTests
         Nunit4VerifyDiagnostic("float actual", assertion);
         Nunit4VerifyDiagnostic("double actual", assertion);
         Nunit4VerifyDiagnostic("decimal actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.Zero{0});")]
+    [Implemented]
+    public void Nunit_AssertNotZero_TestAnalyzer(string assertion)
+    {
+        NunitVerifyDiagnostic("int actual", assertion);
+        NunitVerifyDiagnostic("uint actual", assertion);
+        NunitVerifyDiagnostic("long actual", assertion);
+        NunitVerifyDiagnostic("ulong actual", assertion);
+        NunitVerifyDiagnostic("float actual", assertion);
+        NunitVerifyDiagnostic("double actual", assertion);
+        NunitVerifyDiagnostic("decimal actual", assertion);
     }
 
     [DataTestMethod]
@@ -464,6 +580,22 @@ public class NunitTests
         Nunit4VerifyFix("float actual", oldAssertion, newAssertion);
         Nunit4VerifyFix("double actual", oldAssertion, newAssertion);
         Nunit4VerifyFix("decimal actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.Zero{0});",
+        newAssertion: "actual.Should().NotBe(0{0});")]
+    [Implemented]
+    public void Nunit_AssertNotZero_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        NunitVerifyFix("int actual", oldAssertion, newAssertion);
+        NunitVerifyFix("uint actual", oldAssertion, newAssertion);
+        NunitVerifyFix("long actual", oldAssertion, newAssertion);
+        NunitVerifyFix("ulong actual", oldAssertion, newAssertion);
+        NunitVerifyFix("float actual", oldAssertion, newAssertion);
+        NunitVerifyFix("double actual", oldAssertion, newAssertion);
+        NunitVerifyFix("decimal actual", oldAssertion, newAssertion);
     }
 
     // Positive
@@ -1128,6 +1260,22 @@ public class NunitTests
         => Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
 
     #endregion
+
+    private void NunitVerifyDiagnostic(string methodArguments, string assertion)
+    {
+        Nunit3VerifyDiagnostic(methodArguments, assertion);
+        Nunit4VerifyDiagnostic(methodArguments, assertion);
+    }
+    private void NunitVerifyFix(string methodArguments, string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyFix(methodArguments, oldAssertion, newAssertion);
+        Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
+    }
+    private void NunitVerifyNoFix(string methodArguments, string assertion)
+    {
+        Nunit3VerifyNoFix(methodArguments, assertion);
+        Nunit4VerifyNoFix(methodArguments, assertion);
+    }
 
     private void Nunit3VerifyDiagnostic(string methodArguments, string assertion)
         => VerifyDiagnostic(GenerateCode.Nunit3Assertion(methodArguments, assertion), PackageReference.Nunit_3_14_0);

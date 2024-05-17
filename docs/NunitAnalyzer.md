@@ -10,6 +10,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertNotNull](#scenario-assertnotnull) - `obj.Should().NotBeNull();`
 - [AssertIsEmpty](#scenario-assertisempty) - `collection.Should().BeEmpty();`
 - [AssertIsNotEmpty](#scenario-assertisnotempty) - `collection.Should().NotBeEmpty();`
+- [AssertZero](#scenario-assertzero) - `number.Should().Be(0);`
+- [AssertNotZero](#scenario-assertnotzero) - `number.Should().NotBe(0);`
 
 
 ## Scenarios
@@ -226,6 +228,68 @@ Assert.That(collection, Is.Not.Empty); /* fail message:   Expected: not <empty>
 
 // new assertion:
 collection.Should().NotBeEmpty(); /* fail message: Expected collection not to be empty. */
+```
+
+### scenario: AssertZero
+
+```cs
+// arrange
+var number = 0;
+
+// old assertion:
+Assert.Zero(number);
+Assert.That(number, Is.Zero);
+
+// new assertion:
+number.Should().Be(0);
+```
+
+#### Failure messages
+
+```cs
+var number = 1;
+
+// old assertion:
+Assert.Zero(number); /* fail message:   Expected: 0
+  But was:  1
+ */
+Assert.That(number, Is.Zero); /* fail message:   Expected: 0
+  But was:  1
+ */
+
+// new assertion:
+number.Should().Be(0); /* fail message: Expected number to be 0, but found 1 (difference of 1). */
+```
+
+### scenario: AssertNotZero
+
+```cs
+// arrange
+var number = 1;
+
+// old assertion:
+Assert.NotZero(number);
+Assert.That(number, Is.Not.Zero);
+
+// new assertion:
+number.Should().NotBe(0);
+```
+
+#### Failure messages
+
+```cs
+var number = 0;
+
+// old assertion:
+Assert.NotZero(number); /* fail message:   Expected: not equal to 0
+  But was:  0
+ */
+Assert.That(number, Is.Not.Zero); /* fail message:   Expected: not equal to 0
+  But was:  0
+ */
+
+// new assertion:
+number.Should().NotBe(0); /* fail message: Did not expect number to be 0. */
 ```
 
 
