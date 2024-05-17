@@ -162,7 +162,7 @@ public class NunitTests
         oldAssertion: "ClassicAssert.IsFalse(bool.Parse(\"false\"){0});",
         newAssertion: "bool.Parse(\"false\").Should().BeFalse({0});")]
     [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.False{0});",
+        oldAssertion: "Assert.That(actual, Is.False);",
         newAssertion: "actual.Should().BeFalse();")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Not.True);",
@@ -1180,22 +1180,6 @@ public class NunitTests
         => Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
 
     #endregion
-
-    private void NunitVerifyDiagnostic(string methodArguments, string assertion)
-    {
-        Nunit3VerifyDiagnostic(methodArguments, assertion);
-        Nunit4VerifyDiagnostic(methodArguments, assertion);
-    }
-    private void NunitVerifyFix(string methodArguments, string oldAssertion, string newAssertion)
-    {
-        Nunit3VerifyFix(methodArguments, oldAssertion, newAssertion);
-        Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
-    }
-    private void NunitVerifyNoFix(string methodArguments, string assertion)
-    {
-        Nunit3VerifyNoFix(methodArguments, assertion);
-        Nunit4VerifyNoFix(methodArguments, assertion);
-    }
 
     private void Nunit3VerifyDiagnostic(string methodArguments, string assertion)
         => VerifyDiagnostic(GenerateCode.Nunit3Assertion(methodArguments, assertion), PackageReference.Nunit_3_14_0);
