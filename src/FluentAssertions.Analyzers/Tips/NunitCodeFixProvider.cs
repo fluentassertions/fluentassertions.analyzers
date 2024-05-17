@@ -233,8 +233,15 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
-        if (invocation.Arguments.Length is 1 && invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean) // Assert.That(subject)
-            || invocation.Arguments.Length > 2 && invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean) && invocation.Arguments[1].Value.Type.EqualsSymbol(t.String)) // Assert.That(subject, message)
+        // Assert.That(condition)
+        if (invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean)
+            && (invocation.Arguments.Length is 1 
+                || (invocation.Arguments.Length >= 2 
+                    && (invocation.Arguments[1].Value.Type.EqualsSymbol(t.NUnitString) 
+                        || invocation.Arguments[1].Value.Type.EqualsSymbol(t.String))
+                    )
+                )
+            )
         {
             return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: []);
         }
@@ -259,6 +266,16 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             else if (IsPropertyOfSymbol(constraint, "Not", "Empty", t.Is)) // Assert.That(subject, Is.Not.Empty)
                 return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeEmpty");
         }
+        if (IsPropertyOfSymbol(constraint, "Zero", t.Is))
+            return DocumentEditorUtils.RewriteExpression(invocation, [
+                EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
+                EditAction.SubjectShouldAssertion(argumentIndex: 0, "Be"),
+            ], context);
+        else if (IsPropertyOfSymbol(constraint, "Not", "Zero", t.Is))
+            return DocumentEditorUtils.RewriteExpression(invocation, [
+                    EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
+                EditAction.SubjectShouldAssertion(argumentIndex: 0, "NotBe"),
+            ], context);
 
         return null;
 
@@ -281,5 +298,6 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         public INamedTypeSymbol Contains { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Contains");
         public INamedTypeSymbol Throws { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Throws");
         public INamedTypeSymbol ConstraintExpression { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Constraints.ConstraintExpression");
+        public INamedTypeSymbol NUnitString { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.NUnitString");
     }
 }

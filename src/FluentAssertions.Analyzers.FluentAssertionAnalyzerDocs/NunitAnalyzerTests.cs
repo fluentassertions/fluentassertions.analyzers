@@ -349,4 +349,92 @@ public class NunitAnalyzerTests
         // new assertion:
         collection.Should().NotBeEmpty();
     }
+
+    [TestMethod]
+    public void AssertZero()
+    {
+        // arrange
+        var number = 0;
+
+        // old assertion:
+        Assert.Zero(number);
+        Assert.That(number, Is.Zero);
+
+        // new assertion:
+        number.Should().Be(0);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertZero_Failure_OldAssertion_0()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        Assert.Zero(number);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertZero_Failure_OldAssertion_1()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        Assert.That(number, Is.Zero);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertZero_Failure_NewAssertion()
+    {
+        // arrange
+        var number = 1;
+
+        // new assertion:
+        number.Should().Be(0);
+    }
+
+    [TestMethod]
+    public void AssertNotZero()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        Assert.NotZero(number);
+        Assert.That(number, Is.Not.Zero);
+
+        // new assertion:
+        number.Should().NotBe(0);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNotZero_Failure_OldAssertion_0()
+    {
+        // arrange
+        var number = 0;
+
+        // old assertion:
+        Assert.NotZero(number);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNotZero_Failure_OldAssertion_1()
+    {
+        // arrange
+        var number = 0;
+
+        // old assertion:
+        Assert.That(number, Is.Not.Zero);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNotZero_Failure_NewAssertion()
+    {
+        // arrange
+        var number = 0;
+
+        // new assertion:
+        number.Should().NotBe(0);
+    }
 }
