@@ -249,6 +249,10 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             case "True" when constraint.Instance is IPropertyReferenceOperation { Property.Name: "Not" } chainedReference && PropertyReferencedFromType(chainedReference, t.Is): // Assert.That(subject, Is.Not.True)
             case "False" when PropertyReferencedFromType(constraint, t.Is): // Assert.That(subject, Is.False)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeFalse", subjectIndex: 0, argumentsToRemove: [1]);
+            case "Null" when PropertyReferencedFromType(constraint, t.Is): // Assert.That(subject, Is.Null)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeNull", subjectIndex: 0, argumentsToRemove: [1]);
+            case "Null" when constraint.Instance is IPropertyReferenceOperation { Property.Name: "Not" } chainedReference && PropertyReferencedFromType(chainedReference, t.Is): // Assert.That(subject, Is.Not.Null)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", subjectIndex: 0, argumentsToRemove: [1]);
 
             default:
                 return null;
