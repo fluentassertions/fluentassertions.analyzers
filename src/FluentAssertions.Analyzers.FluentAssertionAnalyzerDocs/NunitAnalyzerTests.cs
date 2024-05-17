@@ -270,19 +270,30 @@ public class NunitAnalyzerTests
 
         // old assertion:
         Assert.IsEmpty(collection);
+        Assert.That(collection, Is.Empty);
 
         // new assertion:
         collection.Should().BeEmpty();
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void AssertIsEmpty_Failure_OldAssertion()
+    public void AssertIsEmpty_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new List<int> { 1, 2, 3 };
 
         // old assertion:
         Assert.IsEmpty(collection);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertIsEmpty_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        Assert.That(collection, Is.Empty);
     }
 
     [TestMethod, ExpectedTestFrameworkException]
@@ -303,19 +314,30 @@ public class NunitAnalyzerTests
 
         // old assertion:
         Assert.IsNotEmpty(collection);
+        Assert.That(collection, Is.Not.Empty);
 
         // new assertion:
         collection.Should().NotBeEmpty();
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void AssertIsNotEmpty_Failure_OldAssertion()
+    public void AssertIsNotEmpty_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new List<int>();
 
         // old assertion:
         Assert.IsNotEmpty(collection);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertIsNotEmpty_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new List<int>();
+
+        // old assertion:
+        Assert.That(collection, Is.Not.Empty);
     }
 
     [TestMethod, ExpectedTestFrameworkException]
