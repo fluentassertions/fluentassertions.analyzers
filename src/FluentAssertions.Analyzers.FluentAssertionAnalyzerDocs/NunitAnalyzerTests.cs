@@ -161,6 +161,7 @@ public class NunitAnalyzerTests
         // old assertion:
         Assert.IsNull(obj);
         Assert.Null(obj);
+        Assert.That(obj, Is.Null);
 
         // new assertion:
         obj.Should().BeNull();
@@ -187,6 +188,16 @@ public class NunitAnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNull_Failure_OldAssertion_2()
+    {
+        // arrange
+        object obj = "foo";
+
+        // old assertion:
+        Assert.That(obj, Is.Null);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
     public void AssertNull_Failure_NewAssertion()
     {
         // arrange
@@ -205,6 +216,7 @@ public class NunitAnalyzerTests
         // old assertion:
         Assert.IsNotNull(obj);
         Assert.NotNull(obj);
+        Assert.That(obj, Is.Not.Null);
 
         // new assertion:
         obj.Should().NotBeNull();
@@ -228,6 +240,16 @@ public class NunitAnalyzerTests
 
         // old assertion:
         Assert.IsNotNull(obj);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertNotNull_Failure_OldAssertion_2()
+    {
+        // arrange
+        object obj = null;
+
+        // old assertion:
+        Assert.That(obj, Is.Not.Null);
     }
 
     [TestMethod, ExpectedTestFrameworkException]

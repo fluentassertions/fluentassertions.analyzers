@@ -105,6 +105,7 @@ object obj = null;
 // old assertion:
 Assert.IsNull(obj);
 Assert.Null(obj);
+Assert.That(obj, Is.Null);
 
 // new assertion:
 obj.Should().BeNull();
@@ -122,6 +123,9 @@ Assert.Null(obj); /* fail message:   Expected: null
 Assert.IsNull(obj); /* fail message:   Expected: null
   But was:  "foo"
  */
+Assert.That(obj, Is.Null); /* fail message:   Expected: null
+  But was:  "foo"
+ */
 
 // new assertion:
 obj.Should().BeNull(); /* fail message: Expected obj to be <null>, but found "foo". */
@@ -136,6 +140,7 @@ object obj = "foo";
 // old assertion:
 Assert.IsNotNull(obj);
 Assert.NotNull(obj);
+Assert.That(obj, Is.Not.Null);
 
 // new assertion:
 obj.Should().NotBeNull();
@@ -151,6 +156,9 @@ Assert.NotNull(obj); /* fail message:   Expected: not null
   But was:  null
  */
 Assert.IsNotNull(obj); /* fail message:   Expected: not null
+  But was:  null
+ */
+Assert.That(obj, Is.Not.Null); /* fail message:   Expected: not null
   But was:  null
  */
 
