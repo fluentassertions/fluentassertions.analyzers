@@ -240,27 +240,38 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         }
 
         if (invocation.Arguments[1].Value.UnwrapConversion() is not IPropertyReferenceOperation constraint) return null;
+        var subject = invocation.Arguments[0].Value;
 
-        switch (constraint.Property.Name)
+        if (IsPropertyOfSymbol(constraint, "True", t.Is) // Assert.That(subject, Is.True)
+            || IsPropertyOfSymbol(constraint, "Not", "False", t.Is)) // Assert.That(subject, Is.False)
+            return RenameAssertThatAssertionToSubjectShouldAssertion("BeTrue");
+        else if (IsPropertyOfSymbol(constraint, "False", t.Is) // Assert.That(subject, Is.False)
+            || IsPropertyOfSymbol(constraint, "Not", "True", t.Is)) // Assert.That(subject, Is.Not.True)
+            return RenameAssertThatAssertionToSubjectShouldAssertion("BeFalse");
+        else if (IsPropertyOfSymbol(constraint, "Null", t.Is)) // Assert.That(subject, Is.Null)
+            return RenameAssertThatAssertionToSubjectShouldAssertion("BeNull");
+        else if (IsPropertyOfSymbol(constraint, "Not", "Null", t.Is)) // Assert.That(subject, Is.Not.Null)
+            return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeNull");
+        else if (subject.Type.SpecialType is not SpecialType.System_Collections_IEnumerable)
         {
-            case "True" when constraint.Property.ContainingType.EqualsSymbol(t.Is): // Assert.That(subject, Is.True)
-            case "False" when constraint.Instance is IPropertyReferenceOperation { Property.Name: "Not" } chainedReference && PropertyReferencedFromType(chainedReference, t.Is): // Assert.That(subject, Is.Not.False)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: [1]);
-            case "True" when constraint.Instance is IPropertyReferenceOperation { Property.Name: "Not" } chainedReference && PropertyReferencedFromType(chainedReference, t.Is): // Assert.That(subject, Is.Not.True)
-            case "False" when PropertyReferencedFromType(constraint, t.Is): // Assert.That(subject, Is.False)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeFalse", subjectIndex: 0, argumentsToRemove: [1]);
-            case "Null" when PropertyReferencedFromType(constraint, t.Is): // Assert.That(subject, Is.Null)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeNull", subjectIndex: 0, argumentsToRemove: [1]);
-            case "Null" when constraint.Instance is IPropertyReferenceOperation { Property.Name: "Not" } chainedReference && PropertyReferencedFromType(chainedReference, t.Is): // Assert.That(subject, Is.Not.Null)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", subjectIndex: 0, argumentsToRemove: [1]);
-
-            default:
-                return null;
+            if (IsPropertyOfSymbol(constraint, "Empty", t.Is)) // Assert.That(subject, Is.Empty)
+                return RenameAssertThatAssertionToSubjectShouldAssertion("BeEmpty");
+            else if (IsPropertyOfSymbol(constraint, "Not", "Empty", t.Is)) // Assert.That(subject, Is.Not.Empty)
+                return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeEmpty");
         }
 
+        return null;
+
+        CreateChangedDocument RenameAssertThatAssertionToSubjectShouldAssertion(string assertionName)
+            => DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertionName, subjectIndex: 0, argumentsToRemove: [1]);
     }
 
-    private static bool PropertyReferencedFromType(IPropertyReferenceOperation propertyReference, INamedTypeSymbol type) => propertyReference.Property.ContainingType.EqualsSymbol(type);
+    private static bool IsPropertyReferencedFromType(IPropertyReferenceOperation propertyReference, INamedTypeSymbol type)
+        => propertyReference.Property.ContainingType.EqualsSymbol(type);
+    private static bool IsPropertyOfSymbol(IPropertyReferenceOperation propertyReference, string firstProperty, string secondProperty, INamedTypeSymbol type)
+        => propertyReference.Property.Name == secondProperty && IsPropertyOfSymbol(propertyReference.Instance, firstProperty, type);
+    private static bool IsPropertyOfSymbol(IOperation operation, string property, INamedTypeSymbol type)
+        => operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == property && IsPropertyReferencedFromType(propertyReference, type);
 
     public class NunitCodeFixContext(Compilation compilation) : TestingFrameworkCodeFixProvider.TestingFrameworkCodeFixContext(compilation)
     {
