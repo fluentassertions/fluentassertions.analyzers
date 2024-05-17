@@ -73,12 +73,24 @@ public static class TestCasesInputUtils
     private static readonly string FormattedBecause = "\"because message with {0} placeholders {1} at {2}\", 3, \"is awesome\", DateTime.Now.Add(2.Seconds())";
     public static IEnumerable<string> GetTestCases(string assertion)
     {
+        if (!assertion.Contains("{0}"))
+        {
+            yield return assertion;
+            yield break;
+        }
+
         yield return SafeFormat(assertion, Empty);
         yield return SafeFormat(assertion, Because);
         yield return SafeFormat(assertion, FormattedBecause);
     }
     public static IEnumerable<(string oldAssertion, string newAssertion)> GetTestCases(string oldAssertion, string newAssertion)
     {
+        if (!oldAssertion.Contains("{0}") && !newAssertion.Contains("{0}"))
+        {
+            yield return (oldAssertion, newAssertion);
+            yield break;
+        }
+
         yield return (SafeFormat(oldAssertion, Empty), SafeFormat(newAssertion, Empty));
         yield return (SafeFormat(oldAssertion, Because), SafeFormat(newAssertion, Because));
         yield return (SafeFormat(oldAssertion, FormattedBecause), SafeFormat(newAssertion, FormattedBecause));
