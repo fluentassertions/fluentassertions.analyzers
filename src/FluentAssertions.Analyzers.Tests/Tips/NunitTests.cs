@@ -314,7 +314,7 @@ public class NunitTests
         oldAssertion: "ClassicAssert.IsEmpty(actual{0});",
         newAssertion: "actual.Should().BeEmpty({0});")]
     [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Empty{0});",
+        oldAssertion: "Assert.That(actual, Is.Empty);",
         newAssertion: "actual.Should().BeEmpty();")]
     [Implemented]
     public void Nunit4_AssertIsEmpty_TestCodeFix(string oldAssertion, string newAssertion)
@@ -371,7 +371,7 @@ public class NunitTests
         oldAssertion: "ClassicAssert.IsNotEmpty(actual{0});",
         newAssertion: "actual.Should().NotBeEmpty({0});")]
     [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Not.Empty{0});",
+        oldAssertion: "Assert.That(actual, Is.Not.Empty);",
         newAssertion: "actual.Should().NotBeEmpty();")]
     [Implemented]
     public void Nunit4_AssertIsNotEmpty_TestCodeFix(string oldAssertion, string newAssertion)
@@ -504,7 +504,7 @@ public class NunitTests
         oldAssertion: "ClassicAssert.NotZero(actual{0});",
         newAssertion: "actual.Should().NotBe(0{0});")]
     [AssertionCodeFix(
-        oldAssertion: "Assert.That(actual, Is.Not.Zero{0});",
+        oldAssertion: "Assert.That(actual, Is.Not.Zero);",
         newAssertion: "actual.Should().NotBe(0);")]
     [Implemented]
     public void Nunit4_AssertNotZero_TestCodeFix(string oldAssertion, string newAssertion)
