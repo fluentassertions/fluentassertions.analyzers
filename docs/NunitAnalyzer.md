@@ -177,6 +177,7 @@ var collection = new List<int>();
 // old assertion:
 Assert.IsEmpty(collection);
 Assert.That(collection, Is.Empty);
+CollectionAssert.IsEmpty(collection);
 
 // new assertion:
 collection.Should().BeEmpty();
@@ -194,6 +195,9 @@ Assert.IsEmpty(collection); /* fail message:   Expected: <empty>
 Assert.That(collection, Is.Empty); /* fail message:   Expected: <empty>
   But was:  < 1, 2, 3 >
  */
+CollectionAssert.IsEmpty(collection); /* fail message:   Expected: <empty>
+  But was:  < 1, 2, 3 >
+ */
 
 // new assertion:
 collection.Should().BeEmpty(); /* fail message: Expected collection to be empty, but found {1, 2, 3}. */
@@ -208,6 +212,7 @@ var collection = new List<int> { 1, 2, 3 };
 // old assertion:
 Assert.IsNotEmpty(collection);
 Assert.That(collection, Is.Not.Empty);
+CollectionAssert.IsNotEmpty(collection);
 
 // new assertion:
 collection.Should().NotBeEmpty();
@@ -223,6 +228,9 @@ Assert.IsNotEmpty(collection); /* fail message:   Expected: not <empty>
   But was:  <empty>
  */
 Assert.That(collection, Is.Not.Empty); /* fail message:   Expected: not <empty>
+  But was:  <empty>
+ */
+CollectionAssert.IsNotEmpty(collection); /* fail message:   Expected: not <empty>
   But was:  <empty>
  */
 

@@ -28,8 +28,8 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             "Assert" when invocation.TargetMethod.Name is "That" => TryComputeFixForNunitThat(invocation, context, t),
             "Assert" when isNunit3 => TryComputeFixForNunitClassicAssert(invocation, context, t),
             "ClassicAssert" when isNunit4 => TryComputeFixForNunitClassicAssert(invocation, context, t),
-            //"StringAssert" => TryComputeFixForStringAssert(invocation, context, testContext),
-            //"CollectionAssert" => TryComputeFixForCollectionAssert(invocation, context, testContext),
+            //"StringAssert" => TryComputeFixForStringAssert(invocation, context, t),
+            "CollectionAssert" => TryComputeFixForCollectionAssert(invocation, context, t),
             _ => null
         };
     }
@@ -52,17 +52,9 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", subjectIndex: 0, argumentsToRemove: []);
             case "IsNaN": // Assert.IsNaN(double actual)
                 return null;
-            case "IsEmpty": // Assert.IsEmpty(IEnumerable collection) | Assert.IsEmpty(string s)
-                if (invocation.Arguments[0].Value.UnwrapConversion().Type.SpecialType is SpecialType.System_Collections_IEnumerable)
-                {
-                    return null;
-                }
+            case "IsEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // Assert.IsEmpty(IEnumerable collection) | Assert.IsEmpty(string s)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEmpty", subjectIndex: 0, argumentsToRemove: []);
-            case "IsNotEmpty": // Assert.IsNotEmpty(IEnumerable collection) | Assert.IsNotEmpty(string s)
-                if (invocation.Arguments[0].Value.UnwrapConversion().Type.SpecialType is SpecialType.System_Collections_IEnumerable)
-                {
-                    return null;
-                }
+            case "IsNotEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // Assert.IsNotEmpty(IEnumerable collection) | Assert.IsNotEmpty(string s)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeEmpty", subjectIndex: 0, argumentsToRemove: []);
             case "Zero": // Assert.Zero(int anObject)
                 return DocumentEditorUtils.RewriteExpression(invocation, [
@@ -231,13 +223,25 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         return null;
     }
 
+    private CreateChangedDocument TryComputeFixForCollectionAssert(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
+    {
+        switch (invocation.TargetMethod.Name)
+        {
+            case "IsEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.IsEmpty(IEnumerable collection)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEmpty", subjectIndex: 0, argumentsToRemove: []);
+            case "IsNotEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0) : // CollectionAssert.IsNotEmpty(IEnumerable collection)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeEmpty", subjectIndex: 0, argumentsToRemove: []);
+        }
+        return null;
+    }
+
     private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
         // Assert.That(condition)
         if (invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean)
-            && (invocation.Arguments.Length is 1 
-                || (invocation.Arguments.Length >= 2 
-                    && (invocation.Arguments[1].Value.Type.EqualsSymbol(t.NUnitString) 
+            && (invocation.Arguments.Length is 1
+                || (invocation.Arguments.Length >= 2
+                    && (invocation.Arguments[1].Value.Type.EqualsSymbol(t.NUnitString)
                         || invocation.Arguments[1].Value.Type.EqualsSymbol(t.String))
                     )
                 )
@@ -259,7 +263,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return RenameAssertThatAssertionToSubjectShouldAssertion("BeNull");
         else if (IsPropertyOfSymbol(constraint, "Not", "Null", t.Is)) // Assert.That(subject, Is.Not.Null)
             return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeNull");
-        else if (subject.Type.SpecialType is not SpecialType.System_Collections_IEnumerable)
+        else if (!IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0))
         {
             if (IsPropertyOfSymbol(constraint, "Empty", t.Is)) // Assert.That(subject, Is.Empty)
                 return RenameAssertThatAssertionToSubjectShouldAssertion("BeEmpty");
@@ -290,6 +294,9 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     private static bool IsPropertyOfSymbol(IOperation operation, string property, INamedTypeSymbol type)
         => operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == property && IsPropertyReferencedFromType(propertyReference, type);
 
+    private static bool IsArgumentTypeOfNonGenericEnumerable(IInvocationOperation invocation, int argumentIndex) => IsArgumentTypeOf(invocation, argumentIndex, SpecialType.System_Collections_IEnumerable);
+    private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, SpecialType specialType)
+        => invocation.Arguments[argumentIndex].Value.UnwrapConversion().Type.SpecialType == specialType;
     public class NunitCodeFixContext(Compilation compilation) : TestingFrameworkCodeFixProvider.TestingFrameworkCodeFixContext(compilation)
     {
         public INamedTypeSymbol Is { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Is");
