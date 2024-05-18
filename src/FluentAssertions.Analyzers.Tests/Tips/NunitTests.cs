@@ -272,6 +272,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("Assert.IsEmpty(actual{0});")]
     [AssertionDiagnostic("Assert.That(actual, Is.Empty{0});")]
+    [AssertionDiagnostic("CollectionAssert.IsEmpty(actual{0});")]
     [Implemented]
     public void Nunit3_AssertIsEmpty_TestAnalyzer(string assertion)
     {
@@ -284,6 +285,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("ClassicAssert.IsEmpty(actual{0});")]
     [AssertionDiagnostic("Assert.That(actual, Is.Empty);")]
+    [AssertionDiagnostic("CollectionAssert.IsEmpty(actual{0});")]
     [Implemented]
     public void Nunit4_AssertIsEmpty_TestAnalyzer(string assertion)
     {
@@ -299,6 +301,9 @@ public class NunitTests
         newAssertion: "actual.Should().BeEmpty({0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Empty{0});",
+        newAssertion: "actual.Should().BeEmpty({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.IsEmpty(actual{0});",
         newAssertion: "actual.Should().BeEmpty({0});")]
     [Implemented]
     public void Nunit3_AssertIsEmpty_TestCodeFix(string oldAssertion, string newAssertion)
@@ -316,6 +321,9 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Empty);",
         newAssertion: "actual.Should().BeEmpty();")]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.IsEmpty(actual{0});",
+        newAssertion: "actual.Should().BeEmpty({0});")]
     [Implemented]
     public void Nunit4_AssertIsEmpty_TestCodeFix(string oldAssertion, string newAssertion)
     {
@@ -329,6 +337,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("Assert.IsNotEmpty(actual{0});")]
     [AssertionDiagnostic("Assert.That(actual, Is.Not.Empty{0});")]
+    [AssertionDiagnostic("CollectionAssert.IsNotEmpty(actual{0});")]
     [Implemented]
     public void Nunit3_AssertIsNotEmpty_TestAnalyzer(string assertion)
     {
@@ -341,6 +350,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("ClassicAssert.IsNotEmpty(actual{0});")]
     [AssertionDiagnostic("Assert.That(actual, Is.Not.Empty);")]
+    [AssertionDiagnostic("CollectionAssert.IsNotEmpty(actual{0});")]
     [Implemented]
     public void Nunit4_AssertIsNotEmpty_TestAnalyzer(string assertion)
     {
@@ -356,6 +366,9 @@ public class NunitTests
         newAssertion: "actual.Should().NotBeEmpty({0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Not.Empty{0});",
+        newAssertion: "actual.Should().NotBeEmpty({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.IsNotEmpty(actual{0});",
         newAssertion: "actual.Should().NotBeEmpty({0});")]
     [Implemented]
     public void Nunit3_AssertIsNotEmpty_TestCodeFix(string oldAssertion, string newAssertion)
@@ -373,6 +386,9 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Not.Empty);",
         newAssertion: "actual.Should().NotBeEmpty();")]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.IsNotEmpty(actual{0});",
+        newAssertion: "actual.Should().NotBeEmpty({0});")]
     [Implemented]
     public void Nunit4_AssertIsNotEmpty_TestCodeFix(string oldAssertion, string newAssertion)
     {
