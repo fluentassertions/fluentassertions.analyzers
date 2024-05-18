@@ -8,7 +8,7 @@ using FluentAssertions;
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
 [TestClass]
-public class NunitAnalyzerTests
+public class Nunit3AnalyzerTests
 {
     [TestMethod]
     public void BooleanAssertIsTrue()

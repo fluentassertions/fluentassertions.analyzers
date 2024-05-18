@@ -2,7 +2,7 @@
 This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator\DocsGenerator.cs to change the contents
 -->
 
-# Nunit Analyzer Docs
+# Nunit3 Analyzer Docs
 
 - [BooleanAssertIsTrue](#scenario-booleanassertistrue) - `flag.Should().BeTrue();`
 - [BooleanAssertIsFalse](#scenario-booleanassertisfalse) - `flag.Should().BeFalse();`
