@@ -32,7 +32,7 @@ dotnet add package FluentAssertions.Analyzers
 
 - [FluentAssertions Analyzer Docs](docs/FluentAssertionsAnalyzer.md)
 - [MsTest Analyzer Docs](docs/MsTestAnalyzer.md)
-- [NUnit Analyzer Docs](docs/NunitAnalyzer.md)
+- [NUnit3 Analyzer Docs](docs/Nunit3Analyzer.md)
 
 ## Getting Started
 
