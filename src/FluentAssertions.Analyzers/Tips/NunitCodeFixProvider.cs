@@ -231,6 +231,10 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEmpty", subjectIndex: 0, argumentsToRemove: []);
             case "IsNotEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0) : // CollectionAssert.IsNotEmpty(IEnumerable collection)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeEmpty", subjectIndex: 0, argumentsToRemove: []);
+            case "AreEqual" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.AreEqual(IEnumerable expected, IEnumerable actual)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Equal", subjectIndex: 1, argumentsToRemove: []);
+            case "AreNotEqual" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.AreNotEqual(IEnumerable notExpected, IEnumerable actual)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotEqual", subjectIndex: 1, argumentsToRemove: []);
         }
         return null;
     }
