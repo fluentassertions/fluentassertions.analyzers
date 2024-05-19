@@ -4,8 +4,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 # Nunit3 Analyzer Docs
 
-- [BooleanAssertIsTrue](#scenario-booleanassertistrue) - `flag.Should().BeTrue();`
-- [BooleanAssertIsFalse](#scenario-booleanassertisfalse) - `flag.Should().BeFalse();`
+- [AssertIsTrue](#scenario-assertistrue) - `flag.Should().BeTrue();`
+- [AssertIsFalse](#scenario-assertisfalse) - `flag.Should().BeFalse();`
 - [AssertNull](#scenario-assertnull) - `obj.Should().BeNull();`
 - [AssertNotNull](#scenario-assertnotnull) - `obj.Should().NotBeNull();`
 - [AssertIsEmpty](#scenario-assertisempty) - `collection.Should().BeEmpty();`
@@ -16,7 +16,7 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 ## Scenarios
 
-### scenario: BooleanAssertIsTrue
+### scenario: AssertIsTrue
 
 ```cs
 // arrange
@@ -59,7 +59,7 @@ Assert.That(flag, Is.Not.False); /* fail message:   Expected: not False
 flag.Should().BeTrue(); /* fail message: Expected flag to be true, but found False. */
 ```
 
-### scenario: BooleanAssertIsFalse
+### scenario: AssertIsFalse
 
 ```cs
 // arrange

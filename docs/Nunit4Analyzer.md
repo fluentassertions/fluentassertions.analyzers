@@ -4,12 +4,19 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 # Nunit4 Analyzer Docs
 
-- [BooleanAssertIsTrue](#scenario-booleanassertistrue) - `flag.Should().BeTrue();`
+- [AssertIsTrue](#scenario-assertistrue) - `flag.Should().BeTrue();`
+- [AssertIsFalse](#scenario-assertisfalse) - `flag.Should().BeFalse();`
+- [AssertNull](#scenario-assertnull) - `obj.Should().BeNull();`
+- [AssertNotNull](#scenario-assertnotnull) - `obj.Should().NotBeNull();`
+- [AssertIsEmpty](#scenario-assertisempty) - `collection.Should().BeEmpty();`
+- [AssertIsNotEmpty](#scenario-assertisnotempty) - `collection.Should().NotBeEmpty();`
+- [AssertZero](#scenario-assertzero) - `number.Should().Be(0);`
+- [AssertNotZero](#scenario-assertnotzero) - `number.Should().NotBe(0);`
 
 
 ## Scenarios
 
-### scenario: BooleanAssertIsTrue
+### scenario: AssertIsTrue
 
 ```cs
 // arrange
@@ -55,6 +62,267 @@ Assert.That(flag, Is.Not.False); /* fail message:   Assert.That(flag, Is.Not.Fal
 
 // new assertion:
 flag.Should().BeTrue(); /* fail message: Expected flag to be true, but found False. */
+```
+
+### scenario: AssertIsFalse
+
+```cs
+// arrange
+var flag = false;
+
+// old assertion:
+ClassicAssert.IsFalse(flag);
+ClassicAssert.False(flag);
+Assert.That(flag, Is.False);
+Assert.That(flag, Is.Not.True);
+
+// new assertion:
+flag.Should().BeFalse();
+```
+
+#### Failure messages
+
+```cs
+var flag = true;
+
+// old assertion:
+ClassicAssert.False(flag); /* fail message:   Assert.That(condition, Is.False)
+  Expected: False
+  But was:  True
+ */
+ClassicAssert.IsFalse(flag); /* fail message:   Assert.That(condition, Is.False)
+  Expected: False
+  But was:  True
+ */
+Assert.That(flag, Is.False); /* fail message:   Assert.That(flag, Is.False)
+  Expected: False
+  But was:  True
+ */
+Assert.That(flag, Is.Not.True); /* fail message:   Assert.That(flag, Is.Not.True)
+  Expected: not True
+  But was:  True
+ */
+
+// new assertion:
+flag.Should().BeFalse(); /* fail message: Expected flag to be false, but found True. */
+```
+
+### scenario: AssertNull
+
+```cs
+// arrange
+object obj = null;
+
+// old assertion:
+ClassicAssert.IsNull(obj);
+ClassicAssert.Null(obj);
+Assert.That(obj, Is.Null);
+
+// new assertion:
+obj.Should().BeNull();
+```
+
+#### Failure messages
+
+```cs
+object obj = "foo";
+
+// old assertion:
+ClassicAssert.Null(obj); /* fail message:   Assert.That(anObject, Is.Null)
+  Expected: null
+  But was:  "foo"
+ */
+ClassicAssert.IsNull(obj); /* fail message:   Assert.That(anObject, Is.Null)
+  Expected: null
+  But was:  "foo"
+ */
+Assert.That(obj, Is.Null); /* fail message:   Assert.That(obj, Is.Null)
+  Expected: null
+  But was:  "foo"
+ */
+
+// new assertion:
+obj.Should().BeNull(); /* fail message: Expected obj to be <null>, but found "foo". */
+```
+
+### scenario: AssertNotNull
+
+```cs
+// arrange
+object obj = "foo";
+
+// old assertion:
+ClassicAssert.IsNotNull(obj);
+ClassicAssert.NotNull(obj);
+Assert.That(obj, Is.Not.Null);
+
+// new assertion:
+obj.Should().NotBeNull();
+```
+
+#### Failure messages
+
+```cs
+object obj = null;
+
+// old assertion:
+ClassicAssert.NotNull(obj); /* fail message:   Assert.That(anObject, Is.Not.Null)
+  Expected: not null
+  But was:  null
+ */
+ClassicAssert.IsNotNull(obj); /* fail message:   Assert.That(anObject, Is.Not.Null)
+  Expected: not null
+  But was:  null
+ */
+Assert.That(obj, Is.Not.Null); /* fail message:   Assert.That(obj, Is.Not.Null)
+  Expected: not null
+  But was:  null
+ */
+
+// new assertion:
+obj.Should().NotBeNull(); /* fail message: Expected obj not to be <null>. */
+```
+
+### scenario: AssertIsEmpty
+
+```cs
+// arrange
+var collection = new List<int>();
+
+// old assertion:
+ClassicAssert.IsEmpty(collection);
+Assert.That(collection, Is.Empty);
+CollectionAssert.IsEmpty(collection);
+
+// new assertion:
+collection.Should().BeEmpty();
+```
+
+#### Failure messages
+
+```cs
+var collection = new List<int> { 1, 2, 3 };
+
+// old assertion:
+ClassicAssert.IsEmpty(collection); /* fail message:   Assert.That(collection, new EmptyCollectionConstraint())
+  Expected: <empty>
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Is.Empty); /* fail message:   Assert.That(collection, Is.Empty)
+  Expected: <empty>
+  But was:  < 1, 2, 3 >
+ */
+CollectionAssert.IsEmpty(collection); /* fail message:   Assert.That(collection, new EmptyCollectionConstraint())
+  Expected: <empty>
+  But was:  < 1, 2, 3 >
+ */
+
+// new assertion:
+collection.Should().BeEmpty(); /* fail message: Expected collection to be empty, but found {1, 2, 3}. */
+```
+
+### scenario: AssertIsNotEmpty
+
+```cs
+// arrange
+var collection = new List<int> { 1, 2, 3 };
+
+// old assertion:
+ClassicAssert.IsNotEmpty(collection);
+Assert.That(collection, Is.Not.Empty);
+CollectionAssert.IsNotEmpty(collection);
+
+// new assertion:
+collection.Should().NotBeEmpty();
+```
+
+#### Failure messages
+
+```cs
+var collection = new List<int>();
+
+// old assertion:
+ClassicAssert.IsNotEmpty(collection); /* fail message:   Assert.That(collection, Is.Not.Empty)
+  Expected: not <empty>
+  But was:  <empty>
+ */
+Assert.That(collection, Is.Not.Empty); /* fail message:   Assert.That(collection, Is.Not.Empty)
+  Expected: not <empty>
+  But was:  <empty>
+ */
+CollectionAssert.IsNotEmpty(collection); /* fail message:   Assert.That(collection, new NotConstraint(new EmptyCollectionConstraint()))
+  Expected: not <empty>
+  But was:  <empty>
+ */
+
+// new assertion:
+collection.Should().NotBeEmpty(); /* fail message: Expected collection not to be empty. */
+```
+
+### scenario: AssertZero
+
+```cs
+// arrange
+var number = 0;
+
+// old assertion:
+ClassicAssert.Zero(number);
+Assert.That(number, Is.Zero);
+
+// new assertion:
+number.Should().Be(0);
+```
+
+#### Failure messages
+
+```cs
+var number = 1;
+
+// old assertion:
+ClassicAssert.Zero(number); /* fail message:   Assert.That(actual, Is.Zero)
+  Expected: 0
+  But was:  1
+ */
+Assert.That(number, Is.Zero); /* fail message:   Assert.That(number, Is.Zero)
+  Expected: 0
+  But was:  1
+ */
+
+// new assertion:
+number.Should().Be(0); /* fail message: Expected number to be 0, but found 1 (difference of 1). */
+```
+
+### scenario: AssertNotZero
+
+```cs
+// arrange
+var number = 1;
+
+// old assertion:
+ClassicAssert.NotZero(number);
+Assert.That(number, Is.Not.Zero);
+
+// new assertion:
+number.Should().NotBe(0);
+```
+
+#### Failure messages
+
+```cs
+var number = 0;
+
+// old assertion:
+ClassicAssert.NotZero(number); /* fail message:   Assert.That(actual, Is.Not.Zero)
+  Expected: not equal to 0
+  But was:  0
+ */
+Assert.That(number, Is.Not.Zero); /* fail message:   Assert.That(number, Is.Not.Zero)
+  Expected: not equal to 0
+  But was:  0
+ */
+
+// new assertion:
+number.Should().NotBe(0); /* fail message: Did not expect number to be 0. */
 ```
 
 
