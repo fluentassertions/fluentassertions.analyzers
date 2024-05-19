@@ -1,9 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Build.Locator;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.MSBuild;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator;
 
@@ -14,17 +10,6 @@ public static class FluentAssertionAnalyzerDocsUtils
     private static readonly string _fluentAssertionsAnalyzersProjectPath = Path.Combine(_fluentAssertionsAnalyzersDocsDirectory, _fluentAssertionsAnalyzersDocs + ".csproj");
     private static readonly char _unixDirectorySeparator = '/';
     private static readonly string _unixNewLine = "\n";
-
-    public static async Task<Compilation> GetFluentAssertionAnalyzerDocsCompilation()
-    {
-        MSBuildLocator.RegisterDefaults();
-
-        using var workspace = MSBuildWorkspace.Create();
-
-        var project = await workspace.OpenProjectAsync(_fluentAssertionsAnalyzersProjectPath);
-
-        return await project.GetCompilationAsync();
-    }
 
     public static string ReplaceStackTrace(string messageIncludingStacktrace)
     {
