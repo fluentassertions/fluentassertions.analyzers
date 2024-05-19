@@ -1195,6 +1195,114 @@ public class NunitTests
     public void Nunit4_AssertContains_WithCasting_TestCodeFix(string methodArguments, string oldAssertion, string newAssertion)
         => Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
 
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.EqualTo(expected){0});", ignore: true)]
+    [Implemented]
+    public void Nunit3_CollectionAssertAreEqual_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("IEnumerable expected, IEnumerable actual", assertion);
+        Nunit3VerifyDiagnostic("ICollection<string> expected, ICollection<string> actual", assertion);
+        Nunit3VerifyDiagnostic("ICollection<DateTime> expected, ICollection<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.EqualTo(expected));", ignore: true)]
+    [Implemented]
+    public void Nunit4_CollectionAssertAreEqual_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("IEnumerable expected, IEnumerable actual", assertion);
+        Nunit4VerifyDiagnostic("ICollection<string> expected, ICollection<string> actual", assertion);
+        Nunit4VerifyDiagnostic("ICollection<DateTime> expected, ICollection<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AreEqual(expected, actual{0});",
+        newAssertion: "actual.Should().Equal(expected{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.EqualTo(expected){0});",
+        newAssertion: "actual.Should().Equal(expected{0});", 
+        ignore: true)]
+    [Implemented]
+    public void Nunit3_CollectionAssertAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyNoFix("IEnumerable expected, IEnumerable actual", oldAssertion);
+        Nunit3VerifyFix("ICollection<string> expected, ICollection<string> actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("ICollection<DateTime> expected, ICollection<DateTime> actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AreEqual(expected, actual{0});",
+        newAssertion: "actual.Should().Equal(expected{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.EqualTo(expected));",
+        newAssertion: "actual.Should().Equal(expected);", 
+        ignore: true)]
+    [Implemented]
+    public void Nunit4_CollectionAssertAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit4VerifyNoFix("IEnumerable expected, IEnumerable actual", oldAssertion);
+        Nunit4VerifyFix("ICollection<string> expected, ICollection<string> actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("ICollection<DateTime> expected, ICollection<DateTime> actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AreNotEqual(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.EqualTo(expected){0});", ignore: true)]
+    [Implemented]
+    public void Nunit3_CollectionAssertAreNotEqual_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("IEnumerable expected, IEnumerable actual", assertion);
+        Nunit3VerifyDiagnostic("ICollection<string> expected, ICollection<string> actual", assertion);
+        Nunit3VerifyDiagnostic("ICollection<DateTime> expected, ICollection<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AreNotEqual(expected, actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.EqualTo(expected));", ignore: true)]
+    [Implemented]
+    public void Nunit4_CollectionAssertAreNotEqual_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("IEnumerable expected, IEnumerable actual", assertion);
+        Nunit4VerifyDiagnostic("ICollection<string> expected, ICollection<string> actual", assertion);
+        Nunit4VerifyDiagnostic("ICollection<DateTime> expected, ICollection<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AreNotEqual(expected, actual{0});",
+        newAssertion: "actual.Should().NotEqual(expected{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.EqualTo(expected){0});",
+        newAssertion: "actual.Should().NotEqual(expected{0});",
+        ignore: true)]
+    [Implemented]
+    public void Nunit3_CollectionAssertAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyNoFix("IEnumerable expected, IEnumerable actual", oldAssertion);
+        Nunit3VerifyFix("ICollection<string> expected, ICollection<string> actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("ICollection<DateTime> expected, ICollection<DateTime> actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AreNotEqual(expected, actual{0});",
+        newAssertion: "actual.Should().NotEqual(expected{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Not.EqualTo(expected));",
+        newAssertion: "actual.Should().NotEqual(expected);", 
+        ignore: true)]
+    [Implemented]
+    public void Nunit4_CollectionAssertAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit4VerifyNoFix("IEnumerable expected, IEnumerable actual", oldAssertion);
+        Nunit4VerifyFix("ICollection<string> expected, ICollection<string> actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("ICollection<DateTime> expected, ICollection<DateTime> actual", oldAssertion, newAssertion);
+    }
+
     #endregion
 
     private void Nunit3VerifyDiagnostic(string methodArguments, string assertion)

@@ -457,4 +457,76 @@ public class Nunit4AnalyzerTests
         // new assertion:
         number.Should().NotBe(0);
     }
+
+    [Test]
+    public void CollectionAssertAreEqual()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new [] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AreEqual(expected, collection);
+
+        // new assertion:
+        collection.Should().Equal(expected);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAreEqual_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 4 };
+
+        // old assertion:
+        CollectionAssert.AreEqual(expected, collection);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 4 };
+
+        // new assertion:
+        collection.Should().Equal(expected);
+    }
+
+    [Test]
+    public void CollectionAssertAreNotEqual()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 4 };
+
+        // old assertion:
+        CollectionAssert.AreNotEqual(expected, collection);
+
+        // new assertion:
+        collection.Should().NotEqual(expected);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAreNotEqual_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AreNotEqual(expected, collection);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAreNotEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 3 };
+
+        // new assertion:
+        collection.Should().NotEqual(expected);
+    }
 }

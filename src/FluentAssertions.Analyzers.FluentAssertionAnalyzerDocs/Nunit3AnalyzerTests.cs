@@ -460,4 +460,76 @@ public class Nunit3AnalyzerTests
         // new assertion:
         number.Should().NotBe(0);
     }
+
+    [TestMethod]
+    public void CollectionAssertAreEqual()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AreEqual(expected, collection);
+
+        // new assertion:
+        collection.Should().Equal(expected);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAreEqual_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 4 };
+
+        // old assertion:
+        CollectionAssert.AreEqual(expected, collection);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAreEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 4 };
+
+        // new assertion:
+        collection.Should().Equal(expected);
+    }
+
+    [TestMethod]
+    public void CollectionAssertAreNotEqual()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 4 };
+
+        // old assertion:
+        CollectionAssert.AreNotEqual(expected, collection);
+
+        // new assertion:
+        collection.Should().NotEqual(expected);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAreNotEqual_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AreNotEqual(expected, collection);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAreNotEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 3 };
+
+        // new assertion:
+        collection.Should().NotEqual(expected);
+    }
 }

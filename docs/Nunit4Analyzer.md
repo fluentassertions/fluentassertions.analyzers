@@ -12,6 +12,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertIsNotEmpty](#scenario-assertisnotempty) - `collection.Should().NotBeEmpty();`
 - [AssertZero](#scenario-assertzero) - `number.Should().Be(0);`
 - [AssertNotZero](#scenario-assertnotzero) - `number.Should().NotBe(0);`
+- [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `collection.Should().Equal(expected);`
+- [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `collection.Should().NotEqual(expected);`
 
 
 ## Scenarios
@@ -323,6 +325,68 @@ Assert.That(number, Is.Not.Zero); /* fail message:   Assert.That(number, Is.Not.
 
 // new assertion:
 number.Should().NotBe(0); /* fail message: Did not expect number to be 0. */
+```
+
+### scenario: CollectionAssertAreEqual
+
+```cs
+// arrange
+var collection = new[] { 1, 2, 3 };
+var expected = new [] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AreEqual(expected, collection);
+
+// new assertion:
+collection.Should().Equal(expected);
+```
+
+#### Failure messages
+
+```cs
+var collection = new[] { 1, 2, 3 };
+var expected = new[] { 1, 2, 4 };
+
+// old assertion:
+CollectionAssert.AreEqual(expected, collection); /* fail message:   Assert.That(actual, Is.EqualTo(expected).AsCollection)
+  Expected and actual are both <System.Int32[3]>
+  Values differ at index [2]
+  Expected: 4
+  But was:  3
+ */
+
+// new assertion:
+collection.Should().Equal(expected); /* fail message: Expected collection to be equal to {1, 2, 4}, but {1, 2, 3} differs at index 2. */
+```
+
+### scenario: CollectionAssertAreNotEqual
+
+```cs
+// arrange
+var collection = new[] { 1, 2, 3 };
+var expected = new[] { 1, 2, 4 };
+
+// old assertion:
+CollectionAssert.AreNotEqual(expected, collection);
+
+// new assertion:
+collection.Should().NotEqual(expected);
+```
+
+#### Failure messages
+
+```cs
+var collection = new[] { 1, 2, 3 };
+var expected = new[] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AreNotEqual(expected, collection); /* fail message:   Assert.That(actual, Is.Not.EqualTo(expected).AsCollection)
+  Expected: not equal to < 1, 2, 3 >
+  But was:  < 1, 2, 3 >
+ */
+
+// new assertion:
+collection.Should().NotEqual(expected); /* fail message: Did not expect collections {1, 2, 3} and {1, 2, 3} to be equal. */
 ```
 
 
