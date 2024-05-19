@@ -11,7 +11,7 @@ namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 public class Nunit3AnalyzerTests
 {
     [TestMethod]
-    public void BooleanAssertIsTrue()
+    public void AssertIsTrue()
     {
         // arrange
         var flag = true;
@@ -28,7 +28,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsTrue_Failure_OldAssertion_0()
+    public void AssertIsTrue_Failure_OldAssertion_0()
     {
         // arrange
         var flag = false;
@@ -38,7 +38,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsTrue_Failure_OldAssertion_1()
+    public void AssertIsTrue_Failure_OldAssertion_1()
     {
         // arrange
         var flag = false;
@@ -48,7 +48,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsTrue_Failure_OldAssertion_2()
+    public void AssertIsTrue_Failure_OldAssertion_2()
     {
         // arrange
         var flag = false;
@@ -58,7 +58,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsTrue_Failure_OldAssertion_3()
+    public void AssertIsTrue_Failure_OldAssertion_3()
     {
         // arrange
         var flag = false;
@@ -68,7 +68,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsTrue_Failure_OldAssertion_4()
+    public void AssertIsTrue_Failure_OldAssertion_4()
     {
         // arrange
         var flag = false;
@@ -78,7 +78,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsTrue_Failure_NewAssertion()
+    public void AssertIsTrue_Failure_NewAssertion()
     {
         // arrange
         var flag = false;
@@ -88,7 +88,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod]
-    public void BooleanAssertIsFalse()
+    public void AssertIsFalse()
     {
         // arrange
         var flag = false;
@@ -104,7 +104,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsFalse_Failure_OldAssertion_0()
+    public void AssertIsFalse_Failure_OldAssertion_0()
     {
         // arrange
         var flag = true;
@@ -114,7 +114,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsFalse_Failure_OldAssertion_1()
+    public void AssertIsFalse_Failure_OldAssertion_1()
     {
         // arrange
         var flag = true;
@@ -124,7 +124,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsFalse_Failure_OldAssertion_2()
+    public void AssertIsFalse_Failure_OldAssertion_2()
     {
         // arrange
         var flag = true;
@@ -134,7 +134,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsFalse_Failure_OldAssertion_3()
+    public void AssertIsFalse_Failure_OldAssertion_3()
     {
         // arrange
         var flag = true;
@@ -144,7 +144,7 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod, ExpectedTestFrameworkException]
-    public void BooleanAssertIsFalse_Failure_NewAssertion()
+    public void AssertIsFalse_Failure_NewAssertion()
     {
         // arrange
         var flag = true;
