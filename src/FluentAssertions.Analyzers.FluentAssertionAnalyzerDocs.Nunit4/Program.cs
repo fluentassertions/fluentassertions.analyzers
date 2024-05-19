@@ -8,7 +8,7 @@ namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 
 public class Program
 {
-    public static Task Main(string[] args) => new Nunit4DocsGenerator().Execute();
+    public static Task Main(string[] args) => ProgramUtils.RunMain<Nunit4DocsGenerator, Nunit4DocsVerifier>(args);
 
     private class Nunit4DocsGenerator : DocsGenerator
     {
@@ -23,5 +23,10 @@ public class Program
 
             NUnit.Framework.Internal.TestExecutionContext.CurrentContext.CurrentResult.AssertionResults.Clear();
         }
+    }
+    private class Nunit4DocsVerifier : DocsVerifier
+    {
+        protected override string TestAttribute => "Test"; // NUnit.Framework.TestAttribute
+        protected override string TestFile => Path.Join(Environment.CurrentDirectory, "Nunit4AnalyzerTests.cs");
     }
 }
