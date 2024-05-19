@@ -10,11 +10,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator;
 
-public class DocsVerifier
+public abstract class DocsVerifier
 {
+    protected abstract string TestAttribute { get; }
+    protected abstract string TestFile { get; }
+
     public async Task Execute()
     {
-        var compilation = await FluentAssertionAnalyzerDocsUtils.GetFluentAssertionAnalyzerDocsCompilation();
+        var compilation = SyntaxFactory.ParseCompilationUnit(await File.ReadAllTextAsync(TestFile));
+        var tree = compilation.SyntaxTree;
+
         var issues = new StringBuilder();
 
         void ValidateAssertions(IEnumerable<ExpressionStatementSyntax> oldAssertions, ExpressionStatementSyntax newAssertion, MethodDeclarationSyntax method, string className)
@@ -28,37 +33,34 @@ public class DocsVerifier
             }
         }
 
-        foreach (var tree in compilation.SyntaxTrees.Where(t => t.FilePath.EndsWith("Tests.cs")))
+        Console.WriteLine($"File: {Path.GetFileName(tree.FilePath)}");
+
+        var root = await tree.GetRootAsync();
+        var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+        var methodsMap = methods.ToDictionary(m => m.Identifier.Text);
+
+        foreach (var method in methods.Where(m => m.AttributeLists.Any(list => list.Attributes.Count is 1 && list.Attributes[0].Name.ToString() == TestAttribute)))
         {
-            Console.WriteLine($"File: {Path.GetFileName(tree.FilePath)}");
+            Console.WriteLine($"### scenario: {method.Identifier}");
 
-            var root = await tree.GetRootAsync();
-            var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
-            var methodsMap = methods.ToDictionary(m => m.Identifier.Text);
+            var (oldAssertions, newAssertion) = GetAssertionsFromMethod(method);
 
-            foreach (var method in methods.Where(m => m.AttributeLists.Any(list => list.Attributes.Count is 1 && list.Attributes[0].Name.ToString() is "TestMethod")))
+            ValidateAssertions(oldAssertions, newAssertion, method, tree.FilePath.Split('\\')[^1]);
+
+            if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure", out var methodFailure))
             {
-                Console.WriteLine($"### scenario: {method.Identifier}");
+                var (oldAssertionsFailure, newAssertionFailure) = GetAssertionsFromMethod(methodFailure);
 
-                var (oldAssertions, newAssertion) = GetAssertionsFromMethod(method);
+                ValidateAssertions(oldAssertionsFailure, newAssertionFailure, methodFailure, tree.FilePath.Split('\\')[^1]);
+            }
 
-                ValidateAssertions(oldAssertions, newAssertion, method, tree.FilePath.Split('\\')[^1]);
+            if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_OldAssertion", out var testWithFailureOldAssertion)
+            && methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_NewAssertion", out var testWithFailureNewAssertion))
+            {
+                var (oldAssertionsFailure, _) = GetAssertionsFromMethod(testWithFailureOldAssertion);
+                var (_, newAssertionFailure) = GetAssertionsFromMethod(testWithFailureNewAssertion);
 
-                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure", out var methodFailure))
-                {
-                    var (oldAssertionsFailure, newAssertionFailure) = GetAssertionsFromMethod(methodFailure);
-
-                    ValidateAssertions(oldAssertionsFailure, newAssertionFailure, methodFailure, tree.FilePath.Split('\\')[^1]);
-                }
-
-                if (methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_OldAssertion", out var testWithFailureOldAssertion)
-                && methodsMap.TryGetValue($"{method.Identifier.Text}_Failure_NewAssertion", out var testWithFailureNewAssertion))
-                {
-                    var (oldAssertionsFailure, _) = GetAssertionsFromMethod(testWithFailureOldAssertion);
-                    var (_, newAssertionFailure) = GetAssertionsFromMethod(testWithFailureNewAssertion);
-
-                    ValidateAssertions(oldAssertionsFailure, newAssertionFailure, testWithFailureOldAssertion, tree.FilePath.Split('\\')[^1]);
-                }
+                ValidateAssertions(oldAssertionsFailure, newAssertionFailure, testWithFailureOldAssertion, tree.FilePath.Split('\\')[^1]);
             }
         }
 

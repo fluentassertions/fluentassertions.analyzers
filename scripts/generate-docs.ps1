@@ -3,12 +3,6 @@ param (
     [switch]$ValidateNoChanges
 )
 
-Push-Location src
-Push-Location FluentAssertions.Analyzers.FluentAssertionAnalyzerDocsGenerator
-dotnet run generate
-Pop-Location
-Pop-Location
-
 if ($ValidateNoChanges) {
     $output = git status --porcelain=v1 -- docs
     if ($output) {
@@ -19,3 +13,18 @@ if ($ValidateNoChanges) {
         }
     }
 }
+
+function GenerateDocs {
+    param (
+        [string]$project
+    )
+
+    Push-Location src
+    Push-Location $project
+    dotnet run generate
+    Pop-Location
+    Pop-Location
+}
+
+GenerateDocs -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs
+GenerateDocs -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit4
