@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -11,10 +12,11 @@ public static class SolutionExtensions
         ?? (OperatingSystem.IsWindows() ? Environment.ExpandEnvironmentVariables("%userprofile%\\.nuget\\packages") : "~/.nuget/packages");
 
     private static readonly HttpClient HttpClient = new HttpClient();
+    private static readonly Task SetupPackages = Task.WhenAll(PackageReference.AllDependencies.Select(p => DownloadPackageAsync(p.Name, p.Version)));
 
     public static Solution AddPackageReference(this Solution solution, ProjectId projectId, PackageReference package)
     {
-        DownloadPackageAsync(package.Name, package.Version).GetAwaiter().GetResult();
+        SetupPackages.GetAwaiter().GetResult();
 
         var packagePath = Path.Combine(NugetPackagesPath, package.Name, package.Version, package.Path);
         foreach (var dll in Directory.GetFiles(packagePath, "*.dll"))
@@ -29,11 +31,11 @@ public static class SolutionExtensions
     {
         return targetFramework switch
         {
-            TargetFramework.NetStandard2_0 => solution.AddPackageReference(projectId, new("NETStandard.Library", "2.0.3", "build/netstandard2.0/ref/")),
-            TargetFramework.NetStandard2_1 => solution.AddPackageReference(projectId, new("NETStandard.Library.Ref", "2.1.0", "ref/netstandard2.1/ref/")),
-            TargetFramework.Net6_0 => solution.AddPackageReference(projectId, new("Microsoft.NETCore.App.Ref", "6.0.25", "ref/net6.0/")),
-            TargetFramework.Net7_0 => solution.AddPackageReference(projectId, new("Microsoft.NETCore.App.Ref", "7.0.14", "ref/net7.0/")),
-            TargetFramework.Net8_0 => solution.AddPackageReference(projectId, new("Microsoft.NETCore.App.Ref", "8.0.0", "ref/net8.0/")),
+            TargetFramework.NetStandard2_0 => solution.AddPackageReference(projectId, PackageReference.NETStandard2_0),
+            TargetFramework.NetStandard2_1 => solution.AddPackageReference(projectId, PackageReference.NETStandard2_1),
+            TargetFramework.Net6_0 => solution.AddPackageReference(projectId, PackageReference.DotNet6),
+            TargetFramework.Net7_0 => solution.AddPackageReference(projectId, PackageReference.DotNet7),
+            TargetFramework.Net8_0 => solution.AddPackageReference(projectId, PackageReference.DotNet8),
             _ => throw new ArgumentOutOfRangeException(nameof(targetFramework), targetFramework, "Unknown target framework"),
         };
     }
