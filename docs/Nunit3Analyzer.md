@@ -12,6 +12,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertIsNotEmpty](#scenario-assertisnotempty) - `collection.Should().NotBeEmpty();`
 - [AssertZero](#scenario-assertzero) - `number.Should().Be(0);`
 - [AssertNotZero](#scenario-assertnotzero) - `number.Should().NotBe(0);`
+- [AssertAreSame](#scenario-assertaresame) - `obj1.Should().BeSameAs(obj2);`
+- [AssertAreNotSame](#scenario-assertarenotsame) - `obj1.Should().NotBeSameAs(obj2);`
 - [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `collection.Should().Equal(expected);`
 - [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `collection.Should().NotEqual(expected);`
 - [CollectionAssertContains](#scenario-collectionassertcontains) - `collection.Should().Contain(2);`
@@ -306,6 +308,64 @@ Assert.That(number, Is.Not.Zero); /* fail message:   Expected: not equal to 0
 
 // new assertion:
 number.Should().NotBe(0); /* fail message: Did not expect number to be 0. */
+```
+
+### scenario: AssertAreSame
+
+```cs
+// arrange
+var obj1 = new object();
+var obj2 = obj1;
+
+// old assertion:
+Assert.AreSame(obj1, obj2);
+
+// new assertion:
+obj1.Should().BeSameAs(obj2);
+```
+
+#### Failure messages
+
+```cs
+object obj1 = 6;
+object obj2 = "foo";
+
+// old assertion:
+Assert.AreSame(obj1, obj2); /* fail message:   Expected: same as 6
+  But was:  "foo"
+ */
+
+// new assertion:
+obj1.Should().BeSameAs(obj2); /* fail message: Expected obj1 to refer to "foo", but found 6. */
+```
+
+### scenario: AssertAreNotSame
+
+```cs
+// arrange
+object obj1 = 6;
+object obj2 = "foo";
+
+// old assertion:
+Assert.AreNotSame(obj1, obj2);
+
+// new assertion:
+obj1.Should().NotBeSameAs(obj2);
+```
+
+#### Failure messages
+
+```cs
+var obj1 = "foo";
+var obj2 = "foo";
+
+// old assertion:
+Assert.AreNotSame(obj1, obj2); /* fail message:   Expected: not same as "foo"
+  But was:  "foo"
+ */
+
+// new assertion:
+obj1.Should().NotBeSameAs(obj2); /* fail message: Did not expect obj1 to refer to "foo". */
 ```
 
 ### scenario: CollectionAssertAreEqual
