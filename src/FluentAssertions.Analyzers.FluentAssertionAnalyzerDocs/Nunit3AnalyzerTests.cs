@@ -532,4 +532,70 @@ public class Nunit3AnalyzerTests
         // new assertion:
         collection.Should().NotEqual(expected);
     }
+
+    [TestMethod]
+    public void CollectionAssertContains()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.Contains(collection, 2);
+
+        // new assertion:
+        collection.Should().Contain(2);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertContains_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.Contains(collection, 4);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertContains_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // new assertion:
+        collection.Should().Contain(4);
+    }
+
+    [TestMethod]
+    public void CollectionAssertDoesNotContain()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, 4);
+
+        // new assertion:
+        collection.Should().NotContain(4);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertDoesNotContain_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, 2);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertDoesNotContain_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // new assertion:
+        collection.Should().NotContain(2);
+    }
 }

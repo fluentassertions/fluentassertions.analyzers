@@ -14,6 +14,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertNotZero](#scenario-assertnotzero) - `number.Should().NotBe(0);`
 - [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `collection.Should().Equal(expected);`
 - [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `collection.Should().NotEqual(expected);`
+- [CollectionAssertContains](#scenario-collectionassertcontains) - `collection.Should().Contain(2);`
+- [CollectionAssertDoesNotContain](#scenario-collectionassertdoesnotcontain) - `collection.Should().NotContain(4);`
 
 
 ## Scenarios
@@ -360,6 +362,60 @@ CollectionAssert.AreNotEqual(expected, collection); /* fail message:   Expected:
 
 // new assertion:
 collection.Should().NotEqual(expected); /* fail message: Did not expect collections {1, 2, 3} and {1, 2, 3} to be equal. */
+```
+
+### scenario: CollectionAssertContains
+
+```cs
+// arrange
+var collection = new[] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.Contains(collection, 2);
+
+// new assertion:
+collection.Should().Contain(2);
+```
+
+#### Failure messages
+
+```cs
+var collection = new[] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.Contains(collection, 4); /* fail message:   Expected: some item equal to 4
+  But was:  < 1, 2, 3 >
+ */
+
+// new assertion:
+collection.Should().Contain(4); /* fail message: Expected collection {1, 2, 3} to contain 4. */
+```
+
+### scenario: CollectionAssertDoesNotContain
+
+```cs
+// arrange
+var collection = new[] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.DoesNotContain(collection, 4);
+
+// new assertion:
+collection.Should().NotContain(4);
+```
+
+#### Failure messages
+
+```cs
+var collection = new[] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.DoesNotContain(collection, 2); /* fail message:   Expected: not some item equal to 2
+  But was:  < 1, 2, 3 >
+ */
+
+// new assertion:
+collection.Should().NotContain(2); /* fail message: Expected collection {1, 2, 3} to not contain 2. */
 ```
 
 
