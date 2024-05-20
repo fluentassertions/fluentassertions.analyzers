@@ -12,6 +12,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertIsNotEmpty](#scenario-assertisnotempty) - `collection.Should().NotBeEmpty();`
 - [AssertZero](#scenario-assertzero) - `number.Should().Be(0);`
 - [AssertNotZero](#scenario-assertnotzero) - `number.Should().NotBe(0);`
+- [AssertAreSame](#scenario-assertaresame) - `obj1.Should().BeSameAs(obj2);`
+- [AssertAreNotSame](#scenario-assertarenotsame) - `obj1.Should().NotBeSameAs(obj2);`
 - [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `collection.Should().Equal(expected);`
 - [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `collection.Should().NotEqual(expected);`
 - [CollectionAssertContains](#scenario-collectionassertcontains) - `collection.Should().Contain(2);`
@@ -333,12 +335,72 @@ Assert.That(number, Is.Not.Zero); /* fail message:   Assert.That(number, Is.Not.
 number.Should().NotBe(0); /* fail message: Did not expect number to be 0. */
 ```
 
+### scenario: AssertAreSame
+
+```cs
+// arrange
+var obj1 = new object();
+var obj2 = obj1;
+
+// old assertion:
+ClassicAssert.AreSame(obj1, obj2);
+
+// new assertion:
+obj1.Should().BeSameAs(obj2);
+```
+
+#### Failure messages
+
+```cs
+object obj1 = 6;
+object obj2 = "foo";
+
+// old assertion:
+ClassicAssert.AreSame(obj1, obj2); /* fail message:   Assert.That(actual, Is.SameAs(expected))
+  Expected: same as 6
+  But was:  "foo"
+ */
+
+// new assertion:
+obj1.Should().BeSameAs(obj2); /* fail message: Expected obj1 to refer to "foo", but found 6. */
+```
+
+### scenario: AssertAreNotSame
+
+```cs
+// arrange
+object obj1 = 6;
+object obj2 = "foo";
+
+// old assertion:
+ClassicAssert.AreNotSame(obj1, obj2);
+
+// new assertion:
+obj1.Should().NotBeSameAs(obj2);
+```
+
+#### Failure messages
+
+```cs
+var obj1 = new object();
+var obj2 = obj1;
+
+// old assertion:
+ClassicAssert.AreNotSame(obj1, obj2); /* fail message:   Assert.That(actual, Is.Not.SameAs(expected))
+  Expected: not same as <System.Object>
+  But was:  <System.Object>
+ */
+
+// new assertion:
+obj1.Should().NotBeSameAs(obj2); /* fail message: Did not expect obj1 to refer to System.Object (HashCode=2766117). */
+```
+
 ### scenario: CollectionAssertAreEqual
 
 ```cs
 // arrange
 var collection = new[] { 1, 2, 3 };
-var expected = new [] { 1, 2, 3 };
+var expected = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.AreEqual(expected, collection);

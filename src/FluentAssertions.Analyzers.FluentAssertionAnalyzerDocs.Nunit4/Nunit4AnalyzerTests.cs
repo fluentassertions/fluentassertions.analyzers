@@ -358,7 +358,7 @@ public class Nunit4AnalyzerTests
 
         // old assertion:
         CollectionAssert.IsNotEmpty(collection);
-}
+    }
 
     [Test, ExpectedAssertionException]
     public void AssertIsNotEmpty_Failure_NewAssertion()
@@ -459,11 +459,83 @@ public class Nunit4AnalyzerTests
     }
 
     [Test]
+    public void AssertAreSame()
+    {
+        // arrange
+        var obj1 = new object();
+        var obj2 = obj1;
+
+        // old assertion:
+        ClassicAssert.AreSame(obj1, obj2);
+
+        // new assertion:
+        obj1.Should().BeSameAs(obj2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertAreSame_Failure_OldAssertion()
+    {
+        // arrange
+        object obj1 = 6;
+        object obj2 = "foo";
+
+        // old assertion:
+        ClassicAssert.AreSame(obj1, obj2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertAreSame_Failure_NewAssertion()
+    {
+        // arrange
+        object obj1 = 6;
+        object obj2 = "foo";
+
+        // new assertion:
+        obj1.Should().BeSameAs(obj2);
+    }
+
+    [Test]
+    public void AssertAreNotSame()
+    {
+        // arrange
+        object obj1 = 6;
+        object obj2 = "foo";
+
+        // old assertion:
+        ClassicAssert.AreNotSame(obj1, obj2);
+
+        // new assertion:
+        obj1.Should().NotBeSameAs(obj2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertAreNotSame_Failure_OldAssertion()
+    {
+        // arrange
+        var obj1 = new object();
+        var obj2 = obj1;
+
+        // old assertion:
+        ClassicAssert.AreNotSame(obj1, obj2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertAreNotSame_Failure_NewAssertion()
+    {
+        // arrange
+        var obj1 = new object();
+        var obj2 = obj1;
+
+        // new assertion:
+        obj1.Should().NotBeSameAs(obj2);
+    }
+
+    [Test]
     public void CollectionAssertAreEqual()
     {
         // arrange
         var collection = new[] { 1, 2, 3 };
-        var expected = new [] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 3 };
 
         // old assertion:
         CollectionAssert.AreEqual(expected, collection);

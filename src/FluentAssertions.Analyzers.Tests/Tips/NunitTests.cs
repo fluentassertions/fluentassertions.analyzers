@@ -915,13 +915,13 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("Assert.AreSame(expected, actual{0});")]
     [Implemented]
-    public void Nunit3_AssertSame_TestAnalyzer(string assertion)
+    public void Nunit3_AssertAreSame_TestAnalyzer(string assertion)
         => Nunit3VerifyDiagnostic("object expected, object actual", assertion);
 
     [DataTestMethod]
     [AssertionDiagnostic("ClassicAssert.AreSame(expected, actual{0});")]
     [Implemented]
-    public void Nunit4_AssertSame_TestAnalyzer(string assertion)
+    public void Nunit4_AssertAreSame_TestAnalyzer(string assertion)
         => Nunit4VerifyDiagnostic("object expected, object actual", assertion);
 
     [DataTestMethod]
@@ -929,7 +929,7 @@ public class NunitTests
         oldAssertion: "Assert.AreSame(expected, actual{0});",
         newAssertion: "actual.Should().BeSameAs(expected{0});")]
     [Implemented]
-    public void Nunit3_AssertSame_TestCodeFix(string oldAssertion, string newAssertion)
+    public void Nunit3_AssertAreSame_TestCodeFix(string oldAssertion, string newAssertion)
         => Nunit3VerifyFix("object expected, object actual", oldAssertion, newAssertion);
 
     [DataTestMethod]
@@ -937,7 +937,35 @@ public class NunitTests
         oldAssertion: "ClassicAssert.AreSame(expected, actual{0});",
         newAssertion: "actual.Should().BeSameAs(expected{0});")]
     [Implemented]
-    public void Nunit4_AssertSame_TestCodeFix(string oldAssertion, string newAssertion)
+    public void Nunit4_AssertAreSame_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit4VerifyFix("object expected, object actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.AreNotSame(expected, actual{0});")]
+    [Implemented]
+    public void Nunit3_AssertAreNotSame_TestAnalyzer(string assertion)
+        => Nunit3VerifyDiagnostic("object expected, object actual", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("ClassicAssert.AreNotSame(expected, actual{0});")]
+    [Implemented]
+    public void Nunit4_AssertAreNotSame_TestAnalyzer(string assertion)
+        => Nunit4VerifyDiagnostic("object expected, object actual", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.AreNotSame(expected, actual{0});",
+        newAssertion: "actual.Should().NotBeSameAs(expected{0});")]
+    [Implemented]
+    public void Nunit3_AssertAreNotSame_TestCodeFix(string oldAssertion, string newAssertion)
+        => Nunit3VerifyFix("object expected, object actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "ClassicAssert.AreNotSame(expected, actual{0});",
+        newAssertion: "actual.Should().NotBeSameAs(expected{0});")]
+    [Implemented]
+    public void Nunit4_AssertAreNotSame_TestCodeFix(string oldAssertion, string newAssertion)
         => Nunit4VerifyFix("object expected, object actual", oldAssertion, newAssertion);
 
     #endregion
