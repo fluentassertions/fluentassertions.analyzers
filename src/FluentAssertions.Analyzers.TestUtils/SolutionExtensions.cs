@@ -14,9 +14,15 @@ public static class SolutionExtensions
 
     public static Solution AddPackageReference(this Solution solution, ProjectId projectId, PackageReference package)
     {
-        DownloadPackageAsync(package.Name, package.Version).GetAwaiter().GetResult();
-
         var packagePath = Path.Combine(NugetPackagesPath, package.Name, package.Version, package.Path);
+        if (!Directory.Exists(packagePath))
+        {
+            lock (HttpClient)
+            {
+                DownloadPackageAsync(package.Name, package.Version).GetAwaiter().GetResult();
+            }
+        }
+
         foreach (var dll in Directory.GetFiles(packagePath, "*.dll"))
         {
             solution = solution.AddMetadataReference(projectId, MetadataReference.CreateFromFile(dll));
