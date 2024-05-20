@@ -66,6 +66,31 @@ public class AssertionCodeFixAttribute : Attribute, ITestDataSource
     public string GetDisplayName(MethodInfo methodInfo, object[] data) => $"{methodInfo.Name}(\"old: {data[0]}\", new: {data[1]}\")";
 }
 
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public class AssertionMethodCodeFixAttribute : Attribute, ITestDataSource
+{
+    public string MethodArguments { get; }
+    public string OldAssertion { get; }
+    public string NewAssertion { get; }
+
+    public bool Ignore { get; }
+
+    public AssertionMethodCodeFixAttribute(string methodArguments, string oldAssertion, string newAssertion, bool ignore = false) 
+        => (MethodArguments, OldAssertion, NewAssertion, Ignore) = (methodArguments, oldAssertion, newAssertion, ignore);
+
+    public IEnumerable<object[]> GetData(MethodInfo methodInfo)
+    {
+        if (Ignore) yield break;
+
+        foreach (var (oldAssertion, newAssertion) in TestCasesInputUtils.GetTestCases(OldAssertion, NewAssertion))
+        {
+            yield return new object[] { MethodArguments, oldAssertion, newAssertion };
+        }
+    }
+
+    public string GetDisplayName(MethodInfo methodInfo, object[] data) => $"{methodInfo.Name}(\"arguments\":{data[0]}, \"old: {data[1]}\", new: {data[2]}\")";
+}
+
 public static class TestCasesInputUtils
 {
     private static readonly string Empty = string.Empty;
