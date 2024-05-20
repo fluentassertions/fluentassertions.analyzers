@@ -567,6 +567,42 @@ public class Nunit3AnalyzerTests
     }
 
     [TestMethod]
+    public void CollectionAssertContains_WithCasting()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 2;
+
+        // old assertion:
+        CollectionAssert.Contains(collection, item);
+
+        // new assertion:
+        collection.Should().Contain((int)item);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertContains_WithCasting_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 4;
+
+        // old assertion:
+        CollectionAssert.Contains(collection, item);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertContains_WithCasting_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 4;
+
+        // new assertion:
+        collection.Should().Contain((int)item);
+    }
+
+    [TestMethod]
     public void CollectionAssertDoesNotContain()
     {
         // arrange
@@ -597,5 +633,41 @@ public class Nunit3AnalyzerTests
 
         // new assertion:
         collection.Should().NotContain(2);
+    }
+
+    [TestMethod]
+    public void CollectionAssertDoesNotContain_WithCasting()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 4;
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, item);
+
+        // new assertion:
+        collection.Should().NotContain((int)item);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertDoesNotContain_WithCasting_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 2;
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, item);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertDoesNotContain_WithCasting_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 2;
+
+        // new assertion:
+        collection.Should().NotContain((int)item);
     }
 }

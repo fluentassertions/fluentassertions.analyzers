@@ -15,7 +15,9 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `collection.Should().Equal(expected);`
 - [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `collection.Should().NotEqual(expected);`
 - [CollectionAssertContains](#scenario-collectionassertcontains) - `collection.Should().Contain(2);`
+- [CollectionAssertContains_WithCasting](#scenario-collectionassertcontains_withcasting) - `collection.Should().Contain((int)item);`
 - [CollectionAssertDoesNotContain](#scenario-collectionassertdoesnotcontain) - `collection.Should().NotContain(4);`
+- [CollectionAssertDoesNotContain_WithCasting](#scenario-collectionassertdoesnotcontain_withcasting) - `collection.Should().NotContain((int)item);`
 
 
 ## Scenarios
@@ -391,6 +393,35 @@ CollectionAssert.Contains(collection, 4); /* fail message:   Expected: some item
 collection.Should().Contain(4); /* fail message: Expected collection {1, 2, 3} to contain 4. */
 ```
 
+### scenario: CollectionAssertContains_WithCasting
+
+```cs
+// arrange
+var collection = new[] { 1, 2, 3 };
+object item = 2;
+
+// old assertion:
+CollectionAssert.Contains(collection, item);
+
+// new assertion:
+collection.Should().Contain((int)item);
+```
+
+#### Failure messages
+
+```cs
+var collection = new[] { 1, 2, 3 };
+object item = 4;
+
+// old assertion:
+CollectionAssert.Contains(collection, item); /* fail message:   Expected: some item equal to 4
+  But was:  < 1, 2, 3 >
+ */
+
+// new assertion:
+collection.Should().Contain((int)item); /* fail message: Expected collection {1, 2, 3} to contain 4. */
+```
+
 ### scenario: CollectionAssertDoesNotContain
 
 ```cs
@@ -416,6 +447,35 @@ CollectionAssert.DoesNotContain(collection, 2); /* fail message:   Expected: not
 
 // new assertion:
 collection.Should().NotContain(2); /* fail message: Expected collection {1, 2, 3} to not contain 2. */
+```
+
+### scenario: CollectionAssertDoesNotContain_WithCasting
+
+```cs
+// arrange
+var collection = new[] { 1, 2, 3 };
+object item = 4;
+
+// old assertion:
+CollectionAssert.DoesNotContain(collection, item);
+
+// new assertion:
+collection.Should().NotContain((int)item);
+```
+
+#### Failure messages
+
+```cs
+var collection = new[] { 1, 2, 3 };
+object item = 2;
+
+// old assertion:
+CollectionAssert.DoesNotContain(collection, item); /* fail message:   Expected: not some item equal to 2
+  But was:  < 1, 2, 3 >
+ */
+
+// new assertion:
+collection.Should().NotContain((int)item); /* fail message: Expected collection {1, 2, 3} to not contain 2. */
 ```
 
 
