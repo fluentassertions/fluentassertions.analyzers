@@ -7,6 +7,7 @@ using CreateChangedDocument = System.Func<System.Threading.CancellationToken, Sy
 using System;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis.Simplification;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FluentAssertions.Analyzers;
 
@@ -197,27 +198,9 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                 return DocumentEditorUtils.RenameGenericMethodToSubjectShouldGenericAssertion(invocation, context, "NotBeOfType", subjectIndex: 0, argumentsToRemove: []);
             case "Contains": // Assert.Contains(object expected, ICollection actual)
                 {
-                    var collectionArgument = invocation.Arguments[1].Value.UnwrapConversion();
-                    if (collectionArgument.Type.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_IEnumerable_T))
-                    {
-                        return DocumentEditorUtils.RewriteExpression(invocation, [
-                            (EditActionContext editActionContext) =>
-                            {
-                                ITypeSymbol elementType = collectionArgument.Type switch
-                                {
-                                    INamedTypeSymbol namedType => namedType.TypeArguments[0],
-                                    IArrayTypeSymbol arrayType => arrayType.ElementType,
-                                    _ => null
-                                };
-
-                                var argumentToCast = editActionContext.InvocationExpression.ArgumentList.Arguments[0];
-                                var castExpression = editActionContext.Editor.Generator.CastExpression(elementType, argumentToCast.Expression);
-                                editActionContext.Editor.ReplaceNode(argumentToCast.Expression, castExpression.WithAdditionalAnnotations(Simplifier.Annotation));
-                            },
-                            EditAction.SubjectShouldAssertion(argumentIndex: 1, "Contain")
-                        ], context);
-                    }
-                    return null;
+                    var subject = invocation.Arguments[1];
+                    var expected = invocation.Arguments[0];
+                    return RewriteContainsAssertion(invocation, context, "Contain", subject, expected);
                 }
         }
         return null;
@@ -229,16 +212,22 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         {
             case "IsEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.IsEmpty(IEnumerable collection)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEmpty", subjectIndex: 0, argumentsToRemove: []);
-            case "IsNotEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0) : // CollectionAssert.IsNotEmpty(IEnumerable collection)
+            case "IsNotEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.IsNotEmpty(IEnumerable collection)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeEmpty", subjectIndex: 0, argumentsToRemove: []);
             case "AreEqual" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.AreEqual(IEnumerable expected, IEnumerable actual)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Equal", subjectIndex: 1, argumentsToRemove: []);
             case "AreNotEqual" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.AreNotEqual(IEnumerable notExpected, IEnumerable actual)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotEqual", subjectIndex: 1, argumentsToRemove: []);
-            case "Contains" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.Contain(object expected, IEnumerable actual)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Contain", subjectIndex: 0, argumentsToRemove: []);
-            case "DoesNotContain" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.DoesNotContain(object expected, IEnumerable actual)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotContain", subjectIndex: 0, argumentsToRemove: []);
+            case "Contains" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.Contain(IEnumerable collection, object actual)
+                return RewriteContainsAssertion(invocation, context, "Contain",
+                    subject: invocation.Arguments[0],
+                    expectation: invocation.Arguments[1]
+                );
+            case "DoesNotContain" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.DoesNotContain(IEnumerable collection, object actual)
+                return RewriteContainsAssertion(invocation, context, "NotContain",
+                    subject: invocation.Arguments[0],
+                    expectation: invocation.Arguments[1]
+                );
         }
         return null;
     }
@@ -295,6 +284,27 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             => DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertionName, subjectIndex: 0, argumentsToRemove: [1]);
     }
 
+    private CreateChangedDocument RewriteContainsAssertion(IInvocationOperation invocation, CodeFixContext context, string assertion, IArgumentOperation subject, IArgumentOperation expectation)
+    {
+        var subjectIndex = invocation.Arguments.IndexOf(subject);
+        return DocumentEditorUtils.RewriteExpression(invocation, [
+            editActionContext =>
+            {
+                ITypeSymbol elementType = subject.Value.UnwrapConversion().Type switch
+                {
+                    INamedTypeSymbol namedType => namedType.TypeArguments[0],
+                    IArrayTypeSymbol arrayType => arrayType.ElementType,
+                    _ => null
+                };
+
+                var argumentToCast = (ArgumentSyntax)expectation.Syntax;
+                var castExpression = editActionContext.Editor.Generator.CastExpression(elementType, argumentToCast.Expression);
+                editActionContext.Editor.ReplaceNode(argumentToCast.Expression, castExpression.WithAdditionalAnnotations(Simplifier.Annotation));
+            },
+            EditAction.SubjectShouldAssertion(subjectIndex, assertion)
+        ], context);
+    }
+
     private static bool IsPropertyReferencedFromType(IPropertyReferenceOperation propertyReference, INamedTypeSymbol type)
         => propertyReference.Property.ContainingType.EqualsSymbol(type);
     private static bool IsPropertyOfSymbol(IPropertyReferenceOperation propertyReference, string firstProperty, string secondProperty, INamedTypeSymbol type)
@@ -305,6 +315,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     private static bool IsArgumentTypeOfNonGenericEnumerable(IInvocationOperation invocation, int argumentIndex) => IsArgumentTypeOf(invocation, argumentIndex, SpecialType.System_Collections_IEnumerable);
     private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, SpecialType specialType)
         => invocation.Arguments[argumentIndex].Value.UnwrapConversion().Type.SpecialType == specialType;
+
     public class NunitCodeFixContext(Compilation compilation) : TestingFrameworkCodeFixProvider.TestingFrameworkCodeFixContext(compilation)
     {
         public INamedTypeSymbol Is { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Is");
