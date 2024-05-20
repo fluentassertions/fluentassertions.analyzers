@@ -276,6 +276,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataTestMethod]
         [AssertionDiagnostic("Assert.IsNotInstanceOfType(actual, type{0});")]
         [AssertionDiagnostic("Assert.IsNotInstanceOfType(actual, typeof(string){0});")]
+        [AssertionDiagnostic("Assert.IsNotInstanceOfType<string>(actual{0});")]
         [Implemented]
         public void AssertIsNotInstanceOfType_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("object actual, Type type", assertion);
 
@@ -285,6 +286,9 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             newAssertion: "actual.Should().NotBeOfType(type{0});")]
         [AssertionCodeFix(
             oldAssertion: "Assert.IsNotInstanceOfType(actual, typeof(string){0});",
+            newAssertion: "actual.Should().NotBeOfType<string>({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.IsNotInstanceOfType<string>(actual{0});",
             newAssertion: "actual.Should().NotBeOfType<string>({0});")]
         [Implemented]
         public void AssertIsNotInstanceOfType_TestCodeFix(string oldAssertion, string newAssertion)
