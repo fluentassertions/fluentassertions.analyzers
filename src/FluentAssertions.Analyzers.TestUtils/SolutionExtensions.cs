@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -11,16 +12,14 @@ public static class SolutionExtensions
         ?? (OperatingSystem.IsWindows() ? Environment.ExpandEnvironmentVariables("%userprofile%\\.nuget\\packages") : "~/.nuget/packages");
 
     private static readonly HttpClient HttpClient = new HttpClient();
+    private static readonly ConcurrentDictionary<string, Task> DownloadTasks = new();
 
     public static Solution AddPackageReference(this Solution solution, ProjectId projectId, PackageReference package)
     {
         var packagePath = Path.Combine(NugetPackagesPath, package.Name, package.Version, package.Path);
         if (!Directory.Exists(packagePath))
         {
-            lock (HttpClient)
-            {
-                DownloadPackageAsync(package.Name, package.Version).GetAwaiter().GetResult();
-            }
+            DownloadTasks.GetOrAdd(packagePath, _ => DownloadPackageAsync(package.Name, package.Version)).GetAwaiter().GetResult();
         }
 
         foreach (var dll in Directory.GetFiles(packagePath, "*.dll"))
