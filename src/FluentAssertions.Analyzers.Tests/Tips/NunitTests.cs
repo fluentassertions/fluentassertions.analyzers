@@ -1154,46 +1154,50 @@ public class NunitTests
     }
 
     [DataTestMethod]
-    [DataRow(
-        /* methodArguments: */ "object expected, string[] actual",
-        /* oldAssertion: */ "Assert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((string)expected);")]
-    [DataRow(
-        /* methodArguments: */ "object expected, List<string> actual",
-        /* oldAssertion: */ "Assert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((string)expected);")]
-    [DataRow(
-        /* methodArguments: */ "object expected, DateTime[] actual",
-        /* oldAssertion: */ "Assert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((DateTime)expected);")]
-    [DataRow(
-        /* methodArguments: */ "object expected, List<DateTime> actual",
-        /* oldAssertion: */ "Assert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, string[] actual",
+        oldAssertion: "Assert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<string> actual",
+        oldAssertion: "Assert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, DateTime[] actual",
+        oldAssertion: "Assert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<DateTime> actual",
+        oldAssertion: "Assert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
     [Implemented]
     public void Nunit3_AssertContains_WithCasting_TestCodeFix(string methodArguments, string oldAssertion, string newAssertion)
         => Nunit3VerifyFix(methodArguments, oldAssertion, newAssertion);
 
     [DataTestMethod]
-    [DataRow(
-        /* methodArguments: */ "object expected, string[] actual",
-        /* oldAssertion: */ "ClassicAssert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((string)expected);")]
-    [DataRow(
-        /* methodArguments: */ "object expected, List<string> actual",
-        /* oldAssertion: */ "ClassicAssert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((string)expected);")]
-    [DataRow(
-        /* methodArguments: */ "object expected, DateTime[] actual",
-        /* oldAssertion: */ "ClassicAssert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((DateTime)expected);")]
-    [DataRow(
-        /* methodArguments: */ "object expected, List<DateTime> actual",
-        /* oldAssertion: */ "ClassicAssert.Contains(expected, actual);",
-        /* newAssertion: */ "actual.Should().Contain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, string[] actual",
+        oldAssertion: "ClassicAssert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<string> actual",
+        oldAssertion: "ClassicAssert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, DateTime[] actual",
+        oldAssertion: "ClassicAssert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<DateTime> actual",
+        oldAssertion: "ClassicAssert.Contains(expected, actual);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
     [Implemented]
     public void Nunit4_AssertContains_WithCasting_TestCodeFix(string methodArguments, string oldAssertion, string newAssertion)
         => Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
+
+    #endregion
+
+    #region CollectionAssert.cs
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual{0});")]
@@ -1302,6 +1306,210 @@ public class NunitTests
         Nunit4VerifyFix("ICollection<string> expected, ICollection<string> actual", oldAssertion, newAssertion);
         Nunit4VerifyFix("ICollection<DateTime> expected, ICollection<DateTime> actual", oldAssertion, newAssertion);
     }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.Contains(actual, expected{0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertContains_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("object expected, IEnumerable actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, string[] actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, List<string> actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, object[] actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, List<object> actual", assertion);
+        Nunit3VerifyDiagnostic("DateTime expected, DateTime[] actual", assertion);
+        Nunit3VerifyDiagnostic("DateTime expected, List<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.Contains(actual, expected{0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertContains_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("object expected, IEnumerable actual", assertion);
+        Nunit4VerifyDiagnostic("object expected, string[] actual", assertion);
+        Nunit4VerifyDiagnostic("object expected, List<string> actual", assertion);
+        Nunit4VerifyDiagnostic("object expected, object[] actual", assertion);
+        Nunit4VerifyDiagnostic("object expected, List<object> actual", assertion);
+        Nunit4VerifyDiagnostic("DateTime expected, DateTime[] actual", assertion);
+        Nunit4VerifyDiagnostic("DateTime expected, List<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.Contains(actual, expected{0});",
+        newAssertion: "actual.Should().Contain(expected{0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertContains_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyNoFix("object expected, IEnumerable actual", oldAssertion);
+        Nunit3VerifyFix("string expected, string[] actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("string expected, List<string> actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("object expected, object[] actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("object expected, List<object> actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("DateTime expected, DateTime[] actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("DateTime expected, List<DateTime> actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.Contains(actual, expected{0});",
+        newAssertion: "actual.Should().Contain(expected{0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertContains_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit4VerifyNoFix("object expected, IEnumerable actual", oldAssertion);
+        Nunit4VerifyFix("string expected, string[] actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("string expected, List<string> actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("object expected, object[] actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("object expected, List<object> actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("DateTime expected, DateTime[] actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("DateTime expected, List<DateTime> actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, string[] actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<string> actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, DateTime[] actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<DateTime> actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
+    [Implemented]
+    public void Nunit3_CollectionAssertContains_WithCasting_TestCodeFix(string methodArguments, string oldAssertion, string newAssertion)
+        => Nunit3VerifyFix(methodArguments, oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, string[] actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<string> actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, DateTime[] actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<DateTime> actual",
+        oldAssertion: "CollectionAssert.Contains(actual, expected);",
+        newAssertion: "actual.Should().Contain((DateTime)expected);")]
+    [Implemented]
+    public void Nunit4_CollectionAssertContains_WithCasting_TestCodeFix(string methodArguments, string oldAssertion, string newAssertion)
+        => Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.DoesNotContain(actual, expected{0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertDoesNotContain_TestAnalyzer(string assertion)
+    {
+        Nunit3VerifyDiagnostic("object expected, IEnumerable actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, string[] actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, List<string> actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, object[] actual", assertion);
+        Nunit3VerifyDiagnostic("object expected, List<object> actual", assertion);
+        Nunit3VerifyDiagnostic("DateTime expected, DateTime[] actual", assertion);
+        Nunit3VerifyDiagnostic("DateTime expected, List<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.DoesNotContain(actual, expected{0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertDoesNotContain_TestAnalyzer(string assertion)
+    {
+        Nunit4VerifyDiagnostic("object expected, IEnumerable actual", assertion);
+        Nunit4VerifyDiagnostic("object expected, string[] actual", assertion);
+        Nunit4VerifyDiagnostic("string expected, List<string> actual", assertion);
+        Nunit4VerifyDiagnostic("object expected, object[] actual", assertion);
+        Nunit4VerifyDiagnostic("object expected, List<object> actual", assertion);
+        Nunit4VerifyDiagnostic("DateTime expected, DateTime[] actual", assertion);
+        Nunit4VerifyDiagnostic("DateTime expected, List<DateTime> actual", assertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected{0});",
+        newAssertion: "actual.Should().NotContain(expected{0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit3VerifyNoFix("object expected, IEnumerable actual", oldAssertion);
+        Nunit3VerifyFix("string expected, string[] actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("string expected, List<string> actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("object expected, object[] actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("object expected, List<object> actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("DateTime expected, DateTime[] actual", oldAssertion, newAssertion);
+        Nunit3VerifyFix("DateTime expected, List<DateTime> actual", oldAssertion, newAssertion);
+    }
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected{0});",
+        newAssertion: "actual.Should().NotContain(expected{0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertDoesNotContain_TestCodeFix(string oldAssertion, string newAssertion)
+    {
+        Nunit4VerifyNoFix("object expected, IEnumerable actual", oldAssertion);
+        Nunit4VerifyFix("string expected, string[] actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("string expected, List<string> actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("object expected, object[] actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("object expected, List<object> actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("DateTime expected, DateTime[] actual", oldAssertion, newAssertion);
+        Nunit4VerifyFix("DateTime expected, List<DateTime> actual", oldAssertion, newAssertion);
+    }    
+
+    [DataTestMethod]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, string[] actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<string> actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, DateTime[] actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<DateTime> actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((DateTime)expected);")]
+    [Implemented]
+    public void Nunit3_CollectionAssertDoesNotContain_WithCasting_TestCodeFix(string methodArguments, string oldAssertion, string newAssertion)
+        => Nunit3VerifyFix(methodArguments, oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, string[] actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<string> actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((string)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, DateTime[] actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((DateTime)expected);")]
+    [AssertionMethodCodeFix(
+        methodArguments: "object expected, List<DateTime> actual",
+        oldAssertion: "CollectionAssert.DoesNotContain(actual, expected);",
+        newAssertion: "actual.Should().NotContain((DateTime)expected);")]
+    [Implemented]
+    public void Nunit4_CollectionAssertDoesNotContain_WithCasting_TestCodeFix(string methodArguments, string oldAssertion, string newAssertion)
+        => Nunit4VerifyFix(methodArguments, oldAssertion, newAssertion);
 
     #endregion
 

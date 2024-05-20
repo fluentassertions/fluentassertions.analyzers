@@ -529,4 +529,142 @@ public class Nunit4AnalyzerTests
         // new assertion:
         collection.Should().NotEqual(expected);
     }
+
+    [Test]
+    public void CollectionAssertContains()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.Contains(collection, 2);
+
+        // new assertion:
+        collection.Should().Contain(2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertContains_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.Contains(collection, 4);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertContains_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // new assertion:
+        collection.Should().Contain(4);
+    }
+
+    [Test]
+    public void CollectionAssertContains_WithCasting()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 2;
+
+        // old assertion:
+        CollectionAssert.Contains(collection, item);
+
+        // new assertion:
+        collection.Should().Contain((int)item);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertContains_WithCasting_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 4;
+
+        // old assertion:
+        CollectionAssert.Contains(collection, item);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertContains_WithCasting_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 4;
+
+        // new assertion:
+        collection.Should().Contain((int)item);
+    }
+
+    [Test]
+    public void CollectionAssertDoesNotContain()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, 4);
+
+        // new assertion:
+        collection.Should().NotContain(4);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertDoesNotContain_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, 2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertDoesNotContain_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // new assertion:
+        collection.Should().NotContain(2);
+    }
+
+    [Test]
+    public void CollectionAssertDoesNotContain_WithCasting()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 4;
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, item);
+
+        // new assertion:
+        collection.Should().NotContain((int)item);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertDoesNotContain_WithCasting_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 2;
+
+        // old assertion:
+        CollectionAssert.DoesNotContain(collection, item);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertDoesNotContain_WithCasting_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        object item = 2;
+
+        // new assertion:
+        collection.Should().NotContain((int)item);
+    }
 }
