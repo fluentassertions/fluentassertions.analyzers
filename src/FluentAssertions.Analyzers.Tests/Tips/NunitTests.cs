@@ -1308,7 +1308,7 @@ public class NunitTests
     }
 
     [DataTestMethod]
-    [AssertionDiagnostic("CollectionAssert.Contains(expected, actual{0});")]
+    [AssertionDiagnostic("CollectionAssert.Contains(actual, expected{0});")]
     [Implemented]
     public void Nunit3_CollectionAssertContains_TestAnalyzer(string assertion)
     {
@@ -1322,7 +1322,7 @@ public class NunitTests
     }
 
     [DataTestMethod]
-    [AssertionDiagnostic("CollectionAssert.Contains(expected, actual{0});")]
+    [AssertionDiagnostic("CollectionAssert.Contains(actual, expected{0});")]
     [Implemented]
     public void Nunit4_CollectionAssertContains_TestAnalyzer(string assertion)
     {
