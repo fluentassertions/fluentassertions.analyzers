@@ -218,12 +218,12 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Equal", subjectIndex: 1, argumentsToRemove: []);
             case "AreNotEqual" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.AreNotEqual(IEnumerable notExpected, IEnumerable actual)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotEqual", subjectIndex: 1, argumentsToRemove: []);
-            case "Contains" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.Contain(IEnumerable collection, object actual)
+            case "Contains": // CollectionAssert.Contain(IEnumerable collection, object actual)
                 return RewriteContainsAssertion(invocation, context, "Contain",
                     subject: invocation.Arguments[0],
                     expectation: invocation.Arguments[1]
                 );
-            case "DoesNotContain" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.DoesNotContain(IEnumerable collection, object actual)
+            case "DoesNotContain": // CollectionAssert.DoesNotContain(IEnumerable collection, object actual)
                 return RewriteContainsAssertion(invocation, context, "NotContain",
                     subject: invocation.Arguments[0],
                     expectation: invocation.Arguments[1]
@@ -286,6 +286,11 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private CreateChangedDocument RewriteContainsAssertion(IInvocationOperation invocation, CodeFixContext context, string assertion, IArgumentOperation subject, IArgumentOperation expectation)
     {
+        if (!subject.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_IEnumerable_T))
+        {
+            return null;
+        }
+
         var subjectIndex = invocation.Arguments.IndexOf(subject);
         return DocumentEditorUtils.RewriteExpression(invocation, [
             editActionContext =>
