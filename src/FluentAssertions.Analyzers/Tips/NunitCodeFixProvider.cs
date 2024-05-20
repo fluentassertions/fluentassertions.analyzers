@@ -208,15 +208,47 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private CreateChangedDocument TryComputeFixForCollectionAssert(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
+        /**
+            public static void AllItemsAreNotNull(IEnumerable collection)
+            public static void AllItemsAreNotNull(IEnumerable collection, string message, params object[] args)
+            public static void AllItemsAreUnique(IEnumerable collection)
+            public static void AllItemsAreUnique(IEnumerable collection, string message, params object[] args)
+            public static void AreEqual(IEnumerable expected, IEnumerable actual, IComparer comparer)
+            public static void AreEqual(IEnumerable expected, IEnumerable actual, IComparer comparer, string message, params object[] args)
+            public static void AreEquivalent(IEnumerable expected, IEnumerable actual)
+            public static void AreEquivalent(IEnumerable expected, IEnumerable actual, string message, params object[] args)
+            public static void AreNotEqual(IEnumerable expected, IEnumerable actual, IComparer comparer)
+            public static void AreNotEqual(IEnumerable expected, IEnumerable actual, IComparer comparer, string message, params object[] args)
+            public static void AreNotEquivalent(IEnumerable expected, IEnumerable actual)
+            public static void AreNotEquivalent(IEnumerable expected, IEnumerable actual, string message, params object[] args)
+            public static void IsNotSubsetOf(IEnumerable subset, IEnumerable superset)
+            public static void IsNotSubsetOf(IEnumerable subset, IEnumerable superset, string message, params object[] args)
+            public static void IsSubsetOf(IEnumerable subset, IEnumerable superset)
+            public static void IsSubsetOf(IEnumerable subset, IEnumerable superset, string message, params object[] args)
+            public static void IsNotSupersetOf(IEnumerable superset, IEnumerable subset)
+            public static void IsNotSupersetOf(IEnumerable superset, IEnumerable subset, string message, params object[] args)
+            public static void IsSupersetOf(IEnumerable superset, IEnumerable subset)
+            public static void IsSupersetOf(IEnumerable superset, IEnumerable subset, string message, params object[] args)
+            public static void IsOrdered(IEnumerable collection, string message, params object[] args)
+            public static void IsOrdered(IEnumerable collection)
+            public static void IsOrdered(IEnumerable collection, IComparer comparer, string message, params object[] args)
+            public static void IsOrdered(IEnumerable collection, IComparer comparer)
+        */
+
+        if (IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0))
+        {
+            return null;
+        }
+
         switch (invocation.TargetMethod.Name)
         {
-            case "IsEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.IsEmpty(IEnumerable collection)
+            case "IsEmpty": // CollectionAssert.IsEmpty(IEnumerable collection)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeEmpty", subjectIndex: 0, argumentsToRemove: []);
-            case "IsNotEmpty" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.IsNotEmpty(IEnumerable collection)
+            case "IsNotEmpty": // CollectionAssert.IsNotEmpty(IEnumerable collection)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeEmpty", subjectIndex: 0, argumentsToRemove: []);
-            case "AreEqual" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.AreEqual(IEnumerable expected, IEnumerable actual)
+            case "AreEqual" when !IsArgumentTypeOf(invocation, argumentIndex: 2, t.IComparer): // CollectionAssert.AreEqual(IEnumerable expected, IEnumerable actual)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Equal", subjectIndex: 1, argumentsToRemove: []);
-            case "AreNotEqual" when !IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0): // CollectionAssert.AreNotEqual(IEnumerable notExpected, IEnumerable actual)
+            case "AreNotEqual" when !IsArgumentTypeOf(invocation, argumentIndex: 2, t.IComparer): // CollectionAssert.AreNotEqual(IEnumerable expected, IEnumerable actual)
                 return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotEqual", subjectIndex: 1, argumentsToRemove: []);
             case "Contains": // CollectionAssert.Contain(IEnumerable collection, object actual)
                 return RewriteContainsAssertion(invocation, context, "Contain",
@@ -228,6 +260,15 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                     subject: invocation.Arguments[0],
                     expectation: invocation.Arguments[1]
                 );
+            case "AllItemsAreInstancesOfType": // CollectionAssert.AllItemsAreInstancesOfType(IEnumerable collection, Type expectedType)
+                {
+                    if (invocation.Arguments[1].Value is not ITypeOfOperation typeOf)
+                    {
+                        return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "AllBeOfType", subjectIndex: 0, argumentsToRemove: []);
+                    }
+
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "AllBeOfType", subjectIndex: 0, argumentsToRemove: [1]);
+                }
         }
         return null;
     }
@@ -318,8 +359,10 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         => operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == property && IsPropertyReferencedFromType(propertyReference, type);
 
     private static bool IsArgumentTypeOfNonGenericEnumerable(IInvocationOperation invocation, int argumentIndex) => IsArgumentTypeOf(invocation, argumentIndex, SpecialType.System_Collections_IEnumerable);
-    private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, SpecialType specialType)
-        => invocation.Arguments[argumentIndex].Value.UnwrapConversion().Type.SpecialType == specialType;
+    private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, SpecialType type)
+        => invocation.Arguments.Length > argumentIndex && invocation.Arguments[argumentIndex].IsTypeof(type);
+    private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, INamedTypeSymbol type)
+        => invocation.Arguments.Length > argumentIndex && invocation.Arguments[argumentIndex].IsTypeof(type);
 
     public class NunitCodeFixContext(Compilation compilation) : TestingFrameworkCodeFixProvider.TestingFrameworkCodeFixContext(compilation)
     {

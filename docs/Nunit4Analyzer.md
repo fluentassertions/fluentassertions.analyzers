@@ -18,6 +18,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [CollectionAssertContains_WithCasting](#scenario-collectionassertcontains_withcasting) - `collection.Should().Contain((int)item);`
 - [CollectionAssertDoesNotContain](#scenario-collectionassertdoesnotcontain) - `collection.Should().NotContain(4);`
 - [CollectionAssertDoesNotContain_WithCasting](#scenario-collectionassertdoesnotcontain_withcasting) - `collection.Should().NotContain((int)item);`
+- [CollectionAssertAllItemsAreInstancesOfType](#scenario-collectionassertallitemsareinstancesoftype) - `collection.Should().AllBeOfType<int>();`
+- [CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument](#scenario-collectionassertallitemsareinstancesoftype_withtypeargument) - `collection.Should().AllBeOfType(type);`
 
 
 ## Scenarios
@@ -507,6 +509,66 @@ CollectionAssert.DoesNotContain(collection, item); /* fail message:   Assert.Tha
 
 // new assertion:
 collection.Should().NotContain((int)item); /* fail message: Expected collection {1, 2, 3} to not contain 2. */
+```
+
+### scenario: CollectionAssertAllItemsAreInstancesOfType
+
+```cs
+// arrange
+var collection = new object[] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int));
+
+// new assertion:
+collection.Should().AllBeOfType<int>();
+```
+
+#### Failure messages
+
+```cs
+var collection = new object[] { 1, 2, "3" };
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int)); /* fail message:   Assert.That(collection, Is.All.InstanceOf(expectedType))
+  Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+
+// new assertion:
+collection.Should().AllBeOfType<int>(); /* fail message: Expected type to be "System.Int32", but found "[System.Int32, System.Int32, System.String]". */
+```
+
+### scenario: CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument
+
+```cs
+// arrange
+var collection = new object[] { 1, 2, 3 };
+var type = typeof(int);
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(collection, type);
+
+// new assertion:
+collection.Should().AllBeOfType(type);
+```
+
+#### Failure messages
+
+```cs
+var collection = new object[] { 1, 2, "3" };
+var type = typeof(int);
+
+// old assertion:
+CollectionAssert.AllItemsAreInstancesOfType(collection, type); /* fail message:   Assert.That(collection, Is.All.InstanceOf(expectedType))
+  Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+
+// new assertion:
+collection.Should().AllBeOfType(type); /* fail message: Expected type to be "System.Int32", but found "[System.Int32, System.Int32, System.String]". */
 ```
 
 
