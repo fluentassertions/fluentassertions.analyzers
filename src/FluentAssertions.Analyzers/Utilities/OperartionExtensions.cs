@@ -81,6 +81,12 @@ internal static class OperartionExtensions
         => invocation.TargetMethod.ContainingType.ImplementsOrIsInterface(type);
     public static bool ImplementsOrIsInterface(this IArgumentOperation argument, SpecialType type)
         => argument.Value.UnwrapConversion().Type.ImplementsOrIsInterface(type);
+    public static bool ImplementsOrIsInterface(this IArgumentOperation argument, INamedTypeSymbol type)
+        => argument.Value.UnwrapConversion().Type.ImplementsOrIsInterface(type);
+    public static bool IsTypeof(this IArgumentOperation argument, SpecialType type)
+        => argument.Value.UnwrapConversion().Type.SpecialType == type;
+    public static bool IsTypeof(this IArgumentOperation argument, INamedTypeSymbol type)
+        => argument.Value.UnwrapConversion().Type.EqualsSymbol(type);
 
     public static bool IsSameArgumentReference(this IArgumentOperation argument1, IArgumentOperation argument2)
     {

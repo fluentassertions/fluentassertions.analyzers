@@ -667,4 +667,73 @@ public class Nunit4AnalyzerTests
         // new assertion:
         collection.Should().NotContain((int)item);
     }
+
+    [Test]
+    public void CollectionAssertAllItemsAreInstancesOfType()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int));
+
+        // new assertion:
+        collection.Should().AllBeOfType<int>();
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+
+        // new assertion:
+        collection.Should().AllBeOfType<int>();
+    }
+
+    [Test]
+    public void CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, 3 };
+        var type = typeof(int);
+
+        // old assertion:
+        CollectionAssert.AllItemsAreInstancesOfType(collection, type);
+
+        // new assertion:
+        collection.Should().AllBeOfType(type);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+        var type = typeof(int);
+
+        // old assertion:
+        CollectionAssert.AllItemsAreInstancesOfType(collection, type);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+        var type = typeof(int);
+
+        // new assertion:
+        collection.Should().AllBeOfType(type);
+    }
 }
