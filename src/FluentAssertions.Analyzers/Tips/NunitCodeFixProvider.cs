@@ -350,6 +350,37 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         return null;
     }
 
+/* TODO:
+StringAssert:
+
+public static void Contains(string expected, string actual, string message, params object[] args)
+public static void Contains(string expected, string actual)
+public static void DoesNotContain(string expected, string actual, string message, params object[] args)
+public static void DoesNotContain(string expected, string actual)
+public static void StartsWith(string expected, string actual, string message, params object[] args)
+public static void StartsWith(string expected, string actual)
+public static void DoesNotStartWith(string expected, string actual, string message, params object[] args)
+public static void DoesNotStartWith(string expected, string actual)
+public static void EndsWith(string expected, string actual, string message, params object[] args)
+public static void EndsWith(string expected, string actual)
+public static void DoesNotEndWith(string expected, string actual, string message, params object[] args)
+public static void DoesNotEndWith(string expected, string actual)
+public static void AreEqualIgnoringCase(string expected, string actual, string message, params object[] args)
+public static void AreEqualIgnoringCase(string expected, string actual)
+public static void AreNotEqualIgnoringCase(string expected, string actual, string message, params object[] args)
+public static void AreNotEqualIgnoringCase(string expected, string actual)
+public static void IsMatch(string pattern, string actual, string message, params object[] args)
+public static void IsMatch(string pattern, string actual)
+public static void DoesNotMatch(string pattern, string actual, string message, params object[] args)
+public static void DoesNotMatch(string pattern, string actual)
+*/
+
+/* TODO:
+
+
+
+*/
+
     private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
         // Assert.That(condition)
