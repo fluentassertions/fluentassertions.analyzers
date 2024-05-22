@@ -375,12 +375,6 @@ public static void DoesNotMatch(string pattern, string actual, string message, p
 public static void DoesNotMatch(string pattern, string actual)
 */
 
-/* TODO:
-
-
-
-*/
-
     private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
         // Assert.That(condition)
