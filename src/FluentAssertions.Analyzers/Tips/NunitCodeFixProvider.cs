@@ -209,10 +209,6 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     private CreateChangedDocument TryComputeFixForCollectionAssert(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
         /**
-            public static void AllItemsAreNotNull(IEnumerable collection)
-            public static void AllItemsAreNotNull(IEnumerable collection, string message, params object[] args)
-            public static void AllItemsAreUnique(IEnumerable collection)
-            public static void AllItemsAreUnique(IEnumerable collection, string message, params object[] args)
             public static void AreEqual(IEnumerable expected, IEnumerable actual, IComparer comparer)
             public static void AreEqual(IEnumerable expected, IEnumerable actual, IComparer comparer, string message, params object[] args)
             public static void AreEquivalent(IEnumerable expected, IEnumerable actual)
@@ -269,6 +265,10 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
                     return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "AllBeOfType", subjectIndex: 0, argumentsToRemove: [1]);
                 }
+            case "AllItemsAreNotNull": // CollectionAssert.AllItemsAreNotNull(IEnumerable collection)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotContainNulls", subjectIndex: 0, argumentsToRemove: []);
+            case "AllItemsAreUnique": // CollectionAssert.AllItemsAreUnique(IEnumerable collection)
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "OnlyHaveUniqueItems", subjectIndex: 0, argumentsToRemove: []);
         }
         return null;
     }

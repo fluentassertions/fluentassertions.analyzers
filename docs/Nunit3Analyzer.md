@@ -22,6 +22,8 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [CollectionAssertDoesNotContain_WithCasting](#scenario-collectionassertdoesnotcontain_withcasting) - `collection.Should().NotContain((int)item);`
 - [CollectionAssertAllItemsAreInstancesOfType](#scenario-collectionassertallitemsareinstancesoftype) - `collection.Should().AllBeOfType<int>();`
 - [CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument](#scenario-collectionassertallitemsareinstancesoftype_withtypeargument) - `collection.Should().AllBeOfType(type);`
+- [CollectionAssertAllItemsAreNotNull](#scenario-collectionassertallitemsarenotnull) - `collection.Should().NotContainNulls();`
+- [CollectionAssertAllItemsAreUnique](#scenario-collectionassertallitemsareunique) - `collection.Should().OnlyHaveUniqueItems();`
 
 
 ## Scenarios
@@ -596,6 +598,62 @@ CollectionAssert.AllItemsAreInstancesOfType(collection, type); /* fail message: 
 
 // new assertion:
 collection.Should().AllBeOfType(type); /* fail message: Expected type to be "System.Int32", but found "[System.Int32, System.Int32, System.String]". */
+```
+
+### scenario: CollectionAssertAllItemsAreNotNull
+
+```cs
+// arrange
+var collection = new object[] { 1, "test", true };
+
+// old assertion:
+CollectionAssert.AllItemsAreNotNull(collection);
+
+// new assertion:
+collection.Should().NotContainNulls();
+```
+
+#### Failure messages
+
+```cs
+var collection = new object[] { 1, null, true };
+
+// old assertion:
+CollectionAssert.AllItemsAreNotNull(collection); /* fail message:   Expected: all items not null
+  But was:  < 1, null, True >
+  First non-matching item at index [1]:  null
+ */
+
+// new assertion:
+collection.Should().NotContainNulls(); /* fail message: Expected collection not to contain <null>s, but found one at index 1. */
+```
+
+### scenario: CollectionAssertAllItemsAreUnique
+
+```cs
+// arrange
+var collection = new[] { 1, 2, 3 };
+
+// old assertion:
+CollectionAssert.AllItemsAreUnique(collection);
+
+// new assertion:
+collection.Should().OnlyHaveUniqueItems();
+```
+
+#### Failure messages
+
+```cs
+var collection = new[] { 1, 2, 1 };
+
+// old assertion:
+CollectionAssert.AllItemsAreUnique(collection); /* fail message:   Expected: all items unique
+  But was:  < 1, 2, 1 >
+  Not unique items: < 1 >
+ */
+
+// new assertion:
+collection.Should().OnlyHaveUniqueItems(); /* fail message: Expected collection to only have unique items, but item 1 is not unique. */
 ```
 
 

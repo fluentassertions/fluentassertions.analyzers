@@ -811,4 +811,70 @@ public class Nunit3AnalyzerTests
         // new assertion:
         collection.Should().AllBeOfType(type);
     }
+
+    [TestMethod]
+    public void CollectionAssertAllItemsAreNotNull()
+    {
+        // arrange
+        var collection = new object[] { 1, "test", true };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreNotNull(collection);
+
+        // new assertion:
+        collection.Should().NotContainNulls();
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, null, true };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreNotNull(collection);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAllItemsAreNotNull_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, null, true };
+
+        // new assertion:
+        collection.Should().NotContainNulls();
+    }
+
+    [TestMethod]
+    public void CollectionAssertAllItemsAreUnique()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreUnique(collection);
+
+        // new assertion:
+        collection.Should().OnlyHaveUniqueItems();
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAllItemsAreUnique_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 1 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreUnique(collection);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void CollectionAssertAllItemsAreUnique_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 1 };
+
+        // new assertion:
+        collection.Should().OnlyHaveUniqueItems();
+    }
 }

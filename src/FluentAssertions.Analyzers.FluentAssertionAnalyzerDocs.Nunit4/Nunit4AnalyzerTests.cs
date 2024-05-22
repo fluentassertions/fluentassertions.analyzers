@@ -808,4 +808,70 @@ public class Nunit4AnalyzerTests
         // new assertion:
         collection.Should().AllBeOfType(type);
     }
+
+    [Test]
+    public void CollectionAssertAllItemsAreNotNull()
+    {
+        // arrange
+        var collection = new object[] { 1, "test", true };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreNotNull(collection);
+
+        // new assertion:
+        collection.Should().NotContainNulls();
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, null, true };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreNotNull(collection);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreNotNull_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new object[] { 1, null, true };
+
+        // new assertion:
+        collection.Should().NotContainNulls();
+    }
+
+    [Test]
+    public void CollectionAssertAllItemsAreUnique()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreUnique(collection);
+
+        // new assertion:
+        collection.Should().OnlyHaveUniqueItems();
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreUnique_Failure_OldAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 1 };
+
+        // old assertion:
+        CollectionAssert.AllItemsAreUnique(collection);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreUnique_Failure_NewAssertion()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 1 };
+
+        // new assertion:
+        collection.Should().OnlyHaveUniqueItems();
+    }
 }
