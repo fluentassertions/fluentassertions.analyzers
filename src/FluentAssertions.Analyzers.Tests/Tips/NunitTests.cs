@@ -1608,6 +1608,53 @@ public class NunitTests
     [Implemented]
     public void Nunit4_CollectionAssertAllItemsAreInstancesOfType_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("IEnumerable<string> actual, Type type", oldAssertion, newAssertion);
 
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AllItemsAreNotNull(actual{0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertAllItemsAreNotNull_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("IEnumerable<string> actual", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AllItemsAreNotNull(actual{0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertAllItemsAreNotNull_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("IEnumerable<string> actual", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AllItemsAreNotNull(actual{0});",
+        newAssertion: "actual.Should().NotContainNulls({0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertAllItemsAreNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AllItemsAreNotNull(actual{0});",
+        newAssertion: "actual.Should().NotContainNulls({0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertAllItemsAreNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AllItemsAreUnique(actual{0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertAllItemsAreUnique_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("IEnumerable<string> actual", assertion);
+
+    [DataTestMethod]
+    [AssertionDiagnostic("CollectionAssert.AllItemsAreUnique(actual{0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertAllItemsAreUnique_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("IEnumerable<string> actual", assertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AllItemsAreUnique(actual{0});",
+        newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
+    [Implemented]
+    public void Nunit3_CollectionAssertAllItemsAreUnique_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
+
+    [DataTestMethod]
+    [AssertionCodeFix(
+        oldAssertion: "CollectionAssert.AllItemsAreUnique(actual{0});",
+        newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
+    [Implemented]
+    public void Nunit4_CollectionAssertAllItemsAreUnique_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
 
     #endregion
 
