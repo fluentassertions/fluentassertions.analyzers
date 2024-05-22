@@ -266,9 +266,9 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                     return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(typeOf.TypeOperand), context, "AllBeOfType", subjectIndex: 0, argumentsToRemove: [1]);
                 }
             case "AllItemsAreNotNull": // CollectionAssert.AllItemsAreNotNull(IEnumerable collection)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "AllNotBeNull", subjectIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotContainNulls", subjectIndex: 0, argumentsToRemove: []);
             case "AllItemsAreUnique": // CollectionAssert.AllItemsAreUnique(IEnumerable collection)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "AllBeUnique", subjectIndex: 0, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "OnlyHaveUniqueItems", subjectIndex: 0, argumentsToRemove: []);
         }
         return null;
     }
