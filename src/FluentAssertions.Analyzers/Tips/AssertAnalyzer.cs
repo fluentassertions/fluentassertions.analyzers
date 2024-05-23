@@ -180,7 +180,7 @@ public class AssertAnalyzer : DiagnosticAnalyzer
             var op = (IInvocationOperation)context.Operation;
             if (IsNunitAssertClass(op.TargetMethod.ContainingType) && !IsMethodExcluded(context.Options, op))
             {
-                if (op.TargetMethod.Name is "Inconclusive" or "Ignore" && op.TargetMethod.ContainingType.EqualsSymbol(_nunitAssertSymbol))
+                if (op.TargetMethod.Name is "Inconclusive" or "Ignore" or "Pass" or "Warn" or "Charlie" && op.TargetMethod.ContainingType.EqualsSymbol(_nunitAssertSymbol))
                     return;
 
                 context.ReportDiagnostic(Diagnostic.Create(NUnitRule, op.Syntax.GetLocation()));

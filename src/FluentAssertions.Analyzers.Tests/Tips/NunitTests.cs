@@ -10,6 +10,35 @@ namespace FluentAssertions.Analyzers.Tests.Tips;
 [TestClass]
 public class NunitTests
 {
+    #region Assert.cs
+
+    [DataTestMethod]
+    [AssertionDiagnostic("Assert.Pass({0});")]
+    [AssertionDiagnostic("Assert.Inconclusive({0});")]
+    [AssertionDiagnostic("Assert.Ignore({0});")]
+    [Implemented]
+    public void Nunit3_NotReportedAsserts_TestAnalyzer(string assertion) => Nunit3VerifyNoDiagnostic(string.Empty, assertion);
+
+    [DataTestMethod]
+    [DataRow("Assert.Warn(\"warning message\");")]
+    [DataRow("Assert.Warn(\"warning message {0} and more.\", DateTime.Now);")]
+    [Implemented]
+    public void Nunit3_SpecialNotReportedAsserts_TestAnalyzer(string assertion) => Nunit3VerifyNoDiagnostic(string.Empty, assertion);
+
+    [DataTestMethod]
+    [DataRow("Assert.Pass();")]
+    [DataRow("Assert.Pass(\"passing message\");")]
+    [DataRow("Assert.Inconclusive();")]
+    [DataRow("Assert.Inconclusive(\"inconclusive message\");")]
+    [DataRow("Assert.Ignore();")]
+    [DataRow("Assert.Ignore(\"ignore message\");")]
+    [DataRow("Assert.Warn(\"warning message\");")]
+    [DataRow("Assert.Charlie();")]
+    [Implemented]
+    public void Nunit4_SpecialNotReportedAsserts_TestAnalyzer(string assertion) => Nunit4VerifyNoDiagnostic(string.Empty, assertion);
+
+    #endregion
+
     #region Assert.Conditions.cs
 
     [DataTestMethod]
@@ -1660,6 +1689,8 @@ public class NunitTests
 
     private void Nunit3VerifyDiagnostic(string methodArguments, string assertion)
         => VerifyDiagnostic(GenerateCode.Nunit3Assertion(methodArguments, assertion), PackageReference.Nunit_3_14_0);
+    private void Nunit3VerifyNoDiagnostic(string methodArguments, string assertion)
+        => VerifyNoDiagnostic(GenerateCode.Nunit3Assertion(methodArguments, assertion), PackageReference.Nunit_3_14_0);
     private void Nunit3VerifyFix(string methodArguments, string oldAssertion, string newAssertion)
         => VerifyFix(GenerateCode.Nunit3Assertion(methodArguments, oldAssertion), GenerateCode.Nunit3Assertion(methodArguments, newAssertion), PackageReference.Nunit_3_14_0);
     private void Nunit3VerifyNoFix(string methodArguments, string assertion)
@@ -1667,6 +1698,8 @@ public class NunitTests
 
     private void Nunit4VerifyDiagnostic(string methodArguments, string assertion)
         => VerifyDiagnostic(GenerateCode.Nunit4Assertion(methodArguments, assertion), PackageReference.Nunit_4_0_1);
+    private void Nunit4VerifyNoDiagnostic(string methodArguments, string assertion)
+        => VerifyNoDiagnostic(GenerateCode.Nunit4Assertion(methodArguments, assertion), PackageReference.Nunit_4_0_1);
     private void Nunit4VerifyFix(string methodArguments, string oldAssertion, string newAssertion)
         => VerifyFix(GenerateCode.Nunit4Assertion(methodArguments, oldAssertion), GenerateCode.Nunit4Assertion(methodArguments, newAssertion), PackageReference.Nunit_4_0_1);
     private void Nunit4VerifyNoFix(string methodArguments, string assertion)
@@ -1705,6 +1738,14 @@ public class NunitTests
         DiagnosticVerifier.VerifyNoFix(new CodeFixVerifierArguments()
             .WithDiagnosticAnalyzer<AssertAnalyzer>()
             .WithCodeFixProvider<NunitCodeFixProvider>()
+            .WithSources(source)
+            .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, nunit)
+        );
+    }
+    private void VerifyNoDiagnostic(string source, PackageReference nunit)
+    {
+        DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+            .WithAllAnalyzers()
             .WithSources(source)
             .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, nunit)
         );
