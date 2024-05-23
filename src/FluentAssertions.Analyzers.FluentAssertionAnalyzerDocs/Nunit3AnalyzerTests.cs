@@ -272,6 +272,8 @@ public class Nunit3AnalyzerTests
         // old assertion:
         Assert.IsEmpty(collection);
         Assert.That(collection, Is.Empty);
+        Assert.That(collection, Has.Count.EqualTo(0));
+        Assert.That(collection, Has.Count.Zero);
         CollectionAssert.IsEmpty(collection);
 
         // new assertion:

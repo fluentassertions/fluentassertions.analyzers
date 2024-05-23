@@ -8,6 +8,7 @@ using System;
 using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace FluentAssertions.Analyzers;
 
@@ -430,38 +431,79 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         if (invocation.Arguments[1].Value.UnwrapConversion() is not IPropertyReferenceOperation constraint) return null;
         var subject = invocation.Arguments[0].Value;
 
-        if (MatchesProperties(constraint, t.Is, "True") // Assert.That(subject, Is.True)
-            || MatchesProperties(constraint, t.Is, "Not", "False")) // Assert.That(subject, Is.Not.False)
-            return RenameAssertThatAssertionToSubjectShouldAssertion("BeTrue");
-        else if (MatchesProperties(constraint, t.Is, "False") // Assert.That(subject, Is.False)
-            || MatchesProperties(constraint, t.Is, "Not", "True")) // Assert.That(subject, Is.Not.True)
-            return RenameAssertThatAssertionToSubjectShouldAssertion("BeFalse");
-        else if (MatchesProperties(constraint, t.Is, "Null")) // Assert.That(subject, Is.Null)
-            return RenameAssertThatAssertionToSubjectShouldAssertion("BeNull");
-        else if (MatchesProperties(constraint, t.Is, "Not", "Null")) // Assert.That(subject, Is.Not.Null)
-            return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeNull");
+        if (MatchesProperties(t.Is, "True") // Assert.That(subject, Is.True)
+            || MatchesProperties(t.Is, "Not", "False")) // Assert.That(subject, Is.Not.False)
+            return RenameAssertThatAssertionToShould("BeTrue");
+        else if (MatchesProperties(t.Is, "False") // Assert.That(subject, Is.False)
+            || MatchesProperties(t.Is, "Not", "True")) // Assert.That(subject, Is.Not.True)
+            return RenameAssertThatAssertionToShould("BeFalse");
+        else if (MatchesProperties(t.Is, "Null")) // Assert.That(subject, Is.Null)
+            return RenameAssertThatAssertionToShould("BeNull");
+        else if (MatchesProperties(t.Is, "Not", "Null")) // Assert.That(subject, Is.Not.Null)
+            return RenameAssertThatAssertionToShould("NotBeNull");
         else if (!IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0))
         {
-            if (MatchesProperties(constraint, t.Is, "Empty")) // Assert.That(subject, Is.Empty)
-                return RenameAssertThatAssertionToSubjectShouldAssertion("BeEmpty");
-            else if (MatchesProperties(constraint, t.Is, "Not", "Empty")) // Assert.That(subject, Is.Not.Empty)
-                return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeEmpty");
+            if (MatchesProperties(t.Is, "Empty") // Assert.That(subject, Is.Empty)
+                || MatchesProperties(t.Has, "Count", "Zero")) // Assert.That(subject, Has.Count.Zero)
+                return RenameAssertThatAssertionToShould("BeEmpty");
+            else if (MatchesProperties(t.Is, "Not", "Empty")) // Assert.That(subject, Is.Not.Empty)
+                return RenameAssertThatAssertionToShould("NotBeEmpty");
         }
-        if (MatchesProperties(constraint, t.Is, "Zero"))
-            return DocumentEditorUtils.RewriteExpression(invocation, [
-                EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
-                EditAction.SubjectShouldAssertion(argumentIndex: 0, "Be"),
-            ], context);
-        else if (MatchesProperties(constraint, t.Is, "Not", "Zero"))
-            return DocumentEditorUtils.RewriteExpression(invocation, [
-                    EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
-                EditAction.SubjectShouldAssertion(argumentIndex: 0, "NotBe"),
-            ], context);
+        if (MatchesProperties(t.Is, "Zero"))
+            return RenameAssertThatToShouldWithArgument("Be", generator => generator.LiteralExpression(0));
+        else if (MatchesProperties(t.Is, "Not", "Zero"))
+            return RenameAssertThatToShouldWithArgument("NotBe", generator => generator.LiteralExpression(0));
+        else if (MatchesMethod(t.Has, [Property("Count")], Method("EqualTo"), out var argument))
+        {
+            if (argument.IsLiteralValue(0))
+                return RenameAssertThatAssertionToShould("BeEmpty");
+            else if (argument.IsLiteralValue(1))
+                return RenameAssertThatAssertionToShould("ContainSingle");
+            else
+                return RenameAssertThatToShouldWithArgument("HaveCount", generator => argument.Syntax);
+        }
 
         return null;
 
-        CreateChangedDocument RenameAssertThatAssertionToSubjectShouldAssertion(string assertionName)
+        CreateChangedDocument RenameAssertThatAssertionToShould(string assertionName)
             => DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertionName, subjectIndex: 0, argumentsToRemove: [1]);
+        CreateChangedDocument RenameAssertThatToShouldWithArgument(string assertionName, Func<SyntaxGenerator, SyntaxNode> argumentGenerator)
+        {
+            return DocumentEditorUtils.RewriteExpression(invocation, [
+                EditAction.ReplaceAssertionArgument(index: 1, argumentGenerator),
+                EditAction.SubjectShouldAssertion(argumentIndex: 0, assertionName),
+            ], context);
+        }
+
+        bool MatchesProperties(INamedTypeSymbol type, params string[] matchers)
+            => Matches(type, Array.ConvertAll(matchers, matcher => new PropertyReferenceMatcher(matcher)));
+        bool MatchesMethod(INamedTypeSymbol type, IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument)
+        {
+            argument = null;
+            var result = Matches(type, [.. matchers, methodMatcher]);
+            if (result) argument = methodMatcher.Argument;
+            return result;
+        }
+        bool Matches(INamedTypeSymbol type, params IOperationMatcher[] matchers)
+        {
+            IOperation currentOp = constraint;
+            for (var i = matchers.Length - 1; i >= 0; i--)
+            {
+                var (nextOp, containingType) = matchers[i].TryGetNext(currentOp);
+                if (containingType is null) return false;
+
+                if (i is 0)
+                {
+                    return containingType.EqualsSymbol(type);
+                }
+
+                if (nextOp is null) return false;
+
+                currentOp = nextOp;
+            }
+
+            return false;
+        }
     }
 
     private CreateChangedDocument RewriteContainsAssertion(IInvocationOperation invocation, CodeFixContext context, string assertion, IArgumentOperation subject, IArgumentOperation expectation)
@@ -496,38 +538,24 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     }
     private class MethodInvocationMatcher(string name) : IOperationMatcher
     {
+        public IArgumentOperation Argument { get; private set; }
         public (IOperation op, ISymbol containingType) TryGetNext(IOperation operation)
-            => operation is IInvocationOperation invocation && invocation.TargetMethod.Name == name ? (invocation.Instance, invocation.TargetMethod.ContainingType) : (null, null);
+        {
+            if (operation is not IInvocationOperation invocation) return default;
+            if (invocation.TargetMethod.Name != name) return default;
+
+            Argument = invocation.Arguments[0];
+
+            return (invocation.Instance, invocation.TargetMethod.ContainingType);
+        }
     }
     private class PropertyReferenceMatcher(string name) : IOperationMatcher
     {
         public (IOperation op, ISymbol containingType) TryGetNext(IOperation operation)
             => operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == name ? (propertyReference.Instance, propertyReference.Member.ContainingType) : (null, null);
     }
-    private static IOperationMatcher Method(string name) => new MethodInvocationMatcher(name);
-    private static IOperationMatcher Property(string name) => new PropertyReferenceMatcher(name);
-    private static bool MatchesProperties(IOperation constraint, INamedTypeSymbol type, params string[] matchers)
-        => Matches(constraint, type, Array.ConvertAll(matchers, matcher => new PropertyReferenceMatcher(matcher)));
-    private static bool Matches(IOperation constraint, INamedTypeSymbol type, params IOperationMatcher[] matchers)
-    {
-        var currentOp = constraint;
-        for (var i = matchers.Length - 1; i >= 0; i--)
-        {
-            var (nextOp, containingType) = matchers[i].TryGetNext(currentOp);
-            if (containingType is null) return false;
-
-            if (i is 0)
-            {
-                return containingType.EqualsSymbol(type);
-            }
-
-            if (nextOp is null) return false;
-
-            currentOp = nextOp;
-        }
-
-        return false;
-    }
+    private static MethodInvocationMatcher Method(string name) => new MethodInvocationMatcher(name);
+    private static PropertyReferenceMatcher Property(string name) => new PropertyReferenceMatcher(name);
 
     private static bool IsArgumentTypeOfNonGenericEnumerable(IInvocationOperation invocation, int argumentIndex) => IsArgumentTypeOf(invocation, argumentIndex, SpecialType.System_Collections_IEnumerable);
     private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, SpecialType type)
