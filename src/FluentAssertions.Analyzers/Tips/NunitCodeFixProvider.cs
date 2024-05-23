@@ -350,33 +350,70 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         return null;
     }
 
-/* TODO:
-StringAssert:
+    /* TODO:
+    StringAssert:
 
-public static void Contains(string expected, string actual, string message, params object[] args)
-public static void Contains(string expected, string actual)
-public static void DoesNotContain(string expected, string actual, string message, params object[] args)
-public static void DoesNotContain(string expected, string actual)
-public static void StartsWith(string expected, string actual, string message, params object[] args)
-public static void StartsWith(string expected, string actual)
-public static void DoesNotStartWith(string expected, string actual, string message, params object[] args)
-public static void DoesNotStartWith(string expected, string actual)
-public static void EndsWith(string expected, string actual, string message, params object[] args)
-public static void EndsWith(string expected, string actual)
-public static void DoesNotEndWith(string expected, string actual, string message, params object[] args)
-public static void DoesNotEndWith(string expected, string actual)
-public static void AreEqualIgnoringCase(string expected, string actual, string message, params object[] args)
-public static void AreEqualIgnoringCase(string expected, string actual)
-public static void AreNotEqualIgnoringCase(string expected, string actual, string message, params object[] args)
-public static void AreNotEqualIgnoringCase(string expected, string actual)
-public static void IsMatch(string pattern, string actual, string message, params object[] args)
-public static void IsMatch(string pattern, string actual)
-public static void DoesNotMatch(string pattern, string actual, string message, params object[] args)
-public static void DoesNotMatch(string pattern, string actual)
-*/
+    public static void Contains(string expected, string actual, string message, params object[] args)
+    public static void Contains(string expected, string actual)
+    public static void DoesNotContain(string expected, string actual, string message, params object[] args)
+    public static void DoesNotContain(string expected, string actual)
+    public static void StartsWith(string expected, string actual, string message, params object[] args)
+    public static void StartsWith(string expected, string actual)
+    public static void DoesNotStartWith(string expected, string actual, string message, params object[] args)
+    public static void DoesNotStartWith(string expected, string actual)
+    public static void EndsWith(string expected, string actual, string message, params object[] args)
+    public static void EndsWith(string expected, string actual)
+    public static void DoesNotEndWith(string expected, string actual, string message, params object[] args)
+    public static void DoesNotEndWith(string expected, string actual)
+    public static void AreEqualIgnoringCase(string expected, string actual, string message, params object[] args)
+    public static void AreEqualIgnoringCase(string expected, string actual)
+    public static void AreNotEqualIgnoringCase(string expected, string actual, string message, params object[] args)
+    public static void AreNotEqualIgnoringCase(string expected, string actual)
+    public static void IsMatch(string pattern, string actual, string message, params object[] args)
+    public static void IsMatch(string pattern, string actual)
+    public static void DoesNotMatch(string pattern, string actual, string message, params object[] args)
+    public static void DoesNotMatch(string pattern, string actual)
+    */
 
     private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
+    /*
+        public static ConstraintExpression All;
+        public static DefaultConstraint Default;
+        public static GreaterThanConstraint Positive;
+        public static LessThanConstraint Negative;
+        public static NaNConstraint NaN;
+        public static EmptyConstraint Empty;
+        public static UniqueItemsConstraint Unique;
+        public static XmlSerializableConstraint XmlSerializable;
+        public static CollectionOrderedConstraint Ordered;
+        public static EqualConstraint EqualTo(object? expected);
+        public static SameAsConstraint SameAs(object? expected);
+        public static GreaterThanConstraint GreaterThan(object expected);
+        public static GreaterThanOrEqualConstraint GreaterThanOrEqualTo(object expected);
+        public static GreaterThanOrEqualConstraint AtLeast(object expected);
+        public static LessThanConstraint LessThan(object expected);
+        public static LessThanOrEqualConstraint LessThanOrEqualTo(object expected);
+        public static LessThanOrEqualConstraint AtMost(object expected);
+        public static ExactTypeConstraint TypeOf(Type expectedType);
+        public static ExactTypeConstraint TypeOf<TExpected>();
+        public static InstanceOfTypeConstraint InstanceOf(Type expectedType);
+        public static InstanceOfTypeConstraint InstanceOf<TExpected>();
+        public static AssignableFromConstraint AssignableFrom(Type expectedType);
+        public static AssignableFromConstraint AssignableFrom<TExpected>();
+        public static AssignableToConstraint AssignableTo(Type expectedType);
+        public static AssignableToConstraint AssignableTo<TExpected>();
+        public static CollectionEquivalentConstraint EquivalentTo(IEnumerable expected);
+        public static CollectionSubsetConstraint SubsetOf(IEnumerable expected);
+        public static CollectionSupersetConstraint SupersetOf(IEnumerable expected);
+        public static SamePathConstraint SamePath(string expected);
+        public static SubPathConstraint SubPathOf(string expected);
+        public static SamePathOrUnderConstraint SamePathOrUnder(string expected);
+        public static RangeConstraint InRange(object from, object to);
+        public static AnyOfConstraint AnyOf(params object?[]? expected);
+        public static AnyOfConstraint AnyOf(ICollection expected);
+    */
+
         // Assert.That(condition)
         if (invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean)
             && (invocation.Arguments.Length is 1
@@ -393,29 +430,29 @@ public static void DoesNotMatch(string pattern, string actual)
         if (invocation.Arguments[1].Value.UnwrapConversion() is not IPropertyReferenceOperation constraint) return null;
         var subject = invocation.Arguments[0].Value;
 
-        if (IsPropertyOfSymbol(constraint, "True", t.Is) // Assert.That(subject, Is.True)
-            || IsPropertyOfSymbol(constraint, "Not", "False", t.Is)) // Assert.That(subject, Is.False)
+        if (MatchesProperties(constraint, t.Is, "True") // Assert.That(subject, Is.True)
+            || MatchesProperties(constraint, t.Is, "Not", "False")) // Assert.That(subject, Is.Not.False)
             return RenameAssertThatAssertionToSubjectShouldAssertion("BeTrue");
-        else if (IsPropertyOfSymbol(constraint, "False", t.Is) // Assert.That(subject, Is.False)
-            || IsPropertyOfSymbol(constraint, "Not", "True", t.Is)) // Assert.That(subject, Is.Not.True)
+        else if (MatchesProperties(constraint, t.Is, "False") // Assert.That(subject, Is.False)
+            || MatchesProperties(constraint, t.Is, "Not", "True")) // Assert.That(subject, Is.Not.True)
             return RenameAssertThatAssertionToSubjectShouldAssertion("BeFalse");
-        else if (IsPropertyOfSymbol(constraint, "Null", t.Is)) // Assert.That(subject, Is.Null)
+        else if (MatchesProperties(constraint, t.Is, "Null")) // Assert.That(subject, Is.Null)
             return RenameAssertThatAssertionToSubjectShouldAssertion("BeNull");
-        else if (IsPropertyOfSymbol(constraint, "Not", "Null", t.Is)) // Assert.That(subject, Is.Not.Null)
+        else if (MatchesProperties(constraint, t.Is, "Not", "Null")) // Assert.That(subject, Is.Not.Null)
             return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeNull");
         else if (!IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0))
         {
-            if (IsPropertyOfSymbol(constraint, "Empty", t.Is)) // Assert.That(subject, Is.Empty)
+            if (MatchesProperties(constraint, t.Is, "Empty")) // Assert.That(subject, Is.Empty)
                 return RenameAssertThatAssertionToSubjectShouldAssertion("BeEmpty");
-            else if (IsPropertyOfSymbol(constraint, "Not", "Empty", t.Is)) // Assert.That(subject, Is.Not.Empty)
+            else if (MatchesProperties(constraint, t.Is, "Not", "Empty")) // Assert.That(subject, Is.Not.Empty)
                 return RenameAssertThatAssertionToSubjectShouldAssertion("NotBeEmpty");
         }
-        if (IsPropertyOfSymbol(constraint, "Zero", t.Is))
+        if (MatchesProperties(constraint, t.Is, "Zero"))
             return DocumentEditorUtils.RewriteExpression(invocation, [
                 EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
                 EditAction.SubjectShouldAssertion(argumentIndex: 0, "Be"),
             ], context);
-        else if (IsPropertyOfSymbol(constraint, "Not", "Zero", t.Is))
+        else if (MatchesProperties(constraint, t.Is, "Not", "Zero"))
             return DocumentEditorUtils.RewriteExpression(invocation, [
                     EditAction.ReplaceAssertionArgument(index: 1, generator => generator.LiteralExpression(0)),
                 EditAction.SubjectShouldAssertion(argumentIndex: 0, "NotBe"),
@@ -453,13 +490,46 @@ public static void DoesNotMatch(string pattern, string actual)
         ], context);
     }
 
-    private static bool IsPropertyReferencedFromType(IPropertyReferenceOperation propertyReference, INamedTypeSymbol type)
-        => propertyReference.Property.ContainingType.EqualsSymbol(type);
-    private static bool IsPropertyOfSymbol(IPropertyReferenceOperation propertyReference, string firstProperty, string secondProperty, INamedTypeSymbol type)
-        => propertyReference.Property.Name == secondProperty && IsPropertyOfSymbol(propertyReference.Instance, firstProperty, type);
-    private static bool IsPropertyOfSymbol(IOperation operation, string property, INamedTypeSymbol type)
-        => operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == property && IsPropertyReferencedFromType(propertyReference, type);
+    private interface IOperationMatcher
+    {
+        IOperation TryGetNext(IOperation operation);
+    }
+    private class MethodInvocationMatcher(string name) : IOperationMatcher
+    {
+        public IOperation TryGetNext(IOperation operation)
+        {
+            return operation is IInvocationOperation invocation && invocation.TargetMethod.Name == name ? invocation.Instance : null;
+        }
+    }
+    private class PropertyReferenceMatcher(string name) : IOperationMatcher
+    {
+        public IOperation TryGetNext(IOperation operation)
+        {
+            return operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == name ? propertyReference.Instance : null;
+        }
+    }
+    private static IOperationMatcher Method(string name) => new MethodInvocationMatcher(name);
+    private static IOperationMatcher Property(string name) => new PropertyReferenceMatcher(name);
+    private static bool MatchesProperties(IOperation constraint, INamedTypeSymbol type, params string[] matchers)
+        => Matches(constraint, type, Array.ConvertAll(matchers, matcher => new PropertyReferenceMatcher(matcher)));
+    private static bool Matches(IOperation constraint, INamedTypeSymbol type, params IOperationMatcher[] matchers)
+    {
+        var currentOp = constraint;
+        for (var i = matchers.Length - 1; i >= 0; i--)
+        {
+            currentOp = matchers[i].TryGetNext(currentOp);
+            if (currentOp is null)
+                return false;
 
+            if (i is 0)
+            {
+                return currentOp.Type.EqualsSymbol(type);
+            }
+        }
+
+        return false;
+    }
+    
     private static bool IsArgumentTypeOfNonGenericEnumerable(IInvocationOperation invocation, int argumentIndex) => IsArgumentTypeOf(invocation, argumentIndex, SpecialType.System_Collections_IEnumerable);
     private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, SpecialType type)
         => invocation.Arguments.Length > argumentIndex && invocation.Arguments[argumentIndex].IsTypeof(type);
