@@ -377,42 +377,42 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private CreateChangedDocument TryComputeFixForNunitThat(IInvocationOperation invocation, CodeFixContext context, NunitCodeFixContext t)
     {
-    /*
-        public static ConstraintExpression All;
-        public static DefaultConstraint Default;
-        public static GreaterThanConstraint Positive;
-        public static LessThanConstraint Negative;
-        public static NaNConstraint NaN;
-        public static EmptyConstraint Empty;
-        public static UniqueItemsConstraint Unique;
-        public static XmlSerializableConstraint XmlSerializable;
-        public static CollectionOrderedConstraint Ordered;
-        public static EqualConstraint EqualTo(object? expected);
-        public static SameAsConstraint SameAs(object? expected);
-        public static GreaterThanConstraint GreaterThan(object expected);
-        public static GreaterThanOrEqualConstraint GreaterThanOrEqualTo(object expected);
-        public static GreaterThanOrEqualConstraint AtLeast(object expected);
-        public static LessThanConstraint LessThan(object expected);
-        public static LessThanOrEqualConstraint LessThanOrEqualTo(object expected);
-        public static LessThanOrEqualConstraint AtMost(object expected);
-        public static ExactTypeConstraint TypeOf(Type expectedType);
-        public static ExactTypeConstraint TypeOf<TExpected>();
-        public static InstanceOfTypeConstraint InstanceOf(Type expectedType);
-        public static InstanceOfTypeConstraint InstanceOf<TExpected>();
-        public static AssignableFromConstraint AssignableFrom(Type expectedType);
-        public static AssignableFromConstraint AssignableFrom<TExpected>();
-        public static AssignableToConstraint AssignableTo(Type expectedType);
-        public static AssignableToConstraint AssignableTo<TExpected>();
-        public static CollectionEquivalentConstraint EquivalentTo(IEnumerable expected);
-        public static CollectionSubsetConstraint SubsetOf(IEnumerable expected);
-        public static CollectionSupersetConstraint SupersetOf(IEnumerable expected);
-        public static SamePathConstraint SamePath(string expected);
-        public static SubPathConstraint SubPathOf(string expected);
-        public static SamePathOrUnderConstraint SamePathOrUnder(string expected);
-        public static RangeConstraint InRange(object from, object to);
-        public static AnyOfConstraint AnyOf(params object?[]? expected);
-        public static AnyOfConstraint AnyOf(ICollection expected);
-    */
+        /*
+            public static ConstraintExpression All;
+            public static DefaultConstraint Default;
+            public static GreaterThanConstraint Positive;
+            public static LessThanConstraint Negative;
+            public static NaNConstraint NaN;
+            public static EmptyConstraint Empty;
+            public static UniqueItemsConstraint Unique;
+            public static XmlSerializableConstraint XmlSerializable;
+            public static CollectionOrderedConstraint Ordered;
+            public static EqualConstraint EqualTo(object? expected);
+            public static SameAsConstraint SameAs(object? expected);
+            public static GreaterThanConstraint GreaterThan(object expected);
+            public static GreaterThanOrEqualConstraint GreaterThanOrEqualTo(object expected);
+            public static GreaterThanOrEqualConstraint AtLeast(object expected);
+            public static LessThanConstraint LessThan(object expected);
+            public static LessThanOrEqualConstraint LessThanOrEqualTo(object expected);
+            public static LessThanOrEqualConstraint AtMost(object expected);
+            public static ExactTypeConstraint TypeOf(Type expectedType);
+            public static ExactTypeConstraint TypeOf<TExpected>();
+            public static InstanceOfTypeConstraint InstanceOf(Type expectedType);
+            public static InstanceOfTypeConstraint InstanceOf<TExpected>();
+            public static AssignableFromConstraint AssignableFrom(Type expectedType);
+            public static AssignableFromConstraint AssignableFrom<TExpected>();
+            public static AssignableToConstraint AssignableTo(Type expectedType);
+            public static AssignableToConstraint AssignableTo<TExpected>();
+            public static CollectionEquivalentConstraint EquivalentTo(IEnumerable expected);
+            public static CollectionSubsetConstraint SubsetOf(IEnumerable expected);
+            public static CollectionSupersetConstraint SupersetOf(IEnumerable expected);
+            public static SamePathConstraint SamePath(string expected);
+            public static SubPathConstraint SubPathOf(string expected);
+            public static SamePathOrUnderConstraint SamePathOrUnder(string expected);
+            public static RangeConstraint InRange(object from, object to);
+            public static AnyOfConstraint AnyOf(params object?[]? expected);
+            public static AnyOfConstraint AnyOf(ICollection expected);
+        */
 
         // Assert.That(condition)
         if (invocation.Arguments[0].Value.Type.EqualsSymbol(t.Boolean)
@@ -492,21 +492,17 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private interface IOperationMatcher
     {
-        IOperation TryGetNext(IOperation operation);
+        (IOperation op, ISymbol containingType) TryGetNext(IOperation operation);
     }
     private class MethodInvocationMatcher(string name) : IOperationMatcher
     {
-        public IOperation TryGetNext(IOperation operation)
-        {
-            return operation is IInvocationOperation invocation && invocation.TargetMethod.Name == name ? invocation.Instance : null;
-        }
+        public (IOperation op, ISymbol containingType) TryGetNext(IOperation operation)
+            => operation is IInvocationOperation invocation && invocation.TargetMethod.Name == name ? (invocation.Instance, invocation.TargetMethod.ContainingType) : (null, null);
     }
     private class PropertyReferenceMatcher(string name) : IOperationMatcher
     {
-        public IOperation TryGetNext(IOperation operation)
-        {
-            return operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == name ? propertyReference.Instance : null;
-        }
+        public (IOperation op, ISymbol containingType) TryGetNext(IOperation operation)
+            => operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == name ? (propertyReference.Instance, propertyReference.Member.ContainingType) : (null, null);
     }
     private static IOperationMatcher Method(string name) => new MethodInvocationMatcher(name);
     private static IOperationMatcher Property(string name) => new PropertyReferenceMatcher(name);
@@ -517,19 +513,22 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         var currentOp = constraint;
         for (var i = matchers.Length - 1; i >= 0; i--)
         {
-            currentOp = matchers[i].TryGetNext(currentOp);
-            if (currentOp is null)
-                return false;
+            var (nextOp, containingType) = matchers[i].TryGetNext(currentOp);
+            if (containingType is null) return false;
 
             if (i is 0)
             {
-                return currentOp.Type.EqualsSymbol(type);
+                return containingType.EqualsSymbol(type);
             }
+
+            if (nextOp is null) return false;
+
+            currentOp = nextOp;
         }
 
         return false;
     }
-    
+
     private static bool IsArgumentTypeOfNonGenericEnumerable(IInvocationOperation invocation, int argumentIndex) => IsArgumentTypeOf(invocation, argumentIndex, SpecialType.System_Collections_IEnumerable);
     private static bool IsArgumentTypeOf(IInvocationOperation invocation, int argumentIndex, SpecialType type)
         => invocation.Arguments.Length > argumentIndex && invocation.Arguments[argumentIndex].IsTypeof(type);
