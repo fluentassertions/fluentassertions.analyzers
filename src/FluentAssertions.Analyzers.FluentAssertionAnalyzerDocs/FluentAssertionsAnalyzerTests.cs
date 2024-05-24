@@ -22,7 +22,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().NotBeEmpty();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldNotBeEmpty_Failure()
     {
         using var scope = new AssertionScope();
@@ -52,7 +52,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().BeEmpty();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldBeEmpty_Failure()
     {
         using var scope = new AssertionScope();
@@ -83,7 +83,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().NotContain(i => i == 4);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldNotContainCondition_Failure()
     {
         using var scope = new AssertionScope();
@@ -111,7 +111,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().NotContain(4);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldNotContainItem_Failure()
     {
         using var scope = new AssertionScope();
@@ -138,7 +138,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().OnlyContain(x => x > 0);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldOnlyContainProperty_Failure()
     {
         using var scope = new AssertionScope();
@@ -165,7 +165,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().Contain(2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldContainItem_Failure()
     {
         using var scope = new AssertionScope();
@@ -193,7 +193,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().Contain(i => i == 2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldContainCondition_Failure()
     {
         using var scope = new AssertionScope();
@@ -222,7 +222,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().HaveCount(3);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldHaveCount_Count_Failure()
     {
         using var scope = new AssertionScope();
@@ -250,7 +250,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().HaveCount(3);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldHaveCount_Length_Failure()
     {
         using var scope = new AssertionScope();
@@ -277,7 +277,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().NotHaveCount(4);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldNotHaveCount_Count_Failure()
     {
         using var scope = new AssertionScope();
@@ -306,7 +306,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().ContainSingle();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldContainSingle_Failure()
     {
         using var scope = new AssertionScope();
@@ -335,7 +335,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().HaveCountGreaterThan(2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldHaveCountGreaterThan_CountShouldBeGreaterThan_Failure()
     {
         using var scope = new AssertionScope();
@@ -362,7 +362,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().HaveCountGreaterOrEqualTo(3);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo_Failure()
     {
         using var scope = new AssertionScope();
@@ -389,7 +389,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().HaveCountLessThan(4);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldHaveCountLessThan_CountShouldBeLessThan_Failure()
     {
         using var scope = new AssertionScope();
@@ -416,7 +416,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().HaveCountLessOrEqualTo(3);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo_Failure()
     {
         using var scope = new AssertionScope();
@@ -444,7 +444,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().HaveSameCount(otherCollection);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldHaveSameCount_ShouldHaveCountOtherCollectionCount_Failure()
     {
         using var scope = new AssertionScope();
@@ -473,7 +473,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().NotHaveSameCount(otherCollection);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount_Failure()
     {
         using var scope = new AssertionScope();
@@ -501,7 +501,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().ContainSingle(i => i == 1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldContainSingle_WhereShouldHaveCount1_Failure()
     {
         using var scope = new AssertionScope();
@@ -529,7 +529,7 @@ public class FluentAssertionsAnalyzerTests
         collection.Should().NotBeNullOrEmpty();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionShouldNotBeNullOrEmpty_Failure()
     {
         using var scope = new AssertionScope();
@@ -557,7 +557,7 @@ public class FluentAssertionsAnalyzerTests
         dictionary.Should().ContainKey("two");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void DictionaryShouldContainKey_Failure()
     {
         using var scope = new AssertionScope();
@@ -584,7 +584,7 @@ public class FluentAssertionsAnalyzerTests
         dictionary.Should().NotContainKey("four");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void DictionaryShouldNotContainKey_Failure()
     {
         using var scope = new AssertionScope();
@@ -611,7 +611,7 @@ public class FluentAssertionsAnalyzerTests
         dictionary.Should().ContainValue(2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void DictionaryShouldContainValue_Failure()
     {
         using var scope = new AssertionScope();
@@ -638,7 +638,7 @@ public class FluentAssertionsAnalyzerTests
         dictionary.Should().NotContainValue(4);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void DictionaryShouldNotContainValue_Failure()
     {
         using var scope = new AssertionScope();
@@ -665,7 +665,7 @@ public class FluentAssertionsAnalyzerTests
         dictionary.Should().Contain("two", 2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void DictionaryShouldContainKeyAndValue_Failure()
     {
         using var scope = new AssertionScope();
@@ -693,7 +693,7 @@ public class FluentAssertionsAnalyzerTests
         dictionary.Should().Contain(pair);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void DictionaryShouldContainPair_Failure()
     {
         using var scope = new AssertionScope();
@@ -723,7 +723,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().Throw<Exception>().WithMessage("message");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowWithMessage_Be_Failure()
     {
         using var scope = new AssertionScope();
@@ -754,7 +754,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().Throw<Exception>().WithMessage("*mess*");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowWithMessage_Contain_Failure()
     {
         using var scope = new AssertionScope();
@@ -785,7 +785,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().Throw<Exception>().WithMessage("*age");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowWithMessage_EndWith_Failure()
     {
         using var scope = new AssertionScope();
@@ -816,7 +816,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().Throw<Exception>().WithMessage("mes*");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowWithMessage_StartWith_Failure()
     {
         using var scope = new AssertionScope();
@@ -847,7 +847,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().ThrowExactly<ArgumentException>().WithMessage("message");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowExactlyWithMessage_Be_Failure()
     {
         using var scope = new AssertionScope();
@@ -878,7 +878,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().ThrowExactly<ArgumentException>().WithMessage("*mess*");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowExactlyWithMessage_Contain_Failure()
     {
         using var scope = new AssertionScope();
@@ -909,7 +909,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().ThrowExactly<ArgumentException>().WithMessage("*age");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowExactlyWithMessage_EndWith_Failure()
     {
         using var scope = new AssertionScope();
@@ -940,7 +940,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().ThrowExactly<ArgumentException>().WithMessage("mes*");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowExactlyWithMessage_StartWith_Failure()
     {
         using var scope = new AssertionScope();
@@ -971,7 +971,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().ThrowExactly<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowExactlyWithInnerExceptionExactly_BeOfType_Failure()
     {
         using var scope = new AssertionScope();
@@ -1002,7 +1002,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().Throw<ArgumentException>().WithInnerExceptionExactly<InvalidOperationException>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowWithInnerExceptionExactly_BeOfType_Failure()
     {
         using var scope = new AssertionScope();
@@ -1033,7 +1033,7 @@ public class FluentAssertionsAnalyzerTests
         action.Should().ThrowExactly<ArgumentException>().WithInnerException<InvalidOperationException>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ExceptionShouldThrowExactlyWithInnerException_BeAssignableTo_Failure()
     {
         using var scope = new AssertionScope();
