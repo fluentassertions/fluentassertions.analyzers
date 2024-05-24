@@ -599,7 +599,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertion, subjectIndex: 0, argumentsToRemove: [1]);
         }
 
-        public CreateChangedDocument Should(string assertion, IArgumentOperation argument) => Should(assertion, _ => argument.Syntax);
+        public CreateChangedDocument Should(string assertion, IArgumentOperation argument) => Should(assertion, _ => argument.Value.Syntax);
         public CreateChangedDocument Should(string assertion, Func<SyntaxGenerator, SyntaxNode> argumentGenerator)
         {
             return DocumentEditorUtils.RewriteExpression(invocation, [
