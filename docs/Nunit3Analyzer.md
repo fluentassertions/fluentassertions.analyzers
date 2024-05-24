@@ -14,6 +14,10 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertNotZero](#scenario-assertnotzero) - `number.Should().NotBe(0);`
 - [AssertAreSame](#scenario-assertaresame) - `obj1.Should().BeSameAs(obj2);`
 - [AssertAreNotSame](#scenario-assertarenotsame) - `obj1.Should().NotBeSameAs(obj2);`
+- [AssertGreater](#scenario-assertgreater) - `number.Should().BeGreaterThan(1);`
+- [AssertGreaterOrEqual](#scenario-assertgreaterorequal) - `number.Should().BeGreaterOrEqualTo(1);`
+- [AssertLess](#scenario-assertless) - `number.Should().BeLessThan(2);`
+- [AssertLessOrEqual](#scenario-assertlessorequal) - `number.Should().BeLessOrEqualTo(2);`
 - [CollectionAssertAreEqual](#scenario-collectionassertareequal) - `collection.Should().Equal(expected);`
 - [CollectionAssertAreNotEqual](#scenario-collectionassertarenotequal) - `collection.Should().NotEqual(expected);`
 - [CollectionAssertContains](#scenario-collectionassertcontains) - `collection.Should().Contain(2);`
@@ -384,6 +388,130 @@ Assert.AreNotSame(obj1, obj2); /* fail message:   Expected: not same as "foo"
 
 // new assertion:
 obj1.Should().NotBeSameAs(obj2); /* fail message: Did not expect obj1 to refer to "foo". */
+```
+
+### scenario: AssertGreater
+
+```cs
+// arrange
+var number = 2;
+
+// old assertion:
+Assert.Greater(number, 1);
+Assert.That(number, Is.GreaterThan(1));
+
+// new assertion:
+number.Should().BeGreaterThan(1);
+```
+
+#### Failure messages
+
+```cs
+var number = 1;
+
+// old assertion:
+Assert.Greater(number, 1); /* fail message:   Expected: greater than 1
+  But was:  1
+ */
+Assert.That(number, Is.GreaterThan(1)); /* fail message:   Expected: greater than 1
+  But was:  1
+ */
+
+// new assertion:
+number.Should().BeGreaterThan(1); /* fail message: Expected number to be greater than 1, but found 1. */
+```
+
+### scenario: AssertGreaterOrEqual
+
+```cs
+// arrange
+var number = 2;
+
+// old assertion:
+Assert.GreaterOrEqual(number, 1);
+Assert.That(number, Is.GreaterThanOrEqualTo(1));
+
+// new assertion:
+number.Should().BeGreaterOrEqualTo(1);
+```
+
+#### Failure messages
+
+```cs
+var number = 1;
+
+// old assertion:
+Assert.GreaterOrEqual(number, 2); /* fail message:   Expected: greater than or equal to 2
+  But was:  1
+ */
+Assert.That(number, Is.GreaterThanOrEqualTo(2)); /* fail message:   Expected: greater than or equal to 2
+  But was:  1
+ */
+
+// new assertion:
+number.Should().BeGreaterOrEqualTo(2); /* fail message: Expected number to be greater than or equal to 2, but found 1. */
+```
+
+### scenario: AssertLess
+
+```cs
+// arrange
+var number = 1;
+
+// old assertion:
+Assert.Less(number, 2);
+Assert.That(number, Is.LessThan(2));
+
+// new assertion:
+number.Should().BeLessThan(2);
+```
+
+#### Failure messages
+
+```cs
+var number = 2;
+
+// old assertion:
+Assert.Less(number, 1); /* fail message:   Expected: less than 1
+  But was:  2
+ */
+Assert.That(number, Is.LessThan(1)); /* fail message:   Expected: less than 1
+  But was:  2
+ */
+
+// new assertion:
+number.Should().BeLessThan(1); /* fail message: Expected number to be less than 1, but found 2. */
+```
+
+### scenario: AssertLessOrEqual
+
+```cs
+// arrange
+var number = 1;
+
+// old assertion:
+Assert.LessOrEqual(number, 2);
+Assert.That(number, Is.LessThanOrEqualTo(2));
+
+// new assertion:
+number.Should().BeLessOrEqualTo(2);
+```
+
+#### Failure messages
+
+```cs
+var number = 2;
+
+// old assertion:
+Assert.LessOrEqual(number, 1); /* fail message:   Expected: less than or equal to 1
+  But was:  2
+ */
+Assert.That(number, Is.LessThanOrEqualTo(1)); /* fail message:   Expected: less than or equal to 1
+  But was:  2
+ */
+
+// new assertion:
+number.Should().BeLessOrEqualTo(1); /* fail message: Expected number to be less than or equal to 1, but found 2. */
 ```
 
 ### scenario: CollectionAssertAreEqual

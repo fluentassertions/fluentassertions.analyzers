@@ -473,6 +473,15 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return rewriter.Should("Be", g => g.LiteralExpression(0));
         else if (matcher.Is("Not", "Zero"))
             return rewriter.Should("NotBe", g => g.LiteralExpression(0));
+        else if (matcher.Is(Method("GreaterThan"), out var argument))
+            return rewriter.Should("BeGreaterThan", argument);
+        else if (matcher.Is(Method("GreaterThanOrEqualTo"), out argument))
+            return rewriter.Should("BeGreaterOrEqualTo", argument);
+        else if (matcher.Is(Method("LessThan"), out argument))
+            return rewriter.Should("BeLessThan", argument);
+        else if (matcher.Is(Method("LessThanOrEqualTo"), out argument))
+            return rewriter.Should("BeLessOrEqualTo", argument);
+
 
         return null;
     }
@@ -547,20 +556,22 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private class AssertThatMatcher(IOperation constraint, NunitCodeFixContext t)
     {
+        public bool Is(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, methodMatcher, out argument);
         public bool Is(params string[] matchers) => Matches(t.Is, matchers);
         public bool Has(params string[] matchers) => Matches(t.Has, matchers);
         public bool Has(IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, matchers, methodMatcher, out argument);
 
-        public bool Matches(INamedTypeSymbol type, params string[] matchers)
+        private bool Matches(INamedTypeSymbol type, params string[] matchers)
             => Matches(type, Array.ConvertAll(matchers, matcher => new PropertyReferenceMatcher(matcher)));
-        public bool Matches(INamedTypeSymbol type, IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument)
+        private bool Matches(INamedTypeSymbol type, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(type, [], methodMatcher, out argument);
+        private bool Matches(INamedTypeSymbol type, IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument)
         {
             argument = null;
             var result = Matches(type, [.. matchers, methodMatcher]);
             if (result) argument = methodMatcher.Argument;
             return result;
         }
-        public bool Matches(INamedTypeSymbol type, params IOperationMatcher[] matchers)
+        private bool Matches(INamedTypeSymbol type, params IOperationMatcher[] matchers)
         {
             IOperation currentOp = constraint;
             for (var i = matchers.Length - 1; i >= 0; i--)
@@ -588,7 +599,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertion, subjectIndex: 0, argumentsToRemove: [1]);
         }
 
-        public CreateChangedDocument Should(string assertion, IArgumentOperation argument) => Should(assertion, _ => argument.Syntax);
+        public CreateChangedDocument Should(string assertion, IArgumentOperation argument) => Should(assertion, _ => argument.Value.Syntax);
         public CreateChangedDocument Should(string assertion, Func<SyntaxGenerator, SyntaxNode> argumentGenerator)
         {
             return DocumentEditorUtils.RewriteExpression(invocation, [

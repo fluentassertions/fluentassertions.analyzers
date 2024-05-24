@@ -586,6 +586,182 @@ public class Nunit4AnalyzerTests
     }
 
     [Test]
+    public void AssertGreater()
+    {
+        // arrange
+        var number = 2;
+
+        // old assertion:
+        ClassicAssert.Greater(number, 1);
+        Assert.That(number, Is.GreaterThan(1));
+
+        // new assertion:
+        number.Should().BeGreaterThan(1);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertGreater_Failure_OldAssertion_0()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        ClassicAssert.Greater(number, 1);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertGreater_Failure_OldAssertion_1()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        Assert.That(number, Is.GreaterThan(1));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertGreater_Failure_NewAssertion()
+    {
+        // arrange
+        var number = 1;
+
+        // new assertion:
+        number.Should().BeGreaterThan(1);
+    }
+
+    [Test]
+    public void AssertGreaterOrEqual()
+    {
+        // arrange
+        var number = 2;
+
+        // old assertion:
+        ClassicAssert.GreaterOrEqual(number, 1);
+        Assert.That(number, Is.GreaterThanOrEqualTo(1));
+
+        // new assertion:
+        number.Should().BeGreaterOrEqualTo(1);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertGreaterOrEqual_Failure_OldAssertion_0()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        ClassicAssert.GreaterOrEqual(number, 2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertGreaterOrEqual_Failure_OldAssertion_1()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        Assert.That(number, Is.GreaterThanOrEqualTo(2));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertGreaterOrEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var number = 1;
+
+        // new assertion:
+        number.Should().BeGreaterOrEqualTo(2);
+    }
+
+    [Test]
+    public void AssertLess()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        ClassicAssert.Less(number, 2);
+        Assert.That(number, Is.LessThan(2));
+
+        // new assertion:
+        number.Should().BeLessThan(2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertLess_Failure_OldAssertion_0()
+    {
+        // arrange
+        var number = 2;
+
+        // old assertion:
+        ClassicAssert.Less(number, 1);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertLess_Failure_OldAssertion_1()
+    {
+        // arrange
+        var number = 2;
+
+        // old assertion:
+        Assert.That(number, Is.LessThan(1));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertLess_Failure_NewAssertion()
+    {
+        // arrange
+        var number = 2;
+
+        // new assertion:
+        number.Should().BeLessThan(1);
+    }
+
+    [Test]
+    public void AssertLessOrEqual()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        ClassicAssert.LessOrEqual(number, 2);
+        Assert.That(number, Is.LessThanOrEqualTo(2));
+
+        // new assertion:
+        number.Should().BeLessOrEqualTo(2);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertLessOrEqual_Failure_OldAssertion_0()
+    {
+        // arrange
+        var number = 2;
+
+        // old assertion:
+        ClassicAssert.LessOrEqual(number, 1);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertLessOrEqual_Failure_OldAssertion_1()
+    {
+        // arrange
+        var number = 2;
+
+        // old assertion:
+        Assert.That(number, Is.LessThanOrEqualTo(1));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertLessOrEqual_Failure_NewAssertion()
+    {
+        // arrange
+        var number = 2;
+
+        // new assertion:
+        number.Should().BeLessOrEqualTo(1);
+    }
+
+    [Test]
     public void CollectionAssertAreEqual()
     {
         // arrange
