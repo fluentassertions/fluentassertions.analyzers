@@ -479,7 +479,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return rewriter.Should("BeGreaterOrEqualTo", argument);
         else if (matcher.Is(Method("LessThan"), out argument))
             return rewriter.Should("BeLessThan", argument);
-        else if (matcher.Is(Method("BeLessThanOrEqualTo"), out argument))
+        else if (matcher.Is(Method("LessThanOrEqualTo"), out argument))
             return rewriter.Should("BeLessOrEqualTo", argument);
 
 
