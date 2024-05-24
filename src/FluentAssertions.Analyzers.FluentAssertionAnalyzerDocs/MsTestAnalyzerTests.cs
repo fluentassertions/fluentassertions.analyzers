@@ -24,7 +24,7 @@ public class MsTestAnalyzerTests
         flag.Should().BeTrue();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void BooleanAssertIsTrue_Failure_OldAssertion()
     {
         // arrange
@@ -34,7 +34,7 @@ public class MsTestAnalyzerTests
         Assert.IsTrue(flag);
     }
 
-    [TestMethod, ExpectedException(typeof(Exception), AllowDerivedTypes = true)]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void BooleanAssertIsTrue_Failure_NewAssertion()
     {
         // arrange
@@ -57,7 +57,7 @@ public class MsTestAnalyzerTests
         flag.Should().BeFalse();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void BooleanAssertIsFalse_Failure_OldAssertion()
     {
         // arrange
@@ -67,7 +67,7 @@ public class MsTestAnalyzerTests
         Assert.IsFalse(flag);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void BooleanAssertIsFalse_Failure_NewAssertion()
     {
         // arrange
@@ -90,7 +90,7 @@ public class MsTestAnalyzerTests
         obj.Should().BeNull();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ObjectAssertIsNull_Failure_OldAssertion()
     {
         // arrange
@@ -100,7 +100,7 @@ public class MsTestAnalyzerTests
         Assert.IsNull(obj);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ObjectAssertIsNull_Failure_NewAssertion()
     {
         // arrange
@@ -123,7 +123,7 @@ public class MsTestAnalyzerTests
         obj.Should().NotBeNull();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ObjectAssertIsNotNull_Failure_OldAssertion()
     {
         // arrange
@@ -133,7 +133,7 @@ public class MsTestAnalyzerTests
         Assert.IsNotNull(obj);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ObjectAssertIsNotNull_Failure_NewAssertion()
     {
         // arrange
@@ -157,7 +157,7 @@ public class MsTestAnalyzerTests
         obj.Should().BeOfType<List<object>>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ReferenceTypeAssertIsInstanceOfType_Failure_OldAssertion_0()
     {
         // arrange
@@ -167,7 +167,7 @@ public class MsTestAnalyzerTests
         Assert.IsInstanceOfType(obj, typeof(List<object>));
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ReferenceTypeAssertIsInstanceOfType_Failure_OldAssertion_1()
     {
         // arrange
@@ -177,7 +177,7 @@ public class MsTestAnalyzerTests
         Assert.IsInstanceOfType<List<object>>(obj);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ReferenceTypeAssertIsInstanceOfType_Failure_NewAssertion()
     {
         // arrange
@@ -201,7 +201,7 @@ public class MsTestAnalyzerTests
         obj.Should().NotBeOfType<List<object>>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ReferenceTypeAssertIsNotInstanceOfType_Failure_OldAssertion_0()
     {
         // arrange
@@ -211,7 +211,7 @@ public class MsTestAnalyzerTests
         Assert.IsNotInstanceOfType(obj, typeof(List<object>));
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ReferenceTypeAssertIsNotInstanceOfType_Failure_OldAssertion_1()
     {
         // arrange
@@ -221,7 +221,7 @@ public class MsTestAnalyzerTests
         Assert.IsNotInstanceOfType<List<object>>(obj);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void ReferenceTypeAssertIsNotInstanceOfType_Failure_NewAssertion()
     {
         // arrange
@@ -245,7 +245,7 @@ public class MsTestAnalyzerTests
         obj1.Should().Be(obj2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertObjectAreEqual_Failure_OldAssertion()
     {
         // arrange
@@ -256,7 +256,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(obj2, obj1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertObjectAreEqual_Failure_NewAssertion()
     {
         // arrange
@@ -281,7 +281,7 @@ public class MsTestAnalyzerTests
         number1.Should().Be(number2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertOptionalIntegerAreEqual_Failure_OldAssertion()
     {
         // arrange
@@ -292,7 +292,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(number2, number1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertOptionalIntegerAreEqual_Failure_NewAssertion()
     {
         // arrange
@@ -317,7 +317,7 @@ public class MsTestAnalyzerTests
         number.Should().BeNull();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertOptionalIntegerAndNullAreEqual_Failure_OldAssertion_0()
     {
         // arrange
@@ -327,7 +327,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(number, null);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertOptionalIntegerAndNullAreEqual_Failure_OldAssertion_1()
     {
         // arrange
@@ -337,7 +337,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(null, number);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertOptionalIntegerAndNullAreEqual_Failure_NewAssertion()
     {
         // arrange
@@ -362,7 +362,7 @@ public class MsTestAnalyzerTests
         number1.Should().BeApproximately(number2, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertDoubleAreEqual_Failure_OldAssertion()
     {
         // arrange
@@ -374,7 +374,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(number2, number1, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertDoubleAreEqual_Failure_NewAssertion()
     {
         // arrange
@@ -401,7 +401,7 @@ public class MsTestAnalyzerTests
         number1.Should().BeApproximately(number2, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertFloatAreEqual_Failure_OldAssertion()
     {
         // arrange
@@ -413,7 +413,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(number2, number1, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertFloatAreEqual_Failure_NewAssertion()
     {
         // arrange
@@ -441,7 +441,7 @@ public class MsTestAnalyzerTests
         str1.Should().Be(str2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreEqual_CaseSensitive_Failure_OldAssertion_0()
     {
         // arrange
@@ -452,7 +452,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(str2, str1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreEqual_CaseSensitive_Failure_OldAssertion_1()
     {
         // arrange
@@ -463,7 +463,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(str2, str1, ignoreCase: false);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreEqual_CaseSensitive_Failure_OldAssertion_2()
     {
         // arrange
@@ -474,7 +474,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreEqual_CaseSensitive_Failure_NewAssertion()
     {
         // arrange
@@ -500,7 +500,7 @@ public class MsTestAnalyzerTests
         str1.Should().BeEquivalentTo(str2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreEqual_IgnoreCase_Failure_OldAssertion_0()
     {
         // arrange
@@ -511,7 +511,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(str2, str1, ignoreCase: true);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreEqual_IgnoreCase_Failure_OldAssertion_1()
     {
         // arrange
@@ -522,7 +522,7 @@ public class MsTestAnalyzerTests
         Assert.AreEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreEqual_IgnoreCase_Failure_NewAssertion()
     {
         // arrange
@@ -547,7 +547,7 @@ public class MsTestAnalyzerTests
         obj1.Should().NotBe(obj2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertObjectAreNotEqual_Failure_OldAssertion()
     {
         // arrange
@@ -558,7 +558,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(obj2, obj1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertObjectAreNotEqual_Failure_NewAssertion()
     {
         // arrange
@@ -583,7 +583,7 @@ public class MsTestAnalyzerTests
         number1.Should().NotBe(number2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertOptionalIntegerAreNotEqual_Failure_OldAssertion()
     {
         // arrange
@@ -594,7 +594,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(number2, number1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertOptionalIntegerAreNotEqual_Failure_NewAssertion()
     {
         // arrange
@@ -620,7 +620,7 @@ public class MsTestAnalyzerTests
         number1.Should().NotBeApproximately(number2, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertDoubleAreNotEqual_Failure_OldAssertion()
     {
         // arrange
@@ -632,7 +632,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(number2, number1, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertDoubleAreNotEqual_Failure_NewAssertion()
     {
         // arrange
@@ -659,7 +659,7 @@ public class MsTestAnalyzerTests
         number1.Should().NotBeApproximately(number2, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertFloatAreNotEqual_Failure_OldAssertion()
     {
         // arrange
@@ -671,7 +671,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(number2, number1, delta);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertFloatAreNotEqual_Failure_NewAssertion()
     {
         // arrange
@@ -699,7 +699,7 @@ public class MsTestAnalyzerTests
         str1.Should().NotBe(str2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreNotEqual_CaseSensitive_Failure_OldAssertion_0()
     {
         // arrange
@@ -710,7 +710,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(str2, str1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreNotEqual_CaseSensitive_Failure_OldAssertion_1()
     {
         // arrange
@@ -721,7 +721,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(str2, str1, ignoreCase: false);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreNotEqual_CaseSensitive_Failure_OldAssertion_2()
     {
         // arrange
@@ -732,7 +732,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(str2, str1, ignoreCase: false, culture: CultureInfo.CurrentCulture);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreNotEqual_CaseSensitive_Failure_NewAssertion()
     {
         // arrange
@@ -758,7 +758,7 @@ public class MsTestAnalyzerTests
         str1.Should().NotBeEquivalentTo(str2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreNotEqual_IgnoreCase_Failure_OldAssertion_0()
     {
         // arrange
@@ -769,7 +769,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(str2, str1, ignoreCase: true);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreNotEqual_IgnoreCase_Failure_OldAssertion_1()
     {
         // arrange
@@ -780,7 +780,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotEqual(str2, str1, ignoreCase: true, culture: CultureInfo.CurrentCulture);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertStringAreNotEqual_IgnoreCase_Failure_NewAssertion()
     {
         // arrange
@@ -805,7 +805,7 @@ public class MsTestAnalyzerTests
         obj1.Should().BeSameAs(obj2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertAreSame_Failure_OldAssertion()
     {
         // arrange
@@ -816,7 +816,7 @@ public class MsTestAnalyzerTests
         Assert.AreSame(obj2, obj1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertAreSame_Failure_NewAssertion()
     {
         // arrange
@@ -841,7 +841,7 @@ public class MsTestAnalyzerTests
         obj1.Should().NotBeSameAs(obj2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertAreNotSame_Failure_OldAssertion()
     {
         // arrange
@@ -852,7 +852,7 @@ public class MsTestAnalyzerTests
         Assert.AreNotSame(obj2, obj1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertAreNotSame_Failure_NewAssertion()
     {
         // arrange
@@ -876,7 +876,7 @@ public class MsTestAnalyzerTests
         list.Should().AllBeOfType<int>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion()
     {
         // arrange
@@ -886,7 +886,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.AllItemsAreInstancesOfType(list, typeof(int));
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAllItemsAreInstancesOfType_Failure_NewAssertion()
     {
         // arrange
@@ -910,7 +910,7 @@ public class MsTestAnalyzerTests
         list1.Should().Equal(list2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreEqual_Failure_OldAssertion()
     {
         // arrange
@@ -921,7 +921,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.AreEqual(list2, list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreEqual_Failure_NewAssertion()
     {
         // arrange
@@ -946,7 +946,7 @@ public class MsTestAnalyzerTests
         list1.Should().NotEqual(list2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreNotEqual_Failure_OldAssertion()
     {
         // arrange
@@ -957,7 +957,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.AreNotEqual(list2, list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreNotEqual_Failure_NewAssertion()
     {
         // arrange
@@ -982,7 +982,7 @@ public class MsTestAnalyzerTests
         list1.Should().BeEquivalentTo(list2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreEquivalent_Failure_OldAssertion()
     {
         // arrange
@@ -993,7 +993,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.AreEquivalent(list2, list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreEquivalent_Failure_NewAssertion()
     {
         // arrange
@@ -1018,7 +1018,7 @@ public class MsTestAnalyzerTests
         list1.Should().NotBeEquivalentTo(list2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreNotEquivalent_Failure_OldAssertion()
     {
         // arrange
@@ -1029,7 +1029,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.AreNotEquivalent(list2, list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAreNotEquivalent_Failure_NewAssertion()
     {
         // arrange
@@ -1053,7 +1053,7 @@ public class MsTestAnalyzerTests
         list.Should().NotContainNulls();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion()
     {
         // arrange
@@ -1063,7 +1063,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.AllItemsAreNotNull(list);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAllItemsAreNotNull_Failure_NewAssertion()
     {
         // arrange
@@ -1086,7 +1086,7 @@ public class MsTestAnalyzerTests
         list.Should().OnlyHaveUniqueItems();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAllItemsAreUnique_Failure_OldAssertion()
     {
         // arrange
@@ -1096,7 +1096,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.AllItemsAreUnique(list);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertAllItemsAreUnique_Failure_NewAssertion()
     {
         // arrange
@@ -1119,7 +1119,7 @@ public class MsTestAnalyzerTests
         list.Should().Contain(2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertContains_Failure_OldAssertion()
     {
         // arrange
@@ -1129,7 +1129,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.Contains(list, 4);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertContains_Failure_NewAssertion()
     {
         // arrange
@@ -1152,7 +1152,7 @@ public class MsTestAnalyzerTests
         list.Should().NotContain(4);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertDoesNotContain_Failure_OldAssertion()
     {
         // arrange
@@ -1162,7 +1162,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.DoesNotContain(list, 2);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertDoesNotContain_Failure_NewAssertion()
     {
         // arrange
@@ -1186,7 +1186,7 @@ public class MsTestAnalyzerTests
         list2.Should().BeSubsetOf(list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertIsSubsetOf_Failure_OldAssertion()
     {
         // arrange
@@ -1197,7 +1197,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.IsSubsetOf(list2, list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertIsSubsetOf_Failure_NewAssertion()
     {
         // arrange
@@ -1222,7 +1222,7 @@ public class MsTestAnalyzerTests
         list2.Should().NotBeSubsetOf(list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertIsNotSubsetOf_Failure_OldAssertion()
     {
         // arrange
@@ -1233,7 +1233,7 @@ public class MsTestAnalyzerTests
         CollectionAssert.IsNotSubsetOf(list2, list1);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void CollectionAssertIsNotSubsetOf_Failure_NewAssertion()
     {
         // arrange
@@ -1258,7 +1258,7 @@ public class MsTestAnalyzerTests
         action.Should().ThrowExactly<InvalidOperationException>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertThrowsException_Failure_OldAssertion()
     {
         // arrange
@@ -1269,7 +1269,7 @@ public class MsTestAnalyzerTests
         Assert.ThrowsException<ArgumentException>(action);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void AssertThrowsException_Failure_NewAssertion()
     {
         // arrange
@@ -1294,7 +1294,7 @@ public class MsTestAnalyzerTests
         await action.Should().ThrowExactlyAsync<InvalidOperationException>();
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public async Task AssertThrowsExceptionAsync_Failure_OldAssertion()
     {
         // arrange
@@ -1305,7 +1305,7 @@ public class MsTestAnalyzerTests
         await Assert.ThrowsExceptionAsync<ArgumentException>(action);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public async Task AssertThrowsExceptionAsync_Failure_NewAssertion()
     {
         // arrange
@@ -1329,7 +1329,7 @@ public class MsTestAnalyzerTests
         str.Should().Contain("oo");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertContains_Failure_OldAssertion()
     {
         // arrange
@@ -1339,7 +1339,7 @@ public class MsTestAnalyzerTests
         StringAssert.Contains(str, "bar");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertContains_Failure_NewAssertion()
     {
         // arrange
@@ -1362,7 +1362,7 @@ public class MsTestAnalyzerTests
         str.Should().StartWith("fo");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertStartsWith_Failure_OldAssertion()
     {
         // arrange
@@ -1372,7 +1372,7 @@ public class MsTestAnalyzerTests
         StringAssert.StartsWith(str, "oo");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertStartsWith_Failure_NewAssertion()
     {
         // arrange
@@ -1395,7 +1395,7 @@ public class MsTestAnalyzerTests
         str.Should().EndWith("oo");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertEndsWith_Failure_OldAssertion()
     {
         // arrange
@@ -1405,7 +1405,7 @@ public class MsTestAnalyzerTests
         StringAssert.EndsWith(str, "fo");
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertEndsWith_Failure_NewAssertion()
     {
         // arrange
@@ -1429,7 +1429,7 @@ public class MsTestAnalyzerTests
         str.Should().MatchRegex(pattern);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertMatches_Failure_OldAssertion()
     {
         // arrange
@@ -1440,7 +1440,7 @@ public class MsTestAnalyzerTests
         StringAssert.Matches(str, pattern);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertMatches_Failure_NewAssertion()
     {
         // arrange
@@ -1465,7 +1465,7 @@ public class MsTestAnalyzerTests
         str.Should().NotMatchRegex(pattern);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertDoesNotMatch_Failure_OldAssertion()
     {
         // arrange
@@ -1476,7 +1476,7 @@ public class MsTestAnalyzerTests
         StringAssert.DoesNotMatch(str, pattern);
     }
 
-    [TestMethod, ExpectedTestFrameworkException]
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
     public void StringAssertDoesNotMatch_Failure_NewAssertion()
     {
         // arrange

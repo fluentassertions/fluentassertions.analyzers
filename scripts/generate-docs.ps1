@@ -28,3 +28,4 @@ function GenerateDocs {
 
 GenerateDocs -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs
 GenerateDocs -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit4
+GenerateDocs -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit3
