@@ -556,7 +556,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
 
     private class AssertThatMatcher(IOperation constraint, NunitCodeFixContext t)
     {
-        public bool Is(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, methodMatcher, out argument);
+        public bool Is(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, methodMatcher, out argument);
         public bool Is(params string[] matchers) => Matches(t.Is, matchers);
         public bool Has(params string[] matchers) => Matches(t.Has, matchers);
         public bool Has(IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, matchers, methodMatcher, out argument);
