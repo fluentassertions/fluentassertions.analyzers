@@ -272,6 +272,8 @@ public class Nunit3AnalyzerTests
         // old assertion:
         Assert.IsEmpty(collection);
         Assert.That(collection, Is.Empty);
+        Assert.That(collection, Has.Count.EqualTo(0));
+        Assert.That(collection, Has.Count.Zero);
         CollectionAssert.IsEmpty(collection);
 
         // new assertion:
@@ -305,6 +307,26 @@ public class Nunit3AnalyzerTests
         var collection = new List<int> { 1, 2, 3 };
 
         // old assertion:
+        Assert.That(collection, Has.Count.EqualTo(0));
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertIsEmpty_Failure_OldAssertion_3()
+    {
+        // arrange
+        var collection = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        Assert.That(collection, Has.Count.Zero);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertIsEmpty_Failure_OldAssertion_4()
+    {
+        // arrange
+        var collection = new List<int> { 1, 2, 3 };
+
+        // old assertion:
         CollectionAssert.IsEmpty(collection);
     }
 
@@ -327,6 +349,8 @@ public class Nunit3AnalyzerTests
         // old assertion:
         Assert.IsNotEmpty(collection);
         Assert.That(collection, Is.Not.Empty);
+        Assert.That(collection, Has.Count.GreaterThan(0));
+        Assert.That(collection, Has.Count.Not.Zero);
         CollectionAssert.IsNotEmpty(collection);
 
         // new assertion:
@@ -355,6 +379,26 @@ public class Nunit3AnalyzerTests
 
     [TestMethod, ExpectedTestFrameworkException]
     public void AssertIsNotEmpty_Failure_OldAssertion_2()
+    {
+        // arrange
+        var collection = new List<int>();
+
+        // old assertion:
+        Assert.That(collection, Has.Count.GreaterThan(0));
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertIsNotEmpty_Failure_OldAssertion_3()
+    {
+        // arrange
+        var collection = new List<int>();
+
+        // old assertion:
+        Assert.That(collection, Has.Count.Not.Zero);
+    }
+
+    [TestMethod, ExpectedTestFrameworkException]
+    public void AssertIsNotEmpty_Failure_OldAssertion_4()
     {
         // arrange
         var collection = new List<int>();

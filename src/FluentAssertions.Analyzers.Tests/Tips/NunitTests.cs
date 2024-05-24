@@ -334,6 +334,12 @@ public class NunitTests
         oldAssertion: "Assert.That(actual, Is.Empty{0});",
         newAssertion: "actual.Should().BeEmpty({0});")]
     [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.Count.EqualTo(0){0});",
+        newAssertion: "actual.Should().BeEmpty({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.Count.Zero{0});",
+        newAssertion: "actual.Should().BeEmpty({0});")]
+    [AssertionCodeFix(
         oldAssertion: "CollectionAssert.IsEmpty(actual{0});",
         newAssertion: "actual.Should().BeEmpty({0});")]
     [Implemented]
@@ -351,6 +357,12 @@ public class NunitTests
         newAssertion: "actual.Should().BeEmpty({0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Empty);",
+        newAssertion: "actual.Should().BeEmpty();")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.Count.EqualTo(0));",
+        newAssertion: "actual.Should().BeEmpty();")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.Count.Zero);",
         newAssertion: "actual.Should().BeEmpty();")]
     [AssertionCodeFix(
         oldAssertion: "CollectionAssert.IsEmpty(actual{0});",
