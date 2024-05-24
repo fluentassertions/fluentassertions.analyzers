@@ -431,82 +431,50 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         var constraint = invocation.Arguments[1].Value.UnwrapConversion();
         var subject = invocation.Arguments[0].Value;
 
-        if (MatchesProperties(t.Is, "True") // Assert.That(subject, Is.True)
-            || MatchesProperties(t.Is, "Not", "False")) // Assert.That(subject, Is.Not.False)
-            return RenameAssertThatAssertionToShould("BeTrue");
-        else if (MatchesProperties(t.Is, "False") // Assert.That(subject, Is.False)
-            || MatchesProperties(t.Is, "Not", "True")) // Assert.That(subject, Is.Not.True)
-            return RenameAssertThatAssertionToShould("BeFalse");
-        else if (MatchesProperties(t.Is, "Null")) // Assert.That(subject, Is.Null)
-            return RenameAssertThatAssertionToShould("BeNull");
-        else if (MatchesProperties(t.Is, "Not", "Null")) // Assert.That(subject, Is.Not.Null)
-            return RenameAssertThatAssertionToShould("NotBeNull");
+        var rewriter = new AssertThatRewriter(invocation, context, constraint);
+        var matcher = new AssertThatMatcher(constraint, t);
+
+        if (matcher.Is("True") // Assert.That(subject, Is.True)
+            || matcher.Is("Not", "False")) // Assert.That(subject, Is.Not.False)
+            return rewriter.Should("BeTrue");
+        else if (matcher.Is("False") // Assert.That(subject, Is.False)
+            || matcher.Is("Not", "True")) // Assert.That(subject, Is.Not.True)
+            return rewriter.Should("BeFalse");
+        else if (matcher.Is("Null")) // Assert.That(subject, Is.Null)
+            return rewriter.Should("BeNull");
+        else if (matcher.Is("Not", "Null")) // Assert.That(subject, Is.Not.Null)
+            return rewriter.Should("NotBeNull");
         else if (!IsArgumentTypeOfNonGenericEnumerable(invocation, argumentIndex: 0))
         {
-            if (MatchesProperties(t.Is, "Empty") // Assert.That(subject, Is.Empty)
-                || MatchesProperties(t.Has, "Count", "Zero")) // Assert.That(subject, Has.Count.Zero)
-                return RenameAssertThatAssertionToShould("BeEmpty");
-            else if (MatchesProperties(t.Is, "Not", "Empty") // Assert.That(subject, Is.Not.Empty)
-                || MatchesProperties(t.Has, "Count", "Not", "Zero")) // Assert.That(subject, Has.Not.Zero)
-                return RenameAssertThatAssertionToShould("NotBeEmpty");
-            else if (MatchesMethod(t.Has, [Property("Count")], Method("EqualTo"), out var argument))
+            if (matcher.Is("Empty") // Assert.That(subject, Is.Empty)
+                || matcher.Has("Count", "Zero")) // Assert.That(subject, Has.Count.Zero)
+                return rewriter.Should("BeEmpty");
+            else if (matcher.Is("Not", "Empty") // Assert.That(subject, Is.Not.Empty)
+                || matcher.Has("Count", "Not", "Zero")) // Assert.That(subject, Has.Not.Zero)
+                return rewriter.Should("NotBeEmpty");
+            else if (matcher.Has([Property("Count")], Method("EqualTo"), out var argument))
             {
                 if (argument.IsLiteralValue(0))
-                    return RenameAssertThatAssertionToShould("BeEmpty");
+                    return rewriter.Should("BeEmpty");
                 else if (argument.IsLiteralValue(1))
-                    return RenameAssertThatAssertionToShould("ContainSingle");
+                    return rewriter.Should("ContainSingle");
                 else
-                    return RenameAssertThatToShouldWithArgument("HaveCount", generator => argument.Syntax);
+                    return rewriter.Should("HaveCount", argument);
             }
-            else if (MatchesMethod(t.Has, [Property("Count")], Method("GreaterThan"), out argument) && argument.IsLiteralValue(0))
-                return RenameAssertThatAssertionToShould("NotBeEmpty");
+            else if (matcher.Has([Property("Count")], Method("GreaterThan"), out argument))
+            {
+                if (argument.IsLiteralValue(0))
+                    return rewriter.Should("NotBeEmpty");
+                else
+                    return rewriter.Should("HaveCountGreaterThan", argument);
+            }
         }
-        if (MatchesProperties(t.Is, "Zero"))
-            return RenameAssertThatToShouldWithArgument("Be", generator => generator.LiteralExpression(0));
-        else if (MatchesProperties(t.Is, "Not", "Zero"))
-            return RenameAssertThatToShouldWithArgument("NotBe", generator => generator.LiteralExpression(0));
+        if (matcher.Is("Zero"))
+            return rewriter.Should("Be", g => g.LiteralExpression(0));
+        else if (matcher.Is("Not", "Zero"))
+            return rewriter.Should("NotBe", g => g.LiteralExpression(0));
 
         return null;
-
-        CreateChangedDocument RenameAssertThatAssertionToShould(string assertionName)
-            => DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertionName, subjectIndex: 0, argumentsToRemove: [1]);
-        CreateChangedDocument RenameAssertThatToShouldWithArgument(string assertionName, Func<SyntaxGenerator, SyntaxNode> argumentGenerator)
-        {
-            return DocumentEditorUtils.RewriteExpression(invocation, [
-                EditAction.ReplaceAssertionArgument(index: 1, argumentGenerator),
-                EditAction.SubjectShouldAssertion(argumentIndex: 0, assertionName),
-            ], context);
-        }
-
-        bool MatchesProperties(INamedTypeSymbol type, params string[] matchers)
-            => Matches(type, Array.ConvertAll(matchers, matcher => new PropertyReferenceMatcher(matcher)));
-        bool MatchesMethod(INamedTypeSymbol type, IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument)
-        {
-            argument = null;
-            var result = Matches(type, [.. matchers, methodMatcher]);
-            if (result) argument = methodMatcher.Argument;
-            return result;
-        }
-        bool Matches(INamedTypeSymbol type, params IOperationMatcher[] matchers)
-        {
-            IOperation currentOp = constraint;
-            for (var i = matchers.Length - 1; i >= 0; i--)
-            {
-                var (nextOp, containingType) = matchers[i].TryGetNext(currentOp);
-                if (containingType is null) return false;
-
-                if (i is 0)
-                {
-                    return containingType.EqualsSymbol(type);
-                }
-
-                if (nextOp is null) return false;
-
-                currentOp = nextOp;
-            }
-
-            return false;
-        }
     }
 
     private CreateChangedDocument RewriteContainsAssertion(IInvocationOperation invocation, CodeFixContext context, string assertion, IArgumentOperation subject, IArgumentOperation expectation)
@@ -575,5 +543,58 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         public INamedTypeSymbol Throws { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Throws");
         public INamedTypeSymbol ConstraintExpression { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.Constraints.ConstraintExpression");
         public INamedTypeSymbol NUnitString { get; } = compilation.GetTypeByMetadataName("NUnit.Framework.NUnitString");
+    }
+
+    private class AssertThatMatcher(IOperation constraint, NunitCodeFixContext t)
+    {
+        public bool Is(params string[] matchers) => Matches(t.Is, matchers);
+        public bool Has(params string[] matchers) => Matches(t.Has, matchers);
+        public bool Has(IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, matchers, methodMatcher, out argument);
+
+        public bool Matches(INamedTypeSymbol type, params string[] matchers)
+            => Matches(type, Array.ConvertAll(matchers, matcher => new PropertyReferenceMatcher(matcher)));
+        public bool Matches(INamedTypeSymbol type, IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument)
+        {
+            argument = null;
+            var result = Matches(type, [.. matchers, methodMatcher]);
+            if (result) argument = methodMatcher.Argument;
+            return result;
+        }
+        public bool Matches(INamedTypeSymbol type, params IOperationMatcher[] matchers)
+        {
+            IOperation currentOp = constraint;
+            for (var i = matchers.Length - 1; i >= 0; i--)
+            {
+                var (nextOp, containingType) = matchers[i].TryGetNext(currentOp);
+                if (containingType is null) return false;
+
+                if (i is 0)
+                {
+                    return containingType.EqualsSymbol(type);
+                }
+
+                if (nextOp is null) return false;
+
+                currentOp = nextOp;
+            }
+
+            return false;
+        }
+    }
+    private class AssertThatRewriter(IInvocationOperation invocation, CodeFixContext context, IOperation constraint)
+    {
+        public CreateChangedDocument Should(string assertion)
+        {
+            return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertion, subjectIndex: 0, argumentsToRemove: [1]);
+        }
+
+        public CreateChangedDocument Should(string assertion, IArgumentOperation argument) => Should(assertion, _ => argument.Syntax);
+        public CreateChangedDocument Should(string assertion, Func<SyntaxGenerator, SyntaxNode> argumentGenerator)
+        {
+            return DocumentEditorUtils.RewriteExpression(invocation, [
+                EditAction.ReplaceAssertionArgument(index: 1, argumentGenerator),
+                EditAction.SubjectShouldAssertion(argumentIndex: 0, assertion),
+            ], context);
+        }
     }
 }
