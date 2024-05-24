@@ -428,7 +428,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeTrue", subjectIndex: 0, argumentsToRemove: []);
         }
 
-        if (invocation.Arguments[1].Value.UnwrapConversion() is not IPropertyReferenceOperation constraint) return null;
+        var constraint = invocation.Arguments[1].Value.UnwrapConversion();
         var subject = invocation.Arguments[0].Value;
 
         if (MatchesProperties(t.Is, "True") // Assert.That(subject, Is.True)
@@ -446,22 +446,25 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             if (MatchesProperties(t.Is, "Empty") // Assert.That(subject, Is.Empty)
                 || MatchesProperties(t.Has, "Count", "Zero")) // Assert.That(subject, Has.Count.Zero)
                 return RenameAssertThatAssertionToShould("BeEmpty");
-            else if (MatchesProperties(t.Is, "Not", "Empty")) // Assert.That(subject, Is.Not.Empty)
+            else if (MatchesProperties(t.Is, "Not", "Empty") // Assert.That(subject, Is.Not.Empty)
+                || MatchesProperties(t.Has, "Count", "Not", "Zero")) // Assert.That(subject, Has.Not.Zero)
+                return RenameAssertThatAssertionToShould("NotBeEmpty");
+            else if (MatchesMethod(t.Has, [Property("Count")], Method("EqualTo"), out var argument))
+            {
+                if (argument.IsLiteralValue(0))
+                    return RenameAssertThatAssertionToShould("BeEmpty");
+                else if (argument.IsLiteralValue(1))
+                    return RenameAssertThatAssertionToShould("ContainSingle");
+                else
+                    return RenameAssertThatToShouldWithArgument("HaveCount", generator => argument.Syntax);
+            }
+            else if (MatchesMethod(t.Has, [Property("Count")], Method("GreaterThan"), out argument) && argument.IsLiteralValue(0))
                 return RenameAssertThatAssertionToShould("NotBeEmpty");
         }
         if (MatchesProperties(t.Is, "Zero"))
             return RenameAssertThatToShouldWithArgument("Be", generator => generator.LiteralExpression(0));
         else if (MatchesProperties(t.Is, "Not", "Zero"))
             return RenameAssertThatToShouldWithArgument("NotBe", generator => generator.LiteralExpression(0));
-        else if (MatchesMethod(t.Has, [Property("Count")], Method("EqualTo"), out var argument))
-        {
-            if (argument.IsLiteralValue(0))
-                return RenameAssertThatAssertionToShould("BeEmpty");
-            else if (argument.IsLiteralValue(1))
-                return RenameAssertThatAssertionToShould("ContainSingle");
-            else
-                return RenameAssertThatToShouldWithArgument("HaveCount", generator => argument.Syntax);
-        }
 
         return null;
 

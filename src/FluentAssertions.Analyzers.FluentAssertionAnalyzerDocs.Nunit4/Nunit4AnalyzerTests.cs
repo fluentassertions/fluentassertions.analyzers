@@ -269,6 +269,8 @@ public class Nunit4AnalyzerTests
         // old assertion:
         ClassicAssert.IsEmpty(collection);
         Assert.That(collection, Is.Empty);
+        Assert.That(collection, Has.Count.EqualTo(0));
+        Assert.That(collection, Has.Count.Zero);
         CollectionAssert.IsEmpty(collection);
 
         // new assertion:
@@ -276,6 +278,7 @@ public class Nunit4AnalyzerTests
     }
 
     [Test, ExpectedAssertionException]
+
     public void AssertIsEmpty_Failure_OldAssertion_0()
     {
         // arrange
@@ -286,6 +289,7 @@ public class Nunit4AnalyzerTests
     }
 
     [Test, ExpectedAssertionException]
+
     public void AssertIsEmpty_Failure_OldAssertion_1()
     {
         // arrange
@@ -296,7 +300,30 @@ public class Nunit4AnalyzerTests
     }
 
     [Test, ExpectedAssertionException]
+
     public void AssertIsEmpty_Failure_OldAssertion_2()
+    {
+        // arrange
+        var collection = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        Assert.That(collection, Has.Count.EqualTo(0));
+    }
+
+    [Test, ExpectedAssertionException]
+
+    public void AssertIsEmpty_Failure_OldAssertion_3()
+    {
+        // arrange
+        var collection = new List<int> { 1, 2, 3 };
+
+        // old assertion:
+        Assert.That(collection, Has.Count.Zero);
+    }
+
+    [Test, ExpectedAssertionException]
+
+    public void AssertIsEmpty_Failure_OldAssertion_4()
     {
         // arrange
         var collection = new List<int> { 1, 2, 3 };
@@ -306,6 +333,7 @@ public class Nunit4AnalyzerTests
     }
 
     [Test, ExpectedAssertionException]
+
     public void AssertIsEmpty_Failure_NewAssertion()
     {
         // arrange
@@ -324,6 +352,8 @@ public class Nunit4AnalyzerTests
         // old assertion:
         ClassicAssert.IsNotEmpty(collection);
         Assert.That(collection, Is.Not.Empty);
+        Assert.That(collection, Has.Count.GreaterThan(0));
+        Assert.That(collection, Has.Count.Not.Zero);
         CollectionAssert.IsNotEmpty(collection);
 
         // new assertion:
@@ -331,6 +361,7 @@ public class Nunit4AnalyzerTests
     }
 
     [Test, ExpectedAssertionException]
+
     public void AssertIsNotEmpty_Failure_OldAssertion_0()
     {
         // arrange
@@ -341,6 +372,7 @@ public class Nunit4AnalyzerTests
     }
 
     [Test, ExpectedAssertionException]
+
     public void AssertIsNotEmpty_Failure_OldAssertion_1()
     {
         // arrange
@@ -351,7 +383,30 @@ public class Nunit4AnalyzerTests
     }
 
     [Test, ExpectedAssertionException]
+
     public void AssertIsNotEmpty_Failure_OldAssertion_2()
+    {
+        // arrange
+        var collection = new List<int>();
+
+        // old assertion:
+        Assert.That(collection, Has.Count.GreaterThan(0));
+    }
+
+    [Test, ExpectedAssertionException]
+
+    public void AssertIsNotEmpty_Failure_OldAssertion_3()
+    {
+        // arrange
+        var collection = new List<int>();
+
+        // old assertion:
+        Assert.That(collection, Has.Count.Not.Zero);
+    }
+
+    [Test, ExpectedAssertionException]
+
+    public void AssertIsNotEmpty_Failure_OldAssertion_4()
     {
         // arrange
         var collection = new List<int>();
@@ -512,8 +567,8 @@ public class Nunit4AnalyzerTests
     public void AssertAreNotSame_Failure_OldAssertion()
     {
         // arrange
-        var obj1 = new object();
-        var obj2 = obj1;
+        object obj1 = "foo";
+        object obj2 = "foo";
 
         // old assertion:
         ClassicAssert.AreNotSame(obj1, obj2);
@@ -523,8 +578,8 @@ public class Nunit4AnalyzerTests
     public void AssertAreNotSame_Failure_NewAssertion()
     {
         // arrange
-        var obj1 = new object();
-        var obj2 = obj1;
+        object obj1 = "foo";
+        object obj2 = "foo";
 
         // new assertion:
         obj1.Should().NotBeSameAs(obj2);

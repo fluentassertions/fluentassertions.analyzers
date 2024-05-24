@@ -204,6 +204,8 @@ var collection = new List<int>();
 // old assertion:
 ClassicAssert.IsEmpty(collection);
 Assert.That(collection, Is.Empty);
+Assert.That(collection, Has.Count.EqualTo(0));
+Assert.That(collection, Has.Count.Zero);
 CollectionAssert.IsEmpty(collection);
 
 // new assertion:
@@ -224,6 +226,14 @@ Assert.That(collection, Is.Empty); /* fail message:   Assert.That(collection, Is
   Expected: <empty>
   But was:  < 1, 2, 3 >
  */
+Assert.That(collection, Has.Count.EqualTo(0)); /* fail message:   Assert.That(collection, Has.Count.EqualTo(0))
+  Expected: property Count equal to 0
+  But was:  3
+ */
+Assert.That(collection, Has.Count.Zero); /* fail message:   Assert.That(collection, Has.Count.Zero)
+  Expected: property Count equal to 0
+  But was:  3
+ */
 CollectionAssert.IsEmpty(collection); /* fail message:   Assert.That(collection, new EmptyCollectionConstraint())
   Expected: <empty>
   But was:  < 1, 2, 3 >
@@ -242,6 +252,8 @@ var collection = new List<int> { 1, 2, 3 };
 // old assertion:
 ClassicAssert.IsNotEmpty(collection);
 Assert.That(collection, Is.Not.Empty);
+Assert.That(collection, Has.Count.GreaterThan(0));
+Assert.That(collection, Has.Count.Not.Zero);
 CollectionAssert.IsNotEmpty(collection);
 
 // new assertion:
@@ -261,6 +273,14 @@ ClassicAssert.IsNotEmpty(collection); /* fail message:   Assert.That(collection,
 Assert.That(collection, Is.Not.Empty); /* fail message:   Assert.That(collection, Is.Not.Empty)
   Expected: not <empty>
   But was:  <empty>
+ */
+Assert.That(collection, Has.Count.GreaterThan(0)); /* fail message:   Assert.That(collection, Has.Count.GreaterThan(0))
+  Expected: property Count greater than 0
+  But was:  0
+ */
+Assert.That(collection, Has.Count.Not.Zero); /* fail message:   Assert.That(collection, Has.Count.Not.Zero)
+  Expected: property Count not equal to 0
+  But was:  0
  */
 CollectionAssert.IsNotEmpty(collection); /* fail message:   Assert.That(collection, new NotConstraint(new EmptyCollectionConstraint()))
   Expected: not <empty>
@@ -384,17 +404,17 @@ obj1.Should().NotBeSameAs(obj2);
 #### Failure messages
 
 ```cs
-var obj1 = new object();
-var obj2 = obj1;
+object obj1 = "foo";
+object obj2 = "foo";
 
 // old assertion:
 ClassicAssert.AreNotSame(obj1, obj2); /* fail message:   Assert.That(actual, Is.Not.SameAs(expected))
-  Expected: not same as <System.Object>
-  But was:  <System.Object>
+  Expected: not same as "foo"
+  But was:  "foo"
  */
 
 // new assertion:
-obj1.Should().NotBeSameAs(obj2); /* fail message: Did not expect obj1 to refer to System.Object (HashCode=19989589). */
+obj1.Should().NotBeSameAs(obj2); /* fail message: Did not expect obj1 to refer to "foo". */
 ```
 
 ### scenario: CollectionAssertAreEqual

@@ -189,6 +189,8 @@ var collection = new List<int>();
 // old assertion:
 Assert.IsEmpty(collection);
 Assert.That(collection, Is.Empty);
+Assert.That(collection, Has.Count.EqualTo(0));
+Assert.That(collection, Has.Count.Zero);
 CollectionAssert.IsEmpty(collection);
 
 // new assertion:
@@ -207,6 +209,12 @@ Assert.IsEmpty(collection); /* fail message:   Expected: <empty>
 Assert.That(collection, Is.Empty); /* fail message:   Expected: <empty>
   But was:  < 1, 2, 3 >
  */
+Assert.That(collection, Has.Count.EqualTo(0)); /* fail message:   Expected: property Count equal to 0
+  But was:  3
+ */
+Assert.That(collection, Has.Count.Zero); /* fail message:   Expected: property Count equal to 0
+  But was:  3
+ */
 CollectionAssert.IsEmpty(collection); /* fail message:   Expected: <empty>
   But was:  < 1, 2, 3 >
  */
@@ -224,6 +232,8 @@ var collection = new List<int> { 1, 2, 3 };
 // old assertion:
 Assert.IsNotEmpty(collection);
 Assert.That(collection, Is.Not.Empty);
+Assert.That(collection, Has.Count.GreaterThan(0));
+Assert.That(collection, Has.Count.Not.Zero);
 CollectionAssert.IsNotEmpty(collection);
 
 // new assertion:
@@ -241,6 +251,12 @@ Assert.IsNotEmpty(collection); /* fail message:   Expected: not <empty>
  */
 Assert.That(collection, Is.Not.Empty); /* fail message:   Expected: not <empty>
   But was:  <empty>
+ */
+Assert.That(collection, Has.Count.GreaterThan(0)); /* fail message:   Expected: property Count greater than 0
+  But was:  0
+ */
+Assert.That(collection, Has.Count.Not.Zero); /* fail message:   Expected: property Count not equal to 0
+  But was:  0
  */
 CollectionAssert.IsNotEmpty(collection); /* fail message:   Expected: not <empty>
   But was:  <empty>
