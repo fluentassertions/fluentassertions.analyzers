@@ -562,6 +562,7 @@ var expected = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.AreEqual(expected, collection);
+Assert.That(collection, Is.EqualTo(expected));
 
 // new assertion:
 collection.Should().Equal(expected);
@@ -575,6 +576,12 @@ var expected = new[] { 1, 2, 4 };
 
 // old assertion:
 CollectionAssert.AreEqual(expected, collection); /* fail message:   Assert.That(actual, Is.EqualTo(expected).AsCollection)
+  Expected and actual are both <System.Int32[3]>
+  Values differ at index [2]
+  Expected: 4
+  But was:  3
+ */
+Assert.That(collection, Is.EqualTo(expected)); /* fail message:   Assert.That(collection, Is.EqualTo(expected))
   Expected and actual are both <System.Int32[3]>
   Values differ at index [2]
   Expected: 4
@@ -594,6 +601,7 @@ var expected = new[] { 1, 2, 4 };
 
 // old assertion:
 CollectionAssert.AreNotEqual(expected, collection);
+Assert.That(collection, Is.Not.EqualTo(expected));
 
 // new assertion:
 collection.Should().NotEqual(expected);
@@ -607,6 +615,10 @@ var expected = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.AreNotEqual(expected, collection); /* fail message:   Assert.That(actual, Is.Not.EqualTo(expected).AsCollection)
+  Expected: not equal to < 1, 2, 3 >
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Is.Not.EqualTo(expected)); /* fail message:   Assert.That(collection, Is.Not.EqualTo(expected))
   Expected: not equal to < 1, 2, 3 >
   But was:  < 1, 2, 3 >
  */

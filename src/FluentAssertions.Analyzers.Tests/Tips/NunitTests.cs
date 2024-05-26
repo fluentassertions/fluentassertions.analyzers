@@ -1305,7 +1305,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual{0});")]
     [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual, comparer{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.EqualTo(expected){0});", ignore: true)]
+    [AssertionDiagnostic("Assert.That(actual, Is.EqualTo(expected){0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAreEqual_TestAnalyzer(string assertion)
     {
@@ -1317,7 +1317,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual{0});")]
     [AssertionDiagnostic("CollectionAssert.AreEqual(expected, actual, comparer{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.EqualTo(expected));", ignore: true)]
+    [AssertionDiagnostic("Assert.That(actual, Is.EqualTo(expected));")]
     [Implemented]
     public void Nunit4_CollectionAssertAreEqual_TestAnalyzer(string assertion)
     {
@@ -1332,8 +1332,7 @@ public class NunitTests
         newAssertion: "actual.Should().Equal(expected{0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.EqualTo(expected){0});",
-        newAssertion: "actual.Should().Equal(expected{0});", 
-        ignore: true)]
+        newAssertion: "actual.Should().Equal(expected{0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
     {
@@ -1364,8 +1363,7 @@ public class NunitTests
         newAssertion: "actual.Should().Equal(expected{0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.EqualTo(expected));",
-        newAssertion: "actual.Should().Equal(expected);", 
-        ignore: true)]
+        newAssertion: "actual.Should().Equal(expected);")]
     [Implemented]
     public void Nunit4_CollectionAssertAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
     {
@@ -1393,7 +1391,7 @@ public class NunitTests
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AreNotEqual(expected, actual{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Not.EqualTo(expected){0});", ignore: true)]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.EqualTo(expected){0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAreNotEqual_TestAnalyzer(string assertion)
     {
@@ -1404,7 +1402,7 @@ public class NunitTests
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AreNotEqual(expected, actual{0});")]
-    [AssertionDiagnostic("Assert.That(actual, Is.Not.EqualTo(expected));", ignore: true)]
+    [AssertionDiagnostic("Assert.That(actual, Is.Not.EqualTo(expected));")]
     [Implemented]
     public void Nunit4_CollectionAssertAreNotEqual_TestAnalyzer(string assertion)
     {
@@ -1419,8 +1417,7 @@ public class NunitTests
         newAssertion: "actual.Should().NotEqual(expected{0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Not.EqualTo(expected){0});",
-        newAssertion: "actual.Should().NotEqual(expected{0});",
-        ignore: true)]
+        newAssertion: "actual.Should().NotEqual(expected{0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
     {
@@ -1435,8 +1432,7 @@ public class NunitTests
         newAssertion: "actual.Should().NotEqual(expected{0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(actual, Is.Not.EqualTo(expected));",
-        newAssertion: "actual.Should().NotEqual(expected);", 
-        ignore: true)]
+        newAssertion: "actual.Should().NotEqual(expected);")]
     [Implemented]
     public void Nunit4_CollectionAssertAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
     {

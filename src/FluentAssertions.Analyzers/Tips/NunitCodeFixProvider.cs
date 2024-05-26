@@ -468,6 +468,10 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                 else
                     return rewriter.Should("HaveCountGreaterThan", argument);
             }
+            else if (matcher.Is(Method("EqualTo"), out argument))
+                return rewriter.Should("Equal", argument);
+            else if (matcher.Is("Not", Method("EqualTo"), out argument))
+                return rewriter.Should("NotEqual", argument);
         }
         if (matcher.Is("Zero"))
             return rewriter.Should("Be", g => g.LiteralExpression(0));
@@ -557,6 +561,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     private class AssertThatMatcher(IOperation constraint, NunitCodeFixContext t)
     {
         public bool Is(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, methodMatcher, out argument);
+        public bool Is(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, [Property(propertyMatcher)], methodMatcher, out argument);
         public bool Is(params string[] matchers) => Matches(t.Is, matchers);
         public bool Has(params string[] matchers) => Matches(t.Has, matchers);
         public bool Has(IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, matchers, methodMatcher, out argument);

@@ -770,13 +770,14 @@ public class Nunit4AnalyzerTests
 
         // old assertion:
         CollectionAssert.AreEqual(expected, collection);
+        Assert.That(collection, Is.EqualTo(expected));
 
         // new assertion:
         collection.Should().Equal(expected);
     }
 
     [Test, ExpectedAssertionException]
-    public void CollectionAssertAreEqual_Failure_OldAssertion()
+    public void CollectionAssertAreEqual_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new[] { 1, 2, 3 };
@@ -784,6 +785,17 @@ public class Nunit4AnalyzerTests
 
         // old assertion:
         CollectionAssert.AreEqual(expected, collection);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAreEqual_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 4 };
+
+        // old assertion:
+        Assert.That(collection, Is.EqualTo(expected));
     }
 
     [Test, ExpectedAssertionException]
@@ -806,13 +818,14 @@ public class Nunit4AnalyzerTests
 
         // old assertion:
         CollectionAssert.AreNotEqual(expected, collection);
+        Assert.That(collection, Is.Not.EqualTo(expected));
 
         // new assertion:
         collection.Should().NotEqual(expected);
     }
 
     [Test, ExpectedAssertionException]
-    public void CollectionAssertAreNotEqual_Failure_OldAssertion()
+    public void CollectionAssertAreNotEqual_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new[] { 1, 2, 3 };
@@ -820,6 +833,17 @@ public class Nunit4AnalyzerTests
 
         // old assertion:
         CollectionAssert.AreNotEqual(expected, collection);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAreNotEqual_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 2, 3 };
+
+        // old assertion:
+        Assert.That(collection, Is.Not.EqualTo(expected));
     }
 
     [Test, ExpectedAssertionException]
