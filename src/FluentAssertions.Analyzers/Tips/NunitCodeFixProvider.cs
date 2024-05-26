@@ -429,7 +429,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         }
 
         var constraint = invocation.Arguments[1].Value.UnwrapConversion();
-        var subject = invocation.Arguments[0].Value;
+        var subject = invocation.Arguments[0];
 
         var rewriter = new AssertThatRewriter(invocation, context, constraint);
         var matcher = new AssertThatMatcher(constraint, t);
@@ -485,7 +485,13 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return rewriter.Should("BeLessThan", argument);
         else if (matcher.Is(Method("LessThanOrEqualTo"), out argument))
             return rewriter.Should("BeLessOrEqualTo", argument);
-
+        else if (matcher.Has(Method("Member"), out argument)
+            || matcher.Does(Method("Contain"), out argument)
+            || matcher.Contains(Method("Item"), out argument))
+            return rewriter.ShouldCollectionContains("Contain", subject, invocation.Arguments[1], argument);
+        else if (matcher.Has("No", Method("Member"), out argument)
+            || matcher.Does("Not", Method("Contain"), out argument))
+            return rewriter.ShouldCollectionContains("NotContain", subject, invocation.Arguments[1], argument);
 
         return null;
     }
@@ -562,6 +568,13 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     {
         public bool Is(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, methodMatcher, out argument);
         public bool Is(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, [Property(propertyMatcher)], methodMatcher, out argument);
+
+        public bool Has(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, methodMatcher, out argument);
+        public bool Has(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, [Property(propertyMatcher)], methodMatcher, out argument);
+        public bool Does(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Does, methodMatcher, out argument);
+        public bool Contains(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Contains, methodMatcher, out argument);
+        public bool Contains(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Contains, [Property(propertyMatcher)], methodMatcher, out argument);
+        public bool Does(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Does, [Property(propertyMatcher)], methodMatcher, out argument);
         public bool Is(params string[] matchers) => Matches(t.Is, matchers);
         public bool Has(params string[] matchers) => Matches(t.Has, matchers);
         public bool Has(IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, matchers, methodMatcher, out argument);
@@ -597,7 +610,7 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return false;
         }
     }
-    private class AssertThatRewriter(IInvocationOperation invocation, CodeFixContext context, IOperation constraint)
+    public class AssertThatRewriter(IInvocationOperation invocation, CodeFixContext context, IOperation constraint)
     {
         public CreateChangedDocument Should(string assertion)
         {
@@ -610,6 +623,35 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return DocumentEditorUtils.RewriteExpression(invocation, [
                 EditAction.ReplaceAssertionArgument(index: 1, argumentGenerator),
                 EditAction.SubjectShouldAssertion(argumentIndex: 0, assertion),
+            ], context);
+        }
+
+        public CreateChangedDocument ShouldCollectionContains(string assertion, IArgumentOperation subject, IArgumentOperation expectation)
+            => ShouldCollectionContains(assertion, subject, expectation, expectation);
+        public CreateChangedDocument ShouldCollectionContains(string assertion, IArgumentOperation subject, IArgumentOperation oldExpectation, IArgumentOperation newExpectation)
+        {
+            if (!subject.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_IEnumerable_T))
+            {
+                return null;
+            }
+
+            var subjectIndex = invocation.Arguments.IndexOf(subject);
+            return DocumentEditorUtils.RewriteExpression(invocation, [
+                editActionContext =>
+                {
+                    ITypeSymbol elementType = subject.Value.UnwrapConversion().Type switch
+                    {
+                        INamedTypeSymbol namedType => namedType.TypeArguments[0],
+                        IArrayTypeSymbol arrayType => arrayType.ElementType,
+                        _ => null
+                    };
+
+                    var argumentToCast = (ArgumentSyntax)newExpectation.Syntax;
+                    var oldArgument = (ArgumentSyntax)oldExpectation.Syntax;
+                    var castExpression = editActionContext.Editor.Generator.CastExpression(elementType, argumentToCast.Expression);
+                    editActionContext.Editor.ReplaceNode(oldArgument.Expression, castExpression.WithAdditionalAnnotations(Simplifier.Annotation));
+                },
+                EditAction.SubjectShouldAssertion(subjectIndex, assertion)
             ], context);
         }
     }

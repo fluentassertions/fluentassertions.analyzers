@@ -635,6 +635,9 @@ var collection = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.Contains(collection, 2);
+Assert.That(collection, Has.Member(2));
+Assert.That(collection, Does.Contain(2));
+Assert.That(collection, Contains.Item(2));
 
 // new assertion:
 collection.Should().Contain(2);
@@ -647,6 +650,14 @@ var collection = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.Contains(collection, 4); /* fail message:   Assert.That(collection, Has.Member(actual))
+  Expected: some item equal to 4
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Has.Member(4)); /* fail message:   Assert.That(collection, Has.Member(4))
+  Expected: some item equal to 4
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Does.Contain(4)); /* fail message:   Assert.That(collection, Does.Contain(4))
   Expected: some item equal to 4
   But was:  < 1, 2, 3 >
  */
@@ -664,6 +675,8 @@ object item = 2;
 
 // old assertion:
 CollectionAssert.Contains(collection, item);
+Assert.That(collection, Has.Member(item));
+Assert.That(collection, Does.Contain(item));
 
 // new assertion:
 collection.Should().Contain((int)item);
@@ -676,7 +689,19 @@ var collection = new[] { 1, 2, 3 };
 object item = 4;
 
 // old assertion:
+Assert.That(collection, Contains.Item(item)); /* fail message:   Assert.That(collection, Contains.Item(item))
+  Expected: some item equal to 4
+  But was:  < 1, 2, 3 >
+ */
 CollectionAssert.Contains(collection, item); /* fail message:   Assert.That(collection, Has.Member(actual))
+  Expected: some item equal to 4
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Has.Member(item)); /* fail message:   Assert.That(collection, Has.Member(item))
+  Expected: some item equal to 4
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Does.Contain(item)); /* fail message:   Assert.That(collection, Does.Contain(item))
   Expected: some item equal to 4
   But was:  < 1, 2, 3 >
  */
@@ -693,6 +718,8 @@ var collection = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.DoesNotContain(collection, 4);
+Assert.That(collection, Has.No.Member(4));
+Assert.That(collection, Does.Not.Contain(4));
 
 // new assertion:
 collection.Should().NotContain(4);
@@ -705,6 +732,14 @@ var collection = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.DoesNotContain(collection, 2); /* fail message:   Assert.That(collection, Has.No.Member(actual))
+  Expected: not some item equal to 2
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Has.No.Member(2)); /* fail message:   Assert.That(collection, Has.No.Member(2))
+  Expected: not some item equal to 2
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Does.Not.Contain(2)); /* fail message:   Assert.That(collection, Does.Not.Contain(2))
   Expected: not some item equal to 2
   But was:  < 1, 2, 3 >
  */
@@ -722,6 +757,8 @@ object item = 4;
 
 // old assertion:
 CollectionAssert.DoesNotContain(collection, item);
+Assert.That(collection, Has.No.Member(item));
+Assert.That(collection, Does.Not.Contain(item));
 
 // new assertion:
 collection.Should().NotContain((int)item);
@@ -735,6 +772,14 @@ object item = 2;
 
 // old assertion:
 CollectionAssert.DoesNotContain(collection, item); /* fail message:   Assert.That(collection, Has.No.Member(actual))
+  Expected: not some item equal to 2
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Has.No.Member(item)); /* fail message:   Assert.That(collection, Has.No.Member(item))
+  Expected: not some item equal to 2
+  But was:  < 1, 2, 3 >
+ */
+Assert.That(collection, Does.Not.Contain(item)); /* fail message:   Assert.That(collection, Does.Not.Contain(item))
   Expected: not some item equal to 2
   But was:  < 1, 2, 3 >
  */
