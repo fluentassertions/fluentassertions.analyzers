@@ -485,7 +485,13 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return rewriter.Should("BeLessThan", argument);
         else if (matcher.Is(Method("LessThanOrEqualTo"), out argument))
             return rewriter.Should("BeLessOrEqualTo", argument);
-
+        else if (matcher.Has(Method("Member"), out argument)
+            || matcher.Does(Method("Contain"), out argument)
+            || matcher.Contains(Method("Item"), out argument))
+            return RewriteContainsAssertion(invocation, context, "Contain", invocation.Arguments[0], argument);
+        else if (matcher.Has("No", Method("Member"), out argument)
+            || matcher.Does("Not", Method("Contain"), out argument))
+            return RewriteContainsAssertion(invocation, context, "NotContain", invocation.Arguments[0], argument);
 
         return null;
     }
@@ -562,6 +568,13 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     {
         public bool Is(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, methodMatcher, out argument);
         public bool Is(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, [Property(propertyMatcher)], methodMatcher, out argument);
+
+        public bool Has(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, methodMatcher, out argument);
+        public bool Has(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, [Property(propertyMatcher)], methodMatcher, out argument);
+        public bool Does(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Does, methodMatcher, out argument);
+        public bool Contains(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Contains, methodMatcher, out argument);
+        public bool Contains(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Contains, [Property(propertyMatcher)], methodMatcher, out argument);
+        public bool Does(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Does, [Property(propertyMatcher)], methodMatcher, out argument);
         public bool Is(params string[] matchers) => Matches(t.Is, matchers);
         public bool Has(params string[] matchers) => Matches(t.Has, matchers);
         public bool Has(IOperationMatcher[] matchers, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, matchers, methodMatcher, out argument);
