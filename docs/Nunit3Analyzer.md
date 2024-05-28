@@ -719,6 +719,10 @@ var collection = new object[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int));
+Assert.That(collection, Is.All.InstanceOf(typeof(int)));
+Assert.That(collection, Is.All.InstanceOf<int>());
+Assert.That(collection, Has.All.InstanceOf(typeof(int)));
+Assert.That(collection, Has.All.InstanceOf<int>());
 
 // new assertion:
 collection.Should().AllBeOfType<int>();
@@ -731,6 +735,22 @@ var collection = new object[] { 1, 2, "3" };
 
 // old assertion:
 CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int)); /* fail message:   Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+Assert.That(collection, Is.All.InstanceOf(typeof(int))); /* fail message:   Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+Assert.That(collection, Is.All.InstanceOf<int>()); /* fail message:   Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+Assert.That(collection, Has.All.InstanceOf(typeof(int))); /* fail message:   Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+Assert.That(collection, Has.All.InstanceOf<int>()); /* fail message:   Expected: all items instance of <System.Int32>
   But was:  < 1, 2, "3" >
   First non-matching item at index [2]:  "3"
  */
@@ -748,6 +768,8 @@ var type = typeof(int);
 
 // old assertion:
 CollectionAssert.AllItemsAreInstancesOfType(collection, type);
+Assert.That(collection, Is.All.InstanceOf(type));
+Assert.That(collection, Has.All.InstanceOf(type));
 
 // new assertion:
 collection.Should().AllBeOfType(type);
@@ -761,6 +783,14 @@ var type = typeof(int);
 
 // old assertion:
 CollectionAssert.AllItemsAreInstancesOfType(collection, type); /* fail message:   Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+Assert.That(collection, Is.All.InstanceOf(type)); /* fail message:   Expected: all items instance of <System.Int32>
+  But was:  < 1, 2, "3" >
+  First non-matching item at index [2]:  "3"
+ */
+Assert.That(collection, Has.All.InstanceOf(type)); /* fail message:   Expected: all items instance of <System.Int32>
   But was:  < 1, 2, "3" >
   First non-matching item at index [2]:  "3"
  */

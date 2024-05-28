@@ -1728,12 +1728,24 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(string){0});")]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, type{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.InstanceOf(typeof(int)){0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.InstanceOf<int>(){0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.InstanceOf(type){0});")]
+    [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf(typeof(int)){0});")]
+    [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf<int>(){0});")]
+    [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf(type){0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAllItemsAreInstancesOfType_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("IEnumerable<string> actual, Type type", assertion); 
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(string){0});")]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, type{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.InstanceOf(typeof(int)));")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.InstanceOf<int>());")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.InstanceOf(type));")]
+    [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf(typeof(int)));")]
+    [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf<int>());")]
+    [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf(type));")]
     [Implemented]
     public void Nunit4_CollectionAssertAllItemsAreInstancesOfType_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("IEnumerable<string> actual, Type type", assertion); 
 
@@ -1743,6 +1755,24 @@ public class NunitTests
         newAssertion: "actual.Should().AllBeOfType<string>({0});")]
     [AssertionCodeFix(
         oldAssertion: "CollectionAssert.AllItemsAreInstancesOfType(actual, type{0});",
+        newAssertion: "actual.Should().AllBeOfType(type{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.InstanceOf(typeof(int)){0});",
+        newAssertion: "actual.Should().AllBeOfType<int>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.InstanceOf<int>(){0});",
+        newAssertion: "actual.Should().AllBeOfType<int>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.InstanceOf(type){0});",
+        newAssertion: "actual.Should().AllBeOfType(type{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.All.InstanceOf(typeof(int)){0});",
+        newAssertion: "actual.Should().AllBeOfType<int>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.All.InstanceOf<int>(){0});",
+        newAssertion: "actual.Should().AllBeOfType<int>({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.All.InstanceOf(type){0});",
         newAssertion: "actual.Should().AllBeOfType(type{0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAllItemsAreInstancesOfType_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("IEnumerable<string> actual, Type type", oldAssertion, newAssertion);
@@ -1754,6 +1784,24 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "CollectionAssert.AllItemsAreInstancesOfType(actual, type{0});",
         newAssertion: "actual.Should().AllBeOfType(type{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.InstanceOf(typeof(int)));",
+        newAssertion: "actual.Should().AllBeOfType<int>();")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.InstanceOf<int>());",
+        newAssertion: "actual.Should().AllBeOfType<int>();")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.InstanceOf(type));",
+        newAssertion: "actual.Should().AllBeOfType(type);")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.All.InstanceOf(typeof(int)));",
+        newAssertion: "actual.Should().AllBeOfType<int>();")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.All.InstanceOf<int>());",
+        newAssertion: "actual.Should().AllBeOfType<int>();")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.All.InstanceOf(type));",
+        newAssertion: "actual.Should().AllBeOfType(type);")]
     [Implemented]
     public void Nunit4_CollectionAssertAllItemsAreInstancesOfType_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("IEnumerable<string> actual, Type type", oldAssertion, newAssertion);
 

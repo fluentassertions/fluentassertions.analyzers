@@ -9,6 +9,7 @@ using FluentAssertions.Analyzers.Utilities;
 using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+using System.Linq;
 
 namespace FluentAssertions.Analyzers;
 
@@ -472,6 +473,18 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                 return rewriter.Should("Equal", argument);
             else if (matcher.Is("Not", Method("EqualTo"), out argument))
                 return rewriter.Should("NotEqual", argument);
+            else if (matcher.Is("All", GenericMethod("InstanceOf"), out argument, out var genericType)
+                    || matcher.Has("All", GenericMethod("InstanceOf"), out argument, out genericType))
+                return rewriter.ShouldGeneric("AllBeOfType", genericType);
+            else if (matcher.Is("All", Method("InstanceOf"), out argument)
+                    || matcher.Has("All", Method("InstanceOf"), out argument))
+            {
+                if (argument.Value is ITypeOfOperation typeOf)
+                {
+                    return rewriter.ShouldGeneric("AllBeOfType", typeOf.TypeOperand);
+                }
+                return rewriter.Should("AllBeOfType", argument);
+            }
         }
         if (matcher.Is("Zero"))
             return rewriter.Should("Be", g => g.LiteralExpression(0));
@@ -539,12 +552,30 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return (invocation.Instance, invocation.TargetMethod.ContainingType);
         }
     }
+    private class GenericMethodInvocationMatcher(string name) : IOperationMatcher
+    {
+        public IArgumentOperation Argument { get; private set; }
+        public ITypeSymbol TypeArgument { get; private set; }
+        public (IOperation op, ISymbol containingType) TryGetNext(IOperation operation)
+        {
+            if (operation is not IInvocationOperation invocation) return default;
+            if (invocation.TargetMethod.Name != name) return default;
+            if (!invocation.TargetMethod.IsGenericMethod) return default;
+            if (invocation.TargetMethod.TypeArguments.Length is not 1) return default;
+
+            Argument = invocation.Arguments.FirstOrDefault();
+            TypeArgument = invocation.TargetMethod.TypeArguments[0];
+
+            return (invocation.Instance, invocation.TargetMethod.ContainingType);
+        }
+    }
     private class PropertyReferenceMatcher(string name) : IOperationMatcher
     {
         public (IOperation op, ISymbol containingType) TryGetNext(IOperation operation)
             => operation is IPropertyReferenceOperation propertyReference && propertyReference.Property.Name == name ? (propertyReference.Instance, propertyReference.Member.ContainingType) : (null, null);
     }
     private static MethodInvocationMatcher Method(string name) => new MethodInvocationMatcher(name);
+    private static GenericMethodInvocationMatcher GenericMethod(string name) => new GenericMethodInvocationMatcher(name);
     private static PropertyReferenceMatcher Property(string name) => new PropertyReferenceMatcher(name);
 
     private static bool IsArgumentTypeOfNonGenericEnumerable(IInvocationOperation invocation, int argumentIndex) => IsArgumentTypeOf(invocation, argumentIndex, SpecialType.System_Collections_IEnumerable);
@@ -568,9 +599,15 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
     {
         public bool Is(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, methodMatcher, out argument);
         public bool Is(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Is, [Property(propertyMatcher)], methodMatcher, out argument);
+        public bool Is(string propertyMatcher, GenericMethodInvocationMatcher genericMethodMatcher, out IArgumentOperation argument, out ITypeSymbol genericType)
+            => Matches(t.Is, [Property(propertyMatcher)], genericMethodMatcher, out argument, out genericType);
+        public bool Is(PropertyReferenceMatcher[] propertyMatchers, GenericMethodInvocationMatcher genericMethodMatcher, out IArgumentOperation argument, out ITypeSymbol genericType)
+            => Matches(t.Is, propertyMatchers, genericMethodMatcher, out argument, out genericType);
 
         public bool Has(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, methodMatcher, out argument);
         public bool Has(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Has, [Property(propertyMatcher)], methodMatcher, out argument);
+        public bool Has(string propertyMatcher, GenericMethodInvocationMatcher genericMethodMatcher, out IArgumentOperation argument, out ITypeSymbol genericType)
+            => Matches(t.Has, [Property(propertyMatcher)], genericMethodMatcher, out argument, out genericType);
         public bool Does(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Does, methodMatcher, out argument);
         public bool Contains(MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Contains, methodMatcher, out argument);
         public bool Contains(string propertyMatcher, MethodInvocationMatcher methodMatcher, out IArgumentOperation argument) => Matches(t.Contains, [Property(propertyMatcher)], methodMatcher, out argument);
@@ -587,6 +624,21 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             argument = null;
             var result = Matches(type, [.. matchers, methodMatcher]);
             if (result) argument = methodMatcher.Argument;
+            return result;
+        }
+        private bool Matches(INamedTypeSymbol type, IOperationMatcher[] matchers, GenericMethodInvocationMatcher genericMethodMatcher,
+            out IArgumentOperation argument, out ITypeSymbol genericType)
+        {
+            argument = null;
+            genericType = null;
+
+            var result = Matches(type, [.. matchers, genericMethodMatcher]);
+            if (result)
+            {
+                argument = genericMethodMatcher.Argument;
+                genericType = genericMethodMatcher.TypeArgument;
+            }
+
             return result;
         }
         private bool Matches(INamedTypeSymbol type, params IOperationMatcher[] matchers)
@@ -615,6 +667,10 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
         public CreateChangedDocument Should(string assertion)
         {
             return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, assertion, subjectIndex: 0, argumentsToRemove: [1]);
+        }
+        public CreateChangedDocument ShouldGeneric(string assertion, ITypeSymbol genericType)
+        {
+            return DocumentEditorUtils.RenameMethodToSubjectShouldGenericAssertion(invocation, ImmutableArray.Create(genericType), context, assertion, subjectIndex: 0, argumentsToRemove: [1]);
         }
 
         public CreateChangedDocument Should(string assertion, IArgumentOperation argument) => Should(assertion, _ => argument.Value.Syntax);

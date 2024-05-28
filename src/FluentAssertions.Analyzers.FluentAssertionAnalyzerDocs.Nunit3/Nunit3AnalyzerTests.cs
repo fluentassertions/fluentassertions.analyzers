@@ -1087,19 +1087,63 @@ public class Nunit3AnalyzerTests
 
         // old assertion:
         CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int));
+        Assert.That(collection, Is.All.InstanceOf(typeof(int)));
+        Assert.That(collection, Is.All.InstanceOf<int>());
+        Assert.That(collection, Has.All.InstanceOf(typeof(int)));
+        Assert.That(collection, Has.All.InstanceOf<int>());
 
         // new assertion:
         collection.Should().AllBeOfType<int>();
     }
 
     [Test, ExpectedAssertionException]
-    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion()
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new object[] { 1, 2, "3" };
 
         // old assertion:
         CollectionAssert.AllItemsAreInstancesOfType(collection, typeof(int));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+
+        // old assertion:
+        Assert.That(collection, Is.All.InstanceOf(typeof(int)));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion_2()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+
+        // old assertion:
+        Assert.That(collection, Is.All.InstanceOf<int>());
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion_3()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+
+        // old assertion:
+        Assert.That(collection, Has.All.InstanceOf(typeof(int)));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_Failure_OldAssertion_4()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+
+        // old assertion:
+        Assert.That(collection, Has.All.InstanceOf<int>());
     }
 
     [Test, ExpectedAssertionException]
@@ -1121,13 +1165,15 @@ public class Nunit3AnalyzerTests
 
         // old assertion:
         CollectionAssert.AllItemsAreInstancesOfType(collection, type);
+        Assert.That(collection, Is.All.InstanceOf(type));
+        Assert.That(collection, Has.All.InstanceOf(type));
 
         // new assertion:
         collection.Should().AllBeOfType(type);
     }
 
     [Test, ExpectedAssertionException]
-    public void CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument_Failure_OldAssertion()
+    public void CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new object[] { 1, 2, "3" };
@@ -1135,6 +1181,28 @@ public class Nunit3AnalyzerTests
 
         // old assertion:
         CollectionAssert.AllItemsAreInstancesOfType(collection, type);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+        var type = typeof(int);
+
+        // old assertion:
+        Assert.That(collection, Is.All.InstanceOf(type));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreInstancesOfType_WithTypeArgument_Failure_OldAssertion_2()
+    {
+        // arrange
+        var collection = new object[] { 1, 2, "3" };
+        var type = typeof(int);
+
+        // old assertion:
+        Assert.That(collection, Has.All.InstanceOf(type));
     }
 
     [Test, ExpectedAssertionException]
