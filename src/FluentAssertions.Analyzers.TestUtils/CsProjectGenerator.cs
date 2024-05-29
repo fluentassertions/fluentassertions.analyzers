@@ -81,7 +81,7 @@ namespace FluentAssertions.Analyzers.TestUtils
             {
                 Language = language,
                 Sources = sources,
-                TargetFramework = TargetFramework.Net6_0,
+                TargetFramework = TargetFramework.Net8_0,
             };
             return CreateProject(arguments).AddMetadataReferences(References);
         }
