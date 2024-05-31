@@ -1807,17 +1807,27 @@ public class NunitTests
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreNotNull(actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.Not.Null{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Has.None.Null{0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAllItemsAreNotNull_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("IEnumerable<string> actual", assertion);
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreNotNull(actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.All.Not.Null);")]
+    [AssertionDiagnostic("Assert.That(actual, Has.None.Null);")]
     [Implemented]
     public void Nunit4_CollectionAssertAllItemsAreNotNull_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("IEnumerable<string> actual", assertion);
 
     [DataTestMethod]
     [AssertionCodeFix(
         oldAssertion: "CollectionAssert.AllItemsAreNotNull(actual{0});",
+        newAssertion: "actual.Should().NotContainNulls({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.Not.Null{0});",
+        newAssertion: "actual.Should().NotContainNulls({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.None.Null{0});",
         newAssertion: "actual.Should().NotContainNulls({0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAllItemsAreNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
@@ -1826,22 +1836,33 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "CollectionAssert.AllItemsAreNotNull(actual{0});",
         newAssertion: "actual.Should().NotContainNulls({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.All.Not.Null);",
+        newAssertion: "actual.Should().NotContainNulls();")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Has.None.Null);",
+        newAssertion: "actual.Should().NotContainNulls();")]
     [Implemented]
     public void Nunit4_CollectionAssertAllItemsAreNotNull_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreUnique(actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.Unique{0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAllItemsAreUnique_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("IEnumerable<string> actual", assertion);
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreUnique(actual{0});")]
+    [AssertionDiagnostic("Assert.That(actual, Is.Unique);")]
     [Implemented]
     public void Nunit4_CollectionAssertAllItemsAreUnique_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("IEnumerable<string> actual", assertion);
 
     [DataTestMethod]
     [AssertionCodeFix(
         oldAssertion: "CollectionAssert.AllItemsAreUnique(actual{0});",
+        newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Unique{0});",
         newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
     [Implemented]
     public void Nunit3_CollectionAssertAllItemsAreUnique_TestCodeFix(string oldAssertion, string newAssertion) => Nunit3VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
@@ -1850,6 +1871,9 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "CollectionAssert.AllItemsAreUnique(actual{0});",
         newAssertion: "actual.Should().OnlyHaveUniqueItems({0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(actual, Is.Unique);",
+        newAssertion: "actual.Should().OnlyHaveUniqueItems();")]
     [Implemented]
     public void Nunit4_CollectionAssertAllItemsAreUnique_TestCodeFix(string oldAssertion, string newAssertion) => Nunit4VerifyFix("IEnumerable<string> actual", oldAssertion, newAssertion);
 

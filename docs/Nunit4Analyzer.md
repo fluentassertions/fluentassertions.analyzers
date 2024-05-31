@@ -892,6 +892,8 @@ var collection = new object[] { 1, "test", true };
 
 // old assertion:
 CollectionAssert.AllItemsAreNotNull(collection);
+Assert.That(collection, Has.None.Null);
+Assert.That(collection, Is.All.Not.Null);
 
 // new assertion:
 collection.Should().NotContainNulls();
@@ -904,6 +906,16 @@ var collection = new object[] { 1, null, true };
 
 // old assertion:
 CollectionAssert.AllItemsAreNotNull(collection); /* fail message:   Assert.That(collection, Is.All.Not.Null)
+  Expected: all items not null
+  But was:  < 1, null, True >
+  First non-matching item at index [1]:  null
+ */
+Assert.That(collection, Has.None.Null); /* fail message:   Assert.That(collection, Has.None.Null)
+  Expected: no item null
+  But was:  < 1, null, True >
+  First non-matching item at index [1]:  null
+ */
+Assert.That(collection, Is.All.Not.Null); /* fail message:   Assert.That(collection, Is.All.Not.Null)
   Expected: all items not null
   But was:  < 1, null, True >
   First non-matching item at index [1]:  null
@@ -921,6 +933,7 @@ var collection = new[] { 1, 2, 3 };
 
 // old assertion:
 CollectionAssert.AllItemsAreUnique(collection);
+Assert.That(collection, Is.Unique);
 
 // new assertion:
 collection.Should().OnlyHaveUniqueItems();
@@ -933,6 +946,11 @@ var collection = new[] { 1, 2, 1 };
 
 // old assertion:
 CollectionAssert.AllItemsAreUnique(collection); /* fail message:   Assert.That(collection, Is.Unique)
+  Expected: all items unique
+  But was:  < 1, 2, 1 >
+  Not unique items: < 1 >
+ */
+Assert.That(collection, Is.Unique); /* fail message:   Assert.That(collection, Is.Unique)
   Expected: all items unique
   But was:  < 1, 2, 1 >
   Not unique items: < 1 >

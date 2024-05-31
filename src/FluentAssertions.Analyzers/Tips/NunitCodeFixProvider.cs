@@ -485,6 +485,11 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
                 }
                 return rewriter.Should("AllBeOfType", argument);
             }
+            else if (matcher.Is("Unique"))
+                return rewriter.Should("OnlyHaveUniqueItems");
+            else if (matcher.Has("None", "Null")
+                || matcher.Is("All", "Not", "Null"))
+                return rewriter.Should("NotContainNulls");
         }
         if (matcher.Is("Zero"))
             return rewriter.Should("Be", g => g.LiteralExpression(0));
