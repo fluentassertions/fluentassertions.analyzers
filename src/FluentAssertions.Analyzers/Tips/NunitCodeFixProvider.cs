@@ -497,11 +497,13 @@ public class NunitCodeFixProvider : TestingFrameworkCodeFixProvider<NunitCodeFix
             return rewriter.Should("NotBe", g => g.LiteralExpression(0));
         else if (matcher.Is(Method("GreaterThan"), out var argument))
             return rewriter.Should("BeGreaterThan", argument);
-        else if (matcher.Is(Method("GreaterThanOrEqualTo"), out argument))
+        else if (matcher.Is(Method("GreaterThanOrEqualTo"), out argument)
+            || matcher.Is(Method("AtLeast"), out argument))
             return rewriter.Should("BeGreaterOrEqualTo", argument);
         else if (matcher.Is(Method("LessThan"), out argument))
             return rewriter.Should("BeLessThan", argument);
-        else if (matcher.Is(Method("LessThanOrEqualTo"), out argument))
+        else if (matcher.Is(Method("LessThanOrEqualTo"), out argument)
+            || matcher.Is(Method("AtMost"), out argument))
             return rewriter.Should("BeLessOrEqualTo", argument);
         else if (matcher.Has(Method("Member"), out argument)
             || matcher.Does(Method("Contain"), out argument)

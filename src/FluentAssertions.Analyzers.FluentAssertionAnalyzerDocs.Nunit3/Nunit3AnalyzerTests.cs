@@ -627,6 +627,7 @@ public class Nunit3AnalyzerTests
         // old assertion:
         Assert.GreaterOrEqual(number, 1);
         Assert.That(number, Is.GreaterThanOrEqualTo(1));
+        Assert.That(number, Is.AtLeast(1));
 
         // new assertion:
         number.Should().BeGreaterOrEqualTo(1);
@@ -650,6 +651,16 @@ public class Nunit3AnalyzerTests
 
         // old assertion:
         Assert.That(number, Is.GreaterThanOrEqualTo(2));
+    }
+    
+    [Test, ExpectedAssertionException]
+    public void AssertGreaterOrEqual_Failure_OldAssertion_2()
+    {
+        // arrange
+        var number = 1;
+
+        // old assertion:
+        Assert.That(number, Is.AtLeast(2));
     }
 
     [Test, ExpectedAssertionException]
@@ -715,6 +726,7 @@ public class Nunit3AnalyzerTests
         // old assertion:
         Assert.LessOrEqual(number, 2);
         Assert.That(number, Is.LessThanOrEqualTo(2));
+        Assert.That(number, Is.AtMost(2));
 
         // new assertion:
         number.Should().BeLessOrEqualTo(2);
@@ -738,6 +750,16 @@ public class Nunit3AnalyzerTests
 
         // old assertion:
         Assert.That(number, Is.LessThanOrEqualTo(1));
+    }
+
+    [Test, ExpectedAssertionException]
+    public void AssertLessOrEqual_Failure_OldAssertion_2()
+    {
+        // arrange
+        var number = 2;
+
+        // old assertion:
+        Assert.That(number, Is.AtMost(1));
     }
 
     [Test, ExpectedAssertionException]
