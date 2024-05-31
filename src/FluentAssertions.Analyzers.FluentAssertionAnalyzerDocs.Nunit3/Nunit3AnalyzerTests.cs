@@ -1224,19 +1224,41 @@ public class Nunit3AnalyzerTests
 
         // old assertion:
         CollectionAssert.AllItemsAreNotNull(collection);
+        Assert.That(collection, Has.None.Null);
+        Assert.That(collection, Is.All.Not.Null);
 
         // new assertion:
         collection.Should().NotContainNulls();
     }
 
     [Test, ExpectedAssertionException]
-    public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion()
+    public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new object[] { 1, null, true };
 
         // old assertion:
         CollectionAssert.AllItemsAreNotNull(collection);
+    }
+    
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new object[] { 1, null, true };
+
+        // old assertion:
+        Assert.That(collection, Has.None.Null);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreNotNull_Failure_OldAssertion_2()
+    {
+        // arrange
+        var collection = new object[] { 1, null, true };
+
+        // old assertion:
+        Assert.That(collection, Is.All.Not.Null);
     }
 
     [Test, ExpectedAssertionException]
@@ -1257,19 +1279,30 @@ public class Nunit3AnalyzerTests
 
         // old assertion:
         CollectionAssert.AllItemsAreUnique(collection);
+        Assert.That(collection, Is.Unique);
 
         // new assertion:
         collection.Should().OnlyHaveUniqueItems();
     }
 
     [Test, ExpectedAssertionException]
-    public void CollectionAssertAllItemsAreUnique_Failure_OldAssertion()
+    public void CollectionAssertAllItemsAreUnique_Failure_OldAssertion_0()
     {
         // arrange
         var collection = new[] { 1, 2, 1 };
 
         // old assertion:
         CollectionAssert.AllItemsAreUnique(collection);
+    }
+
+    [Test, ExpectedAssertionException]
+    public void CollectionAssertAllItemsAreUnique_Failure_OldAssertion_1()
+    {
+        // arrange
+        var collection = new[] { 1, 2, 1 };
+
+        // old assertion:
+        Assert.That(collection, Is.Unique);
     }
 
     [Test, ExpectedAssertionException]
