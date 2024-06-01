@@ -730,6 +730,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("Assert.GreaterOrEqual(arg1, arg2{0});")]
     [AssertionDiagnostic("Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2){0});")]
+    [AssertionDiagnostic("Assert.That(arg1, Is.AtLeast(arg2){0});")]
     [Implemented]
     public void Nunit3_AssertGreaterOrEqual_TestAnalyzer(string assertion)
     {
@@ -742,6 +743,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("ClassicAssert.GreaterOrEqual(arg1, arg2{0});")]
     [AssertionDiagnostic("Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2));")]
+    [AssertionDiagnostic("Assert.That(arg1, Is.AtLeast(arg2));")]
     [Implemented]
     public void Nunit4_AssertGreaterOrEqual_TestAnalyzer(string assertion)
     {
@@ -758,6 +760,9 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2){0});",
         newAssertion: "arg1.Should().BeGreaterOrEqualTo(arg2{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(arg1, Is.AtLeast(arg2){0});",
+        newAssertion: "arg1.Should().BeGreaterOrEqualTo(arg2{0});")]
     [Implemented]
     public void Nunit3_AssertGreaterOrEqual_TestCodeFix(string oldAssertion, string newAssertion)
     {
@@ -773,6 +778,9 @@ public class NunitTests
         newAssertion: "arg1.Should().BeGreaterOrEqualTo(arg2{0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2));",
+        newAssertion: "arg1.Should().BeGreaterOrEqualTo(arg2);")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(arg1, Is.AtLeast(arg2));",
         newAssertion: "arg1.Should().BeGreaterOrEqualTo(arg2);")]
     [Implemented]
     public void Nunit4_AssertGreaterOrEqual_TestCodeFix(string oldAssertion, string newAssertion)
@@ -842,6 +850,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("Assert.LessOrEqual(arg1, arg2{0});")]
     [AssertionDiagnostic("Assert.That(arg1, Is.LessThanOrEqualTo(arg2){0});")]
+    [AssertionDiagnostic("Assert.That(arg1, Is.AtMost(arg2){0});")]
     [Implemented]
     public void Nunit3_AssertLessOrEqual_TestAnalyzer(string assertion)
     {
@@ -854,6 +863,7 @@ public class NunitTests
     [DataTestMethod]
     [AssertionDiagnostic("ClassicAssert.LessOrEqual(arg1, arg2{0});")]
     [AssertionDiagnostic("Assert.That(arg1, Is.LessThanOrEqualTo(arg2));")]
+    [AssertionDiagnostic("Assert.That(arg1, Is.AtMost(arg2));")]
     [Implemented]
     public void Nunit4_AssertLessOrEqual_TestAnalyzer(string assertion)
     {
@@ -870,6 +880,9 @@ public class NunitTests
     [AssertionCodeFix(
         oldAssertion: "Assert.That(arg1, Is.LessThanOrEqualTo(arg2){0});",
         newAssertion: "arg1.Should().BeLessOrEqualTo(arg2{0});")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(arg1, Is.AtMost(arg2){0});",
+        newAssertion: "arg1.Should().BeLessOrEqualTo(arg2{0});")]
     [Implemented]
     public void Nunit3_AssertLessOrEqual_TestCodeFix(string oldAssertion, string newAssertion)
     {
@@ -885,6 +898,9 @@ public class NunitTests
         newAssertion: "arg1.Should().BeLessOrEqualTo(arg2{0});")]
     [AssertionCodeFix(
         oldAssertion: "Assert.That(arg1, Is.LessThanOrEqualTo(arg2));",
+        newAssertion: "arg1.Should().BeLessOrEqualTo(arg2);")]
+    [AssertionCodeFix(
+        oldAssertion: "Assert.That(arg1, Is.AtMost(arg2));",
         newAssertion: "arg1.Should().BeLessOrEqualTo(arg2);")]
     [Implemented]
     public void Nunit4_AssertLessOrEqual_TestCodeFix(string oldAssertion, string newAssertion)

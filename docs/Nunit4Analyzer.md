@@ -463,6 +463,7 @@ var number = 2;
 // old assertion:
 ClassicAssert.GreaterOrEqual(number, 1);
 Assert.That(number, Is.GreaterThanOrEqualTo(1));
+Assert.That(number, Is.AtLeast(1));
 
 // new assertion:
 number.Should().BeGreaterOrEqualTo(1);
@@ -479,6 +480,10 @@ ClassicAssert.GreaterOrEqual(number, 2); /* fail message:   Assert.That(arg1, Is
   But was:  1
  */
 Assert.That(number, Is.GreaterThanOrEqualTo(2)); /* fail message:   Assert.That(number, Is.GreaterThanOrEqualTo(2))
+  Expected: greater than or equal to 2
+  But was:  1
+ */
+Assert.That(number, Is.AtLeast(2)); /* fail message:   Assert.That(number, Is.AtLeast(2))
   Expected: greater than or equal to 2
   But was:  1
  */
@@ -529,6 +534,7 @@ var number = 1;
 // old assertion:
 ClassicAssert.LessOrEqual(number, 2);
 Assert.That(number, Is.LessThanOrEqualTo(2));
+Assert.That(number, Is.AtMost(2));
 
 // new assertion:
 number.Should().BeLessOrEqualTo(2);
@@ -545,6 +551,10 @@ ClassicAssert.LessOrEqual(number, 1); /* fail message:   Assert.That(arg1, Is.Le
   But was:  2
  */
 Assert.That(number, Is.LessThanOrEqualTo(1)); /* fail message:   Assert.That(number, Is.LessThanOrEqualTo(1))
+  Expected: less than or equal to 1
+  But was:  2
+ */
+Assert.That(number, Is.AtMost(1)); /* fail message:   Assert.That(number, Is.AtMost(1))
   Expected: less than or equal to 1
   But was:  2
  */
