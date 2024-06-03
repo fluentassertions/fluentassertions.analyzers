@@ -246,7 +246,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         public void AssertStrictEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("object actual, object expected", oldAssertion, newAssertion);
         
-                [DataTestMethod]
+        [DataTestMethod]
         [DataRow("Assert.NotEqual(expected, actual, precision);")]
         [DataRow("Assert.NotEqual(expected, actual, 5);")]
         [Implemented]
