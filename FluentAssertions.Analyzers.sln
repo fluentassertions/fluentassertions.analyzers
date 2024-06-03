@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit3", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit3\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit3.csproj", "{FBCDB423-7729-42CD-9279-2D0BECE37907}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Xunit", "src\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Xunit\FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Xunit.csproj", "{94D58487-F555-45A1-8076-511D1792C1DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{FBCDB423-7729-42CD-9279-2D0BECE37907}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBCDB423-7729-42CD-9279-2D0BECE37907}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBCDB423-7729-42CD-9279-2D0BECE37907}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94D58487-F555-45A1-8076-511D1792C1DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94D58487-F555-45A1-8076-511D1792C1DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94D58487-F555-45A1-8076-511D1792C1DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94D58487-F555-45A1-8076-511D1792C1DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{2871B22C-AEFC-4C33-9BBF-695699E61B57} = {72192514-FA22-4699-8EE1-39D34CFE1025}
 		{A819A8A5-C8F7-46AD-B0F2-44868070A188} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
 		{FBCDB423-7729-42CD-9279-2D0BECE37907} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
+		{94D58487-F555-45A1-8076-511D1792C1DE} = {8EFE7955-E63C-4055-A9FF-76C7CE0A1151}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BF3D005-625C-4CEC-B3FB-298B956402BE}

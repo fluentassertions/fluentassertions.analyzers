@@ -44,3 +44,4 @@ function RunTestsAndValidate {
 RunTestsAndValidate -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs
 RunTestsAndValidate -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit4
 RunTestsAndValidate -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Nunit3
+RunTestsAndValidate -project FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.Xunit
