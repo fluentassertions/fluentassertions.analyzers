@@ -4,12 +4,12 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 # MsTest Analyzer Docs
 
-- [BooleanAssertIsTrue](#scenario-booleanassertistrue) - `flag.Should().BeTrue();`
-- [BooleanAssertIsFalse](#scenario-booleanassertisfalse) - `flag.Should().BeFalse();`
-- [ObjectAssertIsNull](#scenario-objectassertisnull) - `obj.Should().BeNull();`
-- [ObjectAssertIsNotNull](#scenario-objectassertisnotnull) - `obj.Should().NotBeNull();`
-- [ReferenceTypeAssertIsInstanceOfType](#scenario-referencetypeassertisinstanceoftype) - `obj.Should().BeOfType<List<object>>();`
-- [ReferenceTypeAssertIsNotInstanceOfType](#scenario-referencetypeassertisnotinstanceoftype) - `obj.Should().NotBeOfType<List<object>>();`
+- [AssertIsTrue](#scenario-assertistrue) - `flag.Should().BeTrue();`
+- [AssertIsFalse](#scenario-assertisfalse) - `flag.Should().BeFalse();`
+- [AssertIsNull](#scenario-assertisnull) - `obj.Should().BeNull();`
+- [AssertIsNotNull](#scenario-assertisnotnull) - `obj.Should().NotBeNull();`
+- [AssertIsInstanceOfType](#scenario-assertisinstanceoftype) - `obj.Should().BeOfType<List<object>>();`
+- [AssertIsNotInstanceOfType](#scenario-assertisnotinstanceoftype) - `obj.Should().NotBeOfType<List<object>>();`
 - [AssertObjectAreEqual](#scenario-assertobjectareequal) - `obj1.Should().Be(obj2);`
 - [AssertOptionalIntegerAreEqual](#scenario-assertoptionalintegerareequal) - `number1.Should().Be(number2);`
 - [AssertOptionalIntegerAndNullAreEqual](#scenario-assertoptionalintegerandnullareequal) - `number.Should().BeNull();`
@@ -47,7 +47,7 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 ## Scenarios
 
-### scenario: BooleanAssertIsTrue
+### scenario: AssertIsTrue
 
 ```cs
 // arrange
@@ -72,7 +72,7 @@ Assert.IsTrue(flag); /* fail message: Assert.IsTrue failed.  */
 flag.Should().BeTrue(); /* fail message: Expected flag to be true, but found False. */
 ```
 
-### scenario: BooleanAssertIsFalse
+### scenario: AssertIsFalse
 
 ```cs
 // arrange
@@ -97,7 +97,7 @@ Assert.IsFalse(flag); /* fail message: Assert.IsFalse failed.  */
 flag.Should().BeFalse(); /* fail message: Expected flag to be false, but found True. */
 ```
 
-### scenario: ObjectAssertIsNull
+### scenario: AssertIsNull
 
 ```cs
 // arrange
@@ -122,7 +122,7 @@ Assert.IsNull(obj); /* fail message: Assert.IsNull failed.  */
 obj.Should().BeNull(); /* fail message: Expected obj to be <null>, but found "foo". */
 ```
 
-### scenario: ObjectAssertIsNotNull
+### scenario: AssertIsNotNull
 
 ```cs
 // arrange
@@ -147,7 +147,7 @@ Assert.IsNotNull(obj); /* fail message: Assert.IsNotNull failed.  */
 obj.Should().NotBeNull(); /* fail message: Expected obj not to be <null>. */
 ```
 
-### scenario: ReferenceTypeAssertIsInstanceOfType
+### scenario: AssertIsInstanceOfType
 
 ```cs
 // arrange
@@ -174,7 +174,7 @@ Assert.IsInstanceOfType<List<object>>(obj); /* fail message: Assert.IsInstanceOf
 obj.Should().BeOfType<List<object>>(); /* fail message: Expected type to be System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], but found System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]. */
 ```
 
-### scenario: ReferenceTypeAssertIsNotInstanceOfType
+### scenario: AssertIsNotInstanceOfType
 
 ```cs
 // arrange

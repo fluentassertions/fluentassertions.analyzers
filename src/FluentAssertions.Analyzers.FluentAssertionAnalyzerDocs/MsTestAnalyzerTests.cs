@@ -12,7 +12,7 @@ namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 public class MsTestAnalyzerTests
 {
     [TestMethod]
-    public void BooleanAssertIsTrue()
+    public void AssertIsTrue()
     {
         // arrange
         var flag = true;
@@ -25,7 +25,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void BooleanAssertIsTrue_Failure_OldAssertion()
+    public void AssertIsTrue_Failure_OldAssertion()
     {
         // arrange
         var flag = false;
@@ -35,7 +35,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void BooleanAssertIsTrue_Failure_NewAssertion()
+    public void AssertIsTrue_Failure_NewAssertion()
     {
         // arrange
         var flag = false;
@@ -45,7 +45,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod]
-    public void BooleanAssertIsFalse()
+    public void AssertIsFalse()
     {
         // arrange
         var flag = false;
@@ -58,7 +58,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void BooleanAssertIsFalse_Failure_OldAssertion()
+    public void AssertIsFalse_Failure_OldAssertion()
     {
         // arrange
         var flag = true;
@@ -68,7 +68,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void BooleanAssertIsFalse_Failure_NewAssertion()
+    public void AssertIsFalse_Failure_NewAssertion()
     {
         // arrange
         var flag = true;
@@ -78,7 +78,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod]
-    public void ObjectAssertIsNull()
+    public void AssertIsNull()
     {
         // arrange
         object obj = null;
@@ -91,7 +91,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ObjectAssertIsNull_Failure_OldAssertion()
+    public void AssertIsNull_Failure_OldAssertion()
     {
         // arrange
         var obj = "foo";
@@ -101,7 +101,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ObjectAssertIsNull_Failure_NewAssertion()
+    public void AssertIsNull_Failure_NewAssertion()
     {
         // arrange
         var obj = "foo";
@@ -111,7 +111,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod]
-    public void ObjectAssertIsNotNull()
+    public void AssertIsNotNull()
     {
         // arrange
         var obj = new object();
@@ -124,7 +124,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ObjectAssertIsNotNull_Failure_OldAssertion()
+    public void AssertIsNotNull_Failure_OldAssertion()
     {
         // arrange
         object obj = null;
@@ -134,7 +134,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ObjectAssertIsNotNull_Failure_NewAssertion()
+    public void AssertIsNotNull_Failure_NewAssertion()
     {
         // arrange
         object obj = null;
@@ -144,7 +144,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod]
-    public void ReferenceTypeAssertIsInstanceOfType()
+    public void AssertIsInstanceOfType()
     {
         // arrange
         var obj = new List<object>();
@@ -158,7 +158,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ReferenceTypeAssertIsInstanceOfType_Failure_OldAssertion_0()
+    public void AssertIsInstanceOfType_Failure_OldAssertion_0()
     {
         // arrange
         var obj = new List<int>();
@@ -168,7 +168,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ReferenceTypeAssertIsInstanceOfType_Failure_OldAssertion_1()
+    public void AssertIsInstanceOfType_Failure_OldAssertion_1()
     {
         // arrange
         var obj = new List<int>();
@@ -178,7 +178,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ReferenceTypeAssertIsInstanceOfType_Failure_NewAssertion()
+    public void AssertIsInstanceOfType_Failure_NewAssertion()
     {
         // arrange
         var obj = new List<int>();
@@ -188,7 +188,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod]
-    public void ReferenceTypeAssertIsNotInstanceOfType()
+    public void AssertIsNotInstanceOfType()
     {
         // arrange
         var obj = new List<int>();
@@ -202,7 +202,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ReferenceTypeAssertIsNotInstanceOfType_Failure_OldAssertion_0()
+    public void AssertIsNotInstanceOfType_Failure_OldAssertion_0()
     {
         // arrange
         var obj = new List<object>();
@@ -212,7 +212,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ReferenceTypeAssertIsNotInstanceOfType_Failure_OldAssertion_1()
+    public void AssertIsNotInstanceOfType_Failure_OldAssertion_1()
     {
         // arrange
         var obj = new List<object>();
@@ -222,7 +222,7 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod, ExpectedException(typeof(AssertFailedException))]
-    public void ReferenceTypeAssertIsNotInstanceOfType_Failure_NewAssertion()
+    public void AssertIsNotInstanceOfType_Failure_NewAssertion()
     {
         // arrange
         var obj = new List<object>();
