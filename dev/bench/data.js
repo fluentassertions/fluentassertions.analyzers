@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1717418410244,
+  "lastUpdate": 1717654184484,
   "repoUrl": "https://github.com/fluentassertions/fluentassertions.analyzers",
   "entries": {
     "FluentAssertions.Analyzers Benchmark": [
@@ -10912,6 +10912,50 @@ window.BENCHMARK_DATA = {
             "value": 260.7431929792677,
             "unit": "ns",
             "range": "± 1.0824012223324084"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "committer": {
+            "name": "fluentassertions",
+            "username": "fluentassertions"
+          },
+          "id": "dc7fa505fe556906309c956a68a94718e427064e",
+          "message": "feat: Rewrite parameters order when handling constant values in assertions",
+          "timestamp": "2024-06-05T03:31:47Z",
+          "url": "https://github.com/fluentassertions/fluentassertions.analyzers/pull/370/commits/dc7fa505fe556906309c956a68a94718e427064e"
+        },
+        "date": 1717654183901,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation_SingleSource_ObjectStatement_Analyzing",
+            "value": 277.4219164450963,
+            "unit": "ns",
+            "range": "± 0.4405683285957264"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.MinimalCompilation_SingleSource_ObjectStatement_Analyzing",
+            "value": 266.85171893437706,
+            "unit": "ns",
+            "range": "± 1.840810181982476"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.SmallCompilation_MultipleSources_StringAssertions_Analyzing",
+            "value": 270.5641347169876,
+            "unit": "ns",
+            "range": "± 0.6128572534776652"
+          },
+          {
+            "name": "FluentAssertions.Analyzers.BenchmarkTests.FluentAssertionsBenchmarks.SmallCompilation_MultipleSources_StringAssertions_Analyzing",
+            "value": 258.8333321901468,
+            "unit": "ns",
+            "range": "± 0.7468406330393461"
           }
         ]
       }
