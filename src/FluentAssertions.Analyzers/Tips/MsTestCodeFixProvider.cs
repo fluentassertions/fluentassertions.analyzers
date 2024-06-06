@@ -27,7 +27,8 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
 
     private CreateChangedDocument TryComputeFixForAssert(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t)
     {
-        var actualSubjectIndex = invocation.Arguments[1].IsLiteralValue() ? 0 : 1;
+        var actualSubjectIndex = invocation.Arguments.Length is 1 ? 0 
+            : invocation.Arguments[1].IsLiteralValue() ? 0 : 1;
         switch (invocation.TargetMethod.Name)
         {
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean): // AreEqual(string? expected, string? actual, bool ignoreCase)
