@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Composition;
+using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Operations;
@@ -26,6 +27,7 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
 
     private CreateChangedDocument TryComputeFixForAssert(IInvocationOperation invocation, CodeFixContext context, TestingFrameworkCodeFixContext t)
     {
+        var actualSubjectIndex = invocation.Arguments[1].IsLiteralValue() ? 0 : 1;
         switch (invocation.TargetMethod.Name)
         {
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean): // AreEqual(string? expected, string? actual, bool ignoreCase)
@@ -34,7 +36,8 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
                 {
                     var ignoreCase = invocation.Arguments.Length >= 3 && invocation.Arguments[2].IsLiteralValue(true);
                     var newMethod = ignoreCase ? "BeEquivalentTo" : "Be";
-                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, subjectIndex: 1, argumentsToRemove: [2]);
+
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, actualSubjectIndex, argumentsToRemove: [2]);
                 }
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean, t.CultureInfo): // AreEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean, t.CultureInfo, t.String): // AreEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture, string? message)
@@ -48,7 +51,7 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
                         break; // TODO: Handle other cultures
                     }
 
-                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, subjectIndex: 1, argumentsToRemove: [2, 3]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, actualSubjectIndex, argumentsToRemove: [2, 3]);
                 }
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.Float, t.Float, t.Float): // AreEqual(float expected, float actual, float delta)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.Float, t.Float, t.Float, t.String): // AreEqual(float expected, float actual, float delta, string? message)
@@ -59,7 +62,7 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.Decimal, t.Decimal, t.Decimal): // AreEqual(decimal expected, decimal actual, decimal delta)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.Decimal, t.Decimal, t.Decimal, t.String): // AreEqual(decimal expected, decimal actual, decimal delta, string? message)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, t.Decimal, t.Decimal, t.Decimal, t.String, t.ObjectArray): // AreEqual(decimal expected, decimal actual, decimal delta, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeApproximately", subjectIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeApproximately", actualSubjectIndex, argumentsToRemove: []);
             case "AreEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreEqual<T>(T? expected, T? actual)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String): // AreEqual<T>(T? expected, T? actual, string? message)
             case "AreEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String, t.ObjectArray): // AreEqual<T>(T? expected, T? actual, string? message, params object?[]? parameters)
@@ -71,14 +74,14 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
                 {
                     return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeNull", subjectIndex: 0, argumentsToRemove: [1]);
                 }
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Be", subjectIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "Be", actualSubjectIndex, argumentsToRemove: []);
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean): // AreNotEqual(string? expected, string? actual, bool ignoreCase)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean, t.String): // AreNotEqual(string? expected, string? actual, bool ignoreCase, string? message)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean, t.String, t.ObjectArray): // AreNotEqual(string? expected, string? actual, bool ignoreCase, string? message, params object?[]? parameters)
                 {
                     var ignoreCase = invocation.Arguments.Length >= 3 && invocation.Arguments[2].IsLiteralValue(true);
                     var newMethod = ignoreCase ? "NotBeEquivalentTo" : "NotBe";
-                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, subjectIndex: 1, argumentsToRemove: [2]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, actualSubjectIndex, argumentsToRemove: [2]);
                 }
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean, t.CultureInfo): // AreNotEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.String, t.String, t.Boolean, t.CultureInfo, t.String): // AreNotEqual(string? expected, string? actual, bool ignoreCase, CultureInfo? culture, string? message)
@@ -92,7 +95,7 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
                         break; // TODO: Handle other cultures
                     }
 
-                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, subjectIndex: 1, argumentsToRemove: [2, 3]);
+                    return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, newMethod, actualSubjectIndex, argumentsToRemove: [2, 3]);
                 }
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.Float, t.Float, t.Float): // AreNotEqual(float expected, float actual, float delta)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.Float, t.Float, t.Float, t.String): // AreNotEqual(float expected, float actual, float delta, string? message)
@@ -103,7 +106,7 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.Decimal, t.Decimal, t.Decimal): // AreNotEqual(decimal expected, decimal actual, decimal delta)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.Decimal, t.Decimal, t.Decimal, t.String): // AreNotEqual(decimal expected, decimal actual, decimal delta, string? message)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, t.Decimal, t.Decimal, t.Decimal, t.String, t.ObjectArray): // AreNotEqual(decimal expected, decimal actual, decimal delta, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeApproximately", subjectIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeApproximately", actualSubjectIndex, argumentsToRemove: []);
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreNotEqual<T>(T? expected, T? actual)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String): // AreNotEqual<T>(T? expected, T? actual, string? message)
             case "AreNotEqual" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String, t.ObjectArray): // AreNotEqual<T>(T? expected, T? actual, string? message, params object?[]? parameters)
@@ -115,15 +118,15 @@ public class MsTestCodeFixProvider : TestingFrameworkCodeFixProvider
                 {
                     return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeNull", subjectIndex: 0, argumentsToRemove: [1]);
                 }
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBe", subjectIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBe", actualSubjectIndex, argumentsToRemove: []);
             case "AreSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreSame(string? expected, string? actual)
             case "AreSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String): // AreSame(string? expected, string? actual, string? message)
             case "AreSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String, t.ObjectArray): // AreSame(string? expected, string? actual, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeSameAs", subjectIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "BeSameAs", actualSubjectIndex, argumentsToRemove: []);
             case "AreNotSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2): // AreNotSame(string? expected, string? actual)
             case "AreNotSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String): // AreNotSame(string? expected, string? actual, string? message)
             case "AreNotSame" when ArgumentsAreTypeOf(invocation, startFromIndex: 2, t.String, t.ObjectArray): // AreNotSame(string? expected, string? actual, string? message, params object?[]? parameters)
-                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeSameAs", subjectIndex: 1, argumentsToRemove: []);
+                return DocumentEditorUtils.RenameMethodToSubjectShouldAssertion(invocation, context, "NotBeSameAs", actualSubjectIndex, argumentsToRemove: []);
             case "IsTrue" when ArgumentsAreTypeOf(invocation, t.Boolean): // IsTrue(bool condition)
             case "IsTrue" when ArgumentsAreTypeOf(invocation, t.Boolean, t.String): // IsTrue(bool condition, string? message)
             case "IsTrue" when ArgumentsAreTypeOf(invocation, t.Boolean, t.String, t.ObjectArray): // IsTrue(bool condition, string? message, params object?[]? parameters)

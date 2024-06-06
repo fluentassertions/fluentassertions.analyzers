@@ -112,6 +112,8 @@ internal static class OperartionExtensions
             && propertyReference.Property.Name == property;
     }
 
+    public static bool IsLiteralValue(this IArgumentOperation argument)
+        => UnwrapConversion(argument.Value).Kind is OperationKind.Literal;
     public static bool IsLiteralValue<T>(this IArgumentOperation argument, T value)
         => UnwrapConversion(argument.Value) is ILiteralOperation literal && literal.ConstantValue.HasValue && literal.ConstantValue.Value.Equals(value);
     public static bool IsLiteralNull(this IArgumentOperation argument)

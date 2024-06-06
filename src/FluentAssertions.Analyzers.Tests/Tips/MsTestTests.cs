@@ -322,33 +322,26 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(actual, null{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(null, actual{0});")]
         [Implemented]
-        public void AssertOptionalIntegerAndNullAreEqual1_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
+        public void AssertOptionalIntegerAndNullAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
 
         [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(actual, null{0});",
             newAssertion: "actual.Should().BeNull({0});")]
-        [Implemented]
-        public void AssertOptionalIntegerAndNullAreEqual1_TestCodeFix(string oldAssertion, string newAssertion)
-            => VerifyCSharpFix("int? actual", oldAssertion, newAssertion);
-
-        [DataTestMethod]
-        [AssertionDiagnostic("Assert.AreEqual(null, actual{0});")]
-        [Implemented]
-        public void AssertOptionalIntegerAndNullAreEqual2_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
-
-        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(null, actual{0});",
             newAssertion: "actual.Should().BeNull({0});")]
         [Implemented]
-        public void AssertOptionalIntegerAndNullAreEqual2_TestCodeFix(string oldAssertion, string newAssertion)
+        public void AssertOptionalIntegerAndNullAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("int? actual", oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, delta{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, 0.6{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(actual, 4.2d, 0.6{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(4.2d, actual, 0.6{0});")]
         [Implemented]
         public void AssertDoubleAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("double actual, double expected, double delta", assertion);
 
@@ -359,6 +352,12 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, 0.6{0});",
             newAssertion: "actual.Should().BeApproximately(expected, 0.6{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(actual, 4.2d, 0.6{0});",
+            newAssertion: "actual.Should().BeApproximately(4.2d, 0.6{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(4.2d, actual, 0.6{0});",
+            newAssertion: "actual.Should().BeApproximately(4.2d, 0.6{0});")]
         [Implemented]
         public void AssertDoubleAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("double actual, double expected, double delta", oldAssertion, newAssertion);
@@ -366,6 +365,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, delta{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, 0.6f{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(actual, 4.2f, 0.6f{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(4.2f, actual, 0.6f{0});")]
         [Implemented]
         public void AssertFloatAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("float actual, float expected, float delta", assertion);
 
@@ -376,16 +377,32 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, 0.6f{0});",
             newAssertion: "actual.Should().BeApproximately(expected, 0.6f{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(actual, 4.2f, 0.6f{0});",
+            newAssertion: "actual.Should().BeApproximately(4.2f, 0.6f{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(4.2f, actual, 0.6f{0});",
+            newAssertion: "actual.Should().BeApproximately(4.2f, 0.6f{0});")]
         [Implemented]
         public void AssertFloatAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("float actual, float expected, float delta", oldAssertion, newAssertion);
 
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(actual, \"literal\"{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(\"literal\", actual{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, false{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(actual, \"literal\", false{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(\"literal\", actual, false{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, true{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(actual, \"literal\", true{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(\"literal\", actual, true{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, false, System.Globalization.CultureInfo.CurrentCulture{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(actual, \"literal\", false, System.Globalization.CultureInfo.CurrentCulture{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(\"literal\", actual, false, System.Globalization.CultureInfo.CurrentCulture{0});")]
         [AssertionDiagnostic("Assert.AreEqual(expected, actual, true, System.Globalization.CultureInfo.CurrentCulture{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(actual, \"literal\", true, System.Globalization.CultureInfo.CurrentCulture{0});")]
+        [AssertionDiagnostic("Assert.AreEqual(\"literal\", actual, true, System.Globalization.CultureInfo.CurrentCulture{0});")]
         [Implemented]
         public void AssertStringAreEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("string actual, string expected", assertion);
 
@@ -394,17 +411,47 @@ namespace FluentAssertions.Analyzers.Tests.Tips
             oldAssertion: "Assert.AreEqual(expected, actual{0});",
             newAssertion: "actual.Should().Be(expected{0});")]
         [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(actual, \"literal\"{0});",
+            newAssertion: "actual.Should().Be(\"literal\"{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(\"literal\", actual{0});",
+            newAssertion: "actual.Should().Be(\"literal\"{0});")]
+        [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, false{0});",
             newAssertion: "actual.Should().Be(expected{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(actual, \"literal\", false{0});",
+            newAssertion: "actual.Should().Be(\"literal\"{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(\"literal\", actual, false{0});",
+            newAssertion: "actual.Should().Be(\"literal\"{0});")]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, true{0});",
             newAssertion: "actual.Should().BeEquivalentTo(expected{0});")]
         [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(actual, \"literal\", true{0});",
+            newAssertion: "actual.Should().BeEquivalentTo(\"literal\"{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(\"literal\", actual, true{0});",
+            newAssertion: "actual.Should().BeEquivalentTo(\"literal\"{0});")]
+        [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, false, System.Globalization.CultureInfo.CurrentCulture{0});",
             newAssertion: "actual.Should().Be(expected{0});")]
         [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(actual, \"literal\", false, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().Be(\"literal\"{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(\"literal\", actual, false, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().Be(\"literal\"{0});")]
+        [AssertionCodeFix(
             oldAssertion: "Assert.AreEqual(expected, actual, true, System.Globalization.CultureInfo.CurrentCulture{0});",
             newAssertion: "actual.Should().BeEquivalentTo(expected{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(actual, \"literal\", true, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().BeEquivalentTo(\"literal\"{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreEqual(\"literal\", actual, true, System.Globalization.CultureInfo.CurrentCulture{0});",
+            newAssertion: "actual.Should().BeEquivalentTo(\"literal\"{0});")]
         [Implemented]
         public void AssertStringAreEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("string actual, string expected", oldAssertion, newAssertion);
@@ -455,12 +502,16 @@ namespace FluentAssertions.Analyzers.Tests.Tips
 
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreNotEqual(actual, null{0});")]
+        [AssertionDiagnostic("Assert.AreNotEqual(null, actual{0});")]
         [Implemented]
         public void AssertOptionalIntAndNullAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("int? actual", assertion);
 
         [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Assert.AreNotEqual(actual, null{0});",
+            newAssertion: "actual.Should().NotBeNull({0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreNotEqual(null, actual{0});",
             newAssertion: "actual.Should().NotBeNull({0});")]
         [Implemented]
         public void AssertOptionalIntAndNullAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
@@ -469,6 +520,8 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataTestMethod]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, delta{0});")]
         [AssertionDiagnostic("Assert.AreNotEqual(expected, actual, 0.6f{0});")]
+        [AssertionDiagnostic("Assert.AreNotEqual(actual, 4.2f, 0.6f{0});")]
+        [AssertionDiagnostic("Assert.AreNotEqual(4.2f, actual, 0.6f{0});")]
         [Implemented]
         public void AssertFloatAreNotEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("float actual, float expected, float delta", assertion);
 
@@ -479,6 +532,12 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [AssertionCodeFix(
             oldAssertion: "Assert.AreNotEqual(expected, actual, 0.6f{0});",
             newAssertion: "actual.Should().NotBeApproximately(expected, 0.6f{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreNotEqual(actual, 4.2f, 0.6f{0});",
+            newAssertion: "actual.Should().NotBeApproximately(4.2f, 0.6f{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "Assert.AreNotEqual(4.2f, actual, 0.6f{0});",
+            newAssertion: "actual.Should().NotBeApproximately(4.2f, 0.6f{0});")]
         [Implemented]
         public void AssertFloatAreNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("float actual, float expected, float delta", oldAssertion, newAssertion);
