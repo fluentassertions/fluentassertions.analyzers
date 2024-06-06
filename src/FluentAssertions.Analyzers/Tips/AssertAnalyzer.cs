@@ -162,6 +162,8 @@ public class AssertAnalyzer : DiagnosticAnalyzer
             var op = (IInvocationOperation)context.Operation;
             if (IsMsTestAssertClass(op.TargetMethod.ContainingType) && !IsMethodExcluded(context.Options, op))
             {
+                if (op.TargetMethod.Name is "Fail" or "Inconclusive" && op.TargetMethod.ContainingType.EqualsSymbol(_msTestsAssertSymbol))
+                    return;
                 context.ReportDiagnostic(Diagnostic.Create(MSTestsRule, op.Syntax.GetLocation()));
             }
         }

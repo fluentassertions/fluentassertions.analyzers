@@ -9,6 +9,19 @@ namespace FluentAssertions.Analyzers.Tests.Tips
     public class MsTestTests
     {
         [DataTestMethod]
+        [AssertionDiagnostic("Assert.Inconclusive({0});")]
+        [AssertionDiagnostic("Assert.Fail({0});")]
+        [Implemented]
+        public void MsTest_NotReportedAsserts_TestAnalyzer(string assertion)
+        {
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithAllAnalyzers()
+                .WithSources(GenerateCode.MsTestAssertion(string.Empty, assertion))
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.MSTestTestFramework_3_1_1)
+            );
+        }
+
+        [DataTestMethod]
         [AssertionDiagnostic("Assert.IsTrue(actual{0});")]
         [AssertionDiagnostic("Assert.IsTrue(bool.Parse(\"true\"){0});")]
         [Implemented]
