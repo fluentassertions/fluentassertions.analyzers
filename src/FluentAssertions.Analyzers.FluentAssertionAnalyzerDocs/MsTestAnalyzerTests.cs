@@ -268,6 +268,39 @@ public class MsTestAnalyzerTests
     }
 
     [TestMethod]
+    public void AssertObjectAreEqual_LiteralValue()
+    {
+        // arrange
+        object obj1 = "foo";
+
+        // old assertion:
+        Assert.AreEqual(obj1, "foo");
+
+        // new assertion:
+        obj1.Should().Be("foo");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertObjectAreEqual_LiteralValue_Failure_OldAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+
+        // old assertion:
+        Assert.AreEqual(obj1, "bar");
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void AssertObjectAreEqual_LiteralValue_Failure_NewAssertion()
+    {
+        // arrange
+        object obj1 = "foo";
+
+        // new assertion:
+        obj1.Should().Be("bar");
+    }
+
+    [TestMethod]
     public void AssertOptionalIntegerAreEqual()
     {
         // arrange

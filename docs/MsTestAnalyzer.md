@@ -11,6 +11,7 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [AssertIsInstanceOfType](#scenario-assertisinstanceoftype) - `obj.Should().BeOfType<List<object>>();`
 - [AssertIsNotInstanceOfType](#scenario-assertisnotinstanceoftype) - `obj.Should().NotBeOfType<List<object>>();`
 - [AssertObjectAreEqual](#scenario-assertobjectareequal) - `obj1.Should().Be(obj2);`
+- [AssertObjectAreEqual_LiteralValue](#scenario-assertobjectareequal_literalvalue) - `obj1.Should().Be("foo");`
 - [AssertOptionalIntegerAreEqual](#scenario-assertoptionalintegerareequal) - `number1.Should().Be(number2);`
 - [AssertOptionalIntegerAndNullAreEqual](#scenario-assertoptionalintegerandnullareequal) - `number.Should().BeNull();`
 - [AssertDoubleAreEqual](#scenario-assertdoubleareequal) - `number1.Should().BeApproximately(number2, delta);`
@@ -226,6 +227,31 @@ Assert.AreEqual(obj2, obj1); /* fail message: Assert.AreEqual failed. Expected:<
 
 // new assertion:
 obj1.Should().Be(obj2); /* fail message: Expected obj1 to be 42, but found "foo". */
+```
+
+### scenario: AssertObjectAreEqual_LiteralValue
+
+```cs
+// arrange
+object obj1 = "foo";
+
+// old assertion:
+Assert.AreEqual(obj1, "foo");
+
+// new assertion:
+obj1.Should().Be("foo");
+```
+
+#### Failure messages
+
+```cs
+object obj1 = "foo";
+
+// old assertion:
+Assert.AreEqual(obj1, "bar"); /* fail message: Assert.AreEqual failed. Expected:<foo>. Actual:<bar>.  */
+
+// new assertion:
+obj1.Should().Be("bar"); /* fail message: Expected obj1 to be "bar", but found "foo". */
 ```
 
 ### scenario: AssertOptionalIntegerAreEqual
@@ -950,7 +976,7 @@ Action action = ThrowException;
 // old assertion:
 Assert.ThrowsException<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|106_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1265
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1298
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsException[T](Action action, String message, Object[] parameters) */
 
 // new assertion:
@@ -980,7 +1006,7 @@ Func<Task> action = ThrowExceptionAsync;
 // old assertion:
 await Assert.ThrowsExceptionAsync<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
 Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1301
+Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|112_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1334
    at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsExceptionAsync[T](Func`1 action, String message, Object[] parameters) */
 
 // new assertion:
