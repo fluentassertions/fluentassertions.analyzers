@@ -8,6 +8,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips
     [TestClass]
     public class MsTestTests
     {
+        [TestMethod]
+        [Implemented]
+        public void SupportExcludingMethods()
+        {
+            var source = GenerateCode.MsTestAssertion("bool actual", "Assert.IsTrue(actual);");
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithAllAnalyzers()
+                .WithSources(source)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.MSTestTestFramework_3_1_1)
+                .WithAnalyzerConfigOption("ffa_excluded_methods", "M:Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(System.Boolean)")
+                .WithExpectedDiagnostics()
+            );
+        }
+
         [DataTestMethod]
         [AssertionDiagnostic("Assert.Inconclusive({0});")]
         [AssertionDiagnostic("Assert.Fail({0});")]

@@ -206,7 +206,9 @@ namespace FluentAssertions.Analyzers.Tests
         /// <param name="analyzers">The analyzer to run on the documents</param>
         /// <param name="documents">The Documents that the analyzer will be run on</param>
         /// <returns>An IEnumerable of Diagnostics that surfaced in the source code, sorted by Location</returns>
-        private static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer[] analyzers, Document[] documents)
+        private static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer[] analyzers, Document[] documents) => GetSortedDiagnosticsFromDocuments(analyzers, TestAnalyzerConfigOptionsProvider.Empty, documents);
+
+        private static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer[] analyzers, AnalyzerConfigOptionsProvider analyzerConfigOptions, Document[] documents)
         {
             var projects = new HashSet<Project>();
             foreach (var document in documents)
@@ -228,7 +230,7 @@ namespace FluentAssertions.Analyzers.Tests
                             ["CS1705"] = ReportDiagnostic.Suppress,
                             ["CS8019"] = ReportDiagnostic.Suppress // TODO: Unnecessary using directive
                         }))
-                    .WithAnalyzers(ImmutableArray.Create(analyzers));
+                    .WithAnalyzers(ImmutableArray.Create(analyzers), new AnalyzerOptions(ImmutableArray<AdditionalText>.Empty, analyzerConfigOptions));
                 var relevantDiagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
 
                 var allDiagnostics = compilationWithAnalyzers.GetAllDiagnosticsAsync().Result;
@@ -291,7 +293,7 @@ namespace FluentAssertions.Analyzers.Tests
             var project = CsProjectGenerator.CreateProject(arguments);
             var documents = project.Documents.ToArray();
 
-            var diagnostics = GetSortedDiagnosticsFromDocuments(arguments.DiagnosticAnalyzers.ToArray(), documents);
+            var diagnostics = GetSortedDiagnosticsFromDocuments(arguments.DiagnosticAnalyzers.ToArray(), arguments.CreateAnalyzerConfigOptionsProvider(), documents);
             VerifyDiagnosticResults(diagnostics, arguments.DiagnosticAnalyzers.ToArray(), arguments.ExpectedDiagnostics.ToArray());
         }
 

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using FluentAssertions.Analyzers.TestUtils;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,6 +8,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips;
 [TestClass]
 public class NunitTests
 {
+    [TestMethod]
+    [Implemented]
+    public void SupportExcludingMethods()
+    {
+        var source = GenerateCode.Nunit3Assertion("bool actual", "Assert.IsTrue(actual);");
+        DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+            .WithAllAnalyzers()
+            .WithSources(source)
+            .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.Nunit_3_14_0)
+            .WithAnalyzerConfigOption("ffa_excluded_methods", "M:NUnit.Framework.Assert.IsTrue(System.Boolean)")
+            .WithExpectedDiagnostics()
+        );
+    }
+
     #region Assert.cs
 
     [DataTestMethod]
@@ -1705,7 +1717,7 @@ public class NunitTests
         Nunit4VerifyFix("object expected, List<object> actual", oldAssertion, newAssertion);
         Nunit4VerifyFix("DateTime expected, DateTime[] actual", oldAssertion, newAssertion);
         Nunit4VerifyFix("DateTime expected, List<DateTime> actual", oldAssertion, newAssertion);
-    }    
+    }
 
     [DataTestMethod]
     [AssertionMethodCodeFix(
@@ -1775,7 +1787,7 @@ public class NunitTests
     [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf<int>(){0});")]
     [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf(type){0});")]
     [Implemented]
-    public void Nunit3_CollectionAssertAllItemsAreInstancesOfType_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("IEnumerable<string> actual, Type type", assertion); 
+    public void Nunit3_CollectionAssertAllItemsAreInstancesOfType_TestAnalyzer(string assertion) => Nunit3VerifyDiagnostic("IEnumerable<string> actual, Type type", assertion);
 
     [DataTestMethod]
     [AssertionDiagnostic("CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(string){0});")]
@@ -1787,7 +1799,7 @@ public class NunitTests
     [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf<int>());")]
     [AssertionDiagnostic("Assert.That(actual, Has.All.InstanceOf(type));")]
     [Implemented]
-    public void Nunit4_CollectionAssertAllItemsAreInstancesOfType_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("IEnumerable<string> actual, Type type", assertion); 
+    public void Nunit4_CollectionAssertAllItemsAreInstancesOfType_TestAnalyzer(string assertion) => Nunit4VerifyDiagnostic("IEnumerable<string> actual, Type type", assertion);
 
     [DataTestMethod]
     [AssertionCodeFix(

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FluentAssertions.Analyzers.TestUtils;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 
