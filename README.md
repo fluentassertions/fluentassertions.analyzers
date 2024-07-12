@@ -40,10 +40,12 @@ dotnet add package FluentAssertions.Analyzers
 
 © Thanks to https://github.com/meziantou/Meziantou.FluentAssertionsAnalyzers
 
-You can exclude assertion methods using the .editorconfig file:
+You can exclude assertion methods using the `.editorconfig` file:
 
+````
 [*.cs]
 ffa_excluded_methods=M:NUnit.Framework.Assert.Fail;M:NUnit.Framework.Assert.Fail(System.String)
+````
 
 ## Getting Started
 
