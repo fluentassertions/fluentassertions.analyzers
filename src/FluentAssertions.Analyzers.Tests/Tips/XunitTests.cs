@@ -7,6 +7,20 @@ namespace FluentAssertions.Analyzers.Tests.Tips
     [TestClass]
     public class XunitTests
     {
+        [TestMethod]
+        [Implemented]
+        public void SupportExcludingMethods()
+        {
+            var source = GenerateCode.XunitAssertion("bool actual", "Assert.True(actual);");
+            DiagnosticVerifier.VerifyDiagnostic(new DiagnosticVerifierArguments()
+                .WithAllAnalyzers()
+                .WithSources(source)
+                .WithPackageReferences(PackageReference.FluentAssertions_6_12_0, PackageReference.XunitAssert_2_5_1)
+                .WithAnalyzerConfigOption("ffa_excluded_methods", "M:Xunit.Assert.True(System.Boolean)")
+                .WithExpectedDiagnostics()
+            );
+        }
+
         [DataTestMethod]
         [DataRow("Assert.True(actual);")]
         [DataRow("Assert.True(actual, \"because it's possible\");")]
@@ -96,7 +110,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertFloatEqualWithTolerance_TestAnalyzer(string assertion) =>
             VerifyCSharpDiagnostic("float actual, float expected, float tolerance", assertion);
-        
+
         [DataTestMethod]
         [DataRow(
             /* oldAssertion: */ "Assert.Equal(expected, actual, tolerance);",
@@ -107,14 +121,14 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertFloatEqualWithTolerance_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("float actual, float expected, float tolerance", oldAssertion, newAssertion);
-        
+
         [DataTestMethod]
         [DataRow("Assert.Equal(expected, actual, tolerance);")]
         [DataRow("Assert.Equal(expected, actual, 0.6);")]
         [Implemented]
         public void AssertDoubleEqualWithTolerance_TestAnalyzer(string assertion) =>
             VerifyCSharpDiagnostic("double actual, double expected, double tolerance", assertion);
-        
+
         [DataTestMethod]
         [DataRow(
             /* oldAssertion: */ "Assert.Equal(expected, actual, tolerance);",
@@ -157,7 +171,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertDecimalEqualWithPrecision_TestAnalyzer(string assertion) =>
             VerifyCSharpDiagnostic("decimal actual, decimal expected, int precision", assertion);
-        
+
         // There is no corresponding API in FluentAssertions
         [DataTestMethod]
         [DataRow(
@@ -169,13 +183,13 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertDecimalEqualWithPrecision_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("decimal actual, decimal expected, int precision", oldAssertion, newAssertion);
-        
+
         [DataTestMethod]
         [DataRow("Assert.Equal(expected, actual, precision);")]
         [DataRow("Assert.Equal(expected, actual, TimeSpan.FromSeconds(1));")]
         [Implemented]
         public void AssertDateTimeEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("DateTime actual, DateTime expected, TimeSpan precision", assertion);
-        
+
         [DataTestMethod]
         [DataRow(
             /* oldAssertion: */ "Assert.Equal(expected, actual, precision);",
@@ -186,7 +200,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertDateTimeEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("DateTime actual, DateTime expected, TimeSpan precision", oldAssertion, newAssertion);
-        
+
         [DataTestMethod]
         [DataRow("Assert.Equal(expected, actual, comparer);")]
         [DataRow("Assert.Equal(expected, actual, ReferenceEqualityComparer.Instance);")]
@@ -209,7 +223,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataRow("Assert.Equal(expected, actual);")]
         [Implemented]
         public void AssertObjectEqual_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic("object actual, object expected", assertion);
-        
+
         [DataTestMethod]
         [DataRow(
             /* oldAssertion: */ "Assert.Equal(expected, actual);",
@@ -245,7 +259,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertStrictEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("object actual, object expected", oldAssertion, newAssertion);
-        
+
         [DataTestMethod]
         [DataRow("Assert.NotEqual(expected, actual, precision);")]
         [DataRow("Assert.NotEqual(expected, actual, 5);")]
@@ -271,7 +285,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertDecimalNotEqualWithPrecision_TestAnalyzer(string assertion) =>
             VerifyCSharpDiagnostic("decimal actual, decimal expected, int precision", assertion);
-        
+
         // There is no corresponding API in FluentAssertions
         [DataTestMethod]
         [DataRow(
@@ -283,7 +297,7 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertDecimalNotEqualWithPrecision_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("decimal actual, decimal expected, int precision", oldAssertion, newAssertion);
-        
+
         [DataTestMethod]
         [DataRow("Assert.NotEqual(expected, actual, comparer);")]
         [DataRow("Assert.NotEqual(expected, actual, ReferenceEqualityComparer.Instance);")]
@@ -301,13 +315,13 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertObjectNotEqualWithComparer_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("object actual, object expected, IEqualityComparer<object> comparer", oldAssertion, newAssertion);
-        
+
         [DataTestMethod]
         [DataRow("Assert.NotEqual(expected, actual);")]
         [Implemented]
         public void AssertObjectNotEqual_TestAnalyzer(string assertion) =>
             VerifyCSharpDiagnostic("object actual, object expected", assertion);
-        
+
         [DataTestMethod]
         [DataRow(
             /* oldAssertion: */ "Assert.NotEqual(expected, actual);",
@@ -315,13 +329,13 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [Implemented]
         public void AssertObjectNotEqual_TestCodeFix(string oldAssertion, string newAssertion)
             => VerifyCSharpFix("object actual, object expected", oldAssertion, newAssertion);
-        
+
         [DataTestMethod]
         [DataRow("Assert.NotStrictEqual(expected, actual);")]
         [Implemented]
         public void AssertObjectNotStrictEqual_TestAnalyzer(string assertion) =>
             VerifyCSharpDiagnostic("object actual, object expected", assertion);
-        
+
         [DataTestMethod]
         [DataRow(
             /* oldAssertion: */ "Assert.NotStrictEqual(expected, actual);",
@@ -700,21 +714,21 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataRow("Action action", "Assert.Throws<NullReferenceException>(action);")]
         [DataRow("Action action", "Assert.Throws<ArgumentException>(\"propertyName\", action);")]
         [Implemented]
-        public void AssertThrows_TestAnalyzer(string arguments, string assertion) 
+        public void AssertThrows_TestAnalyzer(string arguments, string assertion)
             => VerifyCSharpDiagnostic(arguments, assertion);
 
         [DataTestMethod]
-        [DataRow("Action action", 
+        [DataRow("Action action",
             /* oldAssertion */ "Assert.Throws(typeof(ArgumentException), action);",
             /* newAssertion */ "action.Should().ThrowExactly<ArgumentException>();")]
-        [DataRow("Action action", 
+        [DataRow("Action action",
             /* oldAssertion */ "Assert.Throws<NullReferenceException>(action);",
             /* newAssertion */ "action.Should().ThrowExactly<NullReferenceException>();")]
-        [DataRow("Action action", 
+        [DataRow("Action action",
             /* oldAssertion */ "Assert.Throws<ArgumentException>(\"propertyName\", action);",
             /* newAssertion */ "action.Should().ThrowExactly<ArgumentException>().WithParameterName(\"propertyName\");")]
         [Implemented]
-        public void AssertThrows_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+        public void AssertThrows_TestCodeFix(string arguments, string oldAssertion, string newAssertion)
             => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
 
         [DataTestMethod]
@@ -723,51 +737,50 @@ namespace FluentAssertions.Analyzers.Tests.Tips
         [DataRow("Func<Task> action", "Assert.ThrowsAsync<NullReferenceException>(action);")]
         [DataRow("Func<Task> action", "Assert.ThrowsAsync<ArgumentException>(\"propertyName\", action);")]
         [Implemented]
-        public void AssertThrowsAsync_TestAnalyzer(string arguments, string assertion) 
+        public void AssertThrowsAsync_TestAnalyzer(string arguments, string assertion)
             => VerifyCSharpDiagnostic(arguments, assertion);
 
         [DataTestMethod]
-        [DataRow("Func<Task> action", 
+        [DataRow("Func<Task> action",
             /* oldAssertion */ "Assert.ThrowsAsync(typeof(ArgumentException), action);",
             /* newAssertion */ "action.Should().ThrowExactlyAsync<ArgumentException>();")]
-        [DataRow("Func<Task> action", 
+        [DataRow("Func<Task> action",
             /* oldAssertion */ "Assert.ThrowsAsync<NullReferenceException>(action);",
             /* newAssertion */ "action.Should().ThrowExactlyAsync<NullReferenceException>();")]
-        [DataRow("Func<Task> action", 
+        [DataRow("Func<Task> action",
             /* oldAssertion */ "Assert.ThrowsAsync<ArgumentException>(\"propertyName\", action);",
             /* newAssertion */ "action.Should().ThrowExactlyAsync<ArgumentException>().WithParameterName(\"propertyName\");")]
         [Implemented]
-        public void AssertThrowsAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+        public void AssertThrowsAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion)
             => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
 
         [DataTestMethod]
         [DataRow("Action action", "Assert.ThrowsAny<NullReferenceException>(action);")]
         [Implemented]
-        public void AssertThrowsAny_TestAnalyzer(string arguments, string assertion) 
+        public void AssertThrowsAny_TestAnalyzer(string arguments, string assertion)
             => VerifyCSharpDiagnostic(arguments, assertion);
 
         [DataTestMethod]
-        [DataRow("Action action", 
+        [DataRow("Action action",
             /* oldAssertion */ "Assert.ThrowsAny<NullReferenceException>(action);",
             /* newAssertion */ "action.Should().Throw<NullReferenceException>();")]
         [Implemented]
-        public void AssertThrowsAny_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+        public void AssertThrowsAny_TestCodeFix(string arguments, string oldAssertion, string newAssertion)
             => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
 
         [DataTestMethod]
         [DataRow("Func<Task> action", "Assert.ThrowsAnyAsync<NullReferenceException>(action);")]
         [Implemented]
-        public void AssertThrowsAnyAsync_TestAnalyzer(string arguments, string assertion) 
+        public void AssertThrowsAnyAsync_TestAnalyzer(string arguments, string assertion)
             => VerifyCSharpDiagnostic(arguments, assertion);
 
         [DataTestMethod]
-        [DataRow("Func<Task> action", 
+        [DataRow("Func<Task> action",
             /* oldAssertion */ "Assert.ThrowsAnyAsync<NullReferenceException>(action);",
             /* newAssertion */ "action.Should().ThrowAsync<NullReferenceException>();")]
         [Implemented]
-        public void AssertThrowsAnyAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion) 
+        public void AssertThrowsAnyAsync_TestCodeFix(string arguments, string oldAssertion, string newAssertion)
             => VerifyCSharpFix(arguments, oldAssertion, newAssertion);
-
 
         private void VerifyCSharpDiagnostic(string methodArguments, string assertion)
         {

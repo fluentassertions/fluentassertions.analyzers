@@ -131,7 +131,7 @@ public class AssertAnalyzer : DiagnosticAnalyzer
             if (fileOptions is null)
                 return false;
 
-            if (!fileOptions.TryGetValue("mfa_excluded_methods", out var symbolDocumentationIds))
+            if (!fileOptions.TryGetValue("ffa_excluded_methods", out var symbolDocumentationIds))
                 return false;
 
             var parts = symbolDocumentationIds.Split(SymbolsSeparators, StringSplitOptions.RemoveEmptyEntries);

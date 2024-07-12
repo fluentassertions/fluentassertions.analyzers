@@ -1,3 +1,4 @@
+using FluentAssertions.Analyzers.TestUtils;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
