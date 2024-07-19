@@ -26,8 +26,6 @@ namespace FluentAssertions.Analyzers.Tests
     {
         public void TestMethod(MultiKeyDict<int, int, string> actual)
         {
-            var dict = new MultiKeyDict<int, int, string>();
-
             actual.ContainsKey(0, 1).Should().BeTrue();
             actual.ContainsValue(0, 1).Should().BeTrue();
         }
@@ -180,13 +178,6 @@ namespace FluentAssertions.Analyzers.Tests
             newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(pair{0}).And.ToString();")]
         [Implemented]
         public void DictionaryShouldContainPair_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
-
-        private void VerifyCSharpNoDiagnostic(string sourceAssersion, string additionalCode)
-        {
-            var source = GenerateCode.GenericIDictionaryAssertion(sourceAssersion, additionalCode);
-
-            DiagnosticVerifier.VerifyCSharpDiagnostic(source);
-        }
 
         private void VerifyCSharpDiagnostic(string sourceAssersion, DiagnosticMetadata metadata)
         {
