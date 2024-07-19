@@ -88,6 +88,23 @@ internal static class OperartionExtensions
     public static bool IsTypeof(this IArgumentOperation argument, INamedTypeSymbol type)
         => argument.Value.UnwrapConversion().Type.EqualsSymbol(type);
 
+    public static bool AreMethodParameterSameTypeAsContainingTypeArguments(this IInvocationOperation invocation, params (int parameter, int typeArgument)[] parameters)
+    {
+        if (invocation.TargetMethod.Parameters.Length != parameters.Length)
+            return false;
+
+        if (invocation.TargetMethod.ContainingType.TypeArguments.Length < parameters.Max(x => x.typeArgument))
+            return false;
+
+        foreach (var (parameter, typeArgument) in parameters)
+        {
+            if (!invocation.TargetMethod.Parameters[parameter].Type.EqualsSymbol(invocation.TargetMethod.ContainingType.TypeArguments[typeArgument]))
+                return false;
+        }
+
+        return true;
+    }
+
     public static bool IsSameArgumentReference(this IArgumentOperation argument1, IArgumentOperation argument2)
     {
         return argument1.TryGetFirstDescendent<IParameterReferenceOperation>(out var argument1Reference)

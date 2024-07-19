@@ -49,6 +49,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        context.Options.AnalyzerConfigOptionsProvider.GetOptions(invocation.Syntax.SyntaxTree).TryGetValue("use_diagnostic_per_assertion", out var useDiagnosticPerAssertion);
         if (HasConditionalAccessAncestor(invocation))
         {
             var expressionStatement = invocation.GetFirstAncestor<IExpressionStatementOperation>();
@@ -211,10 +212,12 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                             case nameof(string.StartsWith) when invocationBeforeShould.IsContainedInType(SpecialType.System_String):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.StringShouldStartWith_StartsWithShouldBeTrue));
                                 return;
-                            case nameof(IDictionary<string, object>.ContainsKey) when invocationBeforeShould.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || invocationBeforeShould.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2):
+                            case nameof(Dictionary<string, object>.ContainsKey) when (invocationBeforeShould.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || invocationBeforeShould.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2))
+                                    && invocationBeforeShould.AreMethodParameterSameTypeAsContainingTypeArguments((parameter: 0, typeArgument: 0)):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldContainKey_ContainsKeyShouldBeTrue));
                                 return;
-                            case nameof(Dictionary<string, object>.ContainsValue) when invocationBeforeShould.IsContainedInType(metadata.DictionaryOfT2):
+                            case nameof(Dictionary<string, object>.ContainsValue) when invocationBeforeShould.IsContainedInType(metadata.DictionaryOfT2)
+                                    && invocationBeforeShould.AreMethodParameterSameTypeAsContainingTypeArguments((parameter: 0, typeArgument: 1)):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldContainValue_ContainsValueShouldBeTrue));
                                 return;
                         }

@@ -14,6 +14,28 @@ namespace FluentAssertions.Analyzers.Tests
         public void DictionaryShouldContainKey_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldContainKey_ContainsKeyShouldBeTrue);
 
         [DataTestMethod]
+        [DataRow(
+@"namespace TestNamespace
+    public class MultiKeyDict<TKey1, TKey2, TValue> : Dictionary<TKey1, Dictionary<TKey2, TValue>>
+    {
+        public bool ContainsKey(TKey1 key1, TKey2 key2) => false;
+        public bool ContainsValue(TKey1 key1, TKey2 key2) => false;
+    }
+
+    public class TestClass
+    {
+        public void TestMethod(MultiKeyDict<int, int, string> actual)
+        {
+            var dict = new MultiKeyDict<int, int, string>();
+
+            actual.ContainsKey(0, 1).Should().BeTrue();
+            actual.ContainsValue(0, 1).Should().BeTrue();
+        }
+    }")]
+        [Implemented]
+        public void DictionaryMethods_CustomMethods_TestNoAnalyzer(string code) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(code);
+
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.ContainsKey(expectedKey).Should().BeTrue({0});",
             newAssertion: "actual.Should().ContainKey(expectedKey{0});")]
@@ -158,6 +180,13 @@ namespace FluentAssertions.Analyzers.Tests
             newAssertion: "actual.ToDictionary(p => p.Key, p=> p.Value).Should().Contain(pair{0}).And.ToString();")]
         [Implemented]
         public void DictionaryShouldContainPair_TestCodeFix(string oldAssertion, string newAssertion) => VerifyCSharpFix(oldAssertion, newAssertion);
+
+        private void VerifyCSharpNoDiagnostic(string sourceAssersion, string additionalCode)
+        {
+            var source = GenerateCode.GenericIDictionaryAssertion(sourceAssersion, additionalCode);
+
+            DiagnosticVerifier.VerifyCSharpDiagnostic(source);
+        }
 
         private void VerifyCSharpDiagnostic(string sourceAssersion, DiagnosticMetadata metadata)
         {
