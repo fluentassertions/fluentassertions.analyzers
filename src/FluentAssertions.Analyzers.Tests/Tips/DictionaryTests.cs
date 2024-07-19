@@ -15,7 +15,10 @@ namespace FluentAssertions.Analyzers.Tests
 
         [DataTestMethod]
         [DataRow(
-@"namespace TestNamespace
+@"using System.Collections.Generic;
+using FluentAssertions;
+
+namespace TestNamespace
     public class MultiKeyDict<TKey1, TKey2, TValue> : Dictionary<TKey1, Dictionary<TKey2, TValue>>
     {
         public bool ContainsKey(TKey1 key1, TKey2 key2) => false;
