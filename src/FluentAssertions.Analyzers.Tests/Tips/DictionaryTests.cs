@@ -19,6 +19,7 @@ namespace FluentAssertions.Analyzers.Tests
 using FluentAssertions;
 
 namespace TestNamespace
+{
     public class MultiKeyDict<TKey1, TKey2, TValue> : Dictionary<TKey1, Dictionary<TKey2, TValue>>
     {
         public bool ContainsKey(TKey1 key1, TKey2 key2) => false;
@@ -32,7 +33,8 @@ namespace TestNamespace
             actual.ContainsKey(0, 1).Should().BeTrue();
             actual.ContainsValue(0, 1).Should().BeTrue();
         }
-    }")]
+    }
+}")]
         [Implemented]
         public void DictionaryMethods_CustomMethods_TestNoAnalyzer(string code) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(code);
 
