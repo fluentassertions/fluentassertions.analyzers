@@ -14,6 +14,31 @@ namespace FluentAssertions.Analyzers.Tests
         public void DictionaryShouldContainKey_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.DictionaryShouldContainKey_ContainsKeyShouldBeTrue);
 
         [DataTestMethod]
+        [DataRow(
+@"using System.Collections.Generic;
+using FluentAssertions;
+
+namespace TestNamespace
+{
+    public class MultiKeyDict<TKey1, TKey2, TValue> : Dictionary<TKey1, Dictionary<TKey2, TValue>>
+    {
+        public bool ContainsKey(TKey1 key1, TKey2 key2) => false;
+        public bool ContainsValue(TKey1 key1, TKey2 key2) => false;
+    }
+
+    public class TestClass
+    {
+        public void TestMethod(MultiKeyDict<int, int, string> actual)
+        {
+            actual.ContainsKey(0, 1).Should().BeTrue();
+            actual.ContainsValue(0, 1).Should().BeTrue();
+        }
+    }
+}")]
+        [Implemented]
+        public void DictionaryMethods_CustomMethods_TestNoAnalyzer(string code) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(code);
+
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.ContainsKey(expectedKey).Should().BeTrue({0});",
             newAssertion: "actual.Should().ContainKey(expectedKey{0});")]
