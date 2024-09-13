@@ -26,14 +26,10 @@ public class AssertionDiagnosticAttribute : Attribute, ITestDataSource
 {
     public string Assertion { get; }
 
-    public bool Ignore { get; }
-
-    public AssertionDiagnosticAttribute(string assertion, bool ignore = false) => (Assertion, Ignore) = (assertion, ignore);
+    public AssertionDiagnosticAttribute(string assertion) => Assertion = assertion;
 
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
-        if (Ignore) yield break;
-
         foreach (var assertion in TestCasesInputUtils.GetTestCases(Assertion))
         {
             yield return new object[] { assertion };
@@ -44,19 +40,23 @@ public class AssertionDiagnosticAttribute : Attribute, ITestDataSource
 }
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public class IgnoreAssertionDiagnosticAttribute : Attribute
+{
+    public string Assertion { get; }
+
+    public IgnoreAssertionDiagnosticAttribute(string assertion) => Assertion = assertion;
+}
+
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class AssertionCodeFixAttribute : Attribute, ITestDataSource
 {
     public string OldAssertion { get; }
     public string NewAssertion { get; }
 
-    public bool Ignore { get; }
-
-    public AssertionCodeFixAttribute(string oldAssertion, string newAssertion, bool ignore = false) => (OldAssertion, NewAssertion, Ignore) = (oldAssertion, newAssertion, ignore);
+    public AssertionCodeFixAttribute(string oldAssertion, string newAssertion) => (OldAssertion, NewAssertion) = (oldAssertion, newAssertion);
 
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
-        if (Ignore) yield break;
-
         foreach (var (oldAssertion, newAssertion) in TestCasesInputUtils.GetTestCases(OldAssertion, NewAssertion))
         {
             yield return new object[] { oldAssertion, newAssertion };
@@ -67,21 +67,26 @@ public class AssertionCodeFixAttribute : Attribute, ITestDataSource
 }
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public class IgnoreAssertionCodeFixAttribute : Attribute
+{
+    public string OldAssertion { get; }
+    public string NewAssertion { get; }
+
+    public IgnoreAssertionCodeFixAttribute(string oldAssertion, string newAssertion) => (OldAssertion, NewAssertion) = (oldAssertion, newAssertion);
+}
+
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class AssertionMethodCodeFixAttribute : Attribute, ITestDataSource
 {
     public string MethodArguments { get; }
     public string OldAssertion { get; }
     public string NewAssertion { get; }
 
-    public bool Ignore { get; }
-
-    public AssertionMethodCodeFixAttribute(string methodArguments, string oldAssertion, string newAssertion, bool ignore = false) 
-        => (MethodArguments, OldAssertion, NewAssertion, Ignore) = (methodArguments, oldAssertion, newAssertion, ignore);
+    public AssertionMethodCodeFixAttribute(string methodArguments, string oldAssertion, string newAssertion)
+        => (MethodArguments, OldAssertion, NewAssertion) = (methodArguments, oldAssertion, newAssertion);
 
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
-        if (Ignore) yield break;
-
         foreach (var (oldAssertion, newAssertion) in TestCasesInputUtils.GetTestCases(OldAssertion, NewAssertion))
         {
             yield return new object[] { MethodArguments, oldAssertion, newAssertion };
@@ -89,6 +94,17 @@ public class AssertionMethodCodeFixAttribute : Attribute, ITestDataSource
     }
 
     public string GetDisplayName(MethodInfo methodInfo, object[] data) => $"{methodInfo.Name}(\"arguments\":{data[0]}, \"old: {data[1]}\", new: {data[2]}\")";
+}
+
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public class IgnoreAssertionMethodCodeFixAttribute : Attribute
+{
+    public string MethodArguments { get; }
+    public string OldAssertion { get; }
+    public string NewAssertion { get; }
+
+    public IgnoreAssertionMethodCodeFixAttribute(string methodArguments, string oldAssertion, string newAssertion)
+        => (MethodArguments, OldAssertion, NewAssertion) = (methodArguments, oldAssertion, newAssertion);
 }
 
 public static class TestCasesInputUtils
