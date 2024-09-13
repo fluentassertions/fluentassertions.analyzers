@@ -184,7 +184,8 @@ namespace FluentAssertions.Analyzers.Tests
         [Implemented]
         public void CollectionShouldNotContainProperty_WhereShouldBeEmpty_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldNotContainProperty_WhereShouldBeEmpty);
 
-        [DataTestMethod]
+        // TODO: all test cases are ignored
+        // [DataTestMethod]
         [IgnoreAssertionDiagnostic("actual.Should().OnlyContain(x => !x.BooleanProperty{0});")]
         [IgnoreAssertionDiagnostic("actual.AsEnumerable().Should().OnlyContain(x => !x.BooleanProperty{0}).And.ToString();")]
         [IgnoreAssertionDiagnostic("actual.ToArray().Should().OnlyContain(x => !x.BooleanProperty{0}).And.ToString();")]
