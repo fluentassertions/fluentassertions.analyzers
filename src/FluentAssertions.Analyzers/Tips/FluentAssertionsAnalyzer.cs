@@ -334,7 +334,8 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
 
                         }
                     }
-                    if (invocation.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyBeforeShould))
+                    var argument = invocation.Arguments[0].Value.UnwrapConversion();
+                    if (argument is IPropertyReferenceOperation propertyBeforeShould)
                     {
                         switch (propertyBeforeShould.Property.Name)
                         {
