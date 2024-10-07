@@ -312,7 +312,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                 return;
             case "Be" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    if (invocation.TryGetSingleArgumentAs<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
@@ -334,8 +334,8 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
 
                         }
                     }
-                    var argument = invocation.Arguments[0].Value.UnwrapConversion();
-                    if (argument is IPropertyReferenceOperation propertyBeforeShould)
+
+                    if (invocation.TryGetSingleArgumentAs<IPropertyReferenceOperation>(out var propertyBeforeShould))
                     {
                         switch (propertyBeforeShould.Property.Name)
                         {
