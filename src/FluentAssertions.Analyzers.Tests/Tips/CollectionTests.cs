@@ -316,7 +316,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ToArray().Count().Should().Be(1{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveCount_CountShouldBe1_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldContainSingle_CountShouldBe1);
-        
+
         [DataTestMethod]
         [AssertionDiagnostic("(array.Count() + 1).Should().Be(0{0}).And.ToString();")]
         [AssertionDiagnostic("(array.Count() + 1).Should().Be(1{0}).And.ToString();")]
