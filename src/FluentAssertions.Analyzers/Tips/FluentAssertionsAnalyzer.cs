@@ -402,7 +402,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                 return;
             case "NotBe" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    if (invocation.TryGetSingleArgumentAs<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
