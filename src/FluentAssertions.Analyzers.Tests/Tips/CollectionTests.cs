@@ -764,6 +764,14 @@ namespace FluentAssertions.Analyzers.Tests
         public void CollectionShouldHaveElementAt_ElementAtIndexShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_ElementAtIndexShouldBe);
 
         [DataTestMethod]
+        [AssertionDiagnostic("actual.ElementAt(k).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0});")]
+        [AssertionDiagnostic("actual.ElementAt(6).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0});")]
+        [AssertionDiagnostic("actual.AsEnumerable().ElementAt(k).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0}).And.ToString();")]
+        [AssertionDiagnostic("actual.AsEnumerable().ElementAt(6).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0}).And.ToString();")] 
+        [Implemented]
+        public void CollectionShouldHaveElementAt_ElementAtIndexShouldBe_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
+
+        [DataTestMethod]
         [AssertionDiagnostic("actual[k].Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual[6].Should().Be(expectedItem{0});")]
         [AssertionDiagnostic("actual.ToArray()[k].Should().Be(expectedItem{0});")]
