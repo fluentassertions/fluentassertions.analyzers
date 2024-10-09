@@ -17,7 +17,7 @@
     <Version>0.17.3</Version>
     <Authors>Meir Blachman</Authors>
     <Copyright>Copyright Meir Blachman 2017-2023</Copyright>
-    
+
     <Description>Analyzers to help writing fluentassertions the right way.</Description>
     <PackageTags>FluentAssertions Analyzers</PackageTags>
     <PackageReleaseNotes>See https://github.com/fluentassertions/fluentassertions.analyzers/releases/</PackageReleaseNotes>
@@ -31,8 +31,13 @@
   </PropertyGroup>
 	
   <ItemGroup>
-	<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" />
-	<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+  	<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" />
+	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+    <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
   </ItemGroup>
 
   <ItemGroup>
