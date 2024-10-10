@@ -192,6 +192,18 @@ internal static class OperartionExtensions
         return false;
     }
 
+    public static bool TryGetSingleArgumentAs<TOperation>(this IInvocationOperation invocation, out TOperation operation)
+    {
+        if (invocation.Arguments.Length is 1 && invocation.Arguments[0].Value.UnwrapConversion() is TOperation op)
+        {
+            operation = op;
+            return true;
+        }
+
+        operation = default;
+        return false;
+    }
+
     public static IOperation UnwrapConversion(this IOperation operation)
     {
         return operation switch
