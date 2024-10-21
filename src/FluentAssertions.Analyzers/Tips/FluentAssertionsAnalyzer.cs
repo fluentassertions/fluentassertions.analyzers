@@ -49,7 +49,6 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        context.Options.AnalyzerConfigOptionsProvider.GetOptions(invocation.Syntax.SyntaxTree).TryGetValue("use_diagnostic_per_assertion", out var useDiagnosticPerAssertion);
         if (HasConditionalAccessAncestor(invocation))
         {
             var expressionStatement = invocation.GetFirstAncestor<IExpressionStatementOperation>();
