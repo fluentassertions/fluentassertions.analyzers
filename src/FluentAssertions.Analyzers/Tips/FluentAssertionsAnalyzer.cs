@@ -301,7 +301,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                 return;
             case "OnlyHaveUniqueItems" when assertion.IsContainedInType(metadata.GenericCollectionAssertionsOfT3):
                 {
-                    if (!invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould)) return;
+                    if (!invocation.TryGetSingleArgumentAs<IInvocationOperation>(out var invocationBeforeShould)) return;
                     switch (invocationBeforeShould.TargetMethod.Name)
                     {
                         case nameof(Enumerable.Select) when IsEnumerableMethodWithPredicate(invocationBeforeShould, metadata):
@@ -312,7 +312,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                 return;
             case "Be" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    if (invocation.TryGetSingleArgumentAs<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
@@ -334,8 +334,8 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
 
                         }
                     }
-                    var argument = invocation.Arguments[0].Value.UnwrapConversion();
-                    if (argument is IPropertyReferenceOperation propertyBeforeShould)
+
+                    if (invocation.TryGetSingleArgumentAs<IPropertyReferenceOperation>(out var propertyBeforeShould))
                     {
                         switch (propertyBeforeShould.Property.Name)
                         {
@@ -370,7 +370,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                 }
             case "Be" when assertion.IsContainedInType(metadata.ObjectAssertionsOfT2):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    if (invocation.TryGetSingleArgumentAs<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
@@ -402,7 +402,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                 return;
             case "NotBe" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    if (invocation.TryGetSingleArgumentAs<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
