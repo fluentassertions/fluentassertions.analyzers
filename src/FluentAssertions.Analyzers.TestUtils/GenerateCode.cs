@@ -55,7 +55,9 @@ namespace FluentAssertions.Analyzers.TestUtils
             .AppendLine("    {")
             .AppendLine("        public bool BooleanProperty { get; set; }")
             .AppendLine("        public string Message { get; set; }")
+            .AppendLine("        public TestComplexClass this[int index] => throw new NotImplementedException();")
             .AppendLine("    }")
+            .AppendLine()
             .AppendLine("}")
             .ToString();
 

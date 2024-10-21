@@ -394,6 +394,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                     }
                     else if (subject.TryGetFirstDescendent<IPropertyReferenceOperation>(out var propertyReference) && propertyReference.Property.IsIndexer)
                     {
+                        if (!propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IListOfT) && !propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IReadonlyListOfT)) return;
                         if (propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IDictionaryOfT2) || propertyReference.Instance.Type.ImplementsOrIsInterface(metadata.IReadonlyDictionaryOfT2)) return;
 
                         context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe));

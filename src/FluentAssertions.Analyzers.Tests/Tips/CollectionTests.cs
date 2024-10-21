@@ -773,7 +773,7 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ElementAt(k).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0});")]
         [AssertionDiagnostic("actual.ElementAt(6).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().ElementAt(k).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0}).And.ToString();")]
-        [AssertionDiagnostic("actual.AsEnumerable().ElementAt(6).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0}).And.ToString();")] 
+        [AssertionDiagnostic("actual.AsEnumerable().ElementAt(6).BooleanProperty.Should().Be(expectedItem.BooleanProperty{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveElementAt_ElementAtIndexShouldBe_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
 
@@ -792,6 +792,11 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionDiagnostic("actual.ToList()[6].Should().Be(expectedItem{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveElementAt_IndexerShouldBe_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveElementAt_IndexerShouldBe);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("var first = actual[0]; first[6].Should().Be(expectedItem{0});")]
+        [Implemented]
+        public void CollectionShouldHaveElementAt_IndexerShouldBe_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
 
         [DataTestMethod]
         [AssertionDiagnostic("actual.Skip(k).First().Should().Be(expectedItem{0});")]
