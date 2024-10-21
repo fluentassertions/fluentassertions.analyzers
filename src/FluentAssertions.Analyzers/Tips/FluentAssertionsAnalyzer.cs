@@ -408,7 +408,7 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                         {
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
-                                if (assertion.Arguments[0].HasFirstDescendentInvocation(nameof(Enumerable.Count)))
+                                if (assertion.TryGetFirstArgumentAs<IInvocationOperation>(out var assertionInvocation) && IsEnumerableMethodWithoutArguments(assertionInvocation, metadata))
                                 {
                                     context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldNotHaveSameCount_CountShouldNotBeOtherCollectionCount));
                                 }

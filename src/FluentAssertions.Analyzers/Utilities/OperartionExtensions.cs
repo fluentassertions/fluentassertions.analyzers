@@ -60,11 +60,6 @@ internal static class OperartionExtensions
         return default;
     }
 
-    public static bool HasFirstDescendentInvocation(this IOperation parent, string invocationMethod)
-    {
-        return parent.TryGetFirstDescendent<IInvocationOperation>(out var invocation) && invocation.TargetMethod.Name == invocationMethod;
-    }
-
     public static bool IsContainedInType(this IPropertyReferenceOperation property, SpecialType type)
         => property.Property.ContainingType.ConstructedFromType(type);
     public static bool IsContainedInType(this IPropertyReferenceOperation property, INamedTypeSymbol type)
@@ -195,6 +190,18 @@ internal static class OperartionExtensions
     public static bool TryGetSingleArgumentAs<TOperation>(this IInvocationOperation invocation, out TOperation operation)
     {
         if (invocation.Arguments.Length is 1 && invocation.Arguments[0].Value.UnwrapConversion() is TOperation op)
+        {
+            operation = op;
+            return true;
+        }
+
+        operation = default;
+        return false;
+    }
+
+    public static bool TryGetFirstArgumentAs<TOperation>(this IInvocationOperation invocation, out TOperation operation)
+    {
+        if (invocation.Arguments.Length is >= 1 && invocation.Arguments[0].Value.UnwrapConversion() is TOperation op)
         {
             operation = op;
             return true;

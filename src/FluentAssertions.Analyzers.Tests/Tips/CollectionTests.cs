@@ -659,6 +659,7 @@ namespace FluentAssertions.Analyzers.Tests
 
         [DataTestMethod]
         [AssertionDiagnostic("(actual.Count() + 1).Should().NotBe(unexpected.Count(){0});")]
+        [AssertionDiagnostic("actual.Count().Should().NotBe((unexpected.Count() + 1){0});")]
         [AssertionDiagnostic("actual.Count().ToString().Length.Should().NotBe(unexpected.Count(){0});")]
         [Implemented]
         public void CollectionShouldNotHaveSameCount_TestNotAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
