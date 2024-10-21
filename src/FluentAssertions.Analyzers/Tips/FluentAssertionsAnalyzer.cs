@@ -423,12 +423,23 @@ public partial class FluentAssertionsAnalyzer : DiagnosticAnalyzer
                 return;
             case "BeGreaterOrEqualTo" when assertion.IsContainedInType(metadata.NumericAssertionsOfT2):
                 {
-                    if (invocation.TryGetFirstDescendent<IInvocationOperation>(out var invocationBeforeShould))
+                    if (invocation.TryGetSingleArgumentAs<IInvocationOperation>(out var invocationBeforeShould))
                     {
                         switch (invocationBeforeShould.TargetMethod.Name)
                         {
                             // TODO: add support for Enumerable.LongCount
                             case nameof(Enumerable.Count) when IsEnumerableMethodWithoutArguments(invocationBeforeShould, metadata):
+                                context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo));
+                                return;
+                        }
+                    }
+
+                    if (invocation.TryGetSingleArgumentAs<IPropertyReferenceOperation>(out var propertyBeforeShould))
+                    {
+                        switch (propertyBeforeShould.Property.Name)
+                        {
+                            case nameof(Array.Length) when propertyBeforeShould.IsContainedInType(SpecialType.System_Array):
+                            case nameof(List<object>.Count) when propertyBeforeShould.ImplementsOrIsInterface(SpecialType.System_Collections_Generic_ICollection_T):
                                 context.ReportDiagnostic(CreateDiagnostic(assertion, DiagnosticMetadata.CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo));
                                 return;
                         }
