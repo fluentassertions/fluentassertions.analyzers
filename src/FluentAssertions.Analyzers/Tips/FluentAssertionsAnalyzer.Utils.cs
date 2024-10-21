@@ -72,6 +72,8 @@ public partial class FluentAssertionsAnalyzer
             IReadonlyDictionaryOfT2 = compilation.GetTypeByMetadataName(typeof(IReadOnlyDictionary<,>).FullName);
             IListOfT = compilation.GetTypeByMetadataName(typeof(IList<>).FullName);
             IReadonlyListOfT = compilation.GetTypeByMetadataName(typeof(IReadOnlyList<>).FullName);
+            ICollectionOfT = compilation.GetTypeByMetadataName(typeof(ICollection<>).FullName);
+            IReadonlyCollectionOfT = compilation.GetTypeByMetadataName(typeof(IReadOnlyCollection<>).FullName);
             Enumerable = compilation.GetTypeByMetadataName(typeof(Enumerable).FullName);
             IEnumerable = compilation.GetTypeByMetadataName(typeof(IEnumerable).FullName);
             Math = compilation.GetTypeByMetadataName(typeof(Math).FullName);
@@ -91,6 +93,8 @@ public partial class FluentAssertionsAnalyzer
         public INamedTypeSymbol IReadonlyDictionaryOfT2 { get; }
         public INamedTypeSymbol IListOfT { get; }
         public INamedTypeSymbol IReadonlyListOfT { get; }
+        public INamedTypeSymbol ICollectionOfT { get; }
+        public INamedTypeSymbol IReadonlyCollectionOfT { get; }
         public INamedTypeSymbol BooleanAssertionsOfT1 { get; }
         public INamedTypeSymbol NumericAssertionsOfT2 { get; }
         public INamedTypeSymbol Enumerable { get; }

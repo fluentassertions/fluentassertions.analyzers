@@ -451,10 +451,24 @@ namespace FluentAssertions.Analyzers.Tests
         [DataTestMethod]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterOrEqualTo(k{0});")]
         [AssertionDiagnostic("actual.Count().Should().BeGreaterOrEqualTo(6{0});")]
+        [AssertionDiagnostic("actual.Count.Should().BeGreaterOrEqualTo(k{0});")]
+        [AssertionDiagnostic("actual.Count.Should().BeGreaterOrEqualTo(6{0});")]
+        [AssertionDiagnostic("actual.ToArray().Length.Should().BeGreaterOrEqualTo(k{0});")]
+        [AssertionDiagnostic("actual.ToArray().Length.Should().BeGreaterOrEqualTo(6{0});")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().BeGreaterOrEqualTo(k{0}).And.ToString();")]
         [AssertionDiagnostic("actual.AsEnumerable().Count().Should().BeGreaterOrEqualTo(6{0}).And.ToString();")]
         [Implemented]
         public void CollectionShouldHaveCountGreaterOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveCountGreaterOrEqualTo_CountShouldBeGreaterOrEqualTo);
+
+        [DataTestMethod]
+        [AssertionDiagnostic("(actual.Count() + 1).Should().BeGreaterOrEqualTo(k{0});")]
+        [AssertionDiagnostic("(actual.Count() + 1).Should().BeGreaterOrEqualTo(6{0});")]
+        [AssertionDiagnostic("(actual.Count + 1).Should().BeGreaterOrEqualTo(k{0});")]
+        [AssertionDiagnostic("(actual.Count + 1).Should().BeGreaterOrEqualTo(6{0});")]
+        [AssertionDiagnostic("(actual.ToArray().Length + 1).Should().BeGreaterOrEqualTo(k{0});")]
+        [AssertionDiagnostic("(actual.ToArray().Length + 1).Should().BeGreaterOrEqualTo(6{0});")]
+        [Implemented]
+        public void CollectionShouldHaveCountGreaterOrEqualTo_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
 
         [DataTestMethod]
         [AssertionCodeFix(
@@ -463,6 +477,18 @@ namespace FluentAssertions.Analyzers.Tests
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeGreaterOrEqualTo(6{0});",
             newAssertion: "actual.Should().HaveCountGreaterOrEqualTo(6{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Count.Should().BeGreaterOrEqualTo(k{0});",
+            newAssertion: "actual.Should().HaveCountGreaterOrEqualTo(k{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.Count.Should().BeGreaterOrEqualTo(6{0});",
+            newAssertion: "actual.Should().HaveCountGreaterOrEqualTo(6{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToArray().Length.Should().BeGreaterOrEqualTo(k{0});",
+            newAssertion: "actual.ToArray().Should().HaveCountGreaterOrEqualTo(k{0});")]
+        [AssertionCodeFix(
+            oldAssertion: "actual.ToArray().Length.Should().BeGreaterOrEqualTo(6{0});",
+            newAssertion: "actual.ToArray().Should().HaveCountGreaterOrEqualTo(6{0});")]
         [AssertionCodeFix(
             oldAssertion: "actual.AsEnumerable().Count().Should().BeGreaterOrEqualTo(k{0}).And.ToString();",
             newAssertion: "actual.AsEnumerable().Should().HaveCountGreaterOrEqualTo(k{0}).And.ToString();")]
