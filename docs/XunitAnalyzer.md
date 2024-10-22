@@ -44,7 +44,7 @@ Expected: True
 Actual:   False */
 
 // new assertion:
-flag.Should().BeTrue(); /* fail message: Expected flag to be true, but found False. */
+flag.Should().BeTrue(); /* fail message: Expected flag to be True, but found False. */
 ```
 
 ### scenario: AssertFalse
@@ -71,7 +71,7 @@ Expected: False
 Actual:   True */
 
 // new assertion:
-flag.Should().BeFalse(); /* fail message: Expected flag to be false, but found True. */
+flag.Should().BeFalse(); /* fail message: Expected flag to be False, but found True. */
 ```
 
 ### scenario: AssertSame
@@ -95,9 +95,9 @@ object obj1 = 6;
 object obj2 = "foo";
 
 // old assertion:
-Assert.Same(obj1, obj2); /* fail message: Assert.Same() Failure
+Assert.Same(obj1, obj2); /* fail message: Assert.Same() Failure: Values are not the same instance
 Expected: 6
-Actual:   foo */
+Actual:   "foo" */
 
 // new assertion:
 obj1.Should().BeSameAs(obj2); /* fail message: Expected obj1 to refer to "foo", but found 6. */
@@ -124,7 +124,7 @@ object obj1 = "foo";
 object obj2 = "foo";
 
 // old assertion:
-Assert.NotSame(obj1, obj2); /* fail message: Assert.NotSame() Failure */
+Assert.NotSame(obj1, obj2); /* fail message: Assert.NotSame() Failure: Values are the same instance */
 
 // new assertion:
 obj1.Should().NotBeSameAs(obj2); /* fail message: Did not expect obj1 to refer to "foo". */
@@ -153,7 +153,7 @@ double expected = 4.2;
 double tolerance = 0.0001;
 
 // old assertion:
-Assert.Equal(expected, actual, tolerance); /* fail message: Assert.Equal() Failure
+Assert.Equal(expected, actual, tolerance); /* fail message: Assert.Equal() Failure: Values are not within tolerance 0.0001
 Expected: 4.2000000000000002
 Actual:   3.1400000000000001 */
 
@@ -182,9 +182,9 @@ var actual = new DateTime(2021, 1, 1);
 var expected = new DateTime(2021, 1, 2);
 
 // old assertion:
-Assert.Equal(expected, actual, TimeSpan.FromHours(3)); /* fail message: Assert.Equal() Failure
-Expected: 1/2/2021 12:00:00 AM 
-Actual:   1/1/2021 12:00:00 AM difference 1.00:00:00 is larger than 03:00:00 */
+Assert.Equal(expected, actual, TimeSpan.FromHours(3)); /* fail message: Assert.Equal() Failure: Values differ
+Expected: 2021-01-02T00:00:00.0000000
+Actual:   2021-01-01T00:00:00.0000000 (difference 1.00:00:00 is larger than 03:00:00) */
 
 // new assertion:
 actual.Should().BeCloseTo(expected, TimeSpan.FromHours(3)); /* fail message: Expected actual to be within 3h from <2021-01-02>, but <2021-01-01> was off by 1d. */
@@ -211,7 +211,7 @@ object actual = "foo";
 object expected = 6;
 
 // old assertion:
-Assert.Equal(expected, actual); /* fail message: Assert.Equal() Failure
+Assert.Equal(expected, actual); /* fail message: Assert.Equal() Failure: Values differ
 Expected: 6
 Actual:   foo */
 
@@ -240,7 +240,7 @@ object actual = "foo";
 object expected = 6;
 
 // old assertion:
-Assert.Equal(expected, actual, EqualityComparer<object>.Default); /* fail message: Assert.Equal() Failure
+Assert.Equal(expected, actual, EqualityComparer<object>.Default); /* fail message: Assert.Equal() Failure: Values differ
 Expected: 6
 Actual:   foo */
 
@@ -282,9 +282,9 @@ object actual = "foo";
 object expected = "foo";
 
 // old assertion:
-Assert.NotEqual(expected, actual); /* fail message: Assert.NotEqual() Failure
+Assert.NotEqual(expected, actual); /* fail message: Assert.NotEqual() Failure: Strings are equal
 Expected: Not "foo"
-Actual:   "foo" */
+Actual:       "foo" */
 
 // new assertion:
 actual.Should().NotBe(expected); /* fail message: Did not expect actual to be equal to "foo". */
@@ -311,9 +311,9 @@ object actual = "foo";
 object expected = "foo";
 
 // old assertion:
-Assert.NotEqual(expected, actual, EqualityComparer<object>.Default); /* fail message: Assert.NotEqual() Failure
+Assert.NotEqual(expected, actual, EqualityComparer<object>.Default); /* fail message: Assert.NotEqual() Failure: Strings are equal
 Expected: Not "foo"
-Actual:   "foo" */
+Actual:       "foo" */
 
 // new assertion:
 actual.Should().NotBeEquivalentTo(expected, options => options.Using(EqualityComparer<object>.Default)); /* fail message: Expected actual not to be equivalent to "foo", but they are. */
@@ -340,9 +340,9 @@ object actual = "foo";
 object expected = 6;
 
 // old assertion:
-Assert.StrictEqual(expected, actual); /* fail message: Assert.Equal() Failure
+Assert.StrictEqual(expected, actual); /* fail message: Assert.StrictEqual() Failure: Values differ
 Expected: 6
-Actual:   foo */
+Actual:   "foo" */
 
 // new assertion:
 actual.Should().Be(expected); /* fail message: Expected actual to be 6, but found "foo". */
@@ -369,9 +369,9 @@ object actual = "foo";
 object expected = "foo";
 
 // old assertion:
-Assert.NotStrictEqual(expected, actual); /* fail message: Assert.NotEqual() Failure
+Assert.NotStrictEqual(expected, actual); /* fail message: Assert.NotStrictEqual() Failure: Values are equal
 Expected: Not "foo"
-Actual:   "foo" */
+Actual:       "foo" */
 
 // new assertion:
 actual.Should().NotBe(expected); /* fail message: Did not expect actual to be equal to "foo". */

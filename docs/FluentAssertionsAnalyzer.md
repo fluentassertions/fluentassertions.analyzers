@@ -4,6 +4,10 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 # FluentAssertions Analyzer Docs
 
+- [StringShouldStartWith](#scenario-stringshouldstartwith) - `actual.Should().StartWith(expected);`
+- [StringShouldEndWith](#scenario-stringshouldendwith) - `actual.Should().EndWith(expected);`
+- [StringShouldNotBeNullOrEmpty](#scenario-stringshouldnotbenullorempty) - `actual.Should().NotBeNullOrEmpty();`
+- [StringShouldBeNullOrEmpty](#scenario-stringshouldbenullorempty) - `actual.Should().BeNullOrEmpty();`
 - [CollectionShouldNotBeEmpty](#scenario-collectionshouldnotbeempty) - `collection.Should().NotBeEmpty();`
 - [CollectionShouldBeEmpty](#scenario-collectionshouldbeempty) - `collection.Should().BeEmpty();`
 - [CollectionShouldNotContainCondition](#scenario-collectionshouldnotcontaincondition) - `collection.Should().NotContain(i => i == 4);`
@@ -44,6 +48,118 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 
 ## Scenarios
 
+### scenario: StringShouldStartWith
+
+```cs
+// arrange
+var actual = "actual";
+var expected = "act";
+
+// old assertion:
+actual.StartsWith(expected).Should().BeTrue();
+
+// new assertion:
+actual.Should().StartWith(expected);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var actual = "actual";
+var expected = "wrong";
+
+// old assertion:
+actual.StartsWith(expected).Should().BeTrue(); 	// fail message: Expected actual.StartsWith(expected) to be True, but found False.
+
+// new assertion:
+actual.Should().StartWith(expected); 	// fail message: Expected actual to start with "wrong", but "actual" differs near "act" (index 0).
+```
+
+### scenario: StringShouldEndWith
+
+```cs
+// arrange
+var actual = "actual";
+var expected = "ual";
+
+// old assertion:
+actual.EndsWith(expected).Should().BeTrue();
+
+// new assertion:
+actual.Should().EndWith(expected);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var actual = "actual";
+var expected = "wrong";
+
+// old assertion:
+actual.EndsWith(expected).Should().BeTrue(); 	// fail message: Expected actual.EndsWith(expected) to be True, but found False.
+
+// new assertion:
+actual.Should().EndWith(expected); 	// fail message: Expected actual "actual" to end with "wrong".
+```
+
+### scenario: StringShouldNotBeNullOrEmpty
+
+```cs
+// arrange
+var actual = "actual";
+
+// old assertion:
+string.IsNullOrEmpty(actual).Should().BeFalse();
+actual.Should().NotBeNull().And.NotBeEmpty();
+actual.Should().NotBeEmpty().And.NotBeNull();
+
+// new assertion:
+actual.Should().NotBeNullOrEmpty();
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var actual = string.Empty;
+
+// old assertion:
+string.IsNullOrEmpty(actual).Should().BeFalse(); 	// fail message: Expected string.IsNullOrEmpty(actual) to be False, but found True.
+actual.Should().NotBeNull().And.NotBeEmpty(); 	// fail message: Did not expect actual to be empty.
+actual.Should().NotBeEmpty().And.NotBeNull(); 	// fail message: Did not expect actual to be empty.
+
+// new assertion:
+actual.Should().NotBeNullOrEmpty(); 	// fail message: Expected actual not to be <null> or empty, but found "".
+```
+
+### scenario: StringShouldBeNullOrEmpty
+
+```cs
+// arrange
+var actual = string.Empty;
+
+// old assertion:
+string.IsNullOrEmpty(actual).Should().BeTrue();
+
+// new assertion:
+actual.Should().BeNullOrEmpty();
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var actual = "actual";
+
+// old assertion:
+string.IsNullOrEmpty(actual).Should().BeTrue(); 	// fail message: Expected string.IsNullOrEmpty(actual) to be True, but found False.
+
+// new assertion:
+actual.Should().BeNullOrEmpty(); 	// fail message: Expected actual to be <null> or empty, but found "actual".
+```
+
 ### scenario: CollectionShouldNotBeEmpty
 
 ```cs
@@ -64,7 +180,7 @@ collection.Should().NotBeEmpty();
 var collection = new List<int> { };
 
 // old assertion:
-collection.Any().Should().BeTrue(); 	// fail message: Expected collection.Any() to be true, but found False.
+collection.Any().Should().BeTrue(); 	// fail message: Expected collection.Any() to be True, but found False.
 
 // new assertion:
 collection.Should().NotBeEmpty(); 	// fail message: Expected collection not to be empty.
@@ -93,13 +209,13 @@ collection.Should().BeEmpty();
 var collection = new List<int> { 1, 2, 3 };
 
 // old assertion:
-collection.Any().Should().BeFalse(); 	// fail message: Expected collection.Any() to be false, but found True.
+collection.Any().Should().BeFalse(); 	// fail message: Expected collection.Any() to be False, but found True.
 collection.Count().Should().Be(0); 	// fail message: Expected collection.Count() to be 0, but found 3 (difference of 3).
 collection.Count.Should().Be(0); 	// fail message: Expected collection.Count to be 0, but found 3 (difference of 3).
 collection.Should().HaveCount(0); 	// fail message: Expected collection to contain 0 item(s), but found 3: {1, 2, 3}.
 
 // new assertion:
-collection.Should().BeEmpty(); 	// fail message: Expected collection to be empty, but found {1, 2, 3}.
+collection.Should().BeEmpty(); 	// fail message: Expected collection to be empty, but found at least one item {1}.
 ```
 
 ### scenario: CollectionShouldNotContainCondition
@@ -123,8 +239,8 @@ collection.Should().NotContain(i => i == 4);
 var collection = new List<int> { 1, 2, 3, 4, 5 };
 
 // old assertion:
-collection.Any(i => i == 4).Should().BeFalse(); 	// fail message: Expected collection.Any(i => i == 4) to be false, but found True.
-collection.Where(i => i == 4).Should().BeEmpty(); 	// fail message: Expected collection.Where(i => i == 4) to be empty, but found {4}.
+collection.Any(i => i == 4).Should().BeFalse(); 	// fail message: Expected collection.Any(i => i == 4) to be False, but found True.
+collection.Where(i => i == 4).Should().BeEmpty(); 	// fail message: Expected collection.Where(i => i == 4) to be empty, but found at least one item {4}.
 
 // new assertion:
 collection.Should().NotContain(i => i == 4); 	// fail message: Expected collection {1, 2, 3, 4, 5} to not have any items matching (i == 4), but found {4}.
@@ -150,7 +266,7 @@ collection.Should().NotContain(4);
 var collection = new List<int> { 1, 2, 3, 4, 5 };
 
 // old assertion:
-collection.Contains(4).Should().BeFalse(); 	// fail message: Expected collection.Contains(4) to be false, but found True.
+collection.Contains(4).Should().BeFalse(); 	// fail message: Expected collection.Contains(4) to be False, but found True.
 
 // new assertion:
 collection.Should().NotContain(4); 	// fail message: Expected collection {1, 2, 3, 4, 5} to not contain 4.
@@ -176,7 +292,7 @@ collection.Should().OnlyContain(x => x > 0);
 var collection = new List<int> { 1, 2, 3, -1 };
 
 // old assertion:
-collection.All(x => x > 0).Should().BeTrue(); 	// fail message: Expected collection.All(x => x > 0) to be true, but found False.
+collection.All(x => x > 0).Should().BeTrue(); 	// fail message: Expected collection.All(x => x > 0) to be True, but found False.
 
 // new assertion:
 collection.Should().OnlyContain(x => x > 0); 	// fail message: Expected collection to contain only items matching (x > 0), but {-1} do(es) not match.
@@ -202,7 +318,7 @@ collection.Should().Contain(2);
 var collection = new List<int> { 1, 3, 4, 5 };
 
 // old assertion:
-collection.Contains(2).Should().BeTrue(); 	// fail message: Expected collection.Contains(2) to be true, but found False.
+collection.Contains(2).Should().BeTrue(); 	// fail message: Expected collection.Contains(2) to be True, but found False.
 
 // new assertion:
 collection.Should().Contain(2); 	// fail message: Expected collection {1, 3, 4, 5} to contain 2.
@@ -229,7 +345,7 @@ collection.Should().Contain(i => i == 2);
 var collection = new List<int> { 3, 4, 5 };
 
 // old assertion:
-collection.Any(i => i == 2).Should().BeTrue(); 	// fail message: Expected collection.Any(i => i == 2) to be true, but found False.
+collection.Any(i => i == 2).Should().BeTrue(); 	// fail message: Expected collection.Any(i => i == 2) to be True, but found False.
 collection.Where(i => i == 2).Should().NotBeEmpty(); 	// fail message: Expected collection.Where(i => i == 2) not to be empty.
 
 // new assertion:
@@ -580,7 +696,7 @@ dictionary.Should().ContainKey("two");
 var dictionary = new Dictionary<string, int> { ["one"] = 1, ["three"] = 3 };
 
 // old assertion:
-dictionary.ContainsKey("two").Should().BeTrue(); 	// fail message: Expected dictionary.ContainsKey("two") to be true, but found False.
+dictionary.ContainsKey("two").Should().BeTrue(); 	// fail message: Expected dictionary.ContainsKey("two") to be True, but found False.
 
 // new assertion:
 dictionary.Should().ContainKey("two"); 	// fail message: Expected dictionary {["one"] = 1, ["three"] = 3} to contain key "two".
@@ -606,7 +722,7 @@ dictionary.Should().NotContainKey("four");
 var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4 };
 
 // old assertion:
-dictionary.ContainsKey("four").Should().BeFalse(); 	// fail message: Expected dictionary.ContainsKey("four") to be false, but found True.
+dictionary.ContainsKey("four").Should().BeFalse(); 	// fail message: Expected dictionary.ContainsKey("four") to be False, but found True.
 
 // new assertion:
 dictionary.Should().NotContainKey("four"); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4} not to contain key "four", but found it anyhow.
@@ -632,7 +748,7 @@ dictionary.Should().ContainValue(2);
 var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3 };
 
 // old assertion:
-dictionary.ContainsValue(4).Should().BeTrue(); 	// fail message: Expected dictionary.ContainsValue(4) to be true, but found False.
+dictionary.ContainsValue(4).Should().BeTrue(); 	// fail message: Expected dictionary.ContainsValue(4) to be True, but found False.
 
 // new assertion:
 dictionary.Should().ContainValue(4); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3} to contain value 4.
@@ -658,7 +774,7 @@ dictionary.Should().NotContainValue(4);
 var dictionary = new Dictionary<string, int> { ["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4 };
 
 // old assertion:
-dictionary.ContainsValue(4).Should().BeFalse(); 	// fail message: Expected dictionary.ContainsValue(4) to be false, but found True.
+dictionary.ContainsValue(4).Should().BeFalse(); 	// fail message: Expected dictionary.ContainsValue(4) to be False, but found True.
 
 // new assertion:
 dictionary.Should().NotContainValue(4); 	// fail message: Expected dictionary {["one"] = 1, ["two"] = 2, ["three"] = 3, ["four"] = 4} not to contain value 4, but found it anyhow.

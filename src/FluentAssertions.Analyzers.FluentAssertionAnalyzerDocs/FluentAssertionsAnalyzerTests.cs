@@ -10,6 +10,122 @@ namespace FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs;
 public class FluentAssertionsAnalyzerTests
 {
     [TestMethod]
+    public void StringShouldStartWith()
+    {
+        // arrange
+        var actual = "actual";
+        var expected = "act";
+
+        // old assertion:
+        actual.StartsWith(expected).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().StartWith(expected);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringShouldStartWith_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var actual = "actual";
+        var expected = "wrong";
+
+        // old assertion:
+        actual.StartsWith(expected).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().StartWith(expected);
+    }
+
+    [TestMethod]
+    public void StringShouldEndWith()
+    {
+        // arrange
+        var actual = "actual";
+        var expected = "ual";
+
+        // old assertion:
+        actual.EndsWith(expected).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().EndWith(expected);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringShouldEndWith_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var actual = "actual";
+        var expected = "wrong";
+
+        // old assertion:
+        actual.EndsWith(expected).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().EndWith(expected);
+    }
+
+    [TestMethod]
+    public void StringShouldNotBeNullOrEmpty()
+    {
+        // arrange
+        var actual = "actual";
+
+        // old assertion:
+        string.IsNullOrEmpty(actual).Should().BeFalse();
+        actual.Should().NotBeNull().And.NotBeEmpty();
+        actual.Should().NotBeEmpty().And.NotBeNull();
+
+        // new assertion:
+        actual.Should().NotBeNullOrEmpty();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringShouldNotBeNullOrEmpty_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var actual = string.Empty;
+
+        // old assertion:
+        string.IsNullOrEmpty(actual).Should().BeFalse();
+        actual.Should().NotBeNull().And.NotBeEmpty();
+        actual.Should().NotBeEmpty().And.NotBeNull();
+
+        // new assertion:
+        actual.Should().NotBeNullOrEmpty();
+    }
+
+    [TestMethod]
+    public void StringShouldBeNullOrEmpty()
+    {
+        // arrange
+        var actual = string.Empty;
+
+        // old assertion:
+        string.IsNullOrEmpty(actual).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().BeNullOrEmpty();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringShouldBeNullOrEmpty_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var actual = "actual";
+
+        // old assertion:
+        string.IsNullOrEmpty(actual).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().BeNullOrEmpty();
+    }
+
+    [TestMethod]
     public void CollectionShouldNotBeEmpty()
     {
         // arrange

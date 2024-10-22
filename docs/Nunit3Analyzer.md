@@ -72,7 +72,7 @@ Assert.That(flag, Is.Not.False); /* fail message:   Expected: not False
  */
 
 // new assertion:
-flag.Should().BeTrue(); /* fail message: Expected flag to be true, but found False. */
+flag.Should().BeTrue(); /* fail message: Expected flag to be True, but found False. */
 ```
 
 ### scenario: AssertIsFalse
@@ -111,7 +111,7 @@ Assert.That(flag, Is.Not.True); /* fail message:   Expected: not True
  */
 
 // new assertion:
-flag.Should().BeFalse(); /* fail message: Expected flag to be false, but found True. */
+flag.Should().BeFalse(); /* fail message: Expected flag to be False, but found True. */
 ```
 
 ### scenario: AssertNull
@@ -224,7 +224,7 @@ CollectionAssert.IsEmpty(collection); /* fail message:   Expected: <empty>
  */
 
 // new assertion:
-collection.Should().BeEmpty(); /* fail message: Expected collection to be empty, but found {1, 2, 3}. */
+collection.Should().BeEmpty(); /* fail message: Expected collection to be empty, but found at least one item {1}. */
 ```
 
 ### scenario: AssertIsNotEmpty
