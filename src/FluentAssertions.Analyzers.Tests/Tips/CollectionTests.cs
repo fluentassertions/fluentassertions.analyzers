@@ -557,6 +557,12 @@ namespace FluentAssertions.Analyzers.Tests
         public void CollectionShouldHaveCountLessOrEqualTo_TestAnalyzer(string assertion) => VerifyCSharpDiagnosticCodeBlock(assertion, DiagnosticMetadata.CollectionShouldHaveCountLessOrEqualTo_CountShouldBeLessOrEqualTo);
 
         [DataTestMethod]
+        [AssertionDiagnostic("(actual.Count() + 1).Should().BeLessOrEqualTo(k{0});")]
+        [AssertionDiagnostic("(actual.Count() + 1).Should().BeLessOrEqualTo(6{0});")]
+        [Implemented]
+        public void CollectionShouldHaveCountLessOrEqualTo_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.GenericIListCodeBlockAssertion(assertion));
+
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "actual.Count().Should().BeLessOrEqualTo(k{0});",
             newAssertion: "actual.Should().HaveCountLessOrEqualTo(k{0});")]

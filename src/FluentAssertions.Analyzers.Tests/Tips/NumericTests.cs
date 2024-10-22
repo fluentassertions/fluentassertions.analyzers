@@ -94,6 +94,11 @@ namespace FluentAssertions.Analyzers.Tests
         public void NumericShouldBeApproximately_TestAnalyzer(string assertion) => VerifyCSharpDiagnostic(assertion, DiagnosticMetadata.NumericShouldBeApproximately_MathAbsShouldBeLessOrEqualTo);
 
         [DataTestMethod]
+        [AssertionDiagnostic("(Math.Abs(expected - actual) + 1).Should().BeLessOrEqualTo(delta{0});")]
+        [Implemented]
+        public void NumericShouldBeApproximately_TestNoAnalyzer(string assertion) => DiagnosticVerifier.VerifyCSharpDiagnosticUsingAllAnalyzers(GenerateCode.NumericAssertion(assertion, "double"));
+
+        [DataTestMethod]
         [AssertionCodeFix(
             oldAssertion: "Math.Abs(expected - actual).Should().BeLessOrEqualTo(delta{0});",
             newAssertion: "actual.Should().BeApproximately(expected, delta{0});")]
