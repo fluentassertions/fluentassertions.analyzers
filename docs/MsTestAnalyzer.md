@@ -70,7 +70,7 @@ var flag = false;
 Assert.IsTrue(flag); /* fail message: Assert.IsTrue failed.  */
 
 // new assertion:
-flag.Should().BeTrue(); /* fail message: Expected flag to be true, but found False. */
+flag.Should().BeTrue(); /* fail message: Expected flag to be True, but found False. */
 ```
 
 ### scenario: AssertIsFalse
@@ -95,7 +95,7 @@ var flag = true;
 Assert.IsFalse(flag); /* fail message: Assert.IsFalse failed.  */
 
 // new assertion:
-flag.Should().BeFalse(); /* fail message: Expected flag to be false, but found True. */
+flag.Should().BeFalse(); /* fail message: Expected flag to be False, but found True. */
 ```
 
 ### scenario: AssertIsNull
@@ -974,10 +974,7 @@ static void ThrowException() => throw new InvalidOperationException();
 Action action = ThrowException;
 
 // old assertion:
-Assert.ThrowsException<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
-Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsException_Failure_OldAssertion>g__ThrowException|109_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1298
-   at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsException[T](Action action, String message, Object[] parameters) */
+Assert.ThrowsException<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Expected exception type:<System.ArgumentException>. Actual exception type:<System.InvalidOperationException>.  */
 
 // new assertion:
 action.Should().ThrowExactly<ArgumentException>(); /* fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException. */
@@ -1004,10 +1001,7 @@ static Task ThrowExceptionAsync() => throw new InvalidOperationException();
 Func<Task> action = ThrowExceptionAsync;
 
 // old assertion:
-await Assert.ThrowsExceptionAsync<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Threw exception InvalidOperationException, but exception ArgumentException was expected. 
-Exception Message: Operation is not valid due to the current state of the object.
-Stack Trace:    at FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs.MsTestAnalyzerTests.<AssertThrowsExceptionAsync_Failure_OldAssertion>g__ThrowExceptionAsync|112_0() in /Users/runner/work/fluentassertions.analyzers/src/FluentAssertions.Analyzers.FluentAssertionAnalyzerDocs/MsTestAnalyzerTests.cs:line 1334
-   at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowsExceptionAsync[T](Func`1 action, String message, Object[] parameters) */
+await Assert.ThrowsExceptionAsync<ArgumentException>(action); /* fail message: Assert.ThrowsException failed. Expected exception type:<System.ArgumentException>. Actual exception type:<System.InvalidOperationException>.  */
 
 // new assertion:
 await action.Should().ThrowExactlyAsync<ArgumentException>(); /* fail message: Expected type to be System.ArgumentException, but found System.InvalidOperationException. */
