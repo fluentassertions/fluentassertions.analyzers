@@ -8,6 +8,9 @@ This is a generated file, please edit src\FluentAssertions.Analyzers.FluentAsser
 - [StringShouldEndWith](#scenario-stringshouldendwith) - `actual.Should().EndWith(expected);`
 - [StringShouldNotBeNullOrEmpty](#scenario-stringshouldnotbenullorempty) - `actual.Should().NotBeNullOrEmpty();`
 - [StringShouldBeNullOrEmpty](#scenario-stringshouldbenullorempty) - `actual.Should().BeNullOrEmpty();`
+- [StringShouldBeNullOrWhiteSpace](#scenario-stringshouldbenullorwhitespace) - `actual.Should().BeNullOrWhiteSpace();`
+- [StringShouldNotBeNullOrWhiteSpace](#scenario-stringshouldnotbenullorwhitespace) - `actual.Should().NotBeNullOrWhiteSpace();`
+- [StringShouldHaveLength](#scenario-stringshouldhavelength) - `actual.Should().HaveLength(expected);`
 - [CollectionShouldNotBeEmpty](#scenario-collectionshouldnotbeempty) - `collection.Should().NotBeEmpty();`
 - [CollectionShouldBeEmpty](#scenario-collectionshouldbeempty) - `collection.Should().BeEmpty();`
 - [CollectionShouldNotContainCondition](#scenario-collectionshouldnotcontaincondition) - `collection.Should().NotContain(i => i == 4);`
@@ -158,6 +161,86 @@ string.IsNullOrEmpty(actual).Should().BeTrue(); 	// fail message: Expected strin
 
 // new assertion:
 actual.Should().BeNullOrEmpty(); 	// fail message: Expected actual to be <null> or empty, but found "actual".
+```
+
+### scenario: StringShouldBeNullOrWhiteSpace
+
+```cs
+// arrange
+var actual = string.Empty;
+
+// old assertion:
+string.IsNullOrWhiteSpace(actual).Should().BeTrue();
+
+// new assertion:
+actual.Should().BeNullOrWhiteSpace();
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var actual = "actual";
+
+// old assertion:
+string.IsNullOrWhiteSpace(actual).Should().BeTrue(); 	// fail message: Expected string.IsNullOrWhiteSpace(actual) to be True, but found False.
+
+// new assertion:
+actual.Should().BeNullOrWhiteSpace(); 	// fail message: Expected actual to be <null> or whitespace, but found "actual".
+```
+
+### scenario: StringShouldNotBeNullOrWhiteSpace
+
+```cs
+// arrange
+var actual = "actual";
+
+// old assertion:
+string.IsNullOrWhiteSpace(actual).Should().BeFalse();
+
+// new assertion:
+actual.Should().NotBeNullOrWhiteSpace();
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var actual = string.Empty;
+
+// old assertion:
+string.IsNullOrWhiteSpace(actual).Should().BeFalse(); 	// fail message: Expected string.IsNullOrWhiteSpace(actual) to be False, but found True.
+
+// new assertion:
+actual.Should().NotBeNullOrWhiteSpace(); 	// fail message: Expected actual not to be <null> or whitespace, but found "".
+```
+
+### scenario: StringShouldHaveLength
+
+```cs
+// arrange
+var actual = "actual";
+var expected = 6;
+
+// old assertion:
+actual.Length.Should().Be(expected);
+
+// new assertion:
+actual.Should().HaveLength(expected);
+```
+
+#### Failure messages
+
+```cs
+// arrange
+var actual = "actual";
+var expected = 5;
+
+// old assertion:
+actual.Length.Should().Be(expected); 	// fail message: Expected actual.Length to be 5, but found 6.
+
+// new assertion:
+actual.Should().HaveLength(expected); 	// fail message: Expected actual with length 5, but found string "actual" with length 6.
 ```
 
 ### scenario: CollectionShouldNotBeEmpty

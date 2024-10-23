@@ -126,6 +126,89 @@ public class FluentAssertionsAnalyzerTests
     }
 
     [TestMethod]
+    public void StringShouldBeNullOrWhiteSpace()
+    {
+        // arrange
+        var actual = string.Empty;
+
+        // old assertion:
+        string.IsNullOrWhiteSpace(actual).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().BeNullOrWhiteSpace();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringShouldBeNullOrWhiteSpace_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var actual = "actual";
+
+        // old assertion:
+        string.IsNullOrWhiteSpace(actual).Should().BeTrue();
+
+        // new assertion:
+        actual.Should().BeNullOrWhiteSpace();
+    }
+
+    [TestMethod]
+    public void StringShouldNotBeNullOrWhiteSpace()
+    {
+        // arrange
+        var actual = "actual";
+
+        // old assertion:
+        string.IsNullOrWhiteSpace(actual).Should().BeFalse();
+
+        // new assertion:
+        actual.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringShouldNotBeNullOrWhiteSpace_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var actual = string.Empty;
+
+        // old assertion:
+        string.IsNullOrWhiteSpace(actual).Should().BeFalse();
+
+        // new assertion:
+        actual.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [TestMethod]
+    public void StringShouldHaveLength()
+    {
+        // arrange
+        var actual = "actual";
+        var expected = 6;
+
+        // old assertion:
+        actual.Length.Should().Be(expected);
+
+        // new assertion:
+        actual.Should().HaveLength(expected);
+    }
+
+    [TestMethod, ExpectedException(typeof(AssertFailedException))]
+    public void StringShouldHaveLength_Failure()
+    {
+        using var scope = new AssertionScope();
+        // arrange
+        var actual = "actual";
+        var expected = 5;
+
+        // old assertion:
+        actual.Length.Should().Be(expected);
+
+        // new assertion:
+        actual.Should().HaveLength(expected);
+    }
+
+    [TestMethod]
     public void CollectionShouldNotBeEmpty()
     {
         // arrange
