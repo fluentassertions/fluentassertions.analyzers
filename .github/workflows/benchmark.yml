@@ -8,7 +8,7 @@ permissions:
 jobs:
   benchmark:
     name: Performance regression check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.repository == 'fluentassertions/fluentassertions.analyzers'
     steps:
       - uses: actions/checkout@v4
